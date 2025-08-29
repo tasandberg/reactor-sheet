@@ -1,0 +1,8 @@
+/**
+ * only required in dev
+ * in prod, foundry loads style.css, as compiled by vite/rollup,
+ * mostly from the `import ose-better-sheet.scss` line at the top of ose-better-sheet.ts
+ *
+ * in dev, foundry loads style.css, this file, which is a no-op
+ * in dev, ose-better-sheet.ts imports ose-better-sheet.scss directly
+ */
