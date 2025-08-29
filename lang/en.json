@@ -1,5 +1,6 @@
 {
   "TEST": {
     "hello": "Hello Foundry React Module Template!"
-  }
+  },
+  "TYPES.Actor.character": "Character"
 }

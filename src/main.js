@@ -34,8 +34,8 @@ function devSetup() {
   } else {
     const mainScript = document.createElement("script");
     mainScript.type = "module";
-    mainScript.src = `/modules/${APP_ID}/dist/main.ts`;
-    document.head.appendChild(mainScript);
+    mainScript.src = `/modules/${APP_ID}/dist/_main.js`;
+    document.body.appendChild(mainScript);
   }
 }
 

@@ -1,3 +1,5 @@
+import { mountApp } from "../util/mountApp";
+
 /**
  * A Foundry VTT Application class that integrates React components with the Foundry application framework.
  * Extends ApplicationV2 to provide seamless React app mounting and rendering capabilities.
@@ -17,13 +19,7 @@
  * @property {Object} initialProps - Initial properties passed to the React component
  * @property {string} rootId - ID added to the root element where the React app will be mounted
  */
-import { mountApp } from "../util/mountApp";
-/**
- * FoundryReactApplication
- *
- *
- */
-class ReactApplication extends foundry.applications.api.ApplicationV2 {
+class ReactApplication extends foundry.applications.api.DocumentSheetV2 {
   reactApp;
   template = "modules/foundry-react-module-template/templates/react-root.hbs";
   initialProps = {};
@@ -47,8 +43,8 @@ class ReactApplication extends foundry.applications.api.ApplicationV2 {
    */
   constructor({ reactApp, initialProps, ...options }) {
     super(options);
+    console.log(options);
     this.reactApp = reactApp;
-    this.initialProps = initialProps || {};
   }
 
   async _onRender(context) {

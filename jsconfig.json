@@ -14,9 +14,5 @@
     "foundry/client/client.mjs",
     "foundry/client/global.d.mts",
     "foundry/common/primitives/global.d.mts"
-  ],
-
-  "typeAcquisition": {
-    "include": ["jquery"]
-  }
+  ]
 }
