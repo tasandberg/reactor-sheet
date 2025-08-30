@@ -1,6 +1,7 @@
 declare global {
   interface LenientGlobalVariableTypes {
     game: never;
+    canvas: never;
   }
 
   class Hooks extends foundry.helpers.Hooks {}

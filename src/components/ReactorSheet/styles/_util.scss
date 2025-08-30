@@ -15,6 +15,17 @@ $justify-options: (
   "evenly": space-evenly,
 );
 
+$colors: (
+  "primary": #007bff,
+  "secondary": #6c757d,
+  "success": #28a745,
+  "danger": #dc3545,
+  "warning": #ffc107,
+  "info": #17a2b8,
+  "light": #f8f9fa,
+  "dark": #343a40,
+);
+
 .flex-row {
   display: flex;
   flex-direction: row;
@@ -27,9 +38,19 @@ $justify-options: (
   gap: 1rem;
 }
 
+.w-100 {
+  width: 100%;
+}
+
 @each $name, $value in $justify-options {
   .justify-#{$name} {
     justify-content: $value;
+  }
+}
+
+@each $name, $value in $justify-options {
+  .align-#{$name} {
+    align-items: $value;
   }
 }
 
@@ -79,4 +100,32 @@ $directions: (
       }
     }
   }
+}
+
+@for $i from 0 through 4 {
+  .gap-#{$i} {
+    @if $i == 0 {
+      gap: 0;
+    } @else {
+      gap: #{map.get(
+          (
+            1: $spacer1,
+            2: $spacer2,
+            3: $spacer3,
+            4: $spacer4,
+          ),
+          $i
+        )};
+    }
+  }
+}
+
+@each $name, $value in $colors {
+  .border-#{$name} {
+    border: 2px solid $value;
+  }
+}
+
+.border-rounded {
+  border-radius: $spacer1;
 }

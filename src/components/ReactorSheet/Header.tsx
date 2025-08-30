@@ -1,11 +1,13 @@
 import { useReactorSheetContext } from "./context";
+import ScoreBox from "./ScoreBox";
 
 export default function Header() {
   const { actor, source } = useReactorSheetContext();
-  const { hp, scores } = source.system;
+  const { hp } = source.system;
+  console.log(actor);
   return (
-    <header className="p-4">
-      <div>
+    <header className="pb-4">
+      <div className="flex-row align-center justify-start">
         <img
           src={String(actor.img)}
           alt={actor.name}
@@ -13,22 +15,17 @@ export default function Header() {
           data-edit="img"
           style={{ width: "100px", height: "100px", borderRadius: "10px" }}
         />
+        <div className="flex-col gap-0">
+          <div className="flex-row align-center justiy-content-space-between">
+            <h1 className="m-0">{actor.name}</h1>
+            <div className="p-0 w-100">
+              {hp.value} / {hp.max}
+            </div>
+          </div>
+          <ScoreBox actor={actor} />
+        </div>
       </div>
-      <div>
-        <h1>{actor.name}</h1>
-      </div>
-      <div className="p-0">
-        {hp.value} / {hp.max}
-      </div>
-      <div>
-        {for (const [key, value] of Object.entries(scores)) {
-          <div key={key} className="inline-block mr-2">
-            <strong>{key.toUpperCase()}:</strong> {value.value} (
-            {value.mod >= 0 ? "+" : ""}
-            {value.mod})
-          </div>;
-        }}    
-      </div>
+      <div></div>A
     </header>
   );
 }

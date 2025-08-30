@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { ReactorSheetContext } from "./context";
-import type { OSEActor } from "./types";
+import type { OSEActor } from "./types/types";
 
 function ReactorSheetProvider({
   actor,

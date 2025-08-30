@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import type { OSEActor } from "./types";
+import type { OSEActor } from "./types/types";
 
 // Define the shape of your context value here
 interface ReactorSheetContextValue {

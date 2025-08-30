@@ -1,3 +1,5 @@
+import type OseDataModelCharacterScores from "./data-model-character-scores";
+
 export type ReactorSheetAppProps = {
   actor?: OSEActor;
   source?: OSEActor;
@@ -10,7 +12,11 @@ export type OSEActor = Actor & {
       biography: string;
       notes: string;
     };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    scores: any;
+    scores: OseDataModelCharacterScores;
+    hp: {
+      value: number;
+      max: number;
+      hd: string;
+    };
   };
 };

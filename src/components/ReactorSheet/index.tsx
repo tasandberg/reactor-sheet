@@ -1,4 +1,4 @@
-import type { ReactorSheetAppProps } from "./types";
+import type { ReactorSheetAppProps } from "./types/types";
 import ReactorSheetProvider from "./ReactorSheetProvider";
 import Header from "./Header";
 import "./styles/styles.scss";
