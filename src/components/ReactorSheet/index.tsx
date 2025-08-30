@@ -1,14 +1,16 @@
 import type { ReactorSheetAppProps } from "./types";
+import ReactorSheetProvider from "./ReactorSheetProvider";
+import Header from "./Header";
+import "./styles/styles.scss";
 
-const ReactorSheetApp: React.FC<ReactorSheetAppProps> = ({
-  actor,
-}: ReactorSheetAppProps) => {
+function ReactorSheetApp({ actor, source }: ReactorSheetAppProps) {
   return (
-    <div className="container">
-      <h1>Greetings</h1>
-      {actor ? <p>Actor: {actor.name}</p> : <p>No actor provided.</p>}
-    </div>
+    <ReactorSheetProvider actor={actor} source={source}>
+      <div className="reactor-sheet-app">
+        <Header />
+      </div>
+    </ReactorSheetProvider>
   );
-};
+}
 
 export default ReactorSheetApp;

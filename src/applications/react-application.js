@@ -19,7 +19,7 @@ import { mountApp } from "../util/mountApp";
  * @property {Object} initialProps - Initial properties passed to the React component
  * @property {string} rootId - ID added to the root element where the React app will be mounted
  */
-class ReactApplication extends foundry.applications.api.DocumentSheetV2 {
+class ReactApplication extends foundry.applications.sheets.ActorSheetV2 {
   reactApp;
   template = "modules/foundry-react-module-template/templates/react-root.hbs";
   initialProps = {};
@@ -48,6 +48,7 @@ class ReactApplication extends foundry.applications.api.DocumentSheetV2 {
   }
 
   async _onRender(context) {
+    await super._onRender(context);
     const el = this.element.querySelectorAll(`#${this.rootId}`);
     if (el) {
       mountApp(this.reactApp, el[0], context.initialProps);

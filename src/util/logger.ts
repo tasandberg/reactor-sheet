@@ -1,5 +1,4 @@
-import APP_INFO from "../../module.json";
-const APP_NAME = APP_INFO.id;
+import { APP_NAME } from "@src/constants";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function logger(...args: any[]) {

@@ -1,0 +1,18 @@
+@use "util";
+
+.reactor-sheet-app {
+  border: 1px solid red;
+
+  header {
+    display: flex;
+    height: 100%;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+
+    img {
+      object-fit: cover;
+    }
+  }
+}

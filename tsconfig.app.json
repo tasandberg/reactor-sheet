@@ -6,7 +6,7 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
-    "types": ["fvtt-types"],
+    // "types": ["fvtt-types"],
 
     /* Bundler mode */
     "moduleResolution": "Bundler",
@@ -27,5 +27,11 @@
       "@src/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "foundry/client/client.mjs",
+    "foundry/client/global.d.mts",
+    "foundry/common/primitives/global.d.mts"
+  ]
 }
