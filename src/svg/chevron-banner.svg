@@ -1,0 +1,14 @@
+﻿
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 1000'>
+  <defs>
+    <filter id="chevronShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <path d='M850 725 500 875 150 725V125 H850 V725 Z'
+    fill='currentColor'
+    stroke='#222'
+    stroke-width='16'
+    filter='url(#chevronShadow)'
+  />
+</svg>

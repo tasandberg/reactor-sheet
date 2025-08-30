@@ -50,14 +50,17 @@ class ReactApplication extends foundry.applications.sheets.ActorSheetV2 {
   async _onRender(context) {
     await super._onRender(context);
     const el = this.element.querySelectorAll(`#${this.rootId}`);
-    if (el) {
+    if (el && !this.mounted) {
       mountApp(this.reactApp, el[0], context.initialProps);
+      this.mounted = true;
     }
   }
 
   _replaceHTML(result, content, options) {
     console.log(options);
-    content.appendChild(result);
+    if (!this.mounted) {
+      content.appendChild(result);
+    }
   }
 
   async _prepareContext(options) {

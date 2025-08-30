@@ -1,14 +1,12 @@
 import type { ReactorSheetAppProps } from "./types/types";
-import ReactorSheetProvider from "./ReactorSheetProvider";
-import Header from "./Header";
+import ReactorSheetProvider from "./components/ReactorSheetProvider";
 import "./styles/styles.scss";
+import { Layout } from "./components/Layout";
 
 function ReactorSheetApp({ actor, source }: ReactorSheetAppProps) {
   return (
-    <ReactorSheetProvider actor={actor} source={source}>
-      <div className="reactor-sheet-app">
-        <Header />
-      </div>
+    <ReactorSheetProvider actor={actor!} source={source!}>
+      <Layout />
     </ReactorSheetProvider>
   );
 }
