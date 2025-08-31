@@ -1,37 +1,38 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { ReactorSheetContext } from "./context";
-import type { OSEActor } from "../types/types";
+import type { OSEActor, ReactorContext } from "../types/types";
+import ContextConnector from "@src/applications/context-connector";
 
 function ReactorSheetProvider({
   initialActor,
   children,
   source,
+  contextConnector,
 }: {
   initialActor: OSEActor;
   source: OSEActor;
   children: ReactNode;
+  contextConnector?: ContextConnector<ReactorContext>;
 }) {
   const [actor, setActor] = useState<OSEActor>(initialActor);
-  const [items, setItems] = useState(initialActor.items);
+  const [items, setItems] = useState<Item[]>(initialActor.items.contents);
 
   useEffect(() => {
     console.log("setup");
     const handleActorUpdate = (updatedActor: Actor) => {
       if (updatedActor._id === actor._id) {
-        console.log("updatedActor", updatedActor);
-        console.log("actor", actor);
         // @ts-expect-error fuck this
         setActor({
-          ...(updatedActor as OSEActor),
           ...actor,
+          ...(updatedActor as OSEActor),
         });
       }
     };
 
     Hooks.on("updateActor", handleActorUpdate);
-    Hooks.on("updateItem", () => {
-      console.log("ding");
-      setItems(actor.items);
+
+    contextConnector.onUpdate(({ document }) => {
+      setItems([...document.items.contents]);
     });
   });
   const context = {

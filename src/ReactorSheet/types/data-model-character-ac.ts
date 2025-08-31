@@ -99,7 +99,6 @@ export default class OseDataModelCharacterAC implements CharacterAC {
    * @returns {number | null} - The AC value from worn armor
    */
   get #armored(): number | null {
-    // @ts-expect-error imported type
     const armor = this.#armor.find(
       // @ts-expect-error imported type
       ({ system: { type } }: Item) => type !== "shield"

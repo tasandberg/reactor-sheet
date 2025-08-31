@@ -11,7 +11,6 @@ export default function Header() {
           src={String(actor.img)}
           alt={actor.name}
           width="100%"
-          data-edit="img"
           style={{ width: "125px", height: "125px", borderRadius: "10px" }}
         />
         <div className="flex-col gap-0">

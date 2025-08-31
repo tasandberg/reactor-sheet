@@ -2,17 +2,28 @@ import type ContextConnector from "@src/applications/context-connector";
 import type OseDataModelCharacterAC from "./data-model-character-ac";
 import type OseDataModelCharacterScores from "./data-model-character-scores";
 
+// Add props as needed
+export type ReactorContext = {
+  document: OSEActor;
+};
+
 export type ReactorSheetAppProps = {
   actor?: OSEActor;
   source?: OSEActor;
-  contextConnector: typeof ContextConnector;
+  contextConnector: ContextConnector<ReactorContext>;
 };
 
-export type EmbeddedCollection<T> = Map<string, T>;
+// Define the shape of your context value here
+export interface ReactorSheetContextValue {
+  actor: OSEActor;
+  source: OSEActor;
+  items: Item[];
+}
 
 export type OSEActor = Actor & {
   img: string;
   name: string;
+  items: Actor["items"];
   system: {
     aac: OseDataModelCharacterAC;
     ac: OseDataModelCharacterAC;

@@ -1,12 +1,5 @@
 import { createContext, useContext } from "react";
-import type { OSEActor } from "../types/types";
-
-// Define the shape of your context value here
-interface ReactorSheetContextValue {
-  actor: OSEActor;
-  source: OSEActor;
-  items: Actor["items"];
-}
+import type { ReactorSheetContextValue } from "../types/types";
 
 export const ReactorSheetContext = createContext<ReactorSheetContextValue>(
   null!
