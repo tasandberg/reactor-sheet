@@ -28,7 +28,12 @@ export default function InventoryPage() {
     {
       name: "",
       getCell: (item) => (
-        <img src={item.img} alt={item.name} width={45} height={45} />
+        <img
+          src={item.img}
+          alt={item.name}
+          width={45}
+          style={{ flexGrow: 0, flexShrink: 0 }}
+        />
       ),
       showHeader: false,
       classes: "p-0",
@@ -86,16 +91,21 @@ export default function InventoryPage() {
     },
   ];
 
+  const toggleExpand = (event) => {
+    event.target.classList.toggle("expanded");
+  };
+
   return (
     <div className="flex-col">
-      <div className="flex-col gap-1">
-        <h4>Wealth</h4>
-      </div>
       <div>
         {Object.entries(categorizedItems).map(([category, items]) => (
           <div key={category}>
-            <h4>{category}</h4>
-            <ItemTable columns={columns} items={items} />
+            <h4 className="expandable expanded" onClick={toggleExpand}>
+              {category}
+            </h4>
+            <div>
+              <ItemTable columns={columns} items={items} />
+            </div>
           </div>
         ))}
       </div>
