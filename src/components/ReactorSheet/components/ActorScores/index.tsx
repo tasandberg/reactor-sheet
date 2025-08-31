@@ -1,7 +1,8 @@
-import { useReactorSheetContext } from "./context";
-import "../styles/ScoreBox.scss";
+import { useReactorSheetContext } from "../context";
+import ScoreBox from "./ScoreBox";
+import "./ScoreBox.scss";
 
-export default function ScoreBox() {
+export default function ActorScores() {
   const { actor } = useReactorSheetContext();
   const scores = [
     {
@@ -38,20 +39,12 @@ export default function ScoreBox() {
   return (
     <div className="flex-row justify-around border-rounded">
       {scores.map(({ name, score }) => (
-        <div
-          className="score-box-container"
+        <ScoreBox
           key={`score-box-container-${name}`}
-        >
-          <div className="score-box">
-            <span className="header-style">
-              {game!.i18n!.localize(`OSE.scores.${name}.short`)}
-            </span>
-            <span>{score.value}</span>
-          </div>
-          <div className="mod-box">
-            {score.mod < 0 ? score.mod : `+${score.mod}`}
-          </div>
-        </div>
+          label={name}
+          value={score?.value ?? 0}
+          mod={score.mod < 0 ? String(score.mod) : `+${score.mod}`}
+        />
       ))}
     </div>
   );

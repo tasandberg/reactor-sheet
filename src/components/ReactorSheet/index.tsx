@@ -5,7 +5,7 @@ import { Layout } from "./components/Layout";
 
 function ReactorSheetApp({ actor, source }: ReactorSheetAppProps) {
   return (
-    <ReactorSheetProvider actor={actor!} source={source!}>
+    <ReactorSheetProvider initialActor={actor!} source={source!}>
       <Layout />
     </ReactorSheetProvider>
   );

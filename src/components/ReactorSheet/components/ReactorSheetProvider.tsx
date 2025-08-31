@@ -1,38 +1,38 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { ReactorSheetContext } from "./context";
-import type { OSEActor } from "./types/types";
+import type { OSEActor } from "../types/types";
 
 function ReactorSheetProvider({
-  actor,
+  initialActor,
   children,
   source,
 }: {
-  actor: OSEActor;
+  initialActor: OSEActor;
   source: OSEActor;
   children: ReactNode;
 }) {
-  const [enrichedContent, setEnrichedContent] = useState<{
-    notes?: string;
-    biography?: string;
-  }>({});
+  const [actor, setActor] = useState<OSEActor>(initialActor);
 
   useEffect(() => {
-    const fetchEnrichedContent = async () => {
-      const notes = await foundry.applications.ux.TextEditor.enrichHTML(
-        actor.system.details.notes || "",
-        { secrets: true }
-      );
-      const biography = await foundry.applications.ux.TextEditor.enrichHTML(
-        actor.system.details.biography || "",
-        { secrets: true }
-      );
-      setEnrichedContent({ notes, biography });
+    console.log("setup");
+    const handleUpdate = (updatedActor: Actor) => {
+      if (updatedActor._id === actor._id) {
+        // @ts-expect-error fuck this
+        setActor({
+          ...actor,
+          ...(updatedActor as OSEActor),
+        });
+      }
     };
-    fetchEnrichedContent();
-  }, [actor]);
+    Hooks.on("updateActor", handleUpdate);
+  });
+  const context = {
+    actor,
+    source,
+  };
 
   return (
-    <ReactorSheetContext.Provider value={{ actor, enrichedContent, source }}>
+    <ReactorSheetContext.Provider value={context}>
       {children}
     </ReactorSheetContext.Provider>
   );

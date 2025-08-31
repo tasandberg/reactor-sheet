@@ -50,17 +50,20 @@ class ReactApplication extends foundry.applications.sheets.ActorSheetV2 {
   async _onRender(context) {
     await super._onRender(context);
     const el = this.element.querySelectorAll(`#${this.rootId}`);
-    if (el && !this.mounted) {
+    if (el && !this.appIsRendered) {
       mountApp(this.reactApp, el[0], context.initialProps);
-      this.mounted = true;
     }
   }
 
   _replaceHTML(result, content, options) {
     console.log(options);
-    if (!this.mounted) {
+    if (!this.appIsRendered) {
       content.appendChild(result);
     }
+  }
+
+  get appIsRendered() {
+    return !!document.querySelector(".reactor-sheet-app");
   }
 
   async _prepareContext(options) {

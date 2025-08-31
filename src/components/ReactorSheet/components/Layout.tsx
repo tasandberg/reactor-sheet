@@ -1,11 +1,15 @@
+import ArrowDivider from "./ArrowDivider";
 import Header from "./Header";
-import ScoreBox from "./ScoreBox";
+import SheetPages from "./SheetPages";
+import ActorScores from "./ActorScores";
 
 export const Layout = () => {
   return (
-    <div className="reactor-sheet-app">
+    <div className="reactor-sheet-app flex-col gap-1">
       <Header />
-      <ScoreBox />
+      <ActorScores />
+      <ArrowDivider />
+      <SheetPages />
     </div>
   );
 };

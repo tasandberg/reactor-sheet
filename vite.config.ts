@@ -1,6 +1,7 @@
 import type { UserConfig } from "vite";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import svgr from "vite-plugin-svgr";
 import path from "path";
 import APP_INFO from "./module.json";
 
@@ -37,7 +38,7 @@ const config: UserConfig = {
     sourcemap: true,
     lib: {
       name: APP_NAME,
-      entry: path.resolve(__dirname, "src/main.ts"),
+      entry: path.resolve(__dirname, "src/_main.js"),
       formats: ["es"],
       fileName: "main",
     },
@@ -45,6 +46,6 @@ const config: UserConfig = {
 };
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), svgr()],
   ...config,
 });

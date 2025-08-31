@@ -5,10 +5,6 @@ import type { OSEActor } from "../types/types";
 interface ReactorSheetContextValue {
   actor: OSEActor;
   source: OSEActor;
-  enrichedContent: {
-    notes?: string;
-    biography?: string;
-  };
 }
 
 export const ReactorSheetContext = createContext<ReactorSheetContextValue>(

@@ -3,7 +3,7 @@ import type { OSEActor } from "../types/types";
 export default function ActorInfo({ actor }: { actor: OSEActor }) {
   const { aac } = actor.system;
   const { title, alignment, class: cls, level, xp } = actor.system.details;
-
+  console.log("ActorInfo render", xp.value);
   return (
     <div className="actor-info mb-4 flex-row justify-between w-100">
       <div className="flex-col gap-1">

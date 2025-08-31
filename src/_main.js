@@ -14,6 +14,7 @@ export function initialize() {
       {
         types: ["character", "npc"],
         makeDefault: true,
+        label: "Re-Actor Character Sheet",
       }
     );
   });
