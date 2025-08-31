@@ -18,7 +18,6 @@ function ReactorSheetProvider({
   const [items, setItems] = useState<Item[]>(initialActor.items.contents);
 
   useEffect(() => {
-    console.log("setup");
     const handleActorUpdate = (updatedActor: Actor) => {
       if (updatedActor._id === actor._id) {
         // @ts-expect-error fuck this

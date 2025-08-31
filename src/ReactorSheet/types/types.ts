@@ -48,4 +48,8 @@ export type OSEActor = Actor & {
       hd: string;
     };
   };
+  rollCheck: (
+    score: string,
+    { event }: { event?: Event; fastForward?: boolean }
+  ) => void;
 };

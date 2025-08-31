@@ -36,6 +36,7 @@ export default function ActorScores() {
       fieldName: "system.scores.cha",
     },
   ];
+
   return (
     <div className="flex-row justify-around border-rounded">
       {scores.map(({ name, score }) => (
@@ -44,6 +45,9 @@ export default function ActorScores() {
           label={name}
           value={score?.value ?? 0}
           mod={score.mod < 0 ? String(score.mod) : `+${score.mod}`}
+          rollScore={(event: Event) =>
+            actor.rollCheck(name, { event, fastForward: true })
+          }
         />
       ))}
     </div>
