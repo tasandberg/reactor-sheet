@@ -21,17 +21,16 @@ export default function ActorInfo({ actor }: { actor: OSEActor }) {
           <strong>Alignment:</strong> {alignment}
         </div>
       </div>
-      <div className="stat-box hp-box flex-col align-center justify-start">
-        <h5 className="mb-1">HP</h5>
-        <div className="stat-value">
-          <span className="main">{actor.system.hp.value}</span>
-          <span className="max">/{actor.system.hp.max}</span>
+      <div className="stat-box hp-box flex-col gap-0 border-danger">
+        <h5 className="m-0">HP</h5>
+        <div className="stat-value flex-col gap-0">
+          <h3 className="m-0">{actor.system.hp.value}</h3>
         </div>
       </div>
-      <div className="stat-box ac-box flex-col align-center justify-start">
-        <h5 className="mb-1">AC</h5>
+      <div className="stat-box ac-box flex-col gap-0 justify-start h-100 border-primary">
+        <h5 className="m-0">AC</h5>
         <div className="stat-value">
-          <span className="main">{aac.value}</span>
+          <h3 className="m-0">{aac.value}</h3>
         </div>
       </div>
     </div>

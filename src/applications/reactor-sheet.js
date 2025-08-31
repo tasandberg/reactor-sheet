@@ -1,4 +1,4 @@
-import ReactorSheetApp from "@src/components/ReactorSheet/index";
+import ReactorSheetApp from "@src/ReactorSheet";
 import ReactApplication from "./react-application";
 
 class ReactorSheet extends ReactApplication {

@@ -1,10 +1,14 @@
+import type ContextConnector from "@src/applications/context-connector";
 import type OseDataModelCharacterAC from "./data-model-character-ac";
 import type OseDataModelCharacterScores from "./data-model-character-scores";
 
 export type ReactorSheetAppProps = {
   actor?: OSEActor;
   source?: OSEActor;
+  contextConnector: typeof ContextConnector;
 };
+
+export type EmbeddedCollection<T> = Map<string, T>;
 
 export type OSEActor = Actor & {
   img: string;

@@ -1,5 +1,5 @@
 import { mountApp } from "../util/mountApp";
-
+import ContextConnector from "./context-connector";
 /**
  * A Foundry VTT Application class that integrates React components with the Foundry application framework.
  * Extends ApplicationV2 to provide seamless React app mounting and rendering capabilities.
@@ -44,6 +44,7 @@ class ReactApplication extends foundry.applications.sheets.ActorSheetV2 {
   constructor({ reactApp, initialProps, ...options }) {
     super(options);
     console.log(options);
+    this.contextConnector = new ContextConnector();
     this.reactApp = reactApp;
   }
 
@@ -53,6 +54,7 @@ class ReactApplication extends foundry.applications.sheets.ActorSheetV2 {
     if (el && !this.appIsRendered) {
       mountApp(this.reactApp, el[0], context.initialProps);
     }
+    this.contextConnector.publishContext(context);
   }
 
   _replaceHTML(result, content, options) {

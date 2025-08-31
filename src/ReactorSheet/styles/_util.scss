@@ -24,6 +24,7 @@ $colors: (
   "info": #17a2b8,
   "light": #f8f9fa,
   "dark": #343a40,
+  "transparent": transparent,
 );
 
 .flex-row {
@@ -122,7 +123,18 @@ $directions: (
 
 @each $name, $value in $colors {
   .border-#{$name} {
-    border: 2px solid $value;
+    border: 1px solid $value;
+  }
+}
+
+@each $name, $value in $colors {
+  .bg-#{$name} {
+    background-color: $value;
+  }
+  @each $dir, $side in $directions {
+    .border#{$side}-#{$name} {
+      border#{$side}: 1px solid $value;
+    }
   }
 }
 

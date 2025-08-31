@@ -1,5 +1,6 @@
 import getLabel from "@src/util/getLabel";
 import { SheetTabs } from "./SheetTabs";
+import ActionsPage from "./ActionsPage";
 
 export default function SheetPages() {
   return (
@@ -8,7 +9,7 @@ export default function SheetPages() {
         {
           label: getLabel("OSE.category.actions"),
           id: "tab1",
-          content: <div>Content for Tab 1</div>,
+          content: <ActionsPage />,
         },
         {
           label: getLabel("OSE.category.inventory"),

@@ -12,6 +12,7 @@
     "init": "node tools/init.mjs"
   },
   "dependencies": {
+    "clsx": "^2.1.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
@@ -24,7 +25,7 @@
     "eslint": "^9.33.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
-    "fvtt-types": "github:League-of-Foundry-Developers/foundry-vtt-types#main",
+    "fvtt-types": "npm:@league-of-foundry-developers/foundry-vtt-types@13.346.0-beta.20250812191140",
     "globals": "^16.3.0",
     "sass-embedded": "^1.91.0",
     "typescript": "~5.8.3",

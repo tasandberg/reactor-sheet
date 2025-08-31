@@ -1,13 +1,14 @@
+import clsx from "clsx";
 import React, { useState } from "react";
 
-export interface SheetTab {
+interface SheetTab {
   label: string;
   id: string | number;
   content: React.ReactNode;
   disabled?: boolean;
 }
 
-export interface TabsProps {
+interface TabsProps {
   tabs: SheetTab[];
   initialActiveTabId?: string | number;
   onTabChange?: (tabId: string | number) => void;
@@ -38,14 +39,16 @@ export const SheetTabs: React.FC<TabsProps> = ({
   const activeTab = tabs.find((tab) => tab.id === activeTabId);
 
   return (
-    <div className={`tabs-component ${className}`.trim()}>
+    <div className={`reactor-sheet-tabs ${className}`.trim()}>
       <div className="flex-row justify-start p-4 gap-0" role="tablist">
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            className={`tab-btn${tab.id === activeTabId ? " active" : ""}${
-              tab.disabled ? " disabled" : ""
-            }`}
+            className={clsx(`tab-btn w-100`, {
+              active: tab.id === activeTabId,
+              disabled: tab.disabled,
+              "bg-transparent border-transparent": tab.id !== activeTabId,
+            })}
             onClick={() => handleTabClick(tab)}
             disabled={tab.disabled}
             role="tab"

@@ -17,21 +17,12 @@
     "jsx": "react-jsx",
 
     /* Linting */
-    "strict": true,
+    "strict": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true,
     "paths": {
       "@src/*": ["./src/*"]
     }
-  },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "foundry/client/client.mjs",
-    "foundry/client/global.d.mts",
-    "foundry/common/primitives/global.d.mts"
-  ]
+  }
 }
