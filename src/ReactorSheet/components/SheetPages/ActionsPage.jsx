@@ -2,11 +2,10 @@ import { useReactorSheetContext } from "../context";
 
 export default function ActionsPage() {
   const { items } = useReactorSheetContext();
-  console.log(items);
   return (
     <div>
       {items
-        .filter((i) => i.type === "weapon")
+        .filter((i) => i.type === "weapon" && i.system.equipped)
         .map((i) => (
           <div key={i._id}>
             <a

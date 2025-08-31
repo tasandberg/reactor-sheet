@@ -1,6 +1,8 @@
 @use "util";
 
 .reactor-sheet-app {
+  overflow: hidden;
+
   header {
     img {
       object-fit: cover;

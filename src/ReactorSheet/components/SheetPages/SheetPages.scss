@@ -1,0 +1,16 @@
+.reactor-sheet-tabs {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+
+  .tabs-content {
+    overflow: hidden;
+    display: block;
+  }
+
+  .tabs-content > * {
+    overflow: auto;
+    height: 350px;
+  }
+}

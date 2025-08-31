@@ -35,6 +35,7 @@ class ReactApplication extends foundry.applications.sheets.ActorSheetV2 {
       resizable: true,
       minimizable: true,
     },
+    scrollY: [".tabs-content"],
   };
 
   /**

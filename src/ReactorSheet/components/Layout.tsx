@@ -5,7 +5,7 @@ import ActorScores from "./ActorScores";
 
 export const Layout = () => {
   return (
-    <div className="reactor-sheet-app flex-col gap-1">
+    <div className="reactor-sheet-app">
       <Header />
       <ActorScores />
       <ArrowDivider />

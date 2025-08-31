@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import React, { useState } from "react";
+import "./SheetPages.scss";
 
 interface SheetTab {
   label: string;
@@ -60,7 +61,7 @@ export const SheetTabs: React.FC<TabsProps> = ({
           </button>
         ))}
       </div>
-      <div className="tabs-content p-4">
+      <div className="tabs-content">
         {activeTab && (
           <div
             id={`tab-panel-${activeTab.id}`}
