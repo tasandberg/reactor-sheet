@@ -20,6 +20,8 @@ export interface ReactorSheetContextValue {
   items: OseItem[];
 }
 
+export type OSESave = "breath" | "death" | "paralysis" | "spell" | "wand";
+
 export type OSEActor = Actor & {
   img: string;
   name: string;
@@ -47,10 +49,24 @@ export type OSEActor = Actor & {
       max: number;
       hd: string;
     };
+    saves: Record<OSESave, number>;
   };
+  targetAttack: (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    roll: { [key: string]: any },
+    type: "melee" | "missile",
+    options: {
+      type: "melee" | "missile";
+      skipDialog?: boolean;
+    }
+  ) => void;
   rollCheck: (
     score: string,
     { event }: { event?: Event; fastForward?: boolean }
+  ) => void;
+  rollSave: (
+    save: OSESave,
+    options: { event?: Event; fastForward?: boolean; chatMessage?: string }
   ) => void;
 };
 

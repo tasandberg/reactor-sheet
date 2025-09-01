@@ -145,3 +145,30 @@ $directions: (
 .border-rounded {
   border-radius: $spacer1;
 }
+
+// Typography
+.header-style {
+  font-family: var(--font-h1);
+  font-weight: bold;
+  color: var(--color-text-emphatic);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+.text-emphatic {
+  color: var(--color-text-emphatic);
+}
+
+// Effects/Animations
+.bloody-box {
+  &:hover {
+    background: radial-gradient(
+      circle at 10%,
+      transparent 50%,
+      rgba(crimson, 0.9) 100%
+    );
+    color: var(--color-text-secondary);
+    transition: background 0.3s, color 0.3s;
+  }
+}

@@ -44,7 +44,6 @@ class ReactApplication extends foundry.applications.sheets.ActorSheetV2 {
    */
   constructor({ reactApp, initialProps, ...options }) {
     super(options);
-    console.log(options);
     this.contextConnector = new ContextConnector();
     this.reactApp = reactApp;
   }
@@ -59,14 +58,9 @@ class ReactApplication extends foundry.applications.sheets.ActorSheetV2 {
   }
 
   _replaceHTML(result, content, options) {
-    console.log(options);
     if (!this.appIsRendered) {
       content.appendChild(result);
     }
-  }
-
-  get appIsRendered() {
-    return !!document.querySelector(".reactor-sheet-app");
   }
 
   async _prepareContext(options) {
@@ -78,7 +72,6 @@ class ReactApplication extends foundry.applications.sheets.ActorSheetV2 {
   }
 
   async _renderHTML(context, options) {
-    console.log(context, options);
     const tempEl = document.createElement("div");
     const htmlString = await foundry.applications.handlebars.renderTemplate(
       this.template,

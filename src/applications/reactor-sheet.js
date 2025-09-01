@@ -13,6 +13,10 @@ class ReactorSheet extends ReactApplication {
     },
   };
 
+  get appIsRendered() {
+    return !!document.querySelector(".reactor-sheet-app");
+  }
+
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
     // You can add additional context data here if needed

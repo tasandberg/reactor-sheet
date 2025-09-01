@@ -1,5 +1,5 @@
 import { useReactorSheetContext } from "../context";
-import ItemRow from "./ItemRow";
+import { toggleExpand } from "../shared/expandable";
 import ItemTable from "./ItemTable";
 export default function InventoryPage() {
   const { items } = useReactorSheetContext();
@@ -90,10 +90,6 @@ export default function InventoryPage() {
       ),
     },
   ];
-
-  const toggleExpand = (event) => {
-    event.target.classList.toggle("expanded");
-  };
 
   return (
     <div className="flex-col">

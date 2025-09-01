@@ -36,13 +36,14 @@ export const actionColumns = (
       name: "name",
       justify: "start",
       align: "start",
+      width: "1fr",
       renderCell: (item) => (
         <div>
           <div>{item.name}</div>
           <div className="flex-row" style={{ flexWrap: "wrap", gap: "0.5rem" }}>
-            {item.system.qualities.map((q) => (
+            {item.system.qualities.map((q, i) => (
               <div
-                key={q.value}
+                key={`qt${i}${q.label}`}
                 title={q.label}
                 style={{ display: "inline" }}
                 className="badge"
@@ -60,6 +61,7 @@ export const actionColumns = (
       name: "damage",
       justify: "start",
       align: "center",
+      width: "min-content",
       renderCell: (item) => {
         const type = item.system.melee ? "melee" : "missile";
         let mod = "";
@@ -75,7 +77,6 @@ export const actionColumns = (
         return (
           <button
             style={{ width: 100 }}
-            className="p-3"
             onClick={() =>
               actor.targetAttack({ roll: {} }, type, { type, skipDialog: true })
             }

@@ -38,7 +38,7 @@ export default function ActorScores() {
   ];
 
   return (
-    <div className="flex-row justify-between border-rounded">
+    <div className="flex-row justify-between border-rounded pl-2 pr-2">
       {scores.map(({ name, score }) => (
         <ScoreBox
           key={`score-box-container-${name}`}
