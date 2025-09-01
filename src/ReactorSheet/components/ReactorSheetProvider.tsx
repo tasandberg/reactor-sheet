@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { ReactorSheetContext } from "./context";
-import type { OSEActor, ReactorContext } from "../types/types";
+import type { OSEActor, OseItem, ReactorContext } from "../types/types";
 import ContextConnector from "@src/applications/context-connector";
 
 function ReactorSheetProvider({
@@ -15,7 +15,7 @@ function ReactorSheetProvider({
   contextConnector?: ContextConnector<ReactorContext>;
 }) {
   const [actor, setActor] = useState<OSEActor>(initialActor);
-  const [items, setItems] = useState<Item[]>(initialActor.items.contents);
+  const [items, setItems] = useState<OseItem[]>(initialActor.items.contents);
 
   useEffect(() => {
     const handleActorUpdate = (updatedActor: Actor) => {

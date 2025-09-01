@@ -17,13 +17,13 @@ export type ReactorSheetAppProps = {
 export interface ReactorSheetContextValue {
   actor: OSEActor;
   source: OSEActor;
-  items: Item[];
+  items: OseItem[];
 }
 
 export type OSEActor = Actor & {
   img: string;
   name: string;
-  items: Actor["items"];
+  items: Actor["items"] | OseItem[];
   system: {
     aac: OseDataModelCharacterAC;
     ac: OseDataModelCharacterAC;
@@ -52,4 +52,19 @@ export type OSEActor = Actor & {
     score: string,
     { event }: { event?: Event; fastForward?: boolean }
   ) => void;
+};
+
+export type OseItem = Omit<Item, "type"> & {
+  type: string;
+};
+
+export type OseWeapon = OseItem & {
+  system: {
+    damage: string;
+    qualities: { label: string; value: string; icon: string }[];
+    description: string;
+    melee: boolean;
+    missile: boolean;
+  };
+  bonus: number;
 };

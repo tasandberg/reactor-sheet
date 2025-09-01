@@ -41,7 +41,7 @@ export const SheetTabs: React.FC<TabsProps> = ({
 
   return (
     <div className={`reactor-sheet-tabs ${className}`.trim()}>
-      <div className="flex-row justify-start p-4 gap-0" role="tablist">
+      <div className="flex-row justify-start pt-4 pb-4 gap-0" role="tablist">
         {tabs.map((tab) => (
           <button
             key={tab.id}
