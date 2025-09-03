@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useReactorSheetContext } from "./context";
-import { type SyntheticEvent } from "react";
+import { useEffect, useState, type SyntheticEvent } from "react";
 
 const HitPointsWrapper = styled.div<{ $percentage?: number }>`
   padding: 0.25rem;
@@ -9,9 +9,9 @@ const HitPointsWrapper = styled.div<{ $percentage?: number }>`
   flex-direction: column;
   width: 80px;
   height: fit-content;
-  background-color: transparent;
   background-position: center;
   clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.8);
 
   &::before {
     content: "";
@@ -79,30 +79,38 @@ const HitPointsMax = styled.div`
 
 export default function HitPoints() {
   const { actor, updateActor } = useReactorSheetContext();
-  const onChangeHp = (e: SyntheticEvent) => {
+  const [currentHp, setCurrentHp] = useState(actor.system.hp.value);
+  const onChangeHp = async (e: SyntheticEvent) => {
     const field = (e.target as HTMLInputElement).name;
     const value = Number((e.target as HTMLInputElement).value);
-    console.log("Updating HP:", field, value);
     let newHp = value;
     if (field === "system.hp.value") {
       newHp = Math.clamp(newHp, 0, actor.system.hp.max);
     }
-    updateActor({ "system.hp.value": newHp });
+    if (newHp === actor.system.hp.value) {
+      setCurrentHp(newHp);
+      return;
+    }
+    const updatedActor = await updateActor({ "system.hp.value": newHp });
+    console.log("Updated actor:", updatedActor);
   };
+  useEffect(() => setCurrentHp(actor.system.hp.value), [actor.system.hp.value]);
 
   return (
     <HitPointsWrapper
       className="p-4"
       $percentage={(actor.system.hp.value / actor.system.hp.max) * 100}
     >
-      <HitPointsLabel>Hit points</HitPointsLabel>
+      <HitPointsLabel>HP</HitPointsLabel>
       <HitPointsValue>
         <HitPointsInput
           type="number"
           max={actor.system.hp.max}
-          defaultValue={actor.system.hp.value}
+          min="0"
+          value={currentHp}
           name="system.hp.value"
           onBlur={onChangeHp}
+          onChange={(e) => setCurrentHp(e.target.valueAsNumber)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               (e.target as HTMLInputElement).blur();

@@ -1,37 +1,114 @@
-import type { OSEActor } from "../types/types";
+import styled from "styled-components";
+import ArmorClass from "./ArmorClass";
 import HitPoints from "./HitPoints";
+import { InlineInput } from "./InlineInput";
+import { useReactorSheetContext } from "./context";
 
-export default function ActorInfo({ actor }: { actor: OSEActor }) {
-  // const { aac } = actor.system;
+const PropertiesGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  width: fit-content;
+  color: var(--color-text-emphasis);
+  & > div {
+    padding: 3px 3px;
+  }
+
+  label {
+    color: var(--color-text-secondary);
+    margin-right: 4px;
+  }
+  span {
+    font-family: var(--font-body);
+    &:hover {
+      background-color: black;
+      text-shadow: #fff 0 0 3px;
+    }
+  }
+`;
+
+export default function ActorInfo() {
+  const { actor, updateActor } = useReactorSheetContext();
   const { title, alignment, class: cls, level, xp } = actor.system.details;
-
+  const mvmt = actor.system.movement;
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    updateActor({ [name]: value });
+  };
+  console.log(actor.system.hp);
   return (
-    <div className="actor-info mb-4 flex-row justify-between w-100 text-emphatic">
+    <div className="actor-info mb-4 flex-row text-emphatic">
       <div className="flex-col gap-1">
-        <h1 className="m-0">{actor.name}</h1>
+        <h1 className="m-0">
+          <InlineInput
+            type="text"
+            name="name"
+            defaultValue={actor.name}
+            onBlur={handleChange}
+          />
+        </h1>
         <div>
-          <i>{title}</i>
+          <i>
+            <InlineInput
+              type="text"
+              name="system.details.title"
+              defaultValue={title}
+              onBlur={handleChange}
+            />
+          </i>
         </div>
-        <div>
-          <strong>Level:</strong> {level}
-        </div>
-        <div>
-          <strong>Class:</strong> {cls}
-        </div>
-        <div>
-          <strong>XP:</strong> {xp.value} / {xp.next}
-        </div>
-        <div>
-          <strong>Alignment:</strong> {alignment}
-        </div>
+        <PropertiesGrid>
+          <div>
+            <label>Level:</label> {level}
+          </div>
+          <div>
+            <label>Class:</label> {cls}
+          </div>
+          <div>
+            <label>XP:</label> {xp.value} / {xp.next}
+          </div>
+          <div>
+            <label>Alignment:</label> {alignment}
+          </div>
+          <div>
+            <label>HD:</label>
+            <a
+              className="inline-roll roll"
+              data-mode="roll"
+              data-formula="1d4"
+              data-tooltip-text="1d4"
+              data-flavor={`Hit Die`}
+            >
+              <i className="fa-solid fa-dice-d20" />
+              {actor.system.hp.hd}
+            </a>
+          </div>
+          <div>
+            <label>Movement:</label>
+            <span data-tooltip={`Base movement ${mvmt.base} ft. / turn`}>
+              {mvmt.base}
+            </span>{" "}
+            /{" "}
+            <span
+              data-tooltip={`Encounter movement ${mvmt.encounter} ft. / turn`}
+            >
+              {mvmt.encounter}
+            </span>{" "}
+            /{" "}
+            <span
+              data-tooltip={`Overland movement ${mvmt.overland} miles / day`}
+            >
+              {mvmt.overland}
+            </span>
+          </div>
+        </PropertiesGrid>
       </div>
-      <HitPoints actor={actor} />
-      {/* <div className="stat-box ac-box flex-col gap-0 justify-start h-100 border-primary">
-        <h5 className="m-0">AC</h5>
-        <div className="stat-value">
-          <h3 className="m-0">{aac.value}</h3>
+      <div className="flex-col">
+        <div className="flex-row">
+          <HitPoints />
+          <ArmorClass />
         </div>
-      </div> */}
+        <p>Rest </p>
+      </div>
     </div>
   );
 }

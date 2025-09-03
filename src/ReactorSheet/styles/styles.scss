@@ -4,12 +4,6 @@
   overflow: hidden;
   color: var(--color-text-secondary);
 
-  header {
-    img {
-      object-fit: cover;
-    }
-  }
-
   .badge {
     background-color: var(--color-text-selection-bg);
     padding: 2px 3px;

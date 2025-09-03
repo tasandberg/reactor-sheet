@@ -68,6 +68,7 @@ class ReactApplication extends foundry.applications.sheets.ActorSheetV2 {
     // You can add additional context data here if needed
     context.rootId = this.rootId;
     context.initialProps = this.initialProps;
+    context.app = this;
     return context;
   }
 

@@ -22,7 +22,11 @@ function ReactorSheetProvider({
   }): Promise<OSEActor | void> {
     if (actor.update) {
       return await actor.update(updateData).then((updatedActor) => {
-        if (updatedActor) setActor(updatedActor);
+        // undefined if no change was made
+        if (updatedActor) {
+          updatedActor.updatedAt = new Date().toISOString();
+          setActor(updatedActor);
+        }
       });
     } else {
       throw new Error("Actor does not have an update method");
@@ -32,8 +36,6 @@ function ReactorSheetProvider({
   useEffect(() => {
     contextConnector.onUpdate(
       foundry.utils.debounce(({ document }: { document: OSEActor }) => {
-        console.log("context update");
-        // setActor(document as OSEActor);
         setItems([...document.items.contents]);
       }, 200)
     );

@@ -29,6 +29,7 @@ export type OSEActor = Actor & {
   img: string;
   name: string;
   items: Actor["items"] | OseItem[];
+  updatedAt?: string;
   system: {
     aac: OseDataModelCharacterAC;
     ac: OseDataModelCharacterAC;
@@ -45,6 +46,11 @@ export type OSEActor = Actor & {
         next: number;
         share: number;
       };
+    };
+    movement: {
+      base: number;
+      encounter: number;
+      overland: number;
     };
     scores: OseDataModelCharacterScores;
     hp: {
