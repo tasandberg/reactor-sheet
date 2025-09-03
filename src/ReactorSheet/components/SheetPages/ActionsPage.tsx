@@ -13,7 +13,9 @@ import { SectionHeader } from "../shared/elements";
 
 export default function ActionsPage() {
   const { items, actor } = useReactorSheetContext();
-  const weapons = items.filter(({ type }) => type == "weapon");
+  const weapons = items.filter(
+    ({ type, system }: OseWeapon) => type == "weapon" && system.equipped
+  );
 
   return (
     <div className="flex-row gap-4">

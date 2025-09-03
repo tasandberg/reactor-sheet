@@ -7,6 +7,7 @@ class ReactorSheet extends ReactApplication {
     window: {
       title: "Reactor Sheet",
     },
+    tag: "div",
     position: {
       width: 600,
       height: 800,

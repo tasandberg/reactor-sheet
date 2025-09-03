@@ -18,6 +18,9 @@ export interface ReactorSheetContextValue {
   actor: OSEActor;
   source: OSEActor;
   items: OseItem[];
+  updateActor: (updateData: {
+    [key: string]: string | number;
+  }) => Promise<OSEActor | void>;
 }
 
 export type OSESave = "breath" | "death" | "paralysis" | "spell" | "wand";
@@ -68,6 +71,7 @@ export type OSEActor = Actor & {
     save: OSESave,
     options: { event?: Event; fastForward?: boolean; chatMessage?: string }
   ) => void;
+  update: (updateData: { [key: string]: string | number }) => Promise<OSEActor>;
 };
 
 export type OseItem = Omit<Item, "type"> & {
@@ -81,6 +85,7 @@ export type OseWeapon = OseItem & {
     description: string;
     melee: boolean;
     missile: boolean;
+    equipped: boolean;
   };
   bonus: number;
 };

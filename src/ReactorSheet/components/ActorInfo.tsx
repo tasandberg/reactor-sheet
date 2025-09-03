@@ -1,7 +1,8 @@
 import type { OSEActor } from "../types/types";
+import HitPoints from "./HitPoints";
 
 export default function ActorInfo({ actor }: { actor: OSEActor }) {
-  const { aac } = actor.system;
+  // const { aac } = actor.system;
   const { title, alignment, class: cls, level, xp } = actor.system.details;
 
   return (
@@ -24,18 +25,13 @@ export default function ActorInfo({ actor }: { actor: OSEActor }) {
           <strong>Alignment:</strong> {alignment}
         </div>
       </div>
-      <div className="stat-box hp-box flex-col gap-0 border-danger">
-        <h5 className="m-0">HP</h5>
-        <div className="stat-value flex-col gap-0">
-          <h3 className="m-0">{actor.system.hp.value}</h3>
-        </div>
-      </div>
-      <div className="stat-box ac-box flex-col gap-0 justify-start h-100 border-primary">
+      <HitPoints actor={actor} />
+      {/* <div className="stat-box ac-box flex-col gap-0 justify-start h-100 border-primary">
         <h5 className="m-0">AC</h5>
         <div className="stat-value">
           <h3 className="m-0">{aac.value}</h3>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
