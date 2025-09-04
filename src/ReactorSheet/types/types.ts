@@ -1,6 +1,7 @@
 import type ContextConnector from "@src/applications/context-connector";
 import type OseDataModelCharacterAC from "./data-model-character-ac";
 import type OseDataModelCharacterScores from "./data-model-character-scores";
+import type { ReactorSheetSettings } from "@src/util/useLocalSettings";
 
 // Add props as needed
 export type ReactorContext = {
@@ -21,6 +22,7 @@ export interface ReactorSheetContextValue {
   updateActor: (updateData: {
     [key: string]: string | number;
   }) => Promise<OSEActor | void>;
+  sheetSettings: ReactorSheetSettings;
 }
 
 export type OSESave = "breath" | "death" | "paralysis" | "spell" | "wand";
@@ -47,6 +49,12 @@ export type OSEActor = Actor & {
         share: number;
       };
     };
+    encumbrance: {
+      variant: string;
+      value: number;
+      max: number;
+      enabled: boolean;
+    };
     movement: {
       base: number;
       encounter: number;
@@ -54,6 +62,7 @@ export type OSEActor = Actor & {
     };
     scores: OseDataModelCharacterScores;
     abilities: Record<string, OseItem>;
+    treasures: Record<string, OseItem>;
     hp: {
       value: number;
       max: number;
@@ -83,6 +92,18 @@ export type OSEActor = Actor & {
 
 export type OseItem = Omit<Item, "type"> & {
   type: string;
+  system: {
+    quantity: {
+      value: number;
+      max: number;
+    };
+    cost: number;
+    cumulativeCost: number;
+    cumulativeWeight: number;
+  };
+  update: (updateData: {
+    [key: string]: string | number;
+  }) => Promise<OseItem | void>;
 };
 
 export type OseWeapon = OseItem & {

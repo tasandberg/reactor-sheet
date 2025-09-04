@@ -34,7 +34,7 @@ export default function ActorInfo() {
     const { name, value } = event.target;
     updateActor({ [name]: value });
   };
-  console.log(actor.system.hp);
+
   return (
     <div className="actor-info mb-4 flex-row text-emphatic gap-0">
       <div className="flex-col gap-1">
