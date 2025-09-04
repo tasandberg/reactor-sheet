@@ -1,11 +1,12 @@
-import { useReactorSheetContext } from "../context";
-import Encumbrance from "../Encumbrance";
-import { toggleExpand } from "../shared/expandable";
+import { useReactorSheetContext } from "../../context";
+import Encumbrance from "../../Encumbrance";
+import { toggleExpand } from "../../shared/expandable";
 import ItemTable from "./ItemTable";
+import UsageBar from "./UsageBar";
 
 export default function InventoryPage() {
   const { items } = useReactorSheetContext();
-
+  console.log(items[0].system.quantity);
   const categorizedItems = items.reduce((acc, item) => {
     const category = item.type || "uncategorized";
     if (!["weapon", "armor", "item"].includes(category)) {
@@ -45,15 +46,13 @@ export default function InventoryPage() {
       name: "Name",
       getValue: (item) => item.name,
       getCell: (item) => (
-        <a onClick={() => item.sheet.render(true)}>{item.name}</a>
+        <div className="flex-col gap-0">
+          <a onClick={() => item.sheet.render(true)}>{item.name}</a>
+          <UsageBar item={item} />
+        </div>
       ),
       align: "left",
       sortable: true,
-    },
-    {
-      name: "Weight",
-      sortable: true,
-      getValue: (item) => item.system?.weight || "",
     },
     {
       name: "Cost",
@@ -92,7 +91,7 @@ export default function InventoryPage() {
       ),
     },
   ];
-
+  console.log({ categorizedItems });
   return (
     <div className="flex-col">
       <Encumbrance />

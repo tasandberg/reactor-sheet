@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { ReactorSheetContext } from "./context";
 import type { OSEActor, OseItem, ReactorContext } from "../types/types";
 import ContextConnector from "@src/applications/context-connector";
+import { useLocalSettings } from "@src/util/useLocalSettings";
 
 function ReactorSheetProvider({
   initialActor,
@@ -16,6 +17,7 @@ function ReactorSheetProvider({
 }) {
   const [actor, setActor] = useState<OSEActor>(initialActor);
   const [items, setItems] = useState<OseItem[]>(initialActor.items.contents);
+  const { sheetSettings } = useLocalSettings();
 
   async function updateActor(updateData: {
     [key: string]: string | number;
@@ -42,6 +44,7 @@ function ReactorSheetProvider({
   });
   const context = {
     actor,
+    sheetSettings,
     source,
     items,
     updateActor,

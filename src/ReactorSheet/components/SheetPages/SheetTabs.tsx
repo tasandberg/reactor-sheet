@@ -1,6 +1,6 @@
 import clsx from "clsx";
-import React, { useState } from "react";
 import "./SheetPages.scss";
+import { useLocalSettings } from "@src/util/useLocalSettings";
 
 interface SheetTab {
   label: string;
@@ -18,26 +18,18 @@ interface TabsProps {
 
 export const SheetTabs: React.FC<TabsProps> = ({
   tabs,
-  initialActiveTabId,
   onTabChange,
   className = "",
 }) => {
-  const getDefaultTabId = () => {
-    if (initialActiveTabId !== undefined) return initialActiveTabId;
-    const firstEnabled = tabs.find((tab) => !tab.disabled);
-    return firstEnabled ? firstEnabled.id : tabs[0]?.id;
-  };
-  const [activeTabId, setActiveTabId] = useState<string | number | undefined>(
-    getDefaultTabId()
-  );
-
+  const { sheetSettings, setSetting } = useLocalSettings();
+  const activeTabId = sheetSettings.currentPage || tabs[0].id;
   const handleTabClick = (tab: SheetTab) => {
     if (tab.disabled) return;
-    setActiveTabId(tab.id);
+    setSetting("currentPage", String(tab.id));
     onTabChange?.(tab.id);
   };
 
-  const activeTab = tabs.find((tab) => tab.id === activeTabId);
+  const activeTab = tabs.find((tab) => tab.id === sheetSettings.currentPage);
 
   return (
     <div className={`reactor-sheet-tabs ${className}`.trim()}>
