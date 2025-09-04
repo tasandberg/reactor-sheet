@@ -53,6 +53,7 @@ export type OSEActor = Actor & {
       overland: number;
     };
     scores: OseDataModelCharacterScores;
+    abilities: Record<string, OseItem>;
     hp: {
       value: number;
       max: number;
@@ -94,4 +95,10 @@ export type OseWeapon = OseItem & {
     equipped: boolean;
   };
   bonus: number;
+};
+
+export type OseAbility = OseItem & {
+  system: {
+    requirements?: string;
+  };
 };

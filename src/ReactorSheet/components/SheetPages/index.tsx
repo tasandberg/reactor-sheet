@@ -2,6 +2,7 @@ import getLabel from "@src/util/getLabel";
 import { SheetTabs } from "./SheetTabs";
 import ActionsPage from "./ActionsPage";
 import InventoryPage from "./InventoryPage";
+import Abilities from "./Abilities";
 
 export default function SheetPages() {
   return (
@@ -20,7 +21,7 @@ export default function SheetPages() {
         {
           label: getLabel("OSE.category.abilities"),
           id: "tab3",
-          content: <div>Content for Abilities</div>,
+          content: <Abilities />,
         },
       ]}
     />

@@ -1,6 +1,8 @@
 import { useReactorSheetContext } from "../context";
 import { toggleExpand } from "../shared/expandable";
+import { SectionHeader } from "../shared/elements";
 import ItemTable from "./ItemTable";
+
 export default function InventoryPage() {
   const { items } = useReactorSheetContext();
 
@@ -96,9 +98,12 @@ export default function InventoryPage() {
       <div>
         {Object.entries(categorizedItems).map(([category, items]) => (
           <div key={category}>
-            <h4 className="expandable expanded" onClick={toggleExpand}>
+            <SectionHeader
+              className="expandable expanded"
+              onClick={toggleExpand}
+            >
               {category}
-            </h4>
+            </SectionHeader>
             <div>
               <ItemTable columns={columns} items={items} />
             </div>

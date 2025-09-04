@@ -52,7 +52,6 @@ export default function GridTable<T>({
     <GridTableWrapper $gridTemplateColumns={gridTemplateColumns}>
       {showHeader && (
         <>
-          )
           {columns.map((col) => (
             <GridTableCell
               key={`h${col.name}-${getRowId(data[0])}`}
