@@ -47,6 +47,12 @@ export type OSEActor = Actor & {
         share: number;
       };
     };
+    encumbrance: {
+      variant: string;
+      value: number;
+      max: number;
+      enabled: boolean;
+    };
     movement: {
       base: number;
       encounter: number;

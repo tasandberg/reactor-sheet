@@ -1,6 +1,8 @@
 import { useReactorSheetContext } from "../context";
+import Encumbrance from "../Encumbrance";
 import { toggleExpand } from "../shared/expandable";
 import ItemTable from "./ItemTable";
+
 export default function InventoryPage() {
   const { items } = useReactorSheetContext();
 
@@ -93,6 +95,7 @@ export default function InventoryPage() {
 
   return (
     <div className="flex-col">
+      <Encumbrance />
       <div>
         {Object.entries(categorizedItems).map(([category, items]) => (
           <div key={category}>
