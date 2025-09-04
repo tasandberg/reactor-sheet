@@ -1,15 +1,17 @@
 import { useReactorSheetContext } from "../../context";
 import Encumbrance from "../../Encumbrance";
+import { SectionHeader } from "../../shared/elements";
 import { toggleExpand } from "../../shared/expandable";
 import ItemTable from "./ItemTable";
+import Money from "./Money";
 import UsageBar from "./UsageBar";
 
 export default function InventoryPage() {
-  const { items } = useReactorSheetContext();
+  const { items, actor } = useReactorSheetContext();
   console.log(items[0].system.quantity);
   const categorizedItems = items.reduce((acc, item) => {
     const category = item.type || "uncategorized";
-    if (!["weapon", "armor", "item"].includes(category)) {
+    if (!["weapon", "armor", "item", "treasure"].includes(category)) {
       return acc; // Skip items that are not weapon, armor, or gear
     }
     if (item.system.tags.find((t) => t.value === "Currency")) {
@@ -55,9 +57,9 @@ export default function InventoryPage() {
       sortable: true,
     },
     {
-      name: "Cost",
+      name: "Weight",
       sortable: true,
-      getValue: (item) => item.system?.cost || "",
+      getValue: (item) => item.cumulativeWeight,
     },
     {
       name: "Qty",
@@ -94,19 +96,23 @@ export default function InventoryPage() {
   console.log({ categorizedItems });
   return (
     <div className="flex-col">
-      <Encumbrance />
       <div>
         {Object.entries(categorizedItems).map(([category, items]) => (
           <div key={category}>
-            <h4 className="expandable expanded" onClick={toggleExpand}>
+            <SectionHeader
+              className="expandable expanded"
+              onClick={toggleExpand}
+            >
               {category}
-            </h4>
+            </SectionHeader>
             <div>
               <ItemTable columns={columns} items={items} />
             </div>
           </div>
         ))}
       </div>
+      <Money actor={actor} />
+      <Encumbrance />
     </div>
   );
 }

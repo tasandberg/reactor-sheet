@@ -46,13 +46,12 @@ export default function GridTable<T>({
   showHeader?: boolean;
 }) {
   const gridTemplateColumns = columns
-    .map((col) => col.width || "minmax(50px, 1fr)")
+    .map((col) => col.width || "max-content")
     .join(" ");
   return (
     <GridTableWrapper $gridTemplateColumns={gridTemplateColumns}>
       {showHeader && (
         <>
-          )
           {columns.map((col) => (
             <GridTableCell
               key={`h${col.name}-${getRowId(data[0])}`}

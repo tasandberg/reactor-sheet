@@ -61,6 +61,7 @@ export type OSEActor = Actor & {
       overland: number;
     };
     scores: OseDataModelCharacterScores;
+    treasures: Record<string, OseItem>;
     hp: {
       value: number;
       max: number;
@@ -95,7 +96,13 @@ export type OseItem = Omit<Item, "type"> & {
       value: number;
       max: number;
     };
+    cost: number;
+    cumulativeCost: number;
+    cumulativeWeight: number;
   };
+  update: (updateData: {
+    [key: string]: string | number;
+  }) => Promise<OseItem | void>;
 };
 
 export type OseWeapon = OseItem & {
