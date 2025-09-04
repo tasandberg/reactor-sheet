@@ -16,8 +16,10 @@ export default function Movement() {
   console.log(actor);
   return (
     <MovementWrapper>
-      <div className="flex-row justify-center align-center">
-        <SectionHeader className="m-0">Movement:</SectionHeader>
+      <div className="flex-row justify-start align-center">
+        <SectionHeader className="m-0" $fw="normal">
+          Movement:
+        </SectionHeader>
         <div>
           <label>Exploration:</label> {actor.system.movement.base} ft.
         </div>
