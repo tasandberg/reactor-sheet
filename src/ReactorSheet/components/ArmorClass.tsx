@@ -19,7 +19,7 @@ const ArmorClassWrapper = styled.div<{ $percentage?: number }>`
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: royalblue;
+    background-color: midnightblue;
     opacity: 0.75;
     z-index: -1;
   }
@@ -51,7 +51,7 @@ const ArmorClassInput = styled.input`
   background: transparent;
   width: 100%;
   text-align: center;
-  color: var(--color-text-secondary);
+  color: var(--color-text-emphasis);
 
   &:focus {
     color: var(--color-text-emphasis);

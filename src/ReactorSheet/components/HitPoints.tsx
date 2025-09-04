@@ -20,7 +20,7 @@ const HitPointsWrapper = styled.div<{ $percentage?: number }>`
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: crimson;
+    background-color: maroon;
     opacity: 0.75;
     z-index: -1;
   }
@@ -52,6 +52,7 @@ const HitPointsInput = styled.input`
   background: transparent;
   width: 100%;
   text-align: center;
+  color: var(--color-text-emphasis);
 
   &:focus {
     color: var(--color-text-emphasis);
