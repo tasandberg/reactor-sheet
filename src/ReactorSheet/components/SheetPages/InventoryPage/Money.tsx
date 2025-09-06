@@ -74,14 +74,16 @@ const columns: GridTableColumn<OseItem>[] = [
 export default function Money({ actor }: { actor: OSEActor }) {
   const treasures = Object.values(actor.system.treasures);
   return (
-    <div>
-      <SectionHeader>Treasure</SectionHeader>
-      <GridTable<OseItem>
-        showHeader
-        getRowId={(row) => `money-gt-${row._id}`}
-        columns={columns}
-        data={treasures || []}
-      />
-    </div>
+    <>
+      <SectionHeader className="mt-0">Treasure</SectionHeader>
+      <div style={{ marginBottom: "3rem" }} className="pl-3 pr-3">
+        <GridTable<OseItem>
+          showHeader
+          getRowId={(row) => `money-gt-${row._id}`}
+          columns={columns}
+          data={treasures || []}
+        />
+      </div>
+    </>
   );
 }

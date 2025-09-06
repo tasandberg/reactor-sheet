@@ -94,22 +94,20 @@ export default function InventoryPage() {
     },
   ];
   return (
-    <div className="flex-col">
-      <div>
-        {Object.entries(categorizedItems).map(([category, items]) => (
-          <div key={category}>
-            <SectionHeader
-              className="expandable expanded"
-              onClick={toggleExpand}
-            >
-              {category}
-            </SectionHeader>
-            <div>
-              <ItemTable columns={columns} items={items} />
-            </div>
+    <div className="flex-col gap-1">
+      {Object.entries(categorizedItems).map(([category, items]) => (
+        <div key={category}>
+          <SectionHeader
+            className="expandable expanded mb-0"
+            onClick={toggleExpand}
+          >
+            {category}
+          </SectionHeader>
+          <div>
+            <ItemTable columns={columns} items={items} />
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
       <Money actor={actor} />
       <Encumbrance />
     </div>

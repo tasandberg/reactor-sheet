@@ -7,6 +7,7 @@ import { useSpellColumns } from "./useSpellColumns";
 export default function PreparedSpells() {
   const { actor } = useReactorSheetContext();
   const columns = useSpellColumns({ detail: true });
+  console.log(actor.system.spells.slots);
   const preparedSpells: OseSpell[] = Object.values(
     actor.system.spells.spellList
   ).reduce(
@@ -17,8 +18,8 @@ export default function PreparedSpells() {
 
   return preparedSpells.length > 0 ? (
     <div>
-      <SectionHeader className="m-0">Prepared Spells</SectionHeader>
-      <div className="p-3 pb-4">
+      <SectionHeader>Prepared Spells</SectionHeader>
+      <div>
         {preparedSpells.length === 0 && <div>No prepared spells</div>}
         <GridTable<OseSpell>
           columns={columns}

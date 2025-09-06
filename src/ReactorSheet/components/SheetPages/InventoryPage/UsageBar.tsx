@@ -8,15 +8,15 @@ const SegmentedProgressBar = styled.div<{
   display: flex;
   gap: 2px;
   width: 100%;
-  height: 10px;
-  margin: 4px 0;
+  height: 7px;
   overflow: hidden;
   cursor: pointer;
 
   & > div {
-    flex: 1;
     background-color: #888;
-    max-width: 5px;
+    width: 7px;
+    flex-grow: 0;
+    flex-shrink: 0;
     transition: background-color 0.3s;
 
     &:nth-child(-n + ${(props) => props.filledSegments}) {

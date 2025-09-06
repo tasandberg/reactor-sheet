@@ -20,7 +20,7 @@ export function useSpellColumns({
   const canMemorize = (item: OseSpell) => {
     const slot = actor.system.spells.slots[item.system.lvl];
     if (!slot) return false;
-    return slot?.max > 0 && item.system.cast < slot.max;
+    return slot?.max > 0 && slot.used < slot.max;
   };
 
   const memorizeSpell = async (spell: OseSpell) => {
@@ -100,5 +100,18 @@ export function useSpellColumns({
         ) : null,
     });
   }
+  baseColumns.push({
+    name: "Delete",
+    header: "delete",
+    align: "center",
+    justify: "end",
+    width: "1fr",
+    renderCell: (item) => (
+      <a role="button" onClick={() => item.delete()}>
+        <i className="fa fa-trash" />
+      </a>
+    ),
+  });
+
   return baseColumns;
 }
