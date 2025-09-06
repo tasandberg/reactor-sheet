@@ -27,21 +27,23 @@ export interface ReactorSheetContextValue {
 
 export type OSESave = "breath" | "death" | "paralysis" | "spell" | "wand";
 
+export type OseSpellList = Record<number, OseSpell[]>;
+
 export type OSEActor = Actor & {
   img: string;
   name: string;
-  items: Actor["items"] | OseItem[];
+  items: Actor["items"] | OseItem[] | { contents: OseItem[] };
   updatedAt?: string;
   system: {
     aac: OseDataModelCharacterAC;
     ac: OseDataModelCharacterAC;
     details: {
-      biography: string;
-      notes: string;
-      title: string;
       alignment: string;
       class: string;
+      biography: string;
       level: number;
+      notes: string;
+      title: string;
       xp: {
         bonus: number;
         value: number;
@@ -59,6 +61,11 @@ export type OSEActor = Actor & {
       base: number;
       encounter: number;
       overland: number;
+    };
+    spells: {
+      spellList: OseSpellList;
+      slots: { [n: number]: { used: number; max: number } };
+      enabled: boolean;
     };
     scores: OseDataModelCharacterScores;
     abilities: Record<string, OseItem>;
@@ -121,5 +128,15 @@ export type OseWeapon = OseItem & {
 export type OseAbility = OseItem & {
   system: {
     requirements?: string;
+  };
+};
+
+export type OseSpell = OseItem & {
+  system: {
+    lvl: number;
+    range: string;
+    duration: string;
+    save: string;
+    memorized: number;
   };
 };

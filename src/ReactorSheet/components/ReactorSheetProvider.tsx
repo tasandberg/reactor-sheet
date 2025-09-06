@@ -16,7 +16,9 @@ function ReactorSheetProvider({
   contextConnector?: ContextConnector<ReactorContext>;
 }) {
   const [actor, setActor] = useState<OSEActor>(initialActor);
-  const [items, setItems] = useState<OseItem[]>(initialActor.items.contents);
+  const [items, setItems] = useState<OseItem[]>(
+    initialActor.items.contents as OseItem[]
+  );
   const { sheetSettings } = useLocalSettings();
 
   async function updateActor(updateData: {
@@ -38,7 +40,7 @@ function ReactorSheetProvider({
   useEffect(() => {
     contextConnector.onUpdate(
       foundry.utils.debounce(({ document }: { document: OSEActor }) => {
-        setItems([...document.items.contents]);
+        setItems([...(document.items.contents as OseItem[])]);
       }, 200)
     );
   });

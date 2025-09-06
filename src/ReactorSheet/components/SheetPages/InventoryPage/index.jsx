@@ -8,7 +8,7 @@ import UsageBar from "./UsageBar";
 
 export default function InventoryPage() {
   const { items, actor } = useReactorSheetContext();
-  console.log(items[0].system.quantity);
+
   const categorizedItems = items.reduce((acc, item) => {
     const category = item.type || "uncategorized";
     if (!["weapon", "armor", "item", "treasure"].includes(category)) {

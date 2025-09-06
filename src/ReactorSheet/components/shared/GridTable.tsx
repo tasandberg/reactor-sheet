@@ -48,7 +48,8 @@ export default function GridTable<T>({
   const gridTemplateColumns = columns
     .map((col) => col.width || "max-content")
     .join(" ");
-  return (
+
+  return data.length > 0 ? (
     <GridTableWrapper $gridTemplateColumns={gridTemplateColumns}>
       {showHeader && (
         <>
@@ -86,5 +87,5 @@ export default function GridTable<T>({
         );
       })}
     </GridTableWrapper>
-  );
+  ) : null;
 }
