@@ -108,9 +108,7 @@ export type OseItem = Omit<Item, "type"> & {
     cumulativeCost: number;
     cumulativeWeight: number;
   };
-  update: (updateData: {
-    [key: string]: string | number;
-  }) => Promise<OseItem | void>;
+  update: (updateData: { [key: string]: string | number }) => Promise<OSEActor>;
 };
 
 export type OseWeapon = OseItem & {
@@ -138,5 +136,6 @@ export type OseSpell = OseItem & {
     duration: string;
     save: string;
     memorized: number;
+    cast: number;
   };
 };

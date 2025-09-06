@@ -1,17 +1,33 @@
 import type { OseSpell } from "@src/ReactorSheet/types/types";
 import type { GridTableColumn } from "../../shared/constants";
 import styled from "styled-components";
+import getLabel from "@src/util/getLabel";
+import { useReactorSheetContext } from "../../context";
 
 const SpellDetail = styled.div`
   font-size: 0.75rem;
   opacity: 0.75;
 `;
-const spellColumns = (spellSlots = null, detail = false) => {
-  const canMemorize = (level: number) => {
-    const slot = spellSlots[level];
-    if (!slot) return false;
 
-    return slot?.max > 0 && slot.used < slot.max;
+export function useSpellColumns({
+  showMemorize,
+  detail,
+}: {
+  showMemorize?: boolean;
+  detail?: boolean;
+}) {
+  const { actor } = useReactorSheetContext();
+  const canMemorize = (item: OseSpell) => {
+    const slot = actor.system.spells.slots[item.system.lvl];
+    if (!slot) return false;
+    return slot?.max > 0 && item.system.cast < slot.max;
+  };
+
+  const memorizeSpell = async (spell: OseSpell) => {
+    const level = spell.system.lvl;
+    if (!canMemorize(spell))
+      throw new Error(`Cannot memorize any more level ${level} spells`);
+    await spell.update({ "system.cast": spell.system.cast + 1 });
   };
 
   const baseColumns: GridTableColumn<OseSpell>[] = [
@@ -45,15 +61,31 @@ const spellColumns = (spellSlots = null, detail = false) => {
   ];
   if (detail) {
     baseColumns.push({
-      name: "Range",
-      header: "Range",
+      name: "Cast",
+      header: "cast",
       align: "center",
-      justify: "start",
+      justify: "center",
       width: "max-content",
-      renderCell: (item) => item.system.range,
+      renderCell: (item) => (
+        <button
+          onClick={async () =>
+            await item.update({ "system.cast": 0, "system.memorized": 0 })
+          }
+        >
+          {getLabel("OSE.spells.Cast")}
+        </button>
+      ),
+    });
+    baseColumns.push({
+      name: "Memorized",
+      header: "Memorized",
+      align: "center",
+      justify: "center",
+      width: "max-content",
+      renderCell: (item) => `Uses: ${item.system.cast}`,
     });
   }
-  if (spellSlots) {
+  if (showMemorize) {
     baseColumns.push({
       name: "Memorize",
       header: "Memorize",
@@ -61,18 +93,12 @@ const spellColumns = (spellSlots = null, detail = false) => {
       justify: "center",
       width: "max-content",
       renderCell: (item) =>
-        canMemorize(item.system.lvl) ? (
-          <a
-            onClick={() =>
-              item.update({ "system.memorized": item.system.memorized + 1 })
-            }
-          >
+        canMemorize(item) ? (
+          <a onClick={() => memorizeSpell(item)}>
             <i className="fas fa-plus" title="Memorize Spell"></i>
           </a>
         ) : null,
     });
   }
   return baseColumns;
-};
-
-export default spellColumns;
+}
