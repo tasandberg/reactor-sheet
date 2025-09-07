@@ -18,7 +18,7 @@ export default function Spells() {
       <div className="flex-row justify-end italic text-secondary pb-2 pt-2">
         <p>{availableSlots.join(" ")}</p>
       </div>
-      <PreparedSpells />
+      <PreparedSpells deleteable />
       <Grimoire spellList={actor.system.spells.spellList} />
     </div>
   );

@@ -7,7 +7,7 @@ import { useSpellColumns } from "./useSpellColumns";
 
 // TODO Make reusable
 export default function Grimoire({ spellList }: { spellList: OseSpellList }) {
-  const columns = useSpellColumns({ showMemorize: true });
+  const columns = useSpellColumns({ showMemorize: true, deleteable: true });
 
   return (
     <>

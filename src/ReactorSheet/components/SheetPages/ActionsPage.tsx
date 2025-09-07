@@ -4,6 +4,7 @@ import type { OseWeapon } from "../../types/types";
 import GridTable from "../shared/GridTable";
 import SavingThrows from "./SavingThrows";
 import { SectionHeader } from "../shared/elements";
+import PreparedSpells from "./Spells/PreparedSpells";
 /**
  * TODO:
  * - reference: https://www.dndbeyond.com/characters/91477249
@@ -27,6 +28,7 @@ export default function ActionsPage() {
           getRowId={(row) => row._id}
           showHeader={false}
         />
+        <PreparedSpells />
         <SectionHeader>Special Actions</SectionHeader>
         <div>
           Special actions are not yet implemented. Please use the chat commands

@@ -12,9 +12,11 @@ const SpellDetail = styled.div`
 export function useSpellColumns({
   showMemorize,
   detail,
+  deleteable,
 }: {
   showMemorize?: boolean;
   detail?: boolean;
+  deleteable?: boolean;
 }) {
   const { actor } = useReactorSheetContext();
   const canMemorize = (item: OseSpell) => {
@@ -100,18 +102,21 @@ export function useSpellColumns({
         ) : null,
     });
   }
-  baseColumns.push({
-    name: "Delete",
-    header: "delete",
-    align: "center",
-    justify: "end",
-    width: "1fr",
-    renderCell: (item) => (
-      <a role="button" onClick={() => item.delete()}>
-        <i className="fa fa-trash" />
-      </a>
-    ),
-  });
+
+  if (deleteable) {
+    baseColumns.push({
+      name: "Delete",
+      header: "delete",
+      align: "center",
+      justify: "end",
+      width: "1fr",
+      renderCell: (item) => (
+        <a role="button" onClick={() => item.delete()}>
+          <i className="fa fa-trash" />
+        </a>
+      ),
+    });
+  }
 
   return baseColumns;
 }

@@ -4,9 +4,13 @@ import { SectionHeader } from "../../shared/elements";
 import GridTable from "../../shared/GridTable";
 import { useSpellColumns } from "./useSpellColumns";
 
-export default function PreparedSpells() {
+export default function PreparedSpells({
+  deleteable,
+}: {
+  deleteable?: boolean;
+}) {
   const { actor } = useReactorSheetContext();
-  const columns = useSpellColumns({ detail: true });
+  const columns = useSpellColumns({ detail: true, deleteable });
   console.log(actor.system.spells.slots);
   const preparedSpells: OseSpell[] = Object.values(
     actor.system.spells.spellList
