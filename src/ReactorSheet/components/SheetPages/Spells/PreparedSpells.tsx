@@ -11,7 +11,7 @@ export default function PreparedSpells({
 }) {
   const { actor } = useReactorSheetContext();
   const columns = useSpellColumns({ detail: true, deleteable });
-  console.log(actor.system.spells.slots);
+
   const preparedSpells: OseSpell[] = Object.values(
     actor.system.spells.spellList
   ).reduce(

@@ -1,8 +1,17 @@
 @use "util";
 
-.reactor-sheet-app {
-  overflow: hidden;
-  color: var(--color-text-secondary);
+/** Purely for namespacing default style overrides */
+
+.reactor-sheet {
+  overflow: visible;
+
+  .window-content {
+    overflow: visible;
+  }
+
+  [role="button"] {
+    cursor: pointer;
+  }
 
   .badge {
     background-color: var(--color-text-selection-bg);

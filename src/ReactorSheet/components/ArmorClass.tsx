@@ -78,26 +78,16 @@ const ArmorClassMax = styled.div`
 // Hit Points component for displaying an actor's current hit points
 
 export default function ArmorClass() {
-  const { actor } = useReactorSheetContext();
-
+  const { actorData } = useReactorSheetContext();
   return (
     <ArmorClassWrapper className="p-4">
       <ArmorClassLabel>AC</ArmorClassLabel>
       <ArmorClassValue>
-        <ArmorClassInput
-          type="number"
-          readOnly
-          disabled
-          defaultValue={actor.system.aac.value}
-        />
+        <ArmorClassInput type="number" readOnly value={actorData.aac.value} />
       </ArmorClassValue>
       <ArmorClassMax>
         <label className="text-secondary">Base:</label>
-        <ArmorClassInput
-          type="number"
-          defaultValue={actor.system.aac.naked}
-          readOnly
-        />
+        <ArmorClassInput type="number" readOnly value={actorData.aac.naked} />
       </ArmorClassMax>
     </ArmorClassWrapper>
   );

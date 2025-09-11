@@ -1,21 +1,25 @@
+import type { OseItem } from "@src/ReactorSheet/types/types";
 import clsx from "clsx";
 import { useState } from "react";
+
+export type ItemTableColumn = {
+  name: string;
+  getCell?: (
+    item: OseItem
+  ) => string | number | React.ReactNode | null | undefined;
+  getValue?: (item: OseItem) => string | number | undefined | null;
+  classes?: string;
+  align?: "left" | "right" | "center";
+  sortable?: boolean;
+  showHeader?: boolean;
+};
 
 export default function ItemTable({
   columns,
   items,
 }: {
-  columns: {
-    name: string;
-    getCell?: (
-      item: Item
-    ) => string | number | React.ReactNode | null | undefined;
-    getValue: (item: Item) => string | number | undefined | null;
-    classes?: string;
-    align?: "left" | "right" | "center";
-    sortable?: boolean;
-  }[];
-  items: Item[];
+  columns: ItemTableColumn[];
+  items: OseItem[];
 }) {
   const [sort, setSort] = useState({ column: "", direction: 1 });
 
@@ -80,7 +84,7 @@ export default function ItemTable({
       </thead>
       <tbody>
         {sortedItems.map((item) => (
-          <tr key={item._id} className="hover:bg-gray-50">
+          <tr key={item._id} className="hover:bg-gray-50" draggable="true">
             {columns.map((col, i) => (
               <td
                 key={`cell-${i}-${col.name}-${item._id}`}

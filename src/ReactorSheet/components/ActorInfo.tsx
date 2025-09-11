@@ -37,11 +37,12 @@ export default function ActorInfo() {
 
   return (
     <div className="actor-info mb-4 flex-row text-emphatic gap-0">
-      <div className="flex-col gap-1">
+      <div className="flex-col gap-0">
         <h1 className="m-0">
           <InlineInput
             type="text"
             name="name"
+            placeholder="Character Name"
             defaultValue={actor.name}
             onBlur={handleChange}
           />
@@ -51,6 +52,7 @@ export default function ActorInfo() {
             <InlineInput
               type="text"
               name="system.details.title"
+              placeholder="Title"
               defaultValue={title}
               onBlur={handleChange}
             />

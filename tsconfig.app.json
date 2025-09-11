@@ -20,7 +20,7 @@
     "strict": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "erasableSyntaxOnly": true,
+    "erasableSyntaxOnly": false,
     "paths": {
       "@src/*": ["./src/*"]
     }

@@ -81,6 +81,7 @@ const HitPointsMax = styled.div`
 export default function HitPoints() {
   const { actor, updateActor } = useReactorSheetContext();
   const [currentHp, setCurrentHp] = useState(actor.system.hp.value);
+
   const onChangeHp = async (e: SyntheticEvent) => {
     const field = (e.target as HTMLInputElement).name;
     const value = Number((e.target as HTMLInputElement).value);
@@ -92,9 +93,9 @@ export default function HitPoints() {
       setCurrentHp(newHp);
       return;
     }
-    const updatedActor = await updateActor({ "system.hp.value": newHp });
-    console.log("Updated actor:", updatedActor);
+    await updateActor({ [field]: newHp });
   };
+
   useEffect(() => setCurrentHp(actor.system.hp.value), [actor.system.hp.value]);
 
   return (

@@ -57,6 +57,10 @@ class ReactApplication extends foundry.applications.sheets.ActorSheetV2 {
     this.contextConnector.publishContext(context);
   }
 
+  get appIsRendered() {
+    return !!document.querySelector(`#${this.rootId}`);
+  }
+
   _replaceHTML(result, content, options) {
     if (!this.appIsRendered) {
       content.appendChild(result);
@@ -74,6 +78,7 @@ class ReactApplication extends foundry.applications.sheets.ActorSheetV2 {
 
   async _renderHTML(context, options) {
     const tempEl = document.createElement("div");
+    tempEl.id = this.rootId;
     const htmlString = await foundry.applications.handlebars.renderTemplate(
       this.template,
       context

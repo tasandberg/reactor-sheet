@@ -33,6 +33,10 @@ $colors: (
   gap: 1rem;
 }
 
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
 .flex-col {
   display: flex;
   flex-direction: column;
@@ -171,4 +175,35 @@ $directions: (
     color: var(--color-text-secondary);
     transition: background 0.3s, color 0.3s;
   }
+}
+
+$position-options: (
+  "static": static,
+  "relative": relative,
+  "absolute": absolute,
+  "fixed": fixed,
+  "sticky": sticky,
+);
+
+@each $name, $value in $position-options {
+  .position-#{$name} {
+    position: $value;
+  }
+}
+
+$overflow-options: (
+  "visible": visible,
+  "hidden": hidden,
+  "scroll": scroll,
+  "auto": auto,
+);
+
+@each $name, $value in $overflow-options {
+  .overflow-#{$name} {
+    overflow: $value;
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }

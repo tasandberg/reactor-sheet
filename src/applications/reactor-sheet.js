@@ -8,6 +8,7 @@ class ReactorSheet extends ReactApplication {
       title: "Reactor Sheet",
     },
     tag: "div",
+    classes: ["reactor-sheet"],
     position: {
       width: 600,
       height: 800,
@@ -17,6 +18,7 @@ class ReactorSheet extends ReactApplication {
     },
   };
 
+  // TODO: this should automatically happen in the base class
   get appIsRendered() {
     return !!document.querySelector(".reactor-sheet-app");
   }

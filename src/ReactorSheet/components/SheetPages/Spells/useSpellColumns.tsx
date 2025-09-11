@@ -39,12 +39,8 @@ export function useSpellColumns({
       align: "center",
       justify: "start",
       width: "max-content",
-      renderCell: (item) => (
-        <img
-          src={item.img}
-          alt={item.name}
-          style={{ width: "25px", height: "25px", objectFit: "cover" }}
-        />
+      renderCell: () => (
+        <i className="fa fa-scroll" style={{ fontSize: "2rem" }} />
       ),
     },
     {

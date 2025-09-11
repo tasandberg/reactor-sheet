@@ -30,29 +30,8 @@ export const SheetTabs: React.FC<TabsProps> = ({
   };
 
   const activeTab = tabs.find((tab) => tab.id === sheetSettings.currentPage);
-  const visibleTabs = tabs.filter((tab) => tab.disabled !== false);
   return (
     <div className={`reactor-sheet-tabs ${className}`.trim()}>
-      <div className="flex-row justify-start pt-4 pb-4 gap-0" role="tablist">
-        {visibleTabs.map((tab) => (
-          <button
-            key={tab.id}
-            className={clsx(`tab-btn w-100`, {
-              active: tab.id === activeTabId,
-              disabled: tab.disabled,
-              "bg-transparent border-transparent": tab.id !== activeTabId,
-            })}
-            onClick={() => handleTabClick(tab)}
-            disabled={tab.disabled}
-            role="tab"
-            aria-selected={tab.id === activeTabId}
-            aria-controls={`tab-panel-${tab.id}`}
-            tabIndex={tab.disabled ? -1 : 0}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
       <div className="tabs-content">
         {activeTab && (
           <div

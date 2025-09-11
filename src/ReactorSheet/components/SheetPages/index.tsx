@@ -1,16 +1,16 @@
 import getLabel from "@src/util/getLabel";
 import { SheetTabs } from "./SheetTabs";
-import ActionsPage from "./ActionsPage";
 import InventoryPage from "./InventoryPage";
 import Abilities from "./Abilities";
 import Spells from "./Spells";
+import Actions from "./Actions";
 
 export default function SheetPages() {
   const tabs = [
     {
       label: getLabel("OSE.category.actions"),
       id: "page-actions",
-      content: <ActionsPage />,
+      content: <Actions />,
     },
     {
       label: getLabel("OSE.category.spells"),

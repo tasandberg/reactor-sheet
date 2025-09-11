@@ -1,7 +1,7 @@
 import type ContextConnector from "@src/applications/context-connector";
 import type OseDataModelCharacterAC from "./data-model-character-ac";
 import type OseDataModelCharacterScores from "./data-model-character-scores";
-import type { ReactorSheetSettings } from "@src/util/useLocalSettings";
+import type { TabIds } from "../components/shared/tabs";
 
 // Add props as needed
 export type ReactorContext = {
@@ -19,10 +19,12 @@ export interface ReactorSheetContextValue {
   actor: OSEActor;
   source: OSEActor;
   items: OseItem[];
+  actorData: OSEActor["_source"]["system"];
+  currentTab: TabIds;
+  setCurrentTab: (tabId: TabIds) => void;
   updateActor: (updateData: {
     [key: string]: string | number;
   }) => Promise<OSEActor | void>;
-  sheetSettings: ReactorSheetSettings;
 }
 
 export type OSESave = "breath" | "death" | "paralysis" | "spell" | "wand";
@@ -76,7 +78,9 @@ export type OSEActor = Actor & {
       hd: string;
     };
     saves: Record<OSESave, number>;
+    updatedAt?: string;
   };
+  _source: OSEActor;
   targetAttack: (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     roll: { [key: string]: any },
@@ -89,6 +93,10 @@ export type OSEActor = Actor & {
   rollCheck: (
     score: string,
     { event }: { event?: Event; fastForward?: boolean }
+  ) => void;
+  rollExploration: (
+    action: string,
+    options: { event?: Event; fastForward?: boolean; chatMessage?: string }
   ) => void;
   rollSave: (
     save: OSESave,
@@ -107,8 +115,13 @@ export type OseItem = Omit<Item, "type"> & {
     cost: number;
     cumulativeCost: number;
     cumulativeWeight: number;
+    equipped?: boolean;
+    tags?: { label: string; value: string; icon: string }[];
   };
-  update: (updateData: { [key: string]: string | number }) => Promise<OSEActor>;
+  update: (updateData: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [key: string]: string | number | Record<any, any>;
+  }) => Promise<OSEActor>;
 };
 
 export type OseWeapon = OseItem & {

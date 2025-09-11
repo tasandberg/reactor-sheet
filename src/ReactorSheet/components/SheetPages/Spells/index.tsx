@@ -4,7 +4,7 @@ import Grimoire from "./Grimoire";
 
 export default function Spells() {
   const { actor } = useReactorSheetContext();
-  console.log(actor.system.spells.slots);
+
   const availableSlots = [];
   for (const level in actor.system.spells.slots) {
     const slotInfo = actor.system.spells.slots[level];
@@ -13,6 +13,7 @@ export default function Spells() {
       `${slotInfo.used} of ${slotInfo.max} level ${level} spells memorized`
     );
   }
+
   return (
     <div>
       <div className="flex-row justify-end italic text-secondary pb-2 pt-2">
