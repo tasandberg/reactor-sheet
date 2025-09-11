@@ -1,12 +1,12 @@
-import ActorImage from "./ActorImage";
 import ActorInfo from "./ActorInfo";
+import ActorScores from "./ActorScores";
 
 export default function Header() {
   return (
-    <header style={{ position: "relative" }}>
-      <div className="flex-row align-start justify-start gap-0">
-        <ActorImage />
+    <header style={{ gridArea: "header" }}>
+      <div className="flex-col align-start justify-start gap-0">
         <ActorInfo />
+        <ActorScores />
       </div>
     </header>
   );

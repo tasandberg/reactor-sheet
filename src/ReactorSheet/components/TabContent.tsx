@@ -18,15 +18,14 @@ const FadeTransition = keyframes`
 `;
 
 const TabsContainer = styled.div`
+  grid-area: main;
   position: absolute;
   height: 450px;
-  left: -1rem;
-  right: -1rem;
   top: 0;
+  right: 0;
+  left: 0;
   overflow: hidden auto;
-  padding-left: 2rem;
-  padding-right: 2rem;
-  padding-top: 1rem;
+  padding: 1rem;
   scrollbar-gutter: stable;
 `;
 
@@ -41,6 +40,8 @@ export default function TabContent() {
     <div
       style={{
         position: "relative",
+        gridArea: "main",
+        height: "450px",
       }}
     >
       <TabsContainer>

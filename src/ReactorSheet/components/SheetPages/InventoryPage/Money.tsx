@@ -1,8 +1,9 @@
-import type { OSEActor, OseItem } from "@src/ReactorSheet/types/types";
+import type { OseItem } from "@src/ReactorSheet/types/types";
 import GridTable from "../../shared/GridTable";
 import type { GridTableColumn } from "../../shared/constants";
 import { SectionHeader } from "../../shared/elements";
 import { InlineInput } from "../../InlineInput";
+import { useReactorSheetContext } from "../../context";
 
 const columns: GridTableColumn<OseItem>[] = [
   {
@@ -71,7 +72,8 @@ const columns: GridTableColumn<OseItem>[] = [
   },
 ];
 
-export default function Money({ actor }: { actor: OSEActor }) {
+export default function Money() {
+  const { actor } = useReactorSheetContext();
   const treasures = Object.values(actor.system.treasures);
   return (
     <>

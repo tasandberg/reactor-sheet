@@ -5,32 +5,35 @@ import { SectionHeader } from "./shared/elements";
 const EncumbranceWrapper = styled.div`
   margin: 8px 0;
   font-size: 0.75rem;
+  width: 100%;
 
   label {
     color: var(--color-text-secondary);
+    text-wrap: nowrap;
+    width: 150px;
   }
 `;
 
 const EncumbranceProgressBar = styled.progress`
-  width: 100px;
+  width: 100%;
   height: 20px;
-  margin-left: 8px;
   position: relative;
 `;
 
 export default function Encumbrance() {
-  const { actor } = useReactorSheetContext();
-  const { encumbrance } = actor.system;
+  const { actorData } = useReactorSheetContext();
+  const { encumbrance } = actorData;
 
   return encumbrance.enabled ? (
     <EncumbranceWrapper>
+      <SectionHeader className="m-0" $fw="normal">
+        Encumbrance:
+      </SectionHeader>
       <div className="flex-row justify-start align-center">
-        <SectionHeader className="m-0" $fw="normal">
-          Encumbrance:
-        </SectionHeader>
-        <EncumbranceProgressBar value={encumbrance.value} max={encumbrance.max}>
-          <h1>wow</h1>
-        </EncumbranceProgressBar>
+        <EncumbranceProgressBar
+          value={encumbrance.value}
+          max={encumbrance.max}
+        />
         {encumbrance.value} / {encumbrance.max}
       </div>
     </EncumbranceWrapper>

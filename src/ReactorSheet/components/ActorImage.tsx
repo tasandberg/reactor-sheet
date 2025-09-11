@@ -3,11 +3,9 @@ import { useReactorSheetContext } from "./context";
 
 const ActorImg = styled.img`
   @extend .bloody-box;
-  width: 130px;
-  height: 130px;
+  width: 100%;
   border-radius: 4px;
   cursor: pointer;
-  margin-right: 1rem;
 `;
 
 export default function ActorImage() {
