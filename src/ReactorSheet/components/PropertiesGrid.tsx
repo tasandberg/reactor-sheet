@@ -25,16 +25,10 @@ const PropertiesGrid = styled.div`
 
 export default function Properties() {
   const { actor } = useReactorSheetContext();
-  const { alignment, class: cls, level, xp } = actor.system.details;
+  const { alignment, xp } = actor.system.details;
   const mvmt = actor.system.movement;
   return (
     <PropertiesGrid>
-      <div>
-        <label>Level:</label> {level}
-      </div>
-      <div>
-        <label>Class:</label> {cls}
-      </div>
       <div>
         <label>XP:</label> {xp.value} / {xp.next}
       </div>

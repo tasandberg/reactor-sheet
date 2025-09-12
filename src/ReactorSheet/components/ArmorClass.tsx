@@ -8,21 +8,9 @@ const ArmorClassWrapper = styled.div<{ $percentage?: number }>`
   flex-direction: column;
   width: 80px;
   height: fit-content;
-  background-position: center;
-  clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
-  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.8);
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: midnightblue;
-    opacity: 0.75;
-    z-index: -1;
-  }
+  border: 1px solid var(--color-text-secondary);
+  background: #222;
+  border-radius: 4px;
 `;
 
 const ArmorClassLabel = styled.h5`
@@ -83,11 +71,21 @@ export default function ArmorClass() {
     <ArmorClassWrapper className="p-4">
       <ArmorClassLabel>AC</ArmorClassLabel>
       <ArmorClassValue>
-        <ArmorClassInput type="number" readOnly value={actorData.aac.value} />
+        <ArmorClassInput
+          type="number"
+          readOnly
+          disabled
+          value={actorData.aac.value}
+        />
       </ArmorClassValue>
       <ArmorClassMax>
         <label className="text-secondary">Base:</label>
-        <ArmorClassInput type="number" readOnly value={actorData.aac.naked} />
+        <ArmorClassInput
+          type="number"
+          disabled
+          readOnly
+          value={actorData.aac.naked}
+        />
       </ArmorClassMax>
     </ArmorClassWrapper>
   );

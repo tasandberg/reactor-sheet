@@ -16,8 +16,41 @@ const EncumbranceWrapper = styled.div`
 
 const EncumbranceProgressBar = styled.progress`
   width: 100%;
-  height: 20px;
+  height: 30px;
+`;
+
+const EncumbranceProgressBarWrapper = styled.div`
   position: relative;
+  width: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  & > label {
+    position: absolute;
+    left: 5px;
+    color: var(--color-text-emphasis);
+    font-size: 0.65rem;
+  }
+
+  & > span {
+    position: absolute;
+    font-size: 0.5rem;
+    top: 21px;
+    color: var(--color-text-emphasis);
+  }
+
+  & > span:nth-of-type(1) {
+    left: 25%;
+  }
+
+  & > span:nth-of-type(2) {
+    left: 37.5%;
+  }
+
+  & > span:nth-of-type(3) {
+    left: 50%;
+  }
 `;
 
 export default function Encumbrance() {
@@ -26,16 +59,19 @@ export default function Encumbrance() {
 
   return encumbrance.enabled ? (
     <EncumbranceWrapper>
-      <SectionHeader className="m-0" $fw="normal">
-        Encumbrance:
-      </SectionHeader>
-      <div className="flex-row justify-start align-center">
+      <div>Encumbrance</div>
+      <EncumbranceProgressBarWrapper>
         <EncumbranceProgressBar
           value={encumbrance.value}
           max={encumbrance.max}
         />
-        {encumbrance.value} / {encumbrance.max}
-      </div>
+        <label>
+          {encumbrance.value} / {encumbrance.max}
+        </label>
+        <span>▲</span>
+        <span>▲</span>
+        <span>▲</span>
+      </EncumbranceProgressBarWrapper>
     </EncumbranceWrapper>
   ) : null;
 }

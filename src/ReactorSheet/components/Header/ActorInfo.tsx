@@ -1,5 +1,7 @@
-import { InlineInput } from "./InlineInput";
-import { useReactorSheetContext } from "./context";
+import ArmorClass from "../ArmorClass";
+import Encumbrance from "../Encumbrance";
+import { InlineInput } from "../InlineInput";
+import { useReactorSheetContext } from "../context";
 
 export default function ActorInfo() {
   const { actor, updateActor } = useReactorSheetContext();
@@ -20,12 +22,12 @@ export default function ActorInfo() {
             onBlur={handleChange}
           />
         </h1>
-        <div>
-          <h5>
-            {actor.system.details.class} {actor.system.details.level}
-          </h5>
-        </div>
+        <h5 className="m-0">
+          {actor.system.details.class} {actor.system.details.level}
+        </h5>
+        <Encumbrance />
       </div>
+      <ArmorClass />
     </div>
   );
 }

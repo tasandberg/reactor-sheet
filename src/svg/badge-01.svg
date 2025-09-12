@@ -1,1 +1,5 @@
-﻿<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 1000'><path d='M100 100c0 360.2 125.3 567 400 800 274.7-233 400-439.8 400-800H100Z' fill='#F09F33'></path></svg>
+﻿<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 1000' width="100%">
+  <path d='M0 0c0 450.25 156.625 708.75 500 1000 343.375-291.25 500-549.75 500-1000H0Z' fill='#F09F33'>
+  </path>
+</svg>
+

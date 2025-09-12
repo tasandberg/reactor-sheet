@@ -26,7 +26,7 @@ export const tabs: TabDef[] = [
     id: TabIds.ACTIONS,
   },
   {
-    icon: "fas fa-list",
+    icon: "fas fa-treasure-chest",
     label: "OSE.category.inventory",
     Content: InventoryPage,
     id: TabIds.INVENTORY,

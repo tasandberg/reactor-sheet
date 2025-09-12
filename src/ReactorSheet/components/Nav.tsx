@@ -1,13 +1,16 @@
 import styled from "styled-components";
 import { tabs, type TabDef } from "./shared/tabs";
 import { useReactorSheetContext } from "./context";
+import getLabel from "@src/util/getLabel";
+
+const MIN_WIDTH = "60px";
+const MAX_WIDTH = "67px";
 
 const TabsContainer = styled.div`
   position: absolute;
-  height: 500px;
   width: 80px;
   right: -80px;
-  top: calc(50% - 250px);
+  top: calc(50% - 252px);
   display: flex;
   flex-direction: column;
   align-items: start;
@@ -20,8 +23,9 @@ const IconTab = styled.div<{ $active?: boolean }>`
   border-radius: 0 0.5rem 0.5rem 0;
   opacity: ${(props) => (props.$active ? 1 : 0.9)};
   border-left: none;
-  width: ${(props) => (props.$active ? "45px" : "40px")};
+  width: ${(props) => (props.$active ? MAX_WIDTH : MIN_WIDTH)};
   display: flex;
+  height: 120px;
   cursor: pointer;
   align-items: center;
   justify-content: center;
@@ -36,7 +40,13 @@ const IconTab = styled.div<{ $active?: boolean }>`
   transition: width 0.2s ease-in-out, opacity 0.2s ease-in-out;
 
   &:hover {
-    width: 45px;
+    width: ${MAX_WIDTH};
+  }
+
+  label {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    cursor: pointer;
   }
 `;
 
@@ -58,7 +68,10 @@ export default function Nav() {
           data-tooltip={tab.label}
           onClick={() => handleTabClick(tab)}
         >
-          <i className={tab.icon} />
+          <div className="flex-col gap-0 justyify-center align-center gap-1">
+            <i className={tab.icon} />
+            <label>{getLabel(tab.label)}</label>
+          </div>
         </IconTab>
       ))}
     </TabsContainer>

@@ -20,7 +20,7 @@ const FadeTransition = keyframes`
 const TabsContainer = styled.div`
   grid-area: main;
   position: absolute;
-  height: 450px;
+  height: 400px;
   top: 0;
   right: 0;
   left: 0;

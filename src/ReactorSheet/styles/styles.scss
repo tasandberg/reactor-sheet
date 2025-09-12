@@ -6,7 +6,9 @@
   overflow: visible;
 
   .window-content {
-    overflow: visible;
+    overflow: hidden;
+    backdrop-filter: none;
+    padding: 0;
   }
 
   [role="button"] {

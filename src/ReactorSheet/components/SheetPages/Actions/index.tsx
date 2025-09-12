@@ -1,4 +1,3 @@
-import SavingThrows from "../SavingThrows";
 import PreparedSpells from "../Spells/PreparedSpells";
 import Exploration from "./Exploration";
 import Weapons from "./Weapons";
@@ -11,13 +10,10 @@ import Weapons from "./Weapons";
 
 export default function Actions() {
   return (
-    <div className="flex-row gap-4">
-      <div className="flex-col">
-        <Weapons />
-        <PreparedSpells />
-        <Exploration />
-      </div>
-      <SavingThrows />
+    <div className="flex-col">
+      <Weapons />
+      <PreparedSpells />
+      <Exploration />
     </div>
   );
 }

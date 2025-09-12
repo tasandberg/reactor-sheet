@@ -6,12 +6,18 @@ import SavingThrows from "../SheetPages/SavingThrows";
 
 export default function Info() {
   return (
-    <div style={{ gridArea: "info", justifySelf: "stretch", height: "100%" }}>
+    <div
+      style={{
+        gridArea: "info",
+        width: 200,
+        padding: "1rem",
+        overflow: "hidden auto",
+      }}
+    >
       <div className="flex-col">
         <ActorImage />
         <div className="flex-row justify-around gap-0">
           <HitPoints />
-          <ArmorClass />
         </div>
         <Properties />
         <SavingThrows />

@@ -9,21 +9,14 @@ const HitPointsWrapper = styled.div<{ $percentage?: number }>`
   flex-direction: column;
   width: 80px;
   height: fit-content;
-  background-position: center;
-  clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
-  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.8);
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: ${(props) => (props.$percentage ? 100 - props.$percentage : 100)}%;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: maroon;
-    opacity: 0.75;
-    z-index: -1;
-  }
+  background: linear-gradient(
+    to bottom,
+    black 0%,
+    maroon ${(props) => 100 - props.$percentage}%,
+    darkred 100%
+  );
+  border: 1px solid var(--color-text-secondary);
+  border-radius: 4px;
 `;
 
 const HitPointsLabel = styled.h5`
@@ -103,7 +96,7 @@ export default function HitPoints() {
       className="p-4"
       $percentage={(actor.system.hp.value / actor.system.hp.max) * 100}
     >
-      <HitPointsLabel>HP</HitPointsLabel>
+      <HitPointsLabel>Hit Points</HitPointsLabel>
       <HitPointsValue>
         <HitPointsInput
           type="number"
