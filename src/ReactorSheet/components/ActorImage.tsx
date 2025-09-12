@@ -10,8 +10,8 @@ const ActorImg = styled.img`
 
 const ActorImgFrame = styled.div`
   width: 100%;
-  border: 2px solid var(--color-text-secondary);
-  border-radius: 6px;
+  background: black;
+  border-radius: 8px;
   padding: 2px;
   box-sizing: border-box;
 `;

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Header from "./Header/Header";
 import TabContent from "./TabContent";
-import Info from "./shared/Info";
+import Info from "./Info/Info";
 import Footer from "./Footer";
 
 const LayoutComponent = styled.div<{ $debug: boolean }>`
@@ -29,7 +29,7 @@ const LayoutComponent = styled.div<{ $debug: boolean }>`
 
 export const Layout = () => {
   return (
-    <LayoutComponent $debug={true}>
+    <LayoutComponent $debug={false}>
       <Info />
       <Header />
       <TabContent />

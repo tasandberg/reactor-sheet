@@ -13,10 +13,9 @@ const ArmorClassWrapper = styled.div<{ $percentage?: number }>`
   border-radius: 4px;
 `;
 
-const ArmorClassLabel = styled.h5`
+const ArmorClassLabel = styled.div`
   margin: 0;
   flex-grow: 0;
-  font-family: var(--font-h1);
 `;
 
 const ArmorClassValue = styled.div`
@@ -25,7 +24,7 @@ const ArmorClassValue = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.75rem;
+  font-size: 1.5rem;
 
   & > input {
     width: 100%;

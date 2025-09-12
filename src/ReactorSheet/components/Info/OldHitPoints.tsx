@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useReactorSheetContext } from "./context";
+import { useReactorSheetContext } from "../context";
 import { useEffect, useState, type SyntheticEvent } from "react";
 
 const HitPointsWrapper = styled.div<{ $percentage?: number }>`
@@ -71,7 +71,7 @@ const HitPointsMax = styled.div`
 
 // Hit Points component for displaying an actor's current hit points
 
-export default function HitPoints() {
+export default function OldHitPoints() {
   const { actor, updateActor } = useReactorSheetContext();
   const [currentHp, setCurrentHp] = useState(actor.system.hp.value);
 
