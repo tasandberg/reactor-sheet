@@ -1,4 +1,5 @@
 import type { OSEActor, OseWeapon } from "@src/ReactorSheet/types/types";
+import { Badge } from "./elements";
 
 export type GridTableColumn<T> = {
   header: string;
@@ -42,7 +43,7 @@ export const actionColumns = (
           <div>{item.name}</div>
           <div className="flex-row" style={{ flexWrap: "wrap", gap: "0.5rem" }}>
             {item.system.qualities.map((q, i) => (
-              <div
+              <Badge
                 key={`qt${i}${q.label}`}
                 title={q.label}
                 style={{ display: "inline" }}
@@ -50,7 +51,7 @@ export const actionColumns = (
               >
                 {q.label}
                 <i className={q.icon} />{" "}
-              </div>
+              </Badge>
             ))}
           </div>
         </div>

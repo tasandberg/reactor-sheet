@@ -1,7 +1,4 @@
 import ActorImage from "../ActorImage";
-import HitPoints from "./HitPoints";
-import Properties from "../PropertiesGrid";
-import SavingThrows from "../SheetPages/SavingThrows";
 
 export default function Info() {
   return (
@@ -15,9 +12,6 @@ export default function Info() {
     >
       <div className="flex-col">
         <ActorImage />
-        <HitPoints />
-        <Properties />
-        <SavingThrows />
       </div>
     </div>
   );

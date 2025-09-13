@@ -1,0 +1,29 @@
+.expandable {
+  cursor: pointer;
+  position: relative;
+  width: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+
+  &::after {
+    font-size: 0.8rem;
+    content: "►";
+    transition: transform 0.2s ease;
+  }
+
+  &.expanded::after {
+    transform: rotate(90deg);
+  }
+
+  & + * {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease;
+  }
+
+  &.expanded + * {
+    max-height: 1000px;
+  }
+}

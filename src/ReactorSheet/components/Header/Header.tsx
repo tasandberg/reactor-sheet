@@ -1,5 +1,4 @@
 import ActorInfo from "./ActorInfo";
-import ActorScores from "../ActorScores";
 
 export default function Header() {
   return (

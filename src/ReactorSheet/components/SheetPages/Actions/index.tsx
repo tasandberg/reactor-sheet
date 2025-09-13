@@ -1,3 +1,4 @@
+import SavingThrows from "../SavingThrows";
 import PreparedSpells from "../Spells/PreparedSpells";
 import Exploration from "./Exploration";
 import Weapons from "./Weapons";
@@ -14,6 +15,7 @@ export default function Actions() {
       <Weapons />
       <PreparedSpells />
       <Exploration />
+      <SavingThrows />
     </div>
   );
 }

@@ -1,11 +1,10 @@
 import styled from "styled-components";
 import { useReactorSheetContext } from "./context";
-import { SectionHeader } from "./shared/elements";
 
 const EncumbranceWrapper = styled.div`
   margin: 8px 0;
   font-size: 0.75rem;
-  width: 100%;
+  min-width: 250px;
 
   label {
     color: var(--color-text-secondary);
@@ -59,7 +58,7 @@ export default function Encumbrance() {
 
   return encumbrance.enabled ? (
     <EncumbranceWrapper>
-      <div>Encumbrance</div>
+      <label>Encumbrance</label>
       <EncumbranceProgressBarWrapper>
         <EncumbranceProgressBar
           value={encumbrance.value}

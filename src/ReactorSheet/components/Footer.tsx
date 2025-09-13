@@ -14,19 +14,17 @@ export default function Footer() {
       style={{
         gridArea: "footer",
         padding: "0.5rem",
-        alignSelf: "end",
-        height: "250px",
+        border: "1px solid red",
       }}
+      className="flex-col justify-center align-center gap-0"
     >
-      <div className="flex-col justyfy-center align-center">
-        <Encumbrance />
-        <div className="flex-row">
-          {currencies.map((cur) => (
-            <span key={`currency-${cur.name}`}>
-              {cur.name} {cur.system.quantity.value}
-            </span>
-          ))}
-        </div>
+      <Encumbrance />
+      <div className="flex-row">
+        {currencies.map((cur) => (
+          <span key={`currency-${cur.name}`}>
+            {cur.name} {cur.system.quantity.value}
+          </span>
+        ))}
       </div>
     </div>
   );
