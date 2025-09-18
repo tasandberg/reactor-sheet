@@ -123,7 +123,7 @@ export default class OseDataModelCharacterAC implements CharacterAC {
   }
 
   // @TODO This will need to be editable once we get to creatures
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+   
   set value(_change: number) {}
 
   /**

@@ -1,3 +1,6 @@
+import styled from "styled-components";
+import ActorScores from "../../ActorScores";
+import { Column } from "../../shared/elements";
 import SavingThrows from "../SavingThrows";
 import PreparedSpells from "../Spells/PreparedSpells";
 import Exploration from "./Exploration";
@@ -9,13 +12,27 @@ import Weapons from "./Weapons";
  *
  */
 
+const ScoreBoxContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  margin: 0 auto;
+  gap: 1rem;
+  max-width: 500px;
+`;
+
 export default function Actions() {
   return (
-    <div className="flex-col">
+    <Column $align="start" style={{ position: "relative" }}>
+      <ScoreBoxContainer>
+        <ActorScores />
+      </ScoreBoxContainer>
       <Weapons />
       <PreparedSpells />
       <Exploration />
       <SavingThrows />
-    </div>
+    </Column>
   );
 }

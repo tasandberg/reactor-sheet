@@ -10,10 +10,13 @@ const ActorImg = styled.img`
 
 const ActorImgFrame = styled.div`
   width: 100%;
-  background: black;
   border-radius: 8px;
   padding: 2px;
   box-sizing: border-box;
+  border: 1px solid #222;
+  &:hover {
+    border-color: var(--color-text-secondary);
+  }
 `;
 
 export default function ActorImage() {

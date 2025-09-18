@@ -17,43 +17,36 @@ export default function ExperienceBar({ actor }: { actor: OSEActor }) {
     toggleEditing();
   };
 
-  return (
-    <div
-      className="flex-col gap-0 align-start"
-      style={{ gridColumnEnd: "span 3", alignSelf: "center" }}
-    >
-      {isEditing ? (
-        <Row>
-          <input
-            type="number"
-            placeholder="0"
-            onChange={(e) => setAddXp(Number(e.target.value))}
-            autoFocus
-            style={{ width: "4rem", height: "25px" }}
-            width="50px"
-          />
-          <button onClick={submitXp}>Add {addXp} XP</button>
-        </Row>
-      ) : (
-        <>
-          <Row align="center" justify="flex-start">
-            <TextTiny>{actor.system.details.xp.value}</TextTiny>
-            <progress
-              value={actor.system.details.xp.value}
-              max={actor.system.details.xp.next}
-              data-tooltip={`XP: ${actor.system.details.xp.value} / ${actor.system.details.xp.next}`}
-            />
-            <TextTiny>{actor.system.details.xp.next}</TextTiny>
-            <TextTiny
-              role="button"
-              onClick={() => setIsEditing(true)}
-              title="Edit XP"
-            >
-              <i className="fas fa-cog"></i>
-            </TextTiny>
-          </Row>
-        </>
-      )}
-    </div>
+  return isEditing ? (
+    <Row>
+      <input
+        type="number"
+        placeholder="0"
+        onChange={(e) => setAddXp(Number(e.target.value))}
+        autoFocus
+        style={{ width: "4rem" }}
+        width="50px"
+      />
+      <button onClick={submitXp}>Add {addXp} XP</button>
+    </Row>
+  ) : (
+    <Row $align="center" $justify="flex-start" className="w-100">
+      <progress
+        value={actor.system.details.xp.value}
+        max={actor.system.details.xp.next}
+        data-tooltip={`XP: ${actor.system.details.xp.value} / ${actor.system.details.xp.next}`}
+      />
+      <TextTiny>
+        {actor.system.details.xp.value} / {actor.system.details.xp.next}
+      </TextTiny>
+
+      <TextTiny
+        role="button"
+        onClick={() => setIsEditing(true)}
+        title="Edit XP"
+      >
+        <i className="fas fa-cog"></i>
+      </TextTiny>
+    </Row>
   );
 }

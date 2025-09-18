@@ -1,55 +1,57 @@
+import getLabel from "@src/util/getLabel";
 import { useReactorSheetContext } from "../context";
-import ScoreBox from "./ScoreBox";
-import "./ScoreBox.scss";
+import { StatBlock } from "@src/svg/StatBlock";
+import type { MouseEvent } from "react";
 
 export default function ActorScores() {
-  const { actor } = useReactorSheetContext();
+  const { actor, actorData } = useReactorSheetContext();
   const scores = [
     {
       name: "str",
-      score: actor?.system.scores.str,
+      score: actorData.scores.str,
       fieldName: "system.scores.str",
     },
     {
       name: "dex",
-      score: actor?.system.scores.dex,
+      score: actorData.scores.dex,
       fieldName: "system.scores.dex",
     },
     {
       name: "con",
-      score: actor?.system.scores.con,
+      score: actorData.scores.con,
       fieldName: "system.scores.con",
     },
     {
       name: "int",
-      score: actor?.system.scores.int,
+      score: actorData.scores.int,
       fieldName: "system.scores.int",
     },
     {
       name: "wis",
-      score: actor?.system.scores.wis,
+      score: actorData.scores.wis,
       fieldName: "system.scores.wis",
     },
     {
       name: "cha",
-      score: actor?.system.scores.cha,
+      score: actorData.scores.cha,
       fieldName: "system.scores.cha",
     },
   ];
 
   return (
-    <div className="flex-row justify-around border-rounded pl-2 pr-2">
+    <>
       {scores.map(({ name, score }) => (
-        <ScoreBox
+        <StatBlock
           key={`score-box-container-${name}`}
-          label={name}
+          label={getLabel(`OSE.scores.${name}.short`)}
+          width={55}
           value={score?.value ?? 0}
-          mod={score.mod < 0 ? String(score.mod) : `+${score.mod}`}
-          rollScore={(event: Event) =>
-            actor.rollCheck(name, { event, fastForward: true })
+          mod={score?.mod ?? 0}
+          rollScore={(event: MouseEvent<SVGTextElement>) =>
+            actor.rollCheck(name, { event })
           }
         />
       ))}
-    </div>
+    </>
   );
 }

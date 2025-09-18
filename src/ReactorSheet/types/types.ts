@@ -92,7 +92,12 @@ export type OSEActor = Actor & {
   ) => void;
   rollCheck: (
     score: string,
-    { event }: { event?: Event; fastForward?: boolean }
+    {
+      event,
+    }: {
+      event?: Event | React.MouseEvent<HTMLElement | SVGTextElement>;
+      fastForward?: boolean;
+    }
   ) => void;
   rollExploration: (
     action: string,

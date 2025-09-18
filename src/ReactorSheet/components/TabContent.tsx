@@ -2,6 +2,7 @@ import styled, { keyframes } from "styled-components";
 import { useReactorSheetContext } from "./context";
 import { tabs } from "./shared/tabs";
 
+const CONTENT_HEIGHT = "450px";
 const FadeTransition = keyframes`
   0% {
     display: none;
@@ -20,13 +21,15 @@ const FadeTransition = keyframes`
 const TabsContainer = styled.div`
   grid-area: main;
   position: absolute;
-  height: 400px;
+  height: ${CONTENT_HEIGHT};
   top: 0;
   right: 0;
   left: 0;
   overflow: hidden auto;
   padding: 1rem;
   scrollbar-gutter: stable;
+  padding-bottom: 100px;
+  z-index: 0;
 `;
 
 const TabWrapper = styled.div<{ $active?: boolean }>`
@@ -41,7 +44,9 @@ export default function TabContent() {
       style={{
         position: "relative",
         gridArea: "main",
-        height: "450px",
+        height: CONTENT_HEIGHT,
+        backgroundColor: "#222",
+        flexGrow: 1,
       }}
     >
       <TabsContainer>

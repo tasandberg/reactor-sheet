@@ -1,29 +1,9 @@
 import styled from "styled-components";
+import { colors, fontFamily, fontSizes } from "./elements-vars";
 
 /** Typography **/
-
-const fontSizes = {
-  tiny: "0.7rem",
-  small: "0.85rem",
-  medium: "1rem",
-  large: "1.5rem",
-  huge: "2rem",
-};
-
-const colors = {
-  primary: "var(--color-text-primary)",
-  secondary: "var(--color-text-secondary)",
-  emphatic: "var(--color-text-emphatic)",
-  highlight: "var(--color-text-highlight)",
-};
-
-const fontFamily = {
-  sans: "var(--font-sans)",
-  serif: "var(--font-serif)",
-};
-
 export const Text = styled.span<{
-  $size?: "small" | "medium" | "large";
+  $size?: "tiny" | "small" | "medium" | "large";
   $color?: keyof typeof colors;
 }>`
   font-size: ${({ $size }) => ($size ? fontSizes[$size] : fontSizes.medium)};
@@ -82,6 +62,7 @@ export const Flex = styled.div<{
   align-items: ${(props) => (props.$align ? props.$align : "center")};
   justify-content: ${(props) =>
     props.$justify ? props.$justify : "flex-start"};
+  width: 100%;
 `;
 
 export const Row = styled(Flex)`

@@ -4,14 +4,32 @@
 
 .reactor-sheet {
   overflow: visible;
+  height: 100%;
+  background-color: #222;
 
   .window-content {
     overflow: hidden;
     backdrop-filter: none;
     padding: 0;
+
+    & > * {
+      height: 100%;
+    }
   }
 
   [role="button"] {
     cursor: pointer;
   }
+
+  .window-resize-handle {
+    z-index: 5;
+  }
+}
+
+.reactor-sheet-app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: 4px;
+  min-width: 500px;
 }

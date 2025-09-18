@@ -25,7 +25,7 @@ const IconTab = styled.div<{ $active?: boolean }>`
   border-left: none;
   width: ${(props) => (props.$active ? MAX_WIDTH : MIN_WIDTH)};
   display: flex;
-  height: 120px;
+  height: 80px;
   cursor: pointer;
   align-items: center;
   justify-content: center;

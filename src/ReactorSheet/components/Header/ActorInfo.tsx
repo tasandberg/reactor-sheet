@@ -1,51 +1,63 @@
 import styled from "styled-components";
-import ArmorClass from "../ArmorClass";
 import { InlineInput } from "../InlineInput";
 import { useReactorSheetContext } from "../context";
-import { Flex, Row, Text, TextSmall } from "../shared/elements";
+import { Column, Row, Text, TextSmall } from "../shared/elements";
 import React from "react";
 import ExperienceBar from "./ExperienceBar";
-import HitPoints from "../Info/HitPoints";
+import Encumbrance from "../Encumbrance";
+import HitPoints from "./HitPoints";
 
 const InfoGrid = styled.div`
   display: grid;
-  grid-template-columns: min-content max-content min-content max-content;);
-  gap: 0.5rem 1rem;
+  grid-template-columns: min-content 1fr min-content 1fr;
+  align-items: center;
+  gap: 0.35rem 1rem;
+  width: 100%;
+  flex-grow: 3;
 `;
 
 const InfoGridItem = ({
   label,
   value,
   align = "center",
+  labelWidth = 1,
+  labelSize = "tiny",
+  valueWidth = 1,
 }: {
   label: string;
   value: string | number | React.ReactNode;
   align?: "start" | "center" | "end";
+  valueWidth?: number;
+  labelWidth?: number;
+  labelSize?: "small" | "tiny" | "medium" | "large";
 }) => (
   <>
     <Text
-      $color="secondary"
-      $size="small"
+      $color="label"
+      $size={labelSize}
       style={{
+        gridColumnEnd: `span ${labelWidth}`,
         justifySelf: "start",
-        alignSelf: align,
-        width: "100%",
+        alignSelf: "center",
+        textTransform: "uppercase",
       }}
     >
       {label}
     </Text>
-    {React.isValidElement(value) ? (
-      value
-    ) : (
-      <TextSmall
-        style={{
-          justifySelf: "start",
-          alignSelf: align,
-        }}
-      >
-        {value}
-      </TextSmall>
-    )}
+    <div style={{ gridColumnEnd: `span ${valueWidth}` }}>
+      {React.isValidElement(value) ? (
+        value
+      ) : (
+        <TextSmall
+          style={{
+            justifySelf: "start",
+            alignSelf: align,
+          }}
+        >
+          {value}
+        </TextSmall>
+      )}
+    </div>
   </>
 );
 
@@ -57,40 +69,45 @@ export default function ActorInfo() {
   };
 
   return (
-    <div className="actor-info mb-4 flex-row text-emphatic gap-0">
-      <div className="flex-col gap-3">
-        <div className="flex-col gap-0">
-          <h1 className="m-0">
-            <InlineInput
-              type="text"
-              name="name"
-              placeholder="Character Name"
-              defaultValue={actor.name}
-              onBlur={handleChange}
-            />
-          </h1>
-          <Text $color="secondary">
-            {actor.system.details.class} {actor.system.details.level}
-          </Text>
-        </div>
-        <div className="flex-col gap-0">
-          <InfoGrid>
-            <InfoGridItem
-              label="Hit Points:"
-              value={
-                <Row style={{ gridColumnEnd: "span 3" }}>
-                  <HitPoints />
-                </Row>
-              }
-            />
-            <InfoGridItem label="XP:" value={<ExperienceBar actor={actor} />} />
-            <InfoGridItem
-              label="Alignment:"
-              value={actor.system.details.alignment}
-            />
-            <InfoGridItem
-              label="Hit Die:"
-              value={
+    <Column className="w-100">
+      <div className="w-100">
+        <h1 className="m-0">
+          <InlineInput
+            type="text"
+            name="name"
+            placeholder="Character Name"
+            defaultValue={actor.name}
+            onBlur={handleChange}
+          />
+        </h1>
+        <Text $color="secondary">
+          {actor.system.details.class + " " + actor.system.details.level}
+        </Text>
+      </div>
+      <Row className="w-100">
+        <Text $color="label">HP:</Text>
+        <HitPoints />
+      </Row>
+
+      <Row className="w-100">
+        <InfoGrid>
+          <InfoGridItem
+            label="XP:"
+            labelWidth={1}
+            valueWidth={3}
+            value={<ExperienceBar actor={actor} />}
+          />
+          <InfoGridItem
+            label="Encumbrance:"
+            labelWidth={1}
+            valueWidth={3}
+            value={<Encumbrance />}
+          />
+          <InfoGridItem
+            label="HD:"
+            valueWidth={3}
+            value={
+              <div style={{ alignSelf: "center" }}>
                 <a
                   className="inline-roll roll"
                   data-mode="roll"
@@ -101,49 +118,16 @@ export default function ActorInfo() {
                   <i className="fa-solid fa-dice-d20" />
                   {actor.system.hp.hd}
                 </a>
-              }
-            />
-            <InfoGridItem
-              label="Movement:"
-              value={
-                <Flex
-                  $align="center"
-                  $justify="center"
-                  style={{
-                    gridColumnEnd: "span 4",
-                    gap: "0 0.8rem",
-                    padding: "0.2rem 0.5rem",
-                    backgroundColor: "#222",
-                    margin: "0 16px",
-                    flexWrap: "wrap",
-                    border: "1px solid var(--color-text-secondary)",
-                  }}
-                >
-                  <TextSmall>
-                    <span style={{ color: "var(--color-text-secondary)" }}>
-                      Base:
-                    </span>{" "}
-                    {actor.system.movement.base} ft.
-                  </TextSmall>
-                  <TextSmall>
-                    <span style={{ color: "var(--color-text-secondary)" }}>
-                      Encounter:
-                    </span>{" "}
-                    {actor.system.movement.encounter} ft.
-                  </TextSmall>
-                  <TextSmall>
-                    <span style={{ color: "var(--color-text-secondary)" }}>
-                      Overland:
-                    </span>{" "}
-                    {actor.system.movement.overland} miles
-                  </TextSmall>
-                </Flex>
-              }
-            />
-          </InfoGrid>
-        </div>
-      </div>
-      <ArmorClass />
-    </div>
+              </div>
+            }
+          />
+          <InfoGridItem
+            label={"Alignment:"}
+            valueWidth={3}
+            value={actor.system.details.alignment || "Unaligned"}
+          />
+        </InfoGrid>
+      </Row>
+    </Column>
   );
 }

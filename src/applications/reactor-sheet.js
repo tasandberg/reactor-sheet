@@ -6,12 +6,14 @@ class ReactorSheet extends ReactApplication {
   static DEFAULT_OPTIONS = {
     window: {
       title: "Reactor Sheet",
+      minimizable: true,
+      resizable: true,
     },
     tag: "div",
     classes: ["reactor-sheet"],
     position: {
-      width: 700,
-      height: 800,
+      width: 625,
+      height: 750,
     },
     actions: {
       editImage: ReactorSheet.#onEditImage,
