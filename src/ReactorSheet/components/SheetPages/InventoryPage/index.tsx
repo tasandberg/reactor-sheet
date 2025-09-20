@@ -9,7 +9,7 @@ import UsageBar from "./UsageBar";
 import type { OseItem } from "@src/ReactorSheet/types/types";
 
 export default function InventoryPage() {
-  const { items, actor } = useReactorSheetContext();
+  const { items } = useReactorSheetContext();
 
   const categorizedItems: Record<string, OseItem[]> = items.reduce(
     (acc, item) => {
@@ -126,7 +126,7 @@ export default function InventoryPage() {
           </div>
         </div>
       ))}
-      <Money actor={actor} />
+      <Money />
       <Encumbrance />
     </div>
   );
