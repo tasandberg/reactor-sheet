@@ -10,7 +10,7 @@ export default function Header() {
       style={{
         backgroundColor: "#222",
         boxShadow: "0 2px 5px rgba(0, 0, 0, 0.3)",
-        borderBottom: "1px solid #444",
+        borderBottom: "0.5px solid #444",
         position: "relative",
         zIndex: 2,
         display: "flex",

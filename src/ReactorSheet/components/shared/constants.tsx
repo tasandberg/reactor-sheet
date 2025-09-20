@@ -11,18 +11,23 @@ export type GridTableColumn<T> = {
   width?: string;
 };
 
+function getModString(mod: number) {
+  return mod >= 0 ? `+ ${mod}` : `- ${Math.abs(mod)}`;
+}
+
 export const actionColumns = (
   actor: OSEActor
 ): GridTableColumn<OseWeapon>[] => {
   const scores = actor.system.scores;
+
   return [
     {
       header: "",
       name: "image",
       justify: "start",
-      width: "40px",
+      width: "30px",
       renderCell: (item) => (
-        <div style={{ width: "25px" }}>
+        <div style={{ width: "30px" }}>
           <img
             src={item.img}
             alt={item.name}
@@ -36,57 +41,76 @@ export const actionColumns = (
       header: "Attack",
       name: "name",
       justify: "start",
-      align: "start",
-      width: "1fr",
-      renderCell: (item) => (
-        <div>
-          <div>{item.name}</div>
-          <div className="flex-row" style={{ flexWrap: "wrap", gap: "0.5rem" }}>
-            {item.system.qualities.map((q, i) => (
-              <Badge
-                key={`qt${i}${q.label}`}
-                title={q.label}
-                style={{ display: "inline" }}
-                className="badge"
-              >
-                {q.label}
-                <i className={q.icon} />{" "}
-              </Badge>
-            ))}
-          </div>
-        </div>
-      ),
+      align: "center",
+      width: "40%",
+      getValue: (item) => item.name,
+    },
+    {
+      header: "Hit",
+      name: "hit",
+      justify: "start",
+      align: "center",
+      width: "max-content",
+      renderCell: (item) => {
+        let mod = "";
+        if (item.system.melee && scores.str.mod !== 0) {
+          mod = getModString(scores.str.mod);
+        }
+        if (item.system.missile && scores.dex.mod !== 0) {
+          mod = getModString(scores.dex.mod);
+        }
+        return <button>{mod}</button>;
+      },
     },
     {
       header: "Damage",
       name: "damage",
       justify: "start",
       align: "center",
-      width: "min-content",
+      width: "max-content",
       renderCell: (item) => {
         const type = item.system.melee ? "melee" : "missile";
+        console.log(item.name, type);
         let mod = "";
-        let operand = "";
         if (item.system.melee && scores.str.mod !== 0) {
-          operand = scores.str.mod > 0 ? "+" : "";
-          mod = ` ${operand}${scores.str.mod}`;
+          mod = getModString(scores.str.mod);
         }
         if (item.system.missile && scores.dex.mod !== 0) {
-          operand = scores.dex.mod > 0 ? "+" : "";
-          mod = ` ${operand}${scores.dex.mod}`;
+          mod = getModString(scores.dex.mod);
         }
         return (
-          <button
-            style={{ width: 100 }}
-            onClick={() =>
-              actor.targetAttack({ roll: {} }, type, { type, skipDialog: true })
-            }
-          >
-            {item.system.damage}
-            {mod}
-          </button>
+          <div style={{ width: "100%" }}>
+            <button
+              style={{ width: "75px" }}
+              onClick={() => actor.targetAttack({ roll: {} }, type, { type })}
+            >
+              {item.system.damage} {mod}
+            </button>
+          </div>
         );
       },
+    },
+    {
+      header: "Notes",
+      name: "notes",
+      justify: "start",
+      align: "center",
+      width: "max-content",
+      renderCell: (item) => (
+        <div className="flex-row" style={{ flexWrap: "wrap", gap: "0.5rem" }}>
+          {item.system.qualities.map((q, i) => (
+            <Badge
+              key={`qt${i}${q.label}`}
+              title={q.label}
+              style={{ display: "inline" }}
+              className="badge"
+            >
+              {q.label}
+              <i className={q.icon} />{" "}
+            </Badge>
+          ))}
+        </div>
+      ),
     },
     // Separate modifiers column?
   ];

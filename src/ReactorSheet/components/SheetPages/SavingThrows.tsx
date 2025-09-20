@@ -2,74 +2,114 @@ import styled from "styled-components";
 import { useReactorSheetContext } from "../context";
 import type { OSESave } from "@src/ReactorSheet/types/types";
 import getLabel from "@src/util/getLabel";
-import { SectionHeader } from "../shared/elements";
-import { Fragment } from "react";
+import { TextSmall } from "../shared/elements";
+import ActionTable from "./Actions/ActionTable";
+import type { GridTableColumn } from "../shared/constants";
+import { colors } from "../shared/elements-vars";
+import { useState, type SyntheticEvent } from "react";
 
-const SavingThrowGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(1, max-content);
+const SaveInput = styled.input`
+  background-color: ${colors.bgDark};
+  border: 1px solid ${colors.hint};
+  border-radius: 4px;
+  text-align: center;
+  width: 50px;
+  height: 100%;
 `;
 
-const SavingThrowButton = styled.a`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.85rem;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
+type SavingThrowItem = {
+  save: OSESave;
+  value: number;
+};
 
-  &:hover {
-    background-color: var(--color-primary-dark);
-  }
-`;
-
-const SavingThrowLabel = styled.div`
-  color: var(--color-text-secondary);
-  font-family: var(--font-h1);
-  letter-spacing: 0.9px;
-  font-size: 1rem;
-  font-weight: bold;
-  flex-grow: 1;
-`;
-
-const SavingThrowValue = styled.div`
-  flex-grow: 0;
-`;
+const icons = {
+  breath: "fas fa-wind",
+  death: "fas fa-skull-crossbones",
+  paralysis: "fas fa-bolt",
+  wand: "fas fa-magic",
+  spell: "fas fa-hat-wizard",
+};
 export default function SavingThrows() {
-  const { actor } = useReactorSheetContext();
+  const { actor, updateActor } = useReactorSheetContext();
   const saves = actor.system.saves;
-  const saveList: { save: OSESave; value: number }[] = [];
+  const saveList: SavingThrowItem[] = [];
   for (const key in saves) {
     saveList.push({ save: key as OSESave, value: saves[key].value });
   }
+  const [loading, setLoading] = useState(false);
+
+  const updateSave = async (e: SyntheticEvent) => {
+    const { name, value } = e.target as HTMLInputElement;
+    setLoading(true);
+    await updateActor({ [name]: Number(value) }).finally(() =>
+      setLoading(false)
+    );
+  };
+
+  const columns: GridTableColumn<SavingThrowItem>[] = [
+    {
+      header: "",
+      name: "save",
+      justify: "start",
+      align: "center",
+      width: "1fr",
+      renderCell: (item) => (
+        <TextSmall>
+          <i className={icons[item.save]} style={{ marginRight: "8px" }} />
+          {getLabel(`OSE.saves.${item.save}.long`)}
+        </TextSmall>
+      ),
+    },
+    {
+      header: "Roll above",
+      name: "value",
+      justify: "start",
+      align: "center",
+      renderCell: (item) => (
+        <SaveInput
+          defaultValue={item.value}
+          name={`system.saves.${item.save}.value`}
+          style={{ width: "50px", textAlign: "center" }}
+          disabled={loading}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              (e.target as HTMLInputElement).blur();
+            }
+          }}
+          onBlur={updateSave}
+        />
+      ),
+    },
+    {
+      header: "",
+      name: "action",
+      justify: "start",
+      align: "center",
+      width: "50px",
+      renderCell: (item) => (
+        <button
+          data-tooltip-text={`Roll ${getLabel(`OSE.saves.${item.save}.long`)}`}
+          onClick={() =>
+            actor.rollSave(item.save, {
+              fastForward: false,
+              chatMessage: "Teehee",
+            })
+          }
+        >
+          <i className="fas fa-dice-d20" />
+        </button>
+      ),
+    },
+  ];
 
   return (
-    <div>
-      <SectionHeader>Saving Throws</SectionHeader>
-      <SavingThrowGrid>
-        {saveList.map(({ save, value }) => (
-          <Fragment key={`st-${save}`}>
-            <SavingThrowButton
-              role="button"
-              className="bloody-box"
-              onClick={() =>
-                actor.rollSave(save, {
-                  fastForward: true,
-                  chatMessage: "Teehee",
-                })
-              }
-            >
-              <div className="flex-row align-center justify-between w-100">
-                <SavingThrowLabel>
-                  {getLabel(`OSE.saves.${save}.long`)}:
-                </SavingThrowLabel>
-                <SavingThrowValue>{value}</SavingThrowValue>
-              </div>
-            </SavingThrowButton>
-          </Fragment>
-        ))}
-      </SavingThrowGrid>
-    </div>
+    <ActionTable<SavingThrowItem>
+      data={saveList}
+      getRowId={(item) => item.save}
+      title="SAVING THROWS"
+      columns={columns}
+      showHeader={false}
+      columnRepeat={2}
+    />
   );
 }

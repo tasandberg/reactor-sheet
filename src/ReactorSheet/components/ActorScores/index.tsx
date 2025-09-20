@@ -44,7 +44,7 @@ export default function ActorScores() {
         <StatBlock
           key={`score-box-container-${name}`}
           label={getLabel(`OSE.scores.${name}.short`)}
-          width={55}
+          width={70}
           value={score?.value ?? 0}
           mod={score?.mod ?? 0}
           rollScore={(event: MouseEvent<SVGTextElement>) =>

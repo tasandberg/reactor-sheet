@@ -59,6 +59,12 @@ export type OSEActor = Actor & {
       max: number;
       enabled: boolean;
     };
+    exploration: {
+      ft: number;
+      ld: number;
+      od: number;
+      sd: number;
+    };
     movement: {
       base: number;
       encounter: number;
@@ -79,6 +85,7 @@ export type OSEActor = Actor & {
     };
     saves: Record<OSESave, number>;
     updatedAt?: string;
+    weapons: OseWeapon[];
   };
   _source: OSEActor;
   targetAttack: (

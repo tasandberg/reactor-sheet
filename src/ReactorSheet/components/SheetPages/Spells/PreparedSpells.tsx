@@ -1,8 +1,8 @@
 import type { OseSpell } from "@src/ReactorSheet/types/types";
 import { useReactorSheetContext } from "../../context";
-import { SectionHeader } from "../../shared/elements";
-import GridTable from "../../shared/GridTable";
+
 import { useSpellColumns } from "./useSpellColumns";
+import ActionTable from "../Actions/ActionTable";
 
 export default function PreparedSpells({
   deleteable,
@@ -21,17 +21,11 @@ export default function PreparedSpells({
   );
 
   return preparedSpells.length > 0 ? (
-    <div>
-      <SectionHeader>Prepared Spells</SectionHeader>
-      <div>
-        {preparedSpells.length === 0 && <div>No prepared spells</div>}
-        <GridTable<OseSpell>
-          columns={columns}
-          getRowId={(item) => item._id as string}
-          data={preparedSpells}
-          showHeader={false}
-        />
-      </div>
-    </div>
+    <ActionTable<OseSpell>
+      title={"PREPARED SPELLS"}
+      data={preparedSpells}
+      columns={columns}
+      getRowId={(item) => item._id as string}
+    />
   ) : null;
 }

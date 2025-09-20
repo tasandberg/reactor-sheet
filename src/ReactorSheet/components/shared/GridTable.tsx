@@ -1,37 +1,34 @@
 import styled from "styled-components";
 import type { GridTableColumn } from "./constants";
 import { Fragment } from "react/jsx-runtime";
+import { colors, fontSizes } from "./elements-vars";
+import { TextSmall } from "./elements";
 
 const GridTableWrapper = styled.div<{
   $gridTemplateColumns: string;
 }>`
   display: grid;
   gap: 10px;
+  width: 100%;
   grid-template-columns: ${(props) => props.$gridTemplateColumns}};
 `;
 
 const GridTableHeader = styled.span`
   text-transform: uppercase;
-  font-size: 0.75rem;
-  color: var(--color-text-secondary);
+  font-size: ${fontSizes.tiny};
+  color: ${colors.label};
 `;
 
 const GridTableCell = styled.div<{
   $justify?: "start" | "center" | "end";
   $align?: "start" | "center" | "end";
   $header?: boolean;
+  $width?: string;
 }>`
   align-items: ${(props) => props.$align || "center"};
   justify-content: ${(props) => props.$justify || "end"};
   display: flex;
-`;
-
-const Divider = styled.div`
-  height: 1px;
-  background-color: var(--color-text-secondary);
-  opacity: 0.5;
-  grid-column: 1 / -1;
-  margin-top: -5px;
+  width: ${(props) => props.$width || "auto"};
 `;
 
 export default function GridTable<T>({
@@ -39,15 +36,21 @@ export default function GridTable<T>({
   data,
   getRowId,
   showHeader = true,
+  columnRepeat,
 }: {
   columns: GridTableColumn<T>[];
   getRowId: (row: T) => string;
   data: T[];
   showHeader?: boolean;
+  columnRepeat?: number;
 }) {
-  const gridTemplateColumns = columns
+  let gridTemplateColumns = columns
     .map((col) => col.width || "max-content")
     .join(" ");
+
+  if (columnRepeat) {
+    gridTemplateColumns = `repeat(${columnRepeat}, ${gridTemplateColumns})`;
+  }
 
   return data.length > 0 ? (
     <GridTableWrapper $gridTemplateColumns={gridTemplateColumns}>
@@ -63,7 +66,6 @@ export default function GridTable<T>({
               <GridTableHeader>{col.header}</GridTableHeader>
             </GridTableCell>
           ))}
-          <Divider />
         </>
       )}
       {data.map((row, rowIndex) => {
@@ -75,12 +77,13 @@ export default function GridTable<T>({
                 key={`r${col.name}-${rowId}`}
                 $align={col.align}
                 $justify={col.justify}
+                $width={col.width}
               >
-                {col.renderCell
-                  ? col.renderCell(row)
-                  : col.getValue
-                  ? col.getValue(row)
-                  : null}
+                {col.renderCell ? (
+                  col.renderCell(row)
+                ) : col.getValue ? (
+                  <TextSmall>{col.getValue(row)}</TextSmall>
+                ) : null}
               </GridTableCell>
             ))}
           </Fragment>

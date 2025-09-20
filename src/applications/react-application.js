@@ -23,7 +23,9 @@ class ReactApplication extends foundry.applications.sheets.ActorSheetV2 {
   reactApp;
   template = "modules/reactor-sheet/templates/react-root.hbs";
   initialProps = {};
-  rootId = `react-app-root-${foundry.utils.randomID(8)}`;
+  uuid = foundry.utils.randomID(12);
+  rootId = `react-app-root-${this.uuid}`;
+  innerSelector = `react-application-inner-${this.rootId}`;
 
   static DEFAULT_OPTIONS = {
     position: {
@@ -52,13 +54,18 @@ class ReactApplication extends foundry.applications.sheets.ActorSheetV2 {
     await super._onRender(context);
     const el = this.element.querySelectorAll(`#${this.rootId}`);
     if (el && !this.appIsRendered) {
-      mountApp(this.reactApp, el[0], context.initialProps);
+      mountApp({
+        App: this.reactApp,
+        element: el[0],
+        initialProps: context.initialProps,
+        innerSelector: this.innerSelector,
+      });
     }
     this.contextConnector.publishContext(context);
   }
 
   get appIsRendered() {
-    return !!document.querySelector(`#${this.rootId}`);
+    return !!document.querySelector(`#${this.innerSelector}`);
   }
 
   _replaceHTML(result, content, options) {
@@ -71,6 +78,7 @@ class ReactApplication extends foundry.applications.sheets.ActorSheetV2 {
     const context = await super._prepareContext(options);
     // You can add additional context data here if needed
     context.rootId = this.rootId;
+    context.uuid = this.uuid;
     context.initialProps = this.initialProps;
     context.app = this;
     return context;

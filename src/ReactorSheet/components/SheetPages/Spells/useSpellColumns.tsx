@@ -3,9 +3,9 @@ import type { GridTableColumn } from "../../shared/constants";
 import styled from "styled-components";
 import getLabel from "@src/util/getLabel";
 import { useReactorSheetContext } from "../../context";
+import { TextSmall, TextTiny } from "../../shared/elements";
 
-const SpellDetail = styled.div`
-  font-size: 0.75rem;
+const SpellDetail = styled(TextTiny)`
   opacity: 0.75;
 `;
 
@@ -34,13 +34,13 @@ export function useSpellColumns({
 
   const baseColumns: GridTableColumn<OseSpell>[] = [
     {
-      name: "Image",
+      name: "LVL",
       header: "",
       align: "center",
-      justify: "start",
-      width: "max-content",
-      renderCell: () => (
-        <i className="fa fa-scroll" style={{ fontSize: "2rem" }} />
+      justify: "center",
+      width: "25px",
+      renderCell: (item) => (
+        <img src={item.img} alt={item.name} className="item-image" />
       ),
     },
     {
@@ -48,10 +48,12 @@ export function useSpellColumns({
       header: "Name",
       align: "center",
       justify: "start",
-      width: "max-content",
+      width: "40%",
       renderCell: (item) => (
         <div className="flex-col gap-0">
-          <a onClick={() => item.sheet.render(true)}>{item.name as string}</a>
+          <a onClick={() => item.sheet.render(true)}>
+            <TextSmall>{item.name as string}</TextSmall>
+          </a>
           {detail && <SpellDetail>Level {item.system.lvl}</SpellDetail>}
         </div>
       ),
@@ -62,7 +64,7 @@ export function useSpellColumns({
       name: "Cast",
       header: "cast",
       align: "center",
-      justify: "center",
+      justify: "start",
       width: "max-content",
       renderCell: (item) => (
         <button
@@ -75,12 +77,26 @@ export function useSpellColumns({
       ),
     });
     baseColumns.push({
+      name: "Range",
+      header: "Range",
+      align: "center",
+      justify: "start",
+      getValue: (item) => item.system.range || "-",
+    });
+    baseColumns.push({
+      name: "Duration",
+      header: "Duration",
+      align: "center",
+      justify: "start",
+      getValue: (item) => item.system.duration || "-",
+    });
+    baseColumns.push({
       name: "Memorized",
       header: "Memorized",
       align: "center",
-      justify: "center",
+      justify: "start",
       width: "max-content",
-      renderCell: (item) => `Uses: ${item.system.cast}`,
+      getValue: (item) => `Uses: ${item.system.cast}`,
     });
   }
   if (showMemorize) {

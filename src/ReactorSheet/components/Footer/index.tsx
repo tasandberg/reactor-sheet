@@ -1,5 +1,5 @@
 import { useReactorSheetContext } from "../context";
-import { Row } from "../shared/elements";
+import { Column, Row, TextSmall, TextTiny } from "../shared/elements";
 import { colors } from "../shared/elements-vars";
 
 export default function Footer() {
@@ -26,31 +26,44 @@ export default function Footer() {
       className="flex-col justify-center align-center gap-0"
     >
       <Row>
-        <div className="w-100">
-          {/* <InfoGridItem
-            label="Encounter:"
-            valueWidth={2}
-            value={actor.system.movement.encounter + " ft."}
-          />
-          <InfoGridItem
-            label="Overland:"
-            valueWidth={2}
-            value={actor.system.movement.overland + " miles"}
-          />
-          <InfoGridItem
-            label="Exploration:"
-            valueWidth={2}
-            value={actor.system.movement.base + " ft."}
-          /> */}
-          Movement
-        </div>
-        <div className="w-100">
-          {currencies.map((cur) => (
-            <span key={`currency-${cur?.name}`}>
-              {cur?.name} {cur.system.quantity.value}
-            </span>
-          ))}
-        </div>
+        <Column $align="start" style={{ gap: "0" }}>
+          <div>
+            <TextTiny $color="label">Movement</TextTiny>
+          </div>
+          <Row style={{ flexWrap: "wrap", gap: "1rem" }}>
+            <div>
+              <TextSmall $color="label">Encounter: </TextSmall>
+              <TextSmall>{actor.system.movement.encounter + " ft."}</TextSmall>
+            </div>
+            <div>
+              <TextSmall $color="label">Travel: </TextSmall>
+              <TextSmall>{actor.system.movement.overland + " miles"}</TextSmall>
+            </div>
+            <div>
+              <TextSmall $color="label">Explore: </TextSmall>
+              <TextSmall>{actor.system.movement.base + " ft."}</TextSmall>
+            </div>
+          </Row>
+        </Column>
+        <Column $align="start" style={{ gap: "0" }}>
+          <div>
+            <TextTiny $color="label">Wealth</TextTiny>
+          </div>
+          <Row style={{ flexWrap: "wrap" }}>
+            {currencies.map((cur) => (
+              <Row
+                key={`footer-${cur.name}`}
+                style={{ gap: 2, width: "auto", marginRight: 4 }}
+              >
+                <img src={cur?.img} width="14" />
+                <TextSmall $color="label">{cur?.name}: </TextSmall>
+                <TextSmall $color="emphatic">
+                  {cur?.system.quantity.value}
+                </TextSmall>
+              </Row>
+            ))}
+          </Row>
+        </Column>
       </Row>
     </div>
   );

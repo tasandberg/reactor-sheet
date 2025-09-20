@@ -16,11 +16,17 @@ const ScoreBoxContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-between;
   width: 100%;
   margin: 0 auto;
   gap: 1rem;
-  max-width: 500px;
+  max-width: 550px;
+`;
+
+const ActionsContainer = styled(Column)`
+  max-width: 550px;
+  margin: 0 auto;
+  width: 100%;
 `;
 
 export default function Actions() {
@@ -29,10 +35,12 @@ export default function Actions() {
       <ScoreBoxContainer>
         <ActorScores />
       </ScoreBoxContainer>
-      <Weapons />
-      <PreparedSpells />
-      <Exploration />
-      <SavingThrows />
+      <ActionsContainer>
+        <Weapons />
+        <PreparedSpells />
+        <Exploration />
+        <SavingThrows />
+      </ActionsContainer>
     </Column>
   );
 }

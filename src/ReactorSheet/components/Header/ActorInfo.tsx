@@ -6,6 +6,7 @@ import React from "react";
 import ExperienceBar from "./ExperienceBar";
 import Encumbrance from "../Encumbrance";
 import HitPoints from "./HitPoints";
+import { diceIcon } from "../shared/elements-vars";
 
 const InfoGrid = styled.div`
   display: grid;
@@ -21,7 +22,7 @@ const InfoGridItem = ({
   value,
   align = "center",
   labelWidth = 1,
-  labelSize = "tiny",
+  labelSize = "small",
   valueWidth = 1,
 }: {
   label: string;
@@ -39,7 +40,6 @@ const InfoGridItem = ({
         gridColumnEnd: `span ${labelWidth}`,
         justifySelf: "start",
         alignSelf: "center",
-        textTransform: "uppercase",
       }}
     >
       {label}
@@ -115,7 +115,7 @@ export default function ActorInfo() {
                   data-tooltip-text="1d4"
                   data-flavor={`Hit Die`}
                 >
-                  <i className="fa-solid fa-dice-d20" />
+                  <i className={diceIcon.d4} />
                   {actor.system.hp.hd}
                 </a>
               </div>
