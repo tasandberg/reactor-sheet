@@ -1,7 +1,7 @@
 {
   "id": "reactor-sheet",
-  "title": "Re-Actor Sheet",
-  "description": "A character sheet in react",
+  "title": "OSE Re-Actor Sheet",
+  "description": "An alternative OSE character sheet for foundry.",
   "version": "0.1.0",
   "authors": [
     {
@@ -28,7 +28,16 @@
       "extensions": ["css", "html", "hbs", "json", "mjs", "js", "ts", "tsx"]
     }
   },
+  "relationships": {
+    "systems": [
+      {
+        "id": "ose",
+        "type": "system",
+        "compatibility": {}
+      }
+    ]
+  },
   "url": "https://github.com/tasandberg/reactor-sheet",
-  "manifest": "https://raw.githubusercontent.com/tasandberg/reactor-sheet/releases/latest/download/module.json",
+  "manifest": "https://raw.githubusercontent.com/tasandberg/reactor-sheet/main/module.json",
   "download": "https://github.com/tasandberg/reactor-sheet/archive/main.zip"
 }
