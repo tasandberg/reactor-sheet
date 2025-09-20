@@ -21,7 +21,7 @@ import ContextConnector from "./context-connector";
  */
 class ReactApplication extends foundry.applications.sheets.ActorSheetV2 {
   reactApp;
-  template = "modules/foundry-react-module-template/templates/react-root.hbs";
+  template = "modules/reactor-sheet/templates/react-root.hbs";
   initialProps = {};
   rootId = `react-app-root-${foundry.utils.randomID(8)}`;
 
