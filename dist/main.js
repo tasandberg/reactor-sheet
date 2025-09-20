@@ -29922,7 +29922,7 @@ function IT(d, m, v = {}) {
 }
 class PT extends foundry.applications.sheets.ActorSheetV2 {
   reactApp;
-  template = "modules/foundry-react-module-template/templates/react-root.hbs";
+  template = "modules/reactor-sheet/templates/react-root.hbs";
   initialProps = {};
   rootId = `react-app-root-${foundry.utils.randomID(8)}`;
   static DEFAULT_OPTIONS = {
@@ -30019,7 +30019,7 @@ class lb extends PT {
     }).browse();
   }
 }
-const e8 = "Re-Actor Sheet", t8 = {
+const e8 = "OSE Re-Actor Sheet", t8 = {
   title: e8
 }, n8 = t8.title;
 function B6(...d) {
