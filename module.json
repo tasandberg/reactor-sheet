@@ -2,15 +2,15 @@
   "id": "reactor-sheet",
   "title": "Re-Actor Sheet",
   "description": "A character sheet in react",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "authors": [
     {
       "name": "Tim Sandberg",
-      "url": "https://github.com/<YOUR-GITHUB>"
+      "url": "https://github.com/tasandberg"
     }
   ],
   "compatibility": {
-    "minimum": "12",
+    "minimum": "13",
     "verified": "13"
   },
   "styles": ["dist/main.css"],
@@ -28,7 +28,7 @@
       "extensions": ["css", "html", "hbs", "json", "mjs", "js", "ts", "tsx"]
     }
   },
-  "url": "https://github.com/<YOUR-GITHUB>/reactor-sheet",
-  "manifest": "https://raw.githubusercontent.com/<YOUR-GITHUB>/reactor-sheet/main/src/module.json",
-  "download": "https://github.com/<YOUR-GITHUB>/reactor-sheet/archive/main.zip"
+  "url": "https://github.com/tasandberg/reactor-sheet",
+  "manifest": "https://raw.githubusercontent.com/tasandberg/reactor-sheet/releases/latest/download/module.json",
+  "download": "https://github.com/tasandberg/reactor-sheet/archive/main.zip"
 }
