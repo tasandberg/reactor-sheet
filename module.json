@@ -2,7 +2,7 @@
   "id": "reactor-sheet",
   "title": "OSE Re-Actor Sheet",
   "description": "An alternative OSE character sheet for foundry.",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "authors": [
     {
       "name": "Tim Sandberg",
@@ -13,8 +13,12 @@
     "minimum": "13",
     "verified": "13"
   },
-  "styles": ["dist/main.css"],
-  "esmodules": ["dist/main.js"],
+  "styles": [
+    "dist/main.css"
+  ],
+  "esmodules": [
+    "dist/main.js"
+  ],
   "packs": [],
   "languages": [
     {
@@ -25,7 +29,16 @@
   ],
   "flags": {
     "hotReload": {
-      "extensions": ["css", "html", "hbs", "json", "mjs", "js", "ts", "tsx"]
+      "extensions": [
+        "css",
+        "html",
+        "hbs",
+        "json",
+        "mjs",
+        "js",
+        "ts",
+        "tsx"
+      ]
     }
   },
   "relationships": {
