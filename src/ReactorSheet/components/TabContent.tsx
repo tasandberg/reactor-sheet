@@ -2,7 +2,7 @@ import styled, { keyframes } from "styled-components";
 import { useReactorSheetContext } from "./context";
 import { tabs } from "./shared/tabs";
 
-const CONTENT_HEIGHT = "400px";
+const CONTENT_HEIGHT = "380px";
 const FadeTransition = keyframes`
   0% {
     display: none;

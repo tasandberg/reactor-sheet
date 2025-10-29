@@ -10,6 +10,7 @@ import type { OseItem } from "@src/ReactorSheet/types/types";
 
 export default function InventoryPage() {
   const { items } = useReactorSheetContext();
+  const { actor } = useReactorSheetContext();
 
   const categorizedItems: Record<string, OseItem[]> = items.reduce(
     (acc, item) => {
@@ -37,6 +38,24 @@ export default function InventoryPage() {
     const { value, max } = item.system.quantity;
     const newValue = Math.clamp(value - 1, 0, max);
     await item.update({ "system.quantity.value": newValue });
+  }
+
+  function showDeleteDialog(item: OseItem) {
+    foundry.applications.api.DialogV2.confirm({
+      window: {
+        title: game.i18n.localize("OSE.dialog.deleteItem"),
+      },
+      content: game.i18n.format("OSE.dialog.confirmDeleteItem", {
+        name: item.name,
+      }),
+      yes: {
+        default: false,
+        callback: () => {
+          actor.deleteEmbeddedDocuments("Item", [item.id]);
+        },
+      },
+      defaultYes: false,
+    });
   }
 
   const columns: ItemTableColumn[] = [
@@ -105,7 +124,10 @@ export default function InventoryPage() {
       showHeader: false,
       sortable: false,
       getCell: (item) => (
-        <a className="item-control item-show" onClick={() => item.delete()}>
+        <a
+          className="item-control item-show"
+          onClick={() => showDeleteDialog(item)}
+        >
           <i className="fas fa-trash"></i>
         </a>
       ),

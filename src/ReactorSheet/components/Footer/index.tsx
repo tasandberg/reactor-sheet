@@ -16,7 +16,7 @@ export default function Footer() {
         gridArea: "footer",
         padding: "0.5rem",
         background: "#222",
-        height: "80px",
+        height: "100px",
         width: "100%",
         borderTop: "1px solid #444",
         boxShadow: "0 -2px 4px rgba(0,0,0,0.5)",
@@ -26,11 +26,11 @@ export default function Footer() {
       className="flex-col justify-center align-center gap-0"
     >
       <Row>
-        <Column $align="start" style={{ gap: "0" }}>
+        <Column $align="start" style={{ gap: "0", height: "100%" }}>
           <div>
             <TextTiny $color="label">Movement</TextTiny>
           </div>
-          <Row style={{ flexWrap: "wrap", gap: "1rem" }}>
+          <Row style={{ flexWrap: "wrap" }}>
             <div>
               <TextSmall $color="label">Encounter: </TextSmall>
               <TextSmall>{actor.system.movement.encounter + " ft."}</TextSmall>
@@ -45,7 +45,7 @@ export default function Footer() {
             </div>
           </Row>
         </Column>
-        <Column $align="start" style={{ gap: "0" }}>
+        <Column $align="start" style={{ gap: "0", height: "100%" }}>
           <div>
             <TextTiny $color="label">Wealth</TextTiny>
           </div>
