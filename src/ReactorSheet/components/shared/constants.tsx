@@ -12,7 +12,7 @@ export type GridTableColumn<T> = {
 };
 
 function getModString(mod: number) {
-  return mod >= 0 ? `+ ${mod}` : `- ${Math.abs(mod)}`;
+  return mod >= 0 ? `+${mod}` : `-${Math.abs(mod)}`;
 }
 
 export const actionColumns = (
@@ -22,73 +22,37 @@ export const actionColumns = (
 
   return [
     {
-      header: "",
+      header: "Item",
       name: "image",
       justify: "start",
       width: "30px",
-      renderCell: (item) => (
-        <div style={{ width: "30px" }}>
-          <img
-            src={item.img}
-            alt={item.name}
-            className="item-image"
-            width="100%"
-          />
-        </div>
-      ),
-    },
-    {
-      header: "Attack",
-      name: "name",
-      justify: "start",
-      align: "center",
-      width: "40%",
-      getValue: (item) => item.name,
-    },
-    {
-      header: "Hit",
-      name: "hit",
-      justify: "start",
-      align: "center",
-      width: "max-content",
       renderCell: (item) => {
-        let mod = "";
-        if (item.system.melee && scores.str.mod !== 0) {
-          mod = getModString(scores.str.mod);
-        }
-        if (item.system.missile && scores.dex.mod !== 0) {
-          mod = getModString(scores.dex.mod);
-        }
-        return <button>{mod}</button>;
-      },
-    },
-    {
-      header: "Damage",
-      name: "damage",
-      justify: "start",
-      align: "center",
-      width: "max-content",
-      renderCell: (item) => {
-        const type = item.system.melee ? "melee" : "missile";
-        console.log(item.name, type);
-        let mod = "";
-        if (item.system.melee && scores.str.mod !== 0) {
-          mod = getModString(scores.str.mod);
-        }
-        if (item.system.missile && scores.dex.mod !== 0) {
-          mod = getModString(scores.dex.mod);
-        }
         return (
-          <div style={{ width: "100%" }}>
+          <div style={{ width: "30px" }}>
             <button
-              style={{ width: "75px" }}
-              onClick={() => actor.targetAttack({ roll: {} }, type, { type })}
+              onClick={() => item.rollWeapon({ skipDialog: false })}
+              style={{ padding: 0, border: "none", background: "none" }}
             >
-              {item.system.damage} {mod}
+              <img
+                src={item.img}
+                alt={item.name}
+                className="item-image"
+                width="100%"
+              />
             </button>
           </div>
         );
       },
+    },
+    {
+      header: "",
+      name: "name",
+      justify: "start",
+      align: "center",
+      width: "auto",
+      renderCell: (item) => (
+        <a onClick={() => item.sheet.render(true)}>{item.name}</a>
+      ),
     },
     {
       header: "Notes",
@@ -112,6 +76,77 @@ export const actionColumns = (
         </div>
       ),
     },
-    // Separate modifiers column?
+    {
+      header: "Hit",
+      name: "hit",
+      justify: "center",
+      align: "center",
+      width: "max-content",
+      renderCell: (item) => {
+        let mod = "+0";
+        if (item.system.melee && scores.str.mod !== 0) {
+          mod = getModString(scores.str.mod);
+        }
+        if (item.system.missile && scores.dex.mod !== 0) {
+          mod = getModString(scores.dex.mod);
+        }
+        return (
+          <div
+            style={{
+              textAlign: "center",
+              minWidth: "40px",
+            }}
+          >
+            {mod}
+          </div>
+        );
+      },
+    },
+    {
+      header: "Damage",
+      name: "damage",
+      justify: "center",
+      align: "center",
+      width: "max-content",
+      renderCell: (item) => {
+        const type = item.system.melee ? "melee" : "missile";
+        console.log(item.name, type);
+        let mod = "";
+        if (item.system.melee && scores.str.mod !== 0) {
+          mod = getModString(scores.str.mod);
+        }
+
+        return (
+          <div
+            style={{
+              textAlign: "center",
+              minWidth: "75px",
+            }}
+          >
+            {item.system.damage}
+            {mod}
+          </div>
+        );
+      },
+    },
+
+    {
+      header: "Attack!",
+      name: "roll",
+      justify: "center",
+      align: "center",
+      width: "max-content",
+      renderCell: (item) => {
+        return (
+          <button
+            key={`${item.id}-attack-button`}
+            style={{ width: "50px" }}
+            onClick={() => item.rollWeapon({ skipDialog: false })}
+          >
+            <i className="fas fa-dice-d20" />
+          </button>
+        );
+      },
+    },
   ];
 };

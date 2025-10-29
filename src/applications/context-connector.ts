@@ -1,5 +1,6 @@
 export default class ContextConnector<T> extends EventTarget {
   static UPDATE = "contextUpdate";
+
   constructor() {
     super();
   }

@@ -130,6 +130,7 @@ export type OseItem = Omit<Item, "type"> & {
     equipped?: boolean;
     tags?: { label: string; value: string; icon: string }[];
   };
+  rollWeapon: (options: { skipDialog: boolean }) => void;
   update: (updateData: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: string | number | Record<any, any>;
