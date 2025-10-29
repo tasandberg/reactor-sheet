@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "link-foundry": "node tools/create-symlinks.mjs",
-    "init": "node tools/init.mjs"
+    "init": "node tools/init.mjs",
+    "release": "node tools/release.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",
