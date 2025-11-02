@@ -1,14 +1,9 @@
 import type { OseSpell } from "@src/ReactorSheet/types/types";
 import type { GridTableColumn } from "../../shared/constants";
-import styled from "styled-components";
 import getLabel from "@src/util/getLabel";
 import { useReactorSheetContext } from "../../context";
 import { TextSmall, TextTiny } from "../../shared/elements";
 import { showDeleteDialog } from "../../shared/showDeleteDialog";
-
-const SpellDetail = styled(TextTiny)`
-  opacity: 0.75;
-`;
 
 export function useSpellColumns({
   showMemorize,
@@ -48,7 +43,7 @@ export function useSpellColumns({
       align: "center",
       justify: "center",
       renderCell: (item) => (
-        <img src={item.img} alt={item.name} className="item-image" width="25" />
+        <img src={item.img} alt={item.name} className="item-image" width="30" />
       ),
     },
     {
@@ -62,7 +57,11 @@ export function useSpellColumns({
           <a onClick={() => item.sheet.render(true)}>
             <TextSmall>{item.name as string}</TextSmall>
           </a>
-          {detail && <SpellDetail>Level {item.system.lvl}</SpellDetail>}
+          {detail && (
+            <TextTiny style={{ opacity: "0.5" }}>
+              Level {item.system.lvl}
+            </TextTiny>
+          )}
         </div>
       ),
     },

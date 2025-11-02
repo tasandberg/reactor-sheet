@@ -1,7 +1,7 @@
 import type { OSEActor, OseWeapon } from "@src/ReactorSheet/types/types";
 import type { GridTableColumn } from "../../shared/constants";
 import styled from "styled-components";
-import { Badge, Row, Text } from "../../shared/elements";
+import { Row, Text, TextSmall, TextTiny } from "../../shared/elements";
 import { InlineRollButton } from "../../shared/InlineRollButton";
 import { colors, fontSizes } from "../../shared/elements-vars";
 
@@ -12,12 +12,11 @@ const DiceHoverButton = styled.button`
 
   i {
     opacity: 0;
-    transition: 0.5 ease;
   }
 
   &:hover {
     img {
-      opacity: 0;
+      opacity: 0.5;
     }
     i {
       opacity: 1;
@@ -44,7 +43,7 @@ export const weaponActionColumns = (
       renderCell: (item) => {
         return (
           <Row>
-            <div style={{ width: "25px" }}>
+            <div style={{ width: "30px" }}>
               <DiceHoverButton
                 onClick={() => item.rollWeapon({ skipDialog: false })}
                 style={{ padding: 0, border: "none", background: "none" }}
@@ -61,34 +60,47 @@ export const weaponActionColumns = (
                 />
               </DiceHoverButton>
             </div>
-            <a onClick={() => item.sheet.render(true)}>
-              <Text>{item.name as string}</Text>
-            </a>
+            <div className="flex-col gap-0">
+              <a onClick={() => item.sheet.render(true)}>
+                <TextSmall>{item.name as string}</TextSmall>
+              </a>
+              <Row style={{ opacity: 0.5 }}>
+                {item.system.qualities.map((q, i) => (
+                  <TextTiny key={`qt${i}${q.label}`}>
+                    <i
+                      className={"fa " + q.icon}
+                      style={{ marginRight: "0px" }}
+                    />{" "}
+                    {q.label}
+                  </TextTiny>
+                ))}
+              </Row>
+            </div>
           </Row>
         );
       },
     },
-    {
-      header: "Notes",
-      name: "notes",
-      justify: "start",
-      align: "start",
-      width: "200px",
-      renderCell: (item) => (
-        <div className="flex-row" style={{ flexWrap: "wrap", gap: "0.5rem" }}>
-          {item.system.qualities.map((q, i) => (
-            <Badge
-              key={`qt${i}${q.label}`}
-              title={q.label}
-              style={{ display: "inline" }}
-              className="badge"
-            >
-              <i className={"pr-1 fa " + q.icon} /> {q.label}
-            </Badge>
-          ))}
-        </div>
-      ),
-    },
+    // {
+    //   header: "Notes",
+    //   name: "notes",
+    //   justify: "start",
+    //   align: "start",
+    //   width: "200px",
+    //   renderCell: (item) => (
+    //     <div className="flex-row" style={{ flexWrap: "wrap", gap: "0.5rem" }}>
+    //       {item.system.qualities.map((q, i) => (
+    //         <Badge
+    //           key={`qt${i}${q.label}`}
+    //           title={q.label}
+    //           style={{ display: "inline" }}
+    //           className="badge"
+    //         >
+    //           <i className={"pr-1 fa " + q.icon} /> {q.label}
+    //         </Badge>
+    //       ))}
+    //     </div>
+    //   ),
+    // },
     {
       header: "Hit",
       name: "hit",
@@ -106,7 +118,7 @@ export const weaponActionColumns = (
               <Text>
                 <i
                   className="fa fa-sword"
-                  style={{ fontSize: fontSizes.tiny, color: colors.label }}
+                  style={{ fontSize: fontSizes.tiny, color: colors.hint }}
                 />
                 {": "}
                 {getModString(scores.str.mod)}
@@ -123,7 +135,7 @@ export const weaponActionColumns = (
               <Text>
                 <i
                   className="fa fa-bow-arrow"
-                  style={{ fontSize: fontSizes.tiny, color: colors.label }}
+                  style={{ fontSize: fontSizes.tiny, color: colors.hint }}
                 />
                 {": "}
                 {getModString(scores.dex.mod)}
@@ -166,7 +178,7 @@ export const weaponActionColumns = (
               <Text>
                 <i
                   className="fa fa-sword"
-                  style={{ fontSize: fontSizes.tiny, color: colors.label }}
+                  style={{ fontSize: fontSizes.tiny, color: colors.hint }}
                 />
                 {": "}
                 {item.system.damage}
@@ -185,7 +197,7 @@ export const weaponActionColumns = (
               <Text>
                 <i
                   className="fa fa-bow-arrow"
-                  style={{ fontSize: fontSizes.tiny, color: colors.label }}
+                  style={{ fontSize: fontSizes.tiny, color: colors.hint }}
                 />
                 {": "}
                 {item.system.damage}
@@ -224,7 +236,10 @@ export const weaponActionColumns = (
           <button
             key={`${item.id}-attack-button`}
             style={{ width: "50px" }}
-            onClick={() => item.rollWeapon({ skipDialog: false })}
+            title={"Auto-roll hit and damage against target"}
+            onClick={() => {
+              item.rollWeapon({ skipDialog: false });
+            }}
           >
             <i className="fas fa-dice-d20" />
           </button>
