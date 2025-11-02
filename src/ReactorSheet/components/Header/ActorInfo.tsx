@@ -105,7 +105,7 @@ export default function ActorInfo() {
           />
           <InfoGridItem
             label="HD:"
-            valueWidth={3}
+            valueWidth={1}
             value={
               <div style={{ alignSelf: "center" }}>
                 <a
@@ -123,7 +123,7 @@ export default function ActorInfo() {
           />
           <InfoGridItem
             label={"Alignment:"}
-            valueWidth={3}
+            valueWidth={1}
             value={actor.system.details.alignment || "Unaligned"}
           />
         </InfoGrid>

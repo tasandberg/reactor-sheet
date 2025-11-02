@@ -1,16 +1,19 @@
 import clsx from "clsx";
 import { useReactorSheetContext } from "../../context";
 import Encumbrance from "../../Encumbrance";
-import { SectionHeader } from "../../shared/elements";
+import { Row, SectionHeader, Text } from "../../shared/elements";
 import { toggleExpand } from "../../shared/expandable";
 import ItemTable, { type ItemTableColumn } from "./ItemTable";
 import Money from "./Money";
 import UsageBar from "./UsageBar";
 import type { OseItem } from "@src/ReactorSheet/types/types";
+import { useState } from "react";
+import GridView from "./GridView";
+import { showDeleteDialog } from "../../shared/showDeleteDialog";
 
 export default function InventoryPage() {
+  const [gridView, setGridView] = useState(true);
   const { items } = useReactorSheetContext();
-  const { actor } = useReactorSheetContext();
 
   const categorizedItems: Record<string, OseItem[]> = items.reduce(
     (acc, item) => {
@@ -38,24 +41,6 @@ export default function InventoryPage() {
     const { value, max } = item.system.quantity;
     const newValue = Math.clamp(value - 1, 0, max);
     await item.update({ "system.quantity.value": newValue });
-  }
-
-  function showDeleteDialog(item: OseItem) {
-    foundry.applications.api.DialogV2.confirm({
-      window: {
-        title: game.i18n.localize("OSE.dialog.deleteItem"),
-      },
-      content: game.i18n.format("OSE.dialog.confirmDeleteItem", {
-        name: item.name,
-      }),
-      yes: {
-        default: false,
-        callback: () => {
-          actor.deleteEmbeddedDocuments("Item", [item.id]);
-        },
-      },
-      defaultYes: false,
-    });
   }
 
   const columns: ItemTableColumn[] = [
@@ -134,20 +119,33 @@ export default function InventoryPage() {
     },
   ];
   return (
-    <div className="flex-col gap-1" style={{ overflow: "hidden" }}>
-      {Object.entries(categorizedItems).map(([category, items]) => (
-        <div key={category}>
-          <SectionHeader
-            className="expandable expanded mb-0"
-            onClick={toggleExpand}
-          >
-            {category}
-          </SectionHeader>
-          <div>
-            <ItemTable columns={columns} items={items} />
+    <div className="flex-col gap-3" style={{ overflow: "hidden" }}>
+      <Row $justify="end">
+        <Text>View:</Text>
+        <button onClick={() => setGridView(true)}>
+          <i className="fa fa-grid" />
+        </button>
+        <button onClick={() => setGridView(false)}>
+          <i className="fa fa-list" />
+        </button>
+      </Row>
+      {gridView ? (
+        <GridView items={items} />
+      ) : (
+        Object.entries(categorizedItems).map(([category, items]) => (
+          <div key={category}>
+            <SectionHeader
+              className="expandable expanded mb-0"
+              onClick={toggleExpand}
+            >
+              {category}
+            </SectionHeader>
+            <div>
+              <ItemTable columns={columns} items={items} />
+            </div>
           </div>
-        </div>
-      ))}
+        ))
+      )}
       <Money />
       <Encumbrance />
     </div>

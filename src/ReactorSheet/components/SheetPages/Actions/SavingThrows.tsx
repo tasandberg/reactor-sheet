@@ -1,11 +1,11 @@
 import styled from "styled-components";
-import { useReactorSheetContext } from "../context";
+import { useReactorSheetContext } from "../../context";
 import type { OSESave } from "@src/ReactorSheet/types/types";
 import getLabel from "@src/util/getLabel";
-import { TextSmall } from "../shared/elements";
-import ActionTable from "./Actions/ActionTable";
-import type { GridTableColumn } from "../shared/constants";
-import { colors } from "../shared/elements-vars";
+import { TextSmall } from "../../shared/elements";
+import ActionTable from "../Actions/ActionTable";
+import type { GridTableColumn } from "../../shared/constants";
+import { colors } from "../../shared/elements-vars";
 import { useState, type SyntheticEvent } from "react";
 
 const SaveInput = styled.input`
@@ -54,7 +54,7 @@ export default function SavingThrows() {
       align: "center",
       width: "1fr",
       renderCell: (item) => (
-        <TextSmall>
+        <TextSmall $color="label">
           <i className={icons[item.save]} style={{ marginRight: "8px" }} />
           {getLabel(`OSE.saves.${item.save}.long`)}
         </TextSmall>
@@ -106,7 +106,7 @@ export default function SavingThrows() {
     <ActionTable<SavingThrowItem>
       data={saveList}
       getRowId={(item) => item.save}
-      title="SAVING THROWS"
+      title="Saving Throws"
       columns={columns}
       showHeader={false}
       columnRepeat={2}

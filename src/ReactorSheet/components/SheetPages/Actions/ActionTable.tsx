@@ -1,12 +1,11 @@
 import styled from "styled-components";
-import { TextTiny } from "../../shared/elements";
+import { Text } from "../../shared/elements";
 import GridTable from "../../shared/GridTable";
 import type { GridTableColumn } from "../../shared/constants";
-import { colors, spacer } from "../../shared/elements-vars";
+import { spacer } from "../../shared/elements-vars";
 
 const ActionHeader = styled.div`
-  padding: ${spacer.xs};
-  border-bottom: 1px solid ${colors.hint};
+  padding: ${spacer.xs} 0;
   margin-bottom: ${spacer.sm};
   width: 100%;
 `;
@@ -35,7 +34,7 @@ export default function ActionTable<T>({
       }}
     >
       <ActionHeader>
-        <TextTiny $color="label">{title}</TextTiny>
+        <Text>{title}</Text>
       </ActionHeader>
       <GridTable<T>
         columns={columns}

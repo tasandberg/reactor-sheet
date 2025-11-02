@@ -4,6 +4,7 @@ import styled from "styled-components";
 import getLabel from "@src/util/getLabel";
 import { useReactorSheetContext } from "../../context";
 import { TextSmall, TextTiny } from "../../shared/elements";
+import { showDeleteDialog } from "../../shared/showDeleteDialog";
 
 const SpellDetail = styled(TextTiny)`
   opacity: 0.75;
@@ -32,23 +33,30 @@ export function useSpellColumns({
     await spell.update({ "system.cast": spell.system.cast + 1 });
   };
 
+  const isMemorized = (spell: OseSpell) => spell.system.cast > 0;
+
+  const forgetSpell = async (spell: OseSpell) => {
+    if (spell.system.cast > 0) {
+      await spell.update({ "system.cast": spell.system.cast - 1 });
+    }
+  };
+
   const baseColumns: GridTableColumn<OseSpell>[] = [
     {
-      name: "LVL",
-      header: "",
+      name: "img",
+      header: "Spell",
       align: "center",
       justify: "center",
-      width: "25px",
       renderCell: (item) => (
-        <img src={item.img} alt={item.name} className="item-image" />
+        <img src={item.img} alt={item.name} className="item-image" width="25" />
       ),
     },
     {
       name: "Name",
-      header: "Name",
+      header: "",
       align: "center",
       justify: "start",
-      width: "40%",
+      width: "1fr",
       renderCell: (item) => (
         <div className="flex-col gap-0">
           <a onClick={() => item.sheet.render(true)}>
@@ -61,42 +69,32 @@ export function useSpellColumns({
   ];
   if (detail) {
     baseColumns.push({
-      name: "Cast",
-      header: "cast",
-      align: "center",
-      justify: "start",
-      width: "max-content",
-      renderCell: (item) => (
-        <button
-          onClick={async () =>
-            await item.update({ "system.cast": 0, "system.memorized": 0 })
-          }
-        >
-          {getLabel("OSE.spells.Cast")}
-        </button>
-      ),
-    });
-    baseColumns.push({
       name: "Range",
       header: "Range",
       align: "center",
-      justify: "start",
+      justify: "center",
       getValue: (item) => item.system.range || "-",
-    });
-    baseColumns.push({
-      name: "Duration",
-      header: "Duration",
-      align: "center",
-      justify: "start",
-      getValue: (item) => item.system.duration || "-",
     });
     baseColumns.push({
       name: "Memorized",
       header: "Memorized",
       align: "center",
-      justify: "start",
-      width: "max-content",
+      justify: "center",
       getValue: (item) => `Uses: ${item.system.cast}`,
+    });
+    baseColumns.push({
+      name: "Cast",
+      header: "cast",
+      align: "center",
+      justify: "center",
+      width: "60px",
+      renderCell: (item) => (
+        <button
+          onClick={async () => await item.spendSpell({ skipDialog: false })}
+        >
+          {getLabel("OSE.spells.Cast")}
+        </button>
+      ),
     });
   }
   if (showMemorize) {
@@ -121,9 +119,17 @@ export function useSpellColumns({
       header: "delete",
       align: "center",
       justify: "end",
-      width: "1fr",
       renderCell: (item) => (
-        <a role="button" onClick={() => item.delete()}>
+        <a
+          role="button"
+          onClick={async () => {
+            if (isMemorized(item)) {
+              await forgetSpell(item);
+            } else {
+              showDeleteDialog(item);
+            }
+          }}
+        >
           <i className="fa fa-trash" />
         </a>
       ),

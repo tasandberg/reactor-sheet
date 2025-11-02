@@ -49,7 +49,7 @@ export default function TabContent() {
         flexGrow: 1,
       }}
     >
-      <TabsContainer>
+      <TabsContainer id="tab-content-container">
         {tabs.map((tab) => (
           <TabWrapper key={tab.id + "-content"} $active={tab.id === currentTab}>
             {tab.id === currentTab && <tab.Content />}

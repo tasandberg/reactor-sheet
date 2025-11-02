@@ -1,9 +1,10 @@
 import type { OseItem } from "@src/ReactorSheet/types/types";
 import GridTable from "../../shared/GridTable";
 import type { GridTableColumn } from "../../shared/constants";
-import { SectionHeader } from "../../shared/elements";
 import { InlineInput } from "../../InlineInput";
 import { useReactorSheetContext } from "../../context";
+import InventorySectionHeader from "./InventorySectionHeader";
+import { sumItemWeight } from "@src/util/sumItemWeight";
 
 const columns: GridTableColumn<OseItem>[] = [
   {
@@ -75,10 +76,14 @@ const columns: GridTableColumn<OseItem>[] = [
 export default function Money() {
   const { actor } = useReactorSheetContext();
   const treasures = Object.values(actor.system.treasures);
+
   return (
     <>
-      <SectionHeader className="mt-0">Treasure</SectionHeader>
-      <div style={{ marginBottom: "3rem" }} className="pl-3 pr-3">
+      <InventorySectionHeader
+        label="Treasure"
+        helperText={`Total Weight: ${sumItemWeight(treasures)}`}
+      />
+      <div className="pl-3 pr-3">
         <GridTable<OseItem>
           showHeader
           getRowId={(row) => `money-gt-${row._id}`}

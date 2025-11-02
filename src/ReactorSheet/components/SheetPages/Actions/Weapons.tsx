@@ -1,7 +1,7 @@
 import type { OseWeapon } from "@src/ReactorSheet/types/types";
 import { useReactorSheetContext } from "../../context";
-import { actionColumns } from "../../shared/constants";
 import ActionTable from "./ActionTable";
+import { weaponActionColumns } from "./weaponColumns";
 
 export default function Weapons() {
   const { actor } = useReactorSheetContext();
@@ -11,8 +11,8 @@ export default function Weapons() {
   return (
     <ActionTable<OseWeapon>
       data={weapons}
-      title="WEAPONS"
-      columns={actionColumns(actor)}
+      title="Weapons"
+      columns={weaponActionColumns(actor)}
       getRowId={(row) => row._id}
     />
   );

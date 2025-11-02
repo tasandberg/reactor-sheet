@@ -22,7 +22,7 @@ export default function PreparedSpells({
 
   return preparedSpells.length > 0 ? (
     <ActionTable<OseSpell>
-      title={"PREPARED SPELLS"}
+      title={"Prepared Spells"}
       data={preparedSpells}
       columns={columns}
       getRowId={(item) => item._id as string}

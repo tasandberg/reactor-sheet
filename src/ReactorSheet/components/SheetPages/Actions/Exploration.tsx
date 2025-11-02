@@ -25,7 +25,7 @@ export default function Exploration() {
 
   return (
     <ActionTable<AdventuringAction>
-      title="EXPLORATION"
+      title="Exploration"
       columnRepeat={2}
       showHeader={false}
       columns={[
@@ -37,6 +37,7 @@ export default function Exploration() {
           width: "1fr",
           renderCell: (item: AdventuringAction) => (
             <TextSmall
+              $color="label"
               style={{ display: "flex", alignItems: "center", gap: "8px" }}
             >
               <i className={item.icon} />

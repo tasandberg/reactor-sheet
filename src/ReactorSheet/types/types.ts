@@ -124,11 +124,15 @@ export type OseItem = Omit<Item, "type"> & {
       value: number;
       max: number;
     };
+    containerId: string;
+    contents: OseItem[];
     cost: number;
     cumulativeCost: number;
     cumulativeWeight: number;
+    totalWeight?: number;
     equipped?: boolean;
     tags?: { label: string; value: string; icon: string }[];
+    weight: number;
   };
   rollWeapon: (options: { skipDialog: boolean }) => void;
   update: (updateData: {
@@ -164,4 +168,5 @@ export type OseSpell = OseItem & {
     memorized: number;
     cast: number;
   };
+  spendSpell: ({ skipDialog }: { skipDialog: boolean }) => Promise<void>;
 };

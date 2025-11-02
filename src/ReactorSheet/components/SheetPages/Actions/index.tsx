@@ -1,17 +1,17 @@
 import styled from "styled-components";
 import ActorScores from "../../ActorScores";
 import { Column } from "../../shared/elements";
-import SavingThrows from "../SavingThrows";
+import SavingThrows from "./SavingThrows";
 import PreparedSpells from "../Spells/PreparedSpells";
 import Exploration from "./Exploration";
 import Weapons from "./Weapons";
+
 /**
  * TODO:
  * - reference: https://www.dndbeyond.com/characters/91477249
  * - Implement table headers and rows using a grid layout
  *
  */
-
 const ScoreBoxContainer = styled.div`
   display: flex;
   flex-direction: row;
