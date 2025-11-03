@@ -1,23 +1,7 @@
-import styled from "styled-components";
 import { useEffect, useState, type SyntheticEvent } from "react";
 import { useReactorSheetContext } from "../context";
-import { TextSmall } from "../shared/elements";
+import { IncrementButton, TextSmall } from "../shared/elements";
 import { ProgressBar } from "../shared/ProgressBar";
-
-const IncrementButton = styled.button`
-  min-width: 20px;
-  min-height: 20px;
-  flex-grow: 0;
-  flex-shrink: 0;
-  height: 100%;
-  font-size: 0.75rem;
-  padding: 0;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-`;
 
 export default function HitPoints() {
   const { actor, updateActor } = useReactorSheetContext();

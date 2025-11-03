@@ -71,7 +71,7 @@ export function useSpellColumns({
       name: "Range",
       header: "Range",
       align: "center",
-      justify: "center",
+      justify: "start",
       getValue: (item) => item.system.range || "-",
     });
     baseColumns.push({
@@ -105,9 +105,9 @@ export function useSpellColumns({
       width: "max-content",
       renderCell: (item) =>
         canMemorize(item) ? (
-          <a onClick={() => memorizeSpell(item)}>
+          <button onClick={() => memorizeSpell(item)}>
             <i className="fas fa-plus" title="Memorize Spell"></i>
-          </a>
+          </button>
         ) : null,
     });
   }
@@ -117,7 +117,7 @@ export function useSpellColumns({
       name: "Delete",
       header: "delete",
       align: "center",
-      justify: "end",
+      justify: "center",
       renderCell: (item) => (
         <a
           role="button"

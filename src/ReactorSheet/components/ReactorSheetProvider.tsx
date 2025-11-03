@@ -35,6 +35,8 @@ function ReactorSheetProvider({
     if (actor.update) {
       return await actor.update(updateData).then((updatedActor) => {
         if (updatedActor) {
+          console.log("okay updated actor in provider");
+          console.log(updatedActor.system.spells);
           _setTimestampedActor(updatedActor);
         }
       });

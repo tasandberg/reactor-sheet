@@ -17,3 +17,20 @@ export function showDeleteDialog(item: OseItem) {
     defaultYes: false,
   });
 }
+
+export async function showFormDialog() {
+  const guess = await foundry.applications.api.DialogV2.prompt({
+    window: {
+      title: "Enter your guess",
+    },
+    content: "Please enter your guess below:",
+    label: "Submit Guess",
+    cancelLabel: "Cancel",
+    input: {
+      type: "text",
+      placeholder: "Your guess here",
+    },
+  });
+
+  console.log(guess);
+}

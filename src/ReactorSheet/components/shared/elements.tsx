@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { colors, fontFamily, fontSizes } from "./elements-vars";
+import { colors, fontFamily, fontSizes, spacer } from "./elements-vars";
 
 /** Typography **/
 export const Text = styled.span<{
@@ -55,10 +55,11 @@ export const Flex = styled.div<{
   $dir?: string;
   $align?: string;
   $justify?: string;
+  $gap?: string;
 }>`
   display: flex;
   flex-direction: ${(props) => (props.$dir ? props.$dir : "row")};
-  gap: 0.5rem;
+  gap: ${(props) => (props.$gap ? props.$gap : "0.5rem")};
   align-items: ${(props) => (props.$align ? props.$align : "center")};
   justify-content: ${(props) =>
     props.$justify ? props.$justify : "flex-start"};
@@ -71,4 +72,26 @@ export const Row = styled(Flex)`
 
 export const Column = styled(Flex)`
   flex-direction: column;
+`;
+
+// Components
+export const ActionHeader = styled.div`
+  padding: ${spacer.xs} 0;
+  margin-bottom: ${spacer.sm};
+  width: 100%;
+`;
+
+export const IncrementButton = styled.button`
+  min-width: 20px;
+  min-height: 20px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  height: 100%;
+  font-size: 0.75rem;
+  padding: 0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 `;
