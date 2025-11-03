@@ -3,7 +3,7 @@ import type { GridTableColumn } from "../../shared/constants";
 import getLabel from "@src/util/getLabel";
 import { useReactorSheetContext } from "../../context";
 import { TextSmall, TextTiny } from "../../shared/elements";
-import { showDeleteDialog } from "../../shared/showDeleteDialog";
+import { showDeleteDialog } from "../../shared/foundryDialogs";
 
 export function useSpellColumns({
   showMemorize,

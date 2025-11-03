@@ -1,5 +1,5 @@
 import { useReactorSheetContext } from "../context";
-import { Column, Row, TextSmall, TextTiny } from "../shared/elements";
+import { Column, Row, Text, TextSmall } from "../shared/elements";
 import { colors } from "../shared/elements-vars";
 
 export default function Footer() {
@@ -26,10 +26,8 @@ export default function Footer() {
       className="flex-col justify-center align-center gap-0"
     >
       <Row>
-        <Column $align="start" style={{ gap: "0", height: "100%" }}>
-          <div>
-            <TextTiny $color="label">Movement</TextTiny>
-          </div>
+        <Column $align="start" style={{ height: "100%" }}>
+          <Text $color="label">Movement</Text>
           <Row style={{ flexWrap: "wrap" }}>
             <div>
               <TextSmall $color="label">Encounter: </TextSmall>
@@ -45,10 +43,8 @@ export default function Footer() {
             </div>
           </Row>
         </Column>
-        <Column $align="start" style={{ gap: "0", height: "100%" }}>
-          <div>
-            <TextTiny $color="label">Wealth</TextTiny>
-          </div>
+        <Column $align="start" style={{ height: "100%" }}>
+          <Text $color="label">Wealth</Text>
           <Row style={{ flexWrap: "wrap" }}>
             {currencies.map((cur) => (
               <Row

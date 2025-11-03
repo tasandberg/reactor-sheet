@@ -55,11 +55,11 @@ export const Flex = styled.div<{
   $dir?: string;
   $align?: string;
   $justify?: string;
-  $gap?: string;
+  $gap?: keyof typeof spacer;
 }>`
   display: flex;
   flex-direction: ${(props) => (props.$dir ? props.$dir : "row")};
-  gap: ${(props) => (props.$gap ? props.$gap : "0.5rem")};
+  gap: ${(props) => (props.$gap ? spacer[props.$gap] : spacer.sm)};
   align-items: ${(props) => (props.$align ? props.$align : "center")};
   justify-content: ${(props) =>
     props.$justify ? props.$justify : "flex-start"};

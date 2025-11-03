@@ -23,24 +23,18 @@ const ScoreBoxContainer = styled.div`
   max-width: 550px;
 `;
 
-const ActionsContainer = styled(Column)`
-  max-width: 550px;
-  margin: 0 auto;
-  width: 100%;
-`;
-
 export default function Actions() {
   return (
     <Column $align="start" style={{ position: "relative" }}>
       <ScoreBoxContainer>
         <ActorScores />
       </ScoreBoxContainer>
-      <ActionsContainer>
+      <Column $gap="lg" style={{ maxWidth: "550px", margin: "0 auto" }}>
         <Weapons />
         <PreparedSpells />
         <Exploration />
         <SavingThrows />
-      </ActionsContainer>
+      </Column>
     </Column>
   );
 }

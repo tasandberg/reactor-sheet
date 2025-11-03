@@ -15,6 +15,14 @@ $justify-options: (
   "evenly": space-evenly,
 );
 
+$font-sizes: (
+  "xs": 0.7rem,
+  "sm": 0.85rem,
+  "md": 1rem,
+  "lg": 1.5rem,
+  "xl": 2rem,
+);
+
 $colors: (
   "primary": #007bff,
   "secondary": #6c757d,
@@ -151,10 +159,22 @@ $directions: (
 }
 
 // Typography
+
+// font size classes
+@each $name, $value in $font-sizes {
+  .text-#{$name} {
+    font-size: $value;
+  }
+}
+
 .header-style {
   font-family: var(--font-h1);
   font-weight: bold;
   color: var(--color-text-emphatic);
+}
+
+.text-primary {
+  color: var(--color-text-primary);
 }
 
 .text-secondary {

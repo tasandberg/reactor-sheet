@@ -43,7 +43,13 @@ export default function GridView({ items }: { items: OseItem[] }) {
         <InventoryGridCard
           key={`container-${container.id}`}
           container={container}
-          items={container.system.contents}
+          items={container.system.contents.filter(
+            (item) => !item.system?.equipped
+          )}
+          updateAttributes={{
+            "system.equipped": false,
+            "system.containerId": container.id,
+          }}
         />
       ))}
       <InventoryGridCard

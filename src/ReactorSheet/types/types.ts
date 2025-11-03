@@ -23,7 +23,7 @@ export interface ReactorSheetContextValue {
   currentTab: TabIds;
   setCurrentTab: (tabId: TabIds) => void;
   updateActor: (updateData: {
-    [key: string]: string | number;
+    [key: string]: string | number | string[];
   }) => Promise<OSEActor | void>;
 }
 
@@ -65,6 +65,7 @@ export type OSEActor = Actor & {
       od: number;
       sd: number;
     };
+    languages: { value: string[] };
     movement: {
       base: number;
       encounter: number;

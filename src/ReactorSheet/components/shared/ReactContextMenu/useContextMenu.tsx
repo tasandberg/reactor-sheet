@@ -24,7 +24,7 @@ export default function useContextMenu({
       // would overflow right edge
       setPosition("left");
     }
-    if (selfRect.bottom + 100 > (containerRect?.bottom || window.innerHeight)) {
+    if (selfRect.bottom + 80 > containerRect.bottom + container.scrollTop) {
       // would overflow bottom edge
       setPosition("top");
     }

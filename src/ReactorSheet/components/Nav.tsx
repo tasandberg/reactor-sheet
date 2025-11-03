@@ -3,17 +3,17 @@ import { tabs, type TabDef } from "./shared/tabs";
 import { useReactorSheetContext } from "./context";
 import getLabel from "@src/util/getLabel";
 import { colors } from "./shared/elements-vars";
-import { TextTiny } from "./shared/elements";
+import { Text } from "./shared/elements";
 
-const MIN_WIDTH = "60px";
-const MAX_WIDTH = "67px";
+const MIN_WIDTH = "35px";
+const MAX_WIDTH = "40px";
 
 const TabsContainer = styled.div`
   position: absolute;
-  right: -67px;
-  width: 67px;
-  height: 390px;
-  top: 276px;
+  right: -${MAX_WIDTH};
+  width: ${MAX_WIDTH};
+  height: auto;
+  top: 34px;
   display: flex;
   flex-direction: column;
   align-items: start;
@@ -25,7 +25,7 @@ const IconTab = styled.div<{ $active?: boolean }>`
   background-color: ${(props) => (props.$active ? colors.bgDark : "#333")};
   width: ${(props) => (props.$active ? MAX_WIDTH : MIN_WIDTH)};
   display: flex;
-  height: 100%;
+  height: 100px;
   flex-grow: 1;
   cursor: pointer;
   align-items: center;
@@ -50,7 +50,7 @@ const IconTab = styled.div<{ $active?: boolean }>`
 `;
 
 export default function Nav() {
-  const { currentTab, setCurrentTab } = useReactorSheetContext();
+  const { currentTab, setCurrentTab, actor } = useReactorSheetContext();
   const activeTabId = currentTab;
 
   const handleTabClick = (tab: TabDef) => {
@@ -60,20 +60,25 @@ export default function Nav() {
 
   return (
     <TabsContainer>
-      {tabs.map((tab) => (
-        <IconTab
-          key={tab.label}
-          $active={tab.id === activeTabId}
-          onClick={() => handleTabClick(tab)}
-        >
-          <div className="flex-col gap-0 justyify-center align-center gap-1">
-            <i className={tab.icon} />
-            <TextTiny style={{ color: "inherit" }}>
-              {getLabel(tab.label)}
-            </TextTiny>
-          </div>
-        </IconTab>
-      ))}
+      {tabs(actor)
+        .filter((tab) => !tab.disabled)
+        .map((tab) => (
+          <IconTab
+            key={tab.label}
+            $active={tab.id === activeTabId}
+            onClick={() => handleTabClick(tab)}
+          >
+            <div
+              className="flex-row gap-0 justify-center align-center gap-1"
+              style={{
+                transform: "rotate(90deg)",
+              }}
+            >
+              <i className={tab.icon} />
+              <Text style={{ color: "inherit" }}>{getLabel(tab.label)}</Text>
+            </div>
+          </IconTab>
+        ))}
     </TabsContainer>
   );
 }

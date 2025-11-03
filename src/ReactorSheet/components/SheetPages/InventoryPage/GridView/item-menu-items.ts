@@ -1,4 +1,4 @@
-import { showDeleteDialog } from "@src/ReactorSheet/components/shared/showDeleteDialog";
+import { showDeleteDialog } from "@src/ReactorSheet/components/shared/foundryDialogs";
 import type { OseItem } from "@src/ReactorSheet/types/types";
 
 export default function itemMenuItems(item: OseItem) {

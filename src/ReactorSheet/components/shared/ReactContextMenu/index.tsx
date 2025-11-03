@@ -38,7 +38,7 @@ const ReactContextMenuItem = styled.div`
 
 const positions: Record<string, { $top: string; $left: string }> = {
   top: {
-    $top: `-100px`,
+    $top: `-70px`,
     $left: `1rem`,
   },
   bottom: {

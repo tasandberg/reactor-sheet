@@ -28,7 +28,7 @@ const TabsContainer = styled.div`
   overflow: hidden auto;
   padding: 1rem;
   scrollbar-gutter: stable;
-  padding-bottom: 100px;
+  padding-bottom: 2rem;
   z-index: 0;
 `;
 
@@ -37,8 +37,8 @@ const TabWrapper = styled.div<{ $active?: boolean }>`
 `;
 
 export default function TabContent() {
-  const { currentTab } = useReactorSheetContext();
-
+  const { currentTab, actor } = useReactorSheetContext();
+  const tab = tabs(actor).find((t) => t.id === currentTab);
   return (
     <div
       style={{
@@ -50,11 +50,9 @@ export default function TabContent() {
       }}
     >
       <TabsContainer id="tab-content-container">
-        {tabs.map((tab) => (
-          <TabWrapper key={tab.id + "-content"} $active={tab.id === currentTab}>
-            {tab.id === currentTab && <tab.Content />}
-          </TabWrapper>
-        ))}
+        <TabWrapper key={tab.id + "-content"} $active={tab.id === currentTab}>
+          <tab.Content />
+        </TabWrapper>
       </TabsContainer>
     </div>
   );

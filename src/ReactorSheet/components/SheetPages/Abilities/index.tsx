@@ -1,8 +1,10 @@
 import type { OseAbility } from "@src/ReactorSheet/types/types";
 import { useReactorSheetContext } from "../../context";
 import type { GridTableColumn } from "../../shared/constants";
-import { Badge, SectionHeader } from "../../shared/elements";
+import { Badge, Column, TextLarge } from "../../shared/elements";
 import GridTable from "../../shared/GridTable";
+import { showDeleteDialog } from "../../shared/foundryDialogs";
+import Languages from "../Notes/Languages";
 
 const abilityColumns: GridTableColumn<OseAbility>[] = [
   {
@@ -14,7 +16,7 @@ const abilityColumns: GridTableColumn<OseAbility>[] = [
         <img
           src={item.img}
           alt={item.name}
-          style={{ width: "32px", height: "32px", borderRadius: "4px" }}
+          style={{ width: "35px", height: "35px" }}
         />
       </a>
     ),
@@ -39,19 +41,34 @@ const abilityColumns: GridTableColumn<OseAbility>[] = [
         <Badge>{item.system.requirements}</Badge>
       ) : null,
   },
+  {
+    name: "Delete",
+    header: "",
+    width: "40px",
+    renderCell: (item) => (
+      <a
+        className="btn btn-danger btn-sm"
+        onClick={() => showDeleteDialog(item)}
+        title="Delete Ability"
+      >
+        <i className="fas fa-trash" />
+      </a>
+    ),
+  },
 ];
 export default function Abilities() {
   const { actor } = useReactorSheetContext();
   const abilities = Object.values(actor.system.abilities ?? {});
   return (
-    <div>
-      <SectionHeader>Abilities</SectionHeader>
+    <Column $justify="start" $align="start" $gap="md">
+      <TextLarge>Abilities</TextLarge>
       <GridTable<OseAbility>
         showHeader={false}
         columns={abilityColumns}
         data={abilities}
         getRowId={(item) => item._id}
       />
-    </div>
+      <Languages />
+    </Column>
   );
 }

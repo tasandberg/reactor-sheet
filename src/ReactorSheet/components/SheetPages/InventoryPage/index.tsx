@@ -1,7 +1,12 @@
 import clsx from "clsx";
 import { useReactorSheetContext } from "../../context";
 import Encumbrance from "../../Encumbrance";
-import { Row, SectionHeader, Text } from "../../shared/elements";
+import {
+  Row,
+  SectionHeader,
+  TextLarge,
+  TextSmall,
+} from "../../shared/elements";
 import { toggleExpand } from "../../shared/expandable";
 import ItemTable, { type ItemTableColumn } from "./ItemTable";
 import Money from "./Money";
@@ -9,7 +14,7 @@ import UsageBar from "./UsageBar";
 import type { OseItem } from "@src/ReactorSheet/types/types";
 import { useState } from "react";
 import GridView from "./GridView";
-import { showDeleteDialog } from "../../shared/showDeleteDialog";
+import { showDeleteDialog } from "../../shared/foundryDialogs";
 
 export default function InventoryPage() {
   const [gridView, setGridView] = useState(true);
@@ -119,15 +124,20 @@ export default function InventoryPage() {
     },
   ];
   return (
-    <div className="flex-col gap-3" style={{ overflow: "hidden" }}>
-      <Row $justify="end">
-        <Text>View:</Text>
-        <button onClick={() => setGridView(true)}>
-          <i className="fa fa-grid" />
-        </button>
-        <button onClick={() => setGridView(false)}>
-          <i className="fa fa-list" />
-        </button>
+    <div className="flex-col" style={{ overflow: "hidden" }}>
+      <Row $justify="space-between" className="mb-2">
+        <div>
+          <TextLarge>Inventory</TextLarge>
+        </div>
+        <div className="flex-row gap-2" style={{ alignItems: "center" }}>
+          <TextSmall>View:</TextSmall>
+          <button onClick={() => setGridView(true)}>
+            <i className="fa fa-grid" />
+          </button>
+          <button onClick={() => setGridView(false)}>
+            <i className="fa fa-list" />
+          </button>
+        </div>
       </Row>
       {gridView ? (
         <GridView items={items} />
