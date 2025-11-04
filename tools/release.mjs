@@ -75,7 +75,7 @@ function commitRelease(newVersion) {
   const message = `Manifest updated for version ${newVersion}`
   console.log(`Committing changes: "${message}"`)
   if (dryRun) return
-  execSync(`git add -A && git commit -m "${message}" && git push origin`, { stdio: 'inherit' });
+  execSync(`git add -A && git commit -m "${message}"`, { stdio: 'inherit' });
 }
 
 // Check if GitHub CLI is available
@@ -89,14 +89,15 @@ function ensureGithubCLI() {
   }
 }
 
-function buildArchive(tag) {
+function buildArchive() {
   const cmd = `zip -r build/module.zip module.json dist/ lang/ templates/ README.md`;
-  console.log(`Building archive for version ${tag}...`);
+  console.log(`Building archive...`);
   execSync(cmd, { stdio: 'inherit' });
 }
 
 function createGithubRelease(tag) {
-  const cmd = `gh release create ${tag} --title "${tag}" --generate-notes build/module.zip \
+  const cmd = `git push \
+    && gh release create ${tag} --title "${tag}" --generate-notes build/module.zip module.json \
     && git fetch --tags origin`;
   console.log(`Creating GitHub release with command: ${cmd}`);
   if (dryRun) return;
@@ -109,6 +110,7 @@ const newVersion = getNewVersion(moduleManifest.version, releaseType)
 
 abortIfGitDirty()
 ensureGithubCLI()
+buildArchive(newVersion)
 updateManifest(newVersion)
 buildDist()
 commitRelease(newVersion)
