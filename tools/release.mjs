@@ -2,9 +2,10 @@ import moduleManifest from "../module.json" with { type: "json" };
 import { writeFileSync } from 'fs';
 import { execSync } from 'child_process';
 import { create } from "domain";
+import path from "path";
 
 const args = process.argv.slice(2);
-const currentVersion = moduleManifest.version;
+const { version: currentVersion, url: githubRepository }= moduleManifest.version;
 
 function getArguments() {
   const releaseType = args.find(arg => arg.startsWith('--type='))?.split('=')[1];
@@ -44,8 +45,14 @@ function getNewVersion(currentVersion, releaseType) {
 // Update manifest and write back to file
 function updateManifest(newVersion) {
   console.log(`Updating manifest version version: ${newVersion}`);
-  if (dryRun) return;
+  
   moduleManifest.version = newVersion;
+  moduleManifest.manifest = `${moduleManifest.url}/releases/download/${newVersion}/module.json`;
+  moduleManifest.download = `${moduleManifest.url}/releases/download/${newVersion}/module.zip`;
+  if (dryRun) {
+    console.log("New module.json:", JSON.stringify(moduleManifest, null, 2));
+    return
+  }
   writeFileSync('./module.json', JSON.stringify(moduleManifest, null, 2) + '\n');
   console.log(`Version updated from ${currentVersion} to ${newVersion}`);
 }
@@ -82,8 +89,15 @@ function ensureGithubCLI() {
   }
 }
 
+function buildArchive(tag) {
+  const cmd = `zip -r build/module.zip module.json dist/ lang/ templates/ README.md`;
+  console.log(`Building archive for version ${tag}...`);
+  execSync(cmd, { stdio: 'inherit' });
+}
+
 function createGithubRelease(tag) {
-  const cmd = `gh release create ${tag} --title "${tag}" --generate-notes && git fetch --tags origin`;
+  const cmd = `gh release create ${tag} --title "${tag}" --generate-notes build/module.zip \
+    && git fetch --tags origin`;
   console.log(`Creating GitHub release with command: ${cmd}`);
   if (dryRun) return;
   execSync(cmd, { stdio: 'inherit' });
