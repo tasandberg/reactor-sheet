@@ -1,8 +1,6 @@
 import moduleManifest from "../module.json" with { type: "json" };
 import { writeFileSync } from 'fs';
 import { execSync } from 'child_process';
-import { create } from "domain";
-import path from "path";
 
 const args = process.argv.slice(2);
 const { version: currentVersion, url: githubRepository }= moduleManifest.version;
@@ -111,8 +109,8 @@ const newVersion = getNewVersion(moduleManifest.version, releaseType)
 abortIfGitDirty()
 ensureGithubCLI()
 updateManifest(newVersion)
-buildArchive(newVersion)
 buildDist()
+buildArchive(newVersion)
 commitRelease(newVersion)
 createGithubRelease(newVersion)
 
