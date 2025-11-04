@@ -32,7 +32,7 @@ export default function SpellbookLevel({
       <Row
         $justify="space-between"
         $align="center"
-        $gap={"0"}
+        $gap={"none"}
         className="pl-2 pr-2"
       >
         <Text>Level {level}</Text>

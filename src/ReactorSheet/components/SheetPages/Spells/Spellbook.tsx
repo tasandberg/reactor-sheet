@@ -15,7 +15,7 @@ export default function SpellBook() {
   }
 
   return (
-    <Column $gap={"0"}>
+    <Column $gap={"none"}>
       <ActionHeader>
         <Row>
           <img
