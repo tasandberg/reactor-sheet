@@ -45,7 +45,6 @@ function updateManifest(newVersion) {
   console.log(`Updating manifest version version: ${newVersion}`);
   
   moduleManifest.version = newVersion;
-  moduleManifest.manifest = `${moduleManifest.url}/releases/download/${newVersion}/module.json`;
   moduleManifest.download = `${moduleManifest.url}/releases/download/${newVersion}/module.zip`;
   if (dryRun) {
     console.log("New module.json:", JSON.stringify(moduleManifest, null, 2));
@@ -70,7 +69,7 @@ function buildDist() {
 }
 
 function commitRelease(newVersion) {
-  const message = `Manifest updated for version ${newVersion}`
+  const message = `Release ${newVersion}`
   console.log(`Committing changes: "${message}"`)
   if (dryRun) return
   execSync(`git add -A && git commit -m "${message}"`, { stdio: 'inherit' });

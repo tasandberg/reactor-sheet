@@ -13,12 +13,8 @@
     "minimum": "13",
     "verified": "13"
   },
-  "styles": [
-    "dist/main.css"
-  ],
-  "esmodules": [
-    "dist/main.js"
-  ],
+  "styles": ["dist/main.css"],
+  "esmodules": ["dist/main.js"],
   "packs": [],
   "languages": [
     {
@@ -29,16 +25,7 @@
   ],
   "flags": {
     "hotReload": {
-      "extensions": [
-        "css",
-        "html",
-        "hbs",
-        "json",
-        "mjs",
-        "js",
-        "ts",
-        "tsx"
-      ]
+      "extensions": ["css", "html", "hbs", "json", "mjs", "js", "ts", "tsx"]
     }
   },
   "relationships": {
@@ -51,6 +38,6 @@
     ]
   },
   "url": "https://github.com/tasandberg/reactor-sheet",
-  "manifest": "https://github.com/tasandberg/reactor-sheet/releases/download/0.1.11/module.json",
+  "manifest": "https://raw.githubusercontent.com/tasandberg/reactor-sheet/main/module.json",
   "download": "https://github.com/tasandberg/reactor-sheet/releases/download/0.1.11/module.zip"
 }
