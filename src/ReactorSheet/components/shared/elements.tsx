@@ -56,6 +56,7 @@ export const Flex = styled.div<{
   $align?: string;
   $justify?: string;
   $gap?: keyof typeof spacer;
+  $wrap?: boolean;
 }>`
   display: flex;
   flex-direction: ${(props) => (props.$dir ? props.$dir : "row")};
@@ -64,6 +65,7 @@ export const Flex = styled.div<{
   justify-content: ${(props) =>
     props.$justify ? props.$justify : "flex-start"};
   width: 100%;
+  flex-wrap: ${(props) => (props.$wrap ? "wrap" : "nowrap")};
 `;
 
 export const Row = styled(Flex)`

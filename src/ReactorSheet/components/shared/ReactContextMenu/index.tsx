@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { MENU_WIDTH, type ContextMenuItem } from "./types";
-import { colors } from "../elements-vars";
+import { colors, fontSizes } from "../elements-vars";
 
 const ReactContextMenuContainer = styled.div<{
   $top?: string;
@@ -20,10 +20,17 @@ const ReactContextMenuContainer = styled.div<{
   z-index: 1000;
 `;
 
+const ReactMenuTitle = styled.div`
+  padding: 8px 12px;
+  font-size: ${fontSizes.medium};
+  color: ${colors.hint};
+  border-bottom: 1px solid ${colors.border};
+`;
+
 const ReactContextMenuItem = styled.div`
   padding: 8px 12px;
   cursor: pointer;
-  font-size: 0.875rem;
+  font-size: ${fontSizes.small};
   color: ${colors.label};
   opacity: 0.8;
 
@@ -36,21 +43,18 @@ const ReactContextMenuItem = styled.div`
   }
 `;
 
-const positions: Record<string, { $top: string; $left: string }> = {
-  top: {
+const positions: Record<string, { $top?: string; $left?: string }> = {
+  topRight: {
     $top: `-70px`,
-    $left: `1rem`,
   },
-  bottom: {
-    $top: `calc(100% + 0px)`,
-    $left: `1rem`,
+  topLeft: {
+    $top: `-70px`,
+    $left: `-100px`,
   },
   left: {
-    $top: `1rem`,
     $left: `-100px`,
   },
   right: {
-    $top: `1rem`,
     $left: `1rem`,
   },
 };
@@ -59,11 +63,13 @@ export default function ReactContextMenu({
   items,
   position = "right",
   show = false,
+  title,
   onHide,
 }: {
   items: ContextMenuItem[];
-  position: "top" | "left" | "bottom" | "right";
+  position: "right" | "left" | "topRight" | "topLeft";
   show: boolean;
+  title?: string;
   onHide: () => void;
 }) {
   const { $top, $left } = positions[position];
@@ -74,6 +80,7 @@ export default function ReactContextMenu({
       $left={$left}
       onMouseLeave={onHide}
     >
+      {title && <ReactMenuTitle>{title}</ReactMenuTitle>}
       {items.map((item) => (
         <ReactContextMenuItem
           key={item.name}

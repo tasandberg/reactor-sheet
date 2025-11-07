@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { useReactorSheetContext } from "./context";
-import { SectionHeader } from "./shared/elements";
+import { useReactorSheetContext } from "../context";
+import { SectionHeader } from "../shared/elements";
 
 const MovementWrapper = styled.div`
   margin: 8px 0;

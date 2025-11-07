@@ -1,4 +1,4 @@
-import ActorImage from "../ActorImage";
+import ActorImage from "./ActorImage";
 import { Column } from "../shared/elements";
 import { colors } from "../shared/elements-vars";
 import ACShield from "./ACShield";

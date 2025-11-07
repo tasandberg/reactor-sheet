@@ -44,13 +44,15 @@ function ReactorSheetProvider({
   }
 
   useEffect(() => {
-    contextConnector.onUpdate(
-      foundry.utils.debounce(({ document }: { document: OSEActor }) => {
+    const handleUpdate = foundry.utils.debounce(
+      ({ document }: { document: OSEActor }) => {
         _setTimestampedActor(document);
         setItems([...(document.items.contents as OseItem[])]);
-      }, 200)
+      },
+      200
     );
-  });
+    contextConnector.onUpdate(handleUpdate);
+  }, [contextConnector]);
 
   const context = {
     actor,

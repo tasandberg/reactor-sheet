@@ -2,6 +2,19 @@ import { showDeleteDialog } from "@src/ReactorSheet/components/shared/foundryDia
 import type { OseItem } from "@src/ReactorSheet/types/types";
 
 export default function itemMenuItems(item: OseItem) {
+  async function deleteContainerItems(item: OseItem) {
+    if (item.type !== "container") return;
+    const containedItems = item.system?.contents || [];
+    const updateData = containedItems.map((i: OseItem) => ({
+      _id: i.id,
+      "system.containerId": "",
+    }));
+    await item.parent?.updateEmbeddedDocuments(
+      "Item",
+      updateData as Item.UpdateData[]
+    );
+    item.delete();
+  }
   return [
     {
       name: "View Item",
@@ -21,7 +34,11 @@ export default function itemMenuItems(item: OseItem) {
       name: "Delete Item",
       icon: "fas fa-trash",
       callback: () => {
-        showDeleteDialog(item);
+        const callBack =
+          item.type === "container"
+            ? () => deleteContainerItems(item)
+            : undefined;
+        showDeleteDialog(item, callBack);
       },
     },
   ];

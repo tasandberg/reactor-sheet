@@ -4,7 +4,7 @@ import { useReactorSheetContext } from "../context";
 import { Column, Row, Text, TextSmall } from "../shared/elements";
 import React from "react";
 import ExperienceBar from "./ExperienceBar";
-import Encumbrance from "../Encumbrance";
+import Encumbrance from "./Encumbrance";
 import HitPoints from "./HitPoints";
 import { diceIcon } from "../shared/elements-vars";
 

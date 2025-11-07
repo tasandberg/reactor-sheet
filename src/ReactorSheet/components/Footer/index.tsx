@@ -16,6 +16,8 @@ export default function Footer() {
         gridArea: "footer",
         padding: "0.5rem",
         background: "#222",
+        position: "absolute",
+        bottom: 0,
         height: "100px",
         width: "100%",
         borderTop: "1px solid #444",

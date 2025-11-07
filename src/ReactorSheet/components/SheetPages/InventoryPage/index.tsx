@@ -1,6 +1,5 @@
 import clsx from "clsx";
 import { useReactorSheetContext } from "../../context";
-import Encumbrance from "../../Encumbrance";
 import {
   Row,
   SectionHeader,
@@ -140,7 +139,7 @@ export default function InventoryPage() {
         </div>
       </Row>
       {gridView ? (
-        <GridView items={items} />
+        <GridView />
       ) : (
         Object.entries(categorizedItems).map(([category, items]) => (
           <div key={category}>
@@ -157,7 +156,6 @@ export default function InventoryPage() {
         ))
       )}
       <Money />
-      <Encumbrance />
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useReactorSheetContext } from "./context";
+import { useReactorSheetContext } from "../context";
 
 const ActorImg = styled.img`
   @extend .bloody-box;

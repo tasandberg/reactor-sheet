@@ -1,6 +1,6 @@
 import type { OseItem } from "@src/ReactorSheet/types/types";
 
-export function showDeleteDialog(item: OseItem) {
+export function showDeleteDialog(item: OseItem, callBack?: () => void) {
   foundry.applications.api.DialogV2.confirm({
     window: {
       title: game.i18n.localize("OSE.dialog.deleteItem"),
@@ -11,7 +11,8 @@ export function showDeleteDialog(item: OseItem) {
     yes: {
       default: false,
       callback: () => {
-        item.delete();
+        if (callBack) callBack();
+        else item.delete();
       },
     },
     defaultYes: false,

@@ -1,13 +1,7 @@
 import { Row, TextTiny } from "@src/ReactorSheet/components/shared/elements";
 import type { OseItem } from "@src/ReactorSheet/types/types";
 import styled from "styled-components";
-import { colors } from "@src/ReactorSheet/components/shared/elements-vars";
-import { useEffect, useRef, useState, type Dispatch } from "react";
-import {
-  draggable,
-  dropTargetForElements,
-} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { useRef } from "react";
 import useContextMenu from "@src/ReactorSheet/components/shared/ReactContextMenu/useContextMenu";
 import EquipButton from "../EquipButton";
 import itemMenuItems from "./item-menu-items";
@@ -16,20 +10,10 @@ const ItemSquareContainer = styled.div<{
   $selected?: boolean;
   $dragging?: boolean;
 }>`
-  border: 1px solid
-    ${(props) => (props.$dragging ? colors.border : "transparent")};
   border-radius: 4px;
   position: relative;
   display: flex;
   flex-direction: column;
-
-  ${({ $selected }) =>
-    $selected &&
-    `
-    border: 1px solid ${colors.border};
-    grid-column: span 4;
-    grid-row: span 3;
-  `}
 `;
 
 const ItemImg = styled.div<{ $image?: string }>`
@@ -64,46 +48,13 @@ const QuantityBadge = ({ current, max }: { current: number; max: number }) => (
   </div>
 );
 
-export default function ItemSquare({
-  item,
-  idx,
-}: {
-  item: OseItem;
-  select: (id: string) => void;
-  isSelected: boolean;
-  removeItem: () => void;
-  isLast: boolean;
-  setItems: Dispatch<React.SetStateAction<OseItem[]>>;
-  idx: number;
-}) {
-  const [isDragging, setIsDragging] = useState(false);
+export default function InventoryItem({ item }: { item: OseItem }) {
   const name = item.name as string;
   const ref = useRef<HTMLDivElement>(null);
   const { showMenu, Menu, hideMenu } = useContextMenu({
     ref,
     items: itemMenuItems(item),
-  });
-
-  useEffect(() => {
-    const cleanup = combine(
-      draggable({
-        element: ref.current,
-        onDragStart: () => {
-          console.log("drag");
-          setIsDragging(true);
-        },
-        onDrop: () => {
-          setIsDragging(false);
-        },
-        getInitialData: () => ({ item, idx }),
-      }),
-      dropTargetForElements({
-        element: ref.current,
-        getData: () => ({ item, idx }),
-        getIsSticky: () => true,
-      })
-    );
-    return cleanup;
+    title: name,
   });
 
   return (
@@ -112,16 +63,12 @@ export default function ItemSquare({
         onDoubleClick={() => item.sheet.render(true)}
         onContextMenu={showMenu}
         onMouseLeave={hideMenu}
-        style={{
-          opacity: isDragging ? 0.5 : 1,
-        }}
-        $dragging={isDragging}
         ref={ref}
       >
         <Row $align="start" className="item-square-inner position-relative">
           <Menu />
           <ItemImg $image={item.img} />
-          {item.system.quantity.max > 0 && (
+          {item.system.quantity && item.system.quantity.max > 0 && (
             <QuantityBadge
               current={item.system.quantity.value}
               max={item.system.quantity.max}
@@ -133,8 +80,8 @@ export default function ItemSquare({
         </Row>
         <Row $justify="center">
           <TextTiny>
-            {name.substring(0, 10)}
-            {name.length > 10 && "..."}
+            {name.substring(0, 8)}
+            {name.length > 8 && "..."}
           </TextTiny>
         </Row>
       </ItemSquareContainer>

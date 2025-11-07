@@ -5,38 +5,46 @@ import ReactContextMenu from ".";
 export default function useContextMenu({
   items,
   ref,
+  title,
   boundingElementId = "tab-content-container",
 }: {
   items: ContextMenuItem[];
   ref: React.RefObject<HTMLElement>;
+  title?: string;
   boundingElementId?: string;
 }) {
   const [show, setShow] = useState(false);
-  const [position, setPosition] = useState<"right" | "left" | "top" | "bottom">(
-    "right"
-  );
+  const [position, setPosition] = useState<
+    "right" | "left" | "topRight" | "topLeft"
+  >("right");
 
   function showMenu() {
     const container = document.getElementById(boundingElementId);
     const containerRect = container?.getBoundingClientRect();
     const selfRect = ref.current?.getBoundingClientRect();
-    if (selfRect.right + 150 > (containerRect?.right || window.innerWidth)) {
-      // would overflow right edge
+
+    const collidesWithRightEdge =
+      selfRect.right + 150 > (containerRect?.right || window.innerWidth);
+    const collidesWithBottomEdge =
+      selfRect.bottom + 200 > containerRect.bottom + container.scrollTop;
+
+    if (collidesWithBottomEdge) {
+      if (collidesWithRightEdge) {
+        setPosition("topLeft");
+      } else {
+        setPosition("topRight");
+      }
+    } else if (collidesWithRightEdge) {
       setPosition("left");
+    } else {
+      setPosition("right");
     }
-    if (selfRect.bottom + 80 > containerRect.bottom + container.scrollTop) {
-      // would overflow bottom edge
-      setPosition("top");
-    }
-    // console.log("showMenu", { selfRect, containerRect });
     setShow(true);
   }
 
   function hideMenu() {
     setShow(false);
   }
-
-  // console.log("scrollParent", scrollParent?.scrollTop);
 
   return {
     show,
@@ -48,6 +56,7 @@ export default function useContextMenu({
         items={items}
         position={position}
         show={show}
+        title={title}
         onHide={hideMenu}
       />
     ),

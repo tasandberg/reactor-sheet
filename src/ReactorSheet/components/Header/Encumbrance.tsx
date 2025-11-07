@@ -1,5 +1,5 @@
-import { useReactorSheetContext } from "./context";
-import { Row, TextTiny } from "./shared/elements";
+import { useReactorSheetContext } from "../context";
+import { Row, TextTiny } from "../shared/elements";
 
 export default function Encumbrance() {
   const { actorData } = useReactorSheetContext();

@@ -4,6 +4,7 @@ import EditableContent from "./EditableContent";
 
 export default function Notes() {
   const { actor } = useReactorSheetContext();
+
   return (
     <Column $align="start">
       <EditableContent

@@ -2,7 +2,7 @@ import styled, { keyframes } from "styled-components";
 import { useReactorSheetContext } from "./context";
 import { tabs } from "./shared/tabs";
 
-const CONTENT_HEIGHT = "380px";
+const CONTENT_HEIGHT = "500px";
 const FadeTransition = keyframes`
   0% {
     display: none;
@@ -28,7 +28,7 @@ const TabsContainer = styled.div`
   overflow: hidden auto;
   padding: 1rem;
   scrollbar-gutter: stable;
-  padding-bottom: 2rem;
+  padding-bottom: 140px;
   z-index: 0;
 `;
 

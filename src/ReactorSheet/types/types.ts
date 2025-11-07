@@ -133,6 +133,7 @@ export type OseItem = Omit<Item, "type"> & {
     totalWeight?: number;
     equipped?: boolean;
     tags?: { label: string; value: string; icon: string }[];
+    treasure: boolean;
     weight: number;
   };
   rollWeapon: (options: { skipDialog: boolean }) => void;
