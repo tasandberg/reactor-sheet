@@ -2,7 +2,7 @@
   "id": "reactor-sheet",
   "title": "OSE Re-Actor Sheet",
   "description": "An alternative OSE character sheet for foundry.",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "authors": [
     {
       "name": "Tim Sandberg",
@@ -52,5 +52,5 @@
   },
   "url": "https://github.com/tasandberg/reactor-sheet",
   "manifest": "https://raw.githubusercontent.com/tasandberg/reactor-sheet/main/module.json",
-  "download": "https://github.com/tasandberg/reactor-sheet/releases/download/0.1.12/module.zip"
+  "download": "https://github.com/tasandberg/reactor-sheet/releases/download/0.1.13/module.zip"
 }
