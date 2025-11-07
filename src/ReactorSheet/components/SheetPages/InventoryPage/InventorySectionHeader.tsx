@@ -13,7 +13,7 @@ export default function InventorySectionHeader({
   img?: string;
   label: string;
   helperText?: string;
-  item: OseItem | undefined;
+  item?: OseItem;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const { showMenu, Menu } = useContextMenu({

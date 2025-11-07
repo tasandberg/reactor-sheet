@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useReactorSheetContext } from "./context";
+import { useReactorSheetContext } from "../context";
 
 const ArmorClassWrapper = styled.div<{ $percentage?: number }>`
   padding: 0.25rem;
