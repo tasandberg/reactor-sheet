@@ -1,133 +1,131 @@
-import styled from "styled-components";
 import { InlineInput } from "../InlineInput";
 import { useReactorSheetContext } from "../context";
 import { Column, Row, Text, TextSmall } from "../shared/elements";
 import React from "react";
-import ExperienceBar from "./ExperienceBar";
-import Encumbrance from "./Encumbrance";
 import HitPoints from "./HitPoints";
-import { diceIcon, fontSizes } from "../shared/elements-vars";
+import { diceIcon, spacer, fontSizes } from "../shared/elements-vars";
+import GenericProgress from "../shared/GenericProgress";
 
-const InfoGrid = styled.div`
-  display: grid;
-  grid-template-columns: min-content 1fr min-content 1fr;
-  align-items: center;
-  gap: 0.35rem 1rem;
-  width: 100%;
-  flex-grow: 3;
-`;
-
-const InfoGridItem = ({
+function ActorInfoField({
   label,
   value,
-  align = "center",
-  labelWidth = 1,
-  labelSize = "sm",
-  valueWidth = 1,
+  name,
+  update,
+  inputSize,
 }: {
   label: string;
-  value: string | number | React.ReactNode;
-  align?: "start" | "center" | "end";
-  valueWidth?: number;
-  labelWidth?: number;
-  labelSize?: keyof typeof fontSizes;
-}) => (
-  <>
-    <Text
-      $color="label"
-      $size={labelSize}
-      style={{
-        gridColumnEnd: `span ${labelWidth}`,
-        justifySelf: "start",
-        alignSelf: "center",
-      }}
-    >
-      {label}
-    </Text>
-    <div style={{ gridColumnEnd: `span ${valueWidth}` }}>
-      {React.isValidElement(value) ? (
-        value
-      ) : (
-        <TextSmall
-          style={{
-            justifySelf: "start",
-            alignSelf: align,
-          }}
-        >
-          {value}
+  value: string | number;
+  name: string;
+  update?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  inputSize?: number;
+}) {
+  return (
+    <Row style={{ width: "auto" }}>
+      <TextSmall $color="label">{label}</TextSmall>
+      {update ? (
+        <TextSmall>
+          <InlineInput
+            type={typeof value === "number" ? "number" : "text"}
+            style={{
+              width: inputSize || 60,
+              height: "20px",
+              paddingLeft: spacer.xs,
+            }}
+            name={name}
+            value={value}
+            onChange={update}
+          />
         </TextSmall>
+      ) : (
+        <TextSmall className="pl-1">{value}</TextSmall>
       )}
-    </div>
-  </>
-);
+    </Row>
+  );
+}
 
 export default function ActorInfo() {
-  const { actor, updateActor } = useReactorSheetContext();
+  const { actor, actorData, updateActor } = useReactorSheetContext();
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     updateActor({ [name]: value });
   };
 
   return (
-    <Column className="w-100">
-      <div className="w-100">
+    <Column className="w-100" $gap="sm">
+      <Column $gap="sm" $align="start">
         <h1 className="m-0">
           <InlineInput
             type="text"
             name="name"
             placeholder="Character Name"
             defaultValue={actor.name}
+            style={{ paddingLeft: 0 }}
             onBlur={handleChange}
           />
         </h1>
         <Text $color="secondary">
           {actor.system.details.class + " " + actor.system.details.level}
         </Text>
-      </div>
-      <Row className="w-100">
-        <Text $color="label">HP:</Text>
-        <HitPoints />
-      </Row>
-
-      <Row className="w-100">
-        <InfoGrid>
-          <InfoGridItem
+        <Row>
+          <TextSmall $color="label">HP:</TextSmall>
+          <HitPoints />
+        </Row>
+        <Row $wrap $align="center" $justify="start" $gap="md">
+          <ActorInfoField
             label="XP:"
-            labelWidth={1}
-            valueWidth={3}
-            value={<ExperienceBar actor={actor} />}
+            name="system.details.xp.value"
+            value={actorData.details.xp.value}
+            update={handleChange}
           />
-          <InfoGridItem
-            label="Encumbrance:"
-            labelWidth={1}
-            valueWidth={3}
-            value={<Encumbrance />}
+          <ActorInfoField
+            label="Next Level:"
+            name="system.details.xp.next"
+            value={actorData.details.xp.next}
+            update={handleChange}
           />
-          <InfoGridItem
-            label="HD:"
-            valueWidth={1}
-            value={
-              <div style={{ alignSelf: "center" }}>
-                <a
-                  className="inline-roll roll"
-                  data-mode="roll"
-                  data-formula="1d4"
-                  data-tooltip-text="1d4"
-                  data-flavor={`Hit Die`}
-                >
-                  <i className={diceIcon.d4} />
-                  {actor.system.hp.hd}
-                </a>
-              </div>
-            }
-          />
-          <InfoGridItem
+          <Row style={{ width: "auto" }}>
+            <TextSmall $color="label">Hit Dice:</TextSmall>
+            <a
+              className="inline-roll roll text-sm"
+              data-mode="roll"
+              data-formula="1d4"
+              data-tooltip-text="Hit Dice 1d4"
+              data-flavor={`Hit Die`}
+            >
+              <i className={diceIcon.d4} />
+              {actor.system.hp.hd}
+            </a>
+          </Row>
+        </Row>
+        <Row $wrap $align="center" $justify="start" $gap="md">
+          <ActorInfoField
             label={"Alignment:"}
-            valueWidth={1}
-            value={actor.system.details.alignment || "Unaligned"}
+            name="system.details.alignment"
+            value={actorData.details.alignment}
+            update={handleChange}
           />
-        </InfoGrid>
-      </Row>
+          <ActorInfoField
+            label={"Title:"}
+            name="system.details.title"
+            value={actorData.details.title}
+            inputSize={100}
+            update={handleChange}
+          />
+        </Row>
+        <Row>
+          <TextSmall $color="label">Enc:</TextSmall>
+          <GenericProgress
+            max={20}
+            styles={{ width: "150px" }}
+            value={Math.ceil(
+              (actorData.encumbrance.value / actorData.encumbrance.max) * 20
+            )}
+          />
+          <TextSmall>
+            {actorData.encumbrance.value}/{actorData.encumbrance.max}gp
+          </TextSmall>
+        </Row>
+      </Column>
     </Column>
   );
 }

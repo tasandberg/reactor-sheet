@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const ProgressBar = styled.div<{ $percentage: number; $color?: string }>`
   width: 100%;
-  height: 25px;
+  height: 100%;
   max-width: 200px;
   position: relative;
   border-radius: 25px;

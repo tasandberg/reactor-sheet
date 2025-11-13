@@ -35,10 +35,11 @@ export default function HitPoints() {
   return isEditing ? (
     <form
       style={{
-        display: "grid",
-        gridTemplateColumns: "auto auto",
+        display: "flex",
+        flexDirection: "row",
         alignItems: "center",
         justifyItems: "end",
+        height: "25px",
         gap: "0.5rem",
       }}
       onSubmit={onChangeHp}
@@ -66,7 +67,6 @@ export default function HitPoints() {
         type="number"
         value={maxHp}
         style={{
-          height: "25px",
           width: "50px",
           textAlign: "center",
           color: "var(--color-text-emphatic)",
@@ -74,9 +74,7 @@ export default function HitPoints() {
         onChange={(e) => setMaxHp(Number((e.target as HTMLInputElement).value))}
         name="system.hp.max"
       />
-      <button style={{ gridColumnStart: "span 2" }} type="submit">
-        Done
-      </button>
+      <button onClick={onChangeHp}>Done</button>
     </form>
   ) : (
     <div className="flex-row align-center gap-1 w-100">

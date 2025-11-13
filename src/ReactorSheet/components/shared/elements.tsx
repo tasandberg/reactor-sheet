@@ -5,10 +5,13 @@ import { colors, fontFamily, fontSizes, spacer } from "./elements-vars";
 export const Text = styled.span<{
   $size?: keyof typeof fontSizes;
   $color?: keyof typeof colors;
+  $font?: keyof typeof fontFamily;
+  $weight?: "normal" | "bold" | "bolder" | "lighter" | number;
 }>`
   font-size: ${({ $size }) => ($size ? fontSizes[$size] : fontSizes.md)};
-  font-family: ${fontFamily.sans};
+  font-family: ${({ $font }) => ($font ? fontFamily[$font] : fontFamily.sans)};
   color: ${({ $color }) => ($color ? colors[$color] : colors.primary)};
+  font-weight: ${({ $weight }) => ($weight ? $weight : "normal")};
 `;
 
 export const TextTiny = styled(Text)`
@@ -76,6 +79,16 @@ export const Column = styled(Flex)`
   flex-direction: column;
 `;
 
+export const Grid = styled.div<{
+  $colTemplate?: string;
+  $gap?: keyof typeof spacer;
+}>`
+  display: grid;
+  grid-template-columns: ${({ $colTemplate }) =>
+    $colTemplate ? $colTemplate : "repeat(auto-fill, 1fr)"};
+  gap: ${({ $gap }) => ($gap ? spacer[$gap] : spacer.sm)};
+`;
+
 // Components
 export const ActionHeader = styled.div`
   padding: ${spacer.xs} 0;
@@ -84,16 +97,9 @@ export const ActionHeader = styled.div`
 `;
 
 export const IncrementButton = styled.button`
-  min-width: 20px;
-  min-height: 20px;
-  flex-grow: 0;
-  flex-shrink: 0;
-  height: 100%;
-  font-size: 0.75rem;
-  padding: 0;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 15px;
+  height: 15px;
+  font-size: 0.5rem;
+
   cursor: pointer;
 `;
