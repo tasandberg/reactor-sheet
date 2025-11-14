@@ -5,6 +5,7 @@ import React from "react";
 import HitPoints from "./HitPoints";
 import { diceIcon, spacer, fontSizes } from "../shared/elements-vars";
 import GenericProgress from "../shared/GenericProgress";
+import { APP_ID } from "@src/constants";
 
 function ActorInfoField({
   label,
@@ -70,7 +71,33 @@ export default function ActorInfo() {
           <TextSmall $color="label">HP:</TextSmall>
           <HitPoints />
         </Row>
-        <Row $wrap $align="center" $justify="start" $gap="md">
+        <Row
+          $wrap
+          $align="center"
+          $justify="start"
+          $gap="sm"
+          style={{ rowGap: spacer.sm }}
+        >
+          <ActorInfoField
+            label="Race:"
+            name={`flags.${APP_ID}.race`}
+            value={actor.flags[APP_ID]?.race || ""}
+            update={handleChange}
+            inputSize={80}
+          />
+          <ActorInfoField
+            label="Class:"
+            name="system.details.class"
+            value={actorData.details.class}
+            update={handleChange}
+            inputSize={80}
+          />
+          <ActorInfoField
+            label="Level:"
+            name="system.details.level"
+            value={actorData.details.level}
+            update={handleChange}
+          />
           <ActorInfoField
             label="XP:"
             name="system.details.xp.value"
