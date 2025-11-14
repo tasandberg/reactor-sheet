@@ -1,6 +1,6 @@
 import { InlineInput } from "../InlineInput";
 import { useReactorSheetContext } from "../context";
-import { Column, Row, Text, TextSmall } from "../shared/elements";
+import { Column, Row, TextSmall } from "../shared/elements";
 import React from "react";
 import HitPoints from "./HitPoints";
 import { diceIcon, spacer, fontSizes } from "../shared/elements-vars";
@@ -64,9 +64,6 @@ export default function ActorInfo() {
             onBlur={handleChange}
           />
         </h1>
-        <Text $color="secondary">
-          {actor.system.details.class + " " + actor.system.details.level}
-        </Text>
         <Row>
           <TextSmall $color="label">HP:</TextSmall>
           <HitPoints />
