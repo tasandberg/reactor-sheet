@@ -5,6 +5,13 @@ import { Badge, Column, TextLarge } from "../../shared/elements";
 import GridTable from "../../shared/GridTable";
 import { showDeleteDialog } from "../../shared/foundryDialogs";
 import Languages from "../Notes/Languages";
+import {
+  addAbilitiesToCharacter,
+  getClassAbilities,
+  getRaceAbilities,
+  resetAbilities,
+} from "@src/lib/ose-compendiums";
+import { APP_ID } from "@src/constants";
 
 const abilityColumns: GridTableColumn<OseAbility>[] = [
   {
@@ -56,12 +63,36 @@ const abilityColumns: GridTableColumn<OseAbility>[] = [
     ),
   },
 ];
+
 export default function Abilities() {
   const { actor } = useReactorSheetContext();
   const abilities = Object.values(actor.system.abilities ?? {});
   return (
     <Column $justify="start" $align="start" $gap="md">
       <TextLarge>Abilities</TextLarge>
+      <button
+        onClick={async () => {
+          const abilities = await getRaceAbilities(actor.flags[APP_ID]?.race);
+          await addAbilitiesToCharacter(actor, abilities);
+        }}
+      >
+        Add race abilities ({actor.flags[APP_ID]?.race})
+      </button>
+      <button
+        onClick={async () => {
+          const abilities = await getClassAbilities(actor.system.details.class);
+          await addAbilitiesToCharacter(actor, abilities);
+        }}
+      >
+        Add class abilities ({actor.system.details.class})
+      </button>
+      <button
+        onClick={async () => {
+          await resetAbilities(actor);
+        }}
+      >
+        🗑️ Reset Abilities
+      </button>
       <GridTable<OseAbility>
         showHeader={false}
         columns={abilityColumns}
