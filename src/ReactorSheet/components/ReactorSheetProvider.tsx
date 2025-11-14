@@ -3,6 +3,8 @@ import { ReactorSheetContext } from "./context";
 import type { OSEActor, OseItem, ReactorContext } from "../types/types";
 import type { ContextConnector } from "foundry-vtt-react";
 import { TabIds } from "./shared/tabs";
+import { OSE_MODES } from "@src/lib/ose-compendiums";
+import getOseMode from "@src/util/ose-mode";
 
 function ReactorSheetProvider({
   initialActor,
@@ -17,7 +19,14 @@ function ReactorSheetProvider({
 }) {
   const [actor, setActor] = useState<OSEActor>(initialActor);
   const [actorData, setActorData] = useState(initialActor.system);
+<<<<<<< HEAD
   const [items, setItems] = useState<OseItem[]>(initialActor.items.contents as OseItem[]);
+=======
+  const [items, setItems] = useState<OseItem[]>(
+    initialActor.items.contents as OseItem[]
+  );
+
+>>>>>>> 3160ed8 (Add OSE mode setting)
   const [currentTab, setCurrentTab] = useState<TabIds>(TabIds.ACTIONS);
 
   const _setTimestampedActor = (updatedActor: OSEActor) => {
@@ -51,12 +60,18 @@ function ReactorSheetProvider({
     };
   }, [contextConnector]);
 
+  const ruleMode = getOseMode();
+
   const context = {
     actor,
     actorData,
     source,
     items,
     currentTab,
+    oseMode: {
+      advanced: ruleMode === OSE_MODES.ADVANCED,
+      classic: ruleMode === OSE_MODES.CLASSIC,
+    },
     setCurrentTab,
     updateActor,
   };

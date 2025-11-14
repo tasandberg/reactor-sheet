@@ -22,7 +22,14 @@ export interface ReactorSheetContextValue {
   actorData: OSEActor["_source"]["system"];
   currentTab: TabIds;
   setCurrentTab: (tabId: TabIds) => void;
+<<<<<<< HEAD
   updateActor: (updateData: { [key: string]: string | number | string[] }) => Promise<OSEActor | void>;
+=======
+  oseMode: { advanced: boolean; classic: boolean };
+  updateActor: (updateData: {
+    [key: string]: string | number | string[];
+  }) => Promise<OSEActor | void>;
+>>>>>>> 3160ed8 (Add OSE mode setting)
 }
 
 export type OSESave = "breath" | "death" | "paralysis" | "spell" | "wand";

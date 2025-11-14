@@ -1,9 +1,11 @@
 import ReactorSheet from "./applications/reactor-sheet";
+import { setupConfig } from "./config";
 import logger from "./util/logger";
 
 export function initialize() {
   Hooks.once("init", () => {
     logger("Foundry React Module | Initializing module");
+    setupConfig();
   });
 
   Hooks.once("ready", async () => {

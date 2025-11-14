@@ -45,7 +45,7 @@ function ActorInfoField({
 }
 
 export default function ActorInfo() {
-  const { actor, actorData, updateActor } = useReactorSheetContext();
+  const { actor, actorData, updateActor, oseMode } = useReactorSheetContext();
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     updateActor({ [name]: value });
@@ -78,13 +78,15 @@ export default function ActorInfo() {
           $gap="sm"
           style={{ rowGap: spacer.sm }}
         >
-          <ActorInfoField
-            label="Race:"
-            name={`flags.${APP_ID}.race`}
-            value={actor.flags[APP_ID]?.race || ""}
-            update={handleChange}
-            inputSize={80}
-          />
+          {oseMode.advanced && (
+            <ActorInfoField
+              label="Race:"
+              name={`flags.${APP_ID}.race`}
+              value={actor.flags[APP_ID]?.race || ""}
+              update={handleChange}
+              inputSize={80}
+            />
+          )}
           <ActorInfoField
             label="Class:"
             name="system.details.class"
