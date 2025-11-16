@@ -69,6 +69,7 @@ export type OSEActor = Actor & {
       encounter: number;
       overland: number;
     };
+    requirements: string;
     spells: {
       spellList: OseSpellList;
       slots: { [n: number]: { used: number; max: number } };
