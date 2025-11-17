@@ -1,6 +1,6 @@
 import ReactorSheetApp from "@src/ReactorSheet";
 
-import { ReactActorSheetV2 } from "foundry-vtt-react-application";
+import { ReactActorSheetV2 } from "foundry-vtt-react";
 
 class ReactorSheet extends ReactActorSheetV2 {
   reactApp = ReactorSheetApp;

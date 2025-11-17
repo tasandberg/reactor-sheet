@@ -5,6 +5,6 @@
  * 2. Inject the actual entrypoint (main.ts)
  */
 import { id as APP_ID } from "../module.json";
-import { devSetup } from "foundry-vtt-react-application";
+import { devSetup } from "foundry-vtt-react";
 
 devSetup(APP_ID, "dist/main.ts");
