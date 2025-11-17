@@ -38,7 +38,7 @@ const config: UserConfig = {
     sourcemap: true,
     lib: {
       name: APP_NAME,
-      entry: path.resolve(__dirname, "src/_main.js"),
+      entry: path.resolve(__dirname, "src/main.ts"),
       formats: ["es"],
       fileName: "main",
     },
