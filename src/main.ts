@@ -1,5 +1,5 @@
 import Peekaboo from "./applications/my-react-component";
-import { ReactApplicationV2 } from "foundry-vtt-react-application";
+import { ReactApplicationV2 } from "foundry-vtt-react";
 import ReactorSheet from "./applications/reactor-sheet";
 import logger from "./util/logger";
 
