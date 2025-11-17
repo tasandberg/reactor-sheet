@@ -1,7 +1,7 @@
-import type ContextConnector from "@src/applications/context-connector";
 import type OseDataModelCharacterAC from "./data-model-character-ac";
 import type OseDataModelCharacterScores from "./data-model-character-scores";
 import type { TabIds } from "../components/shared/tabs";
+import type { ContextConnector } from "foundry-vtt-react";
 
 // Add props as needed
 export type ReactorContext = {
@@ -22,9 +22,7 @@ export interface ReactorSheetContextValue {
   actorData: OSEActor["_source"]["system"];
   currentTab: TabIds;
   setCurrentTab: (tabId: TabIds) => void;
-  updateActor: (updateData: {
-    [key: string]: string | number | string[];
-  }) => Promise<OSEActor | void>;
+  updateActor: (updateData: { [key: string]: string | number | string[] }) => Promise<OSEActor | void>;
 }
 
 export type OSESave = "breath" | "death" | "paralysis" | "spell" | "wand";
@@ -107,14 +105,8 @@ export type OSEActor = Actor & {
       fastForward?: boolean;
     }
   ) => void;
-  rollExploration: (
-    action: string,
-    options: { event?: Event; fastForward?: boolean; chatMessage?: string }
-  ) => void;
-  rollSave: (
-    save: OSESave,
-    options: { event?: Event; fastForward?: boolean; chatMessage?: string }
-  ) => void;
+  rollExploration: (action: string, options: { event?: Event; fastForward?: boolean; chatMessage?: string }) => void;
+  rollSave: (save: OSESave, options: { event?: Event; fastForward?: boolean; chatMessage?: string }) => void;
   update: (updateData: { [key: string]: string | number }) => Promise<OSEActor>;
 };
 
