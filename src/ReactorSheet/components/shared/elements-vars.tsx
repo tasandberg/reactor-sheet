@@ -1,9 +1,9 @@
 export const fontSizes = {
-  tiny: "0.7rem",
-  small: "0.85rem",
-  medium: "1rem",
-  large: "1.5rem",
-  huge: "2rem",
+  xs: "0.7rem",
+  sm: "0.85rem",
+  md: "1rem",
+  lg: "1.5rem",
+  xl: "2rem",
 };
 
 export const spacer = {

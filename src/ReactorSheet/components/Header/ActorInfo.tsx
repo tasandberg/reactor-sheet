@@ -6,7 +6,8 @@ import React from "react";
 import ExperienceBar from "./ExperienceBar";
 import Encumbrance from "./Encumbrance";
 import HitPoints from "./HitPoints";
-import { diceIcon } from "../shared/elements-vars";
+import { diceIcon, fontSizes } from "../shared/elements-vars";
+import clsx from "clsx";
 
 const InfoGrid = styled.div`
   display: grid;
@@ -22,7 +23,7 @@ const InfoGridItem = ({
   value,
   align = "center",
   labelWidth = 1,
-  labelSize = "small",
+  labelSize = "sm",
   valueWidth = 1,
 }: {
   label: string;
@@ -30,7 +31,7 @@ const InfoGridItem = ({
   align?: "start" | "center" | "end";
   valueWidth?: number;
   labelWidth?: number;
-  labelSize?: "small" | "tiny" | "medium" | "large";
+  labelSize?: keyof typeof fontSizes;
 }) => (
   <>
     <Text
@@ -61,7 +62,7 @@ const InfoGridItem = ({
   </>
 );
 
-export default function ActorInfo() {
+export default function ActorInfo({ collapsed }: { collapsed: boolean }) {
   const { actor, updateActor } = useReactorSheetContext();
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -69,9 +70,19 @@ export default function ActorInfo() {
   };
 
   return (
-    <Column className="w-100">
-      <div className="w-100">
-        <h1 className="m-0">
+    <Column
+      className="w-100"
+      $gap={collapsed ? "xs" : "md"}
+      style={{
+        flexDirection: collapsed ? "row" : "column",
+        alignItems: collapsed ? "center" : "flex-start",
+      }}
+    >
+      <div style={{ display: "flex", flexGrow: 0, flexDirection: "column" }}>
+        <h1
+          className={clsx("m-0", { "text-lg": collapsed })}
+          style={{ transition: "font-size 0.2s linear", lineHeight: 1 }}
+        >
           <InlineInput
             type="text"
             name="name"
@@ -80,54 +91,62 @@ export default function ActorInfo() {
             onBlur={handleChange}
           />
         </h1>
-        <Text $color="secondary">
-          {actor.system.details.class + " " + actor.system.details.level}
+        <Text
+          $color="label"
+          $size={collapsed ? "sm" : "md"}
+          style={{ marginTop: -4 }}
+        >
+          {"Level " +
+            actor.system.details.level +
+            " " +
+            actor.system.details.class}
         </Text>
       </div>
-      <Row className="w-100">
-        <Text $color="label">HP:</Text>
+      <Row className="w-100" style={{ flexGrow: 1 }}>
+        <TextSmall $color="label">HP:</TextSmall>
         <HitPoints />
       </Row>
-
-      <Row className="w-100">
-        <InfoGrid>
-          <InfoGridItem
-            label="XP:"
-            labelWidth={1}
-            valueWidth={3}
-            value={<ExperienceBar actor={actor} />}
-          />
-          <InfoGridItem
-            label="Encumbrance:"
-            labelWidth={1}
-            valueWidth={3}
-            value={<Encumbrance />}
-          />
-          <InfoGridItem
-            label="HD:"
-            valueWidth={1}
-            value={
-              <div style={{ alignSelf: "center" }}>
-                <a
-                  className="inline-roll roll"
-                  data-mode="roll"
-                  data-formula="1d4"
-                  data-tooltip-text="1d4"
-                  data-flavor={`Hit Die`}
-                >
-                  <i className={diceIcon.d4} />
-                  {actor.system.hp.hd}
-                </a>
-              </div>
-            }
-          />
-          <InfoGridItem
-            label={"Alignment:"}
-            valueWidth={1}
-            value={actor.system.details.alignment || "Unaligned"}
-          />
-        </InfoGrid>
-      </Row>
+      {!collapsed && (
+        <Row className="w-100">
+          <InfoGrid>
+            <InfoGridItem
+              label="XP:"
+              labelWidth={1}
+              valueWidth={3}
+              value={<ExperienceBar actor={actor} />}
+            />
+            <InfoGridItem
+              label="Encumbrance:"
+              labelWidth={1}
+              valueWidth={3}
+              value={<Encumbrance />}
+            />
+            <InfoGridItem
+              label="HD:"
+              valueWidth={1}
+              value={
+                <div style={{ alignSelf: "center" }}>
+                  <a
+                    className="inline-roll roll"
+                    data-mode="roll"
+                    data-formula="1d4"
+                    data-tooltip-text="1d4"
+                    data-flavor={`Hit Die`}
+                  >
+                    <i className={diceIcon.d4} />
+                    {actor.system.hp.hd}
+                  </a>
+                </div>
+              }
+            />
+            <InfoGridItem
+              label={"Alignment:"}
+              valueWidth={1}
+              value={actor.system.details.alignment || "Unaligned"}
+            />
+          </InfoGrid>
+        </Row>
+      )}
     </Column>
   );
 }

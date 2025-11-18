@@ -3,37 +3,37 @@ import { colors, fontFamily, fontSizes, spacer } from "./elements-vars";
 
 /** Typography **/
 export const Text = styled.span<{
-  $size?: "tiny" | "small" | "medium" | "large";
+  $size?: keyof typeof fontSizes;
   $color?: keyof typeof colors;
 }>`
-  font-size: ${({ $size }) => ($size ? fontSizes[$size] : fontSizes.medium)};
+  font-size: ${({ $size }) => ($size ? fontSizes[$size] : fontSizes.md)};
   font-family: ${fontFamily.sans};
   color: ${({ $color }) => ($color ? colors[$color] : colors.primary)};
 `;
 
 export const TextTiny = styled(Text)`
-  font-size: ${fontSizes.tiny};
+  font-size: ${fontSizes.xs};
 `;
 
 export const TextSmall = styled(Text)`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.sm};
 `;
 
 export const TextLarge = styled(Text)`
-  font-size: ${fontSizes.large};
+  font-size: ${fontSizes.lg};
 `;
 export const TextHuge = styled(Text)`
-  font-size: ${fontSizes.huge};
+  font-size: ${fontSizes.xl};
 `;
 
 export const TextEmphatic = styled(Text)`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.md};
   font-weight: bold;
   color: ${colors.emphatic};
 `;
 
 export const H1 = styled.h1`
-  font-size: ${fontSizes.huge};
+  font-size: ${fontSizes.xl};
   color: ${colors.primary};
   font-family: ${fontFamily.serif};
 `;
