@@ -128,6 +128,7 @@ export type OseItem = Omit<Item, "type"> & {
     tags?: { label: string; value: string; icon: string }[];
     treasure: boolean;
     weight: number;
+    requirements?: string;
   };
   rollWeapon: (options: { skipDialog: boolean }) => void;
   update: (updateData: {
