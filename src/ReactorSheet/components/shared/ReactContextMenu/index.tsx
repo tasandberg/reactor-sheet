@@ -22,7 +22,7 @@ const ReactContextMenuContainer = styled.div<{
 
 const ReactMenuTitle = styled.div`
   padding: 8px 12px;
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.md};
   color: ${colors.hint};
   border-bottom: 1px solid ${colors.border};
 `;
@@ -30,7 +30,7 @@ const ReactMenuTitle = styled.div`
 const ReactContextMenuItem = styled.div`
   padding: 8px 12px;
   cursor: pointer;
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.sm};
   color: ${colors.label};
   opacity: 0.8;
 

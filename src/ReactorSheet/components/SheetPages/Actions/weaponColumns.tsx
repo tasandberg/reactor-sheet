@@ -118,7 +118,7 @@ export const weaponActionColumns = (
               <Text>
                 <i
                   className="fa fa-sword"
-                  style={{ fontSize: fontSizes.tiny, color: colors.hint }}
+                  style={{ fontSize: fontSizes.xs, color: colors.hint }}
                 />
                 {": "}
                 {getModString(scores.str.mod)}
@@ -135,7 +135,7 @@ export const weaponActionColumns = (
               <Text>
                 <i
                   className="fa fa-bow-arrow"
-                  style={{ fontSize: fontSizes.tiny, color: colors.hint }}
+                  style={{ fontSize: fontSizes.xs, color: colors.hint }}
                 />
                 {": "}
                 {getModString(scores.dex.mod)}
@@ -178,7 +178,7 @@ export const weaponActionColumns = (
               <Text>
                 <i
                   className="fa fa-sword"
-                  style={{ fontSize: fontSizes.tiny, color: colors.hint }}
+                  style={{ fontSize: fontSizes.xs, color: colors.hint }}
                 />
                 {": "}
                 {item.system.damage}
@@ -197,7 +197,7 @@ export const weaponActionColumns = (
               <Text>
                 <i
                   className="fa fa-bow-arrow"
-                  style={{ fontSize: fontSizes.tiny, color: colors.hint }}
+                  style={{ fontSize: fontSizes.xs, color: colors.hint }}
                 />
                 {": "}
                 {item.system.damage}
