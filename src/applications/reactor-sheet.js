@@ -36,11 +36,15 @@ class ReactorSheet extends ReactActorSheetV2 {
 
   static async #onEditImage(e, target) {
     if (target.nodeName !== "IMG") {
-      throw new Error("The editImage action is available only for IMG elements.");
+      throw new Error(
+        "The editImage action is available only for IMG elements."
+      );
     }
     const attr = target.dataset.edit;
     const current = foundry.utils.getProperty(this.document._source, attr);
-    const defaultArtwork = this.document.constructor.getDefaultArtwork?.(this.document._source) ?? {};
+    const defaultArtwork =
+      this.document.constructor.getDefaultArtwork?.(this.document._source) ??
+      {};
     const defaultImage = foundry.utils.getProperty(defaultArtwork, attr);
     const fp = new foundry.applications.apps.FilePicker.implementation({
       current,
