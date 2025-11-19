@@ -19,14 +19,10 @@ function ReactorSheetProvider({
 }) {
   const [actor, setActor] = useState<OSEActor>(initialActor);
   const [actorData, setActorData] = useState(initialActor.system);
-<<<<<<< HEAD
-  const [items, setItems] = useState<OseItem[]>(initialActor.items.contents as OseItem[]);
-=======
   const [items, setItems] = useState<OseItem[]>(
     initialActor.items.contents as OseItem[]
   );
 
->>>>>>> 3160ed8 (Add OSE mode setting)
   const [currentTab, setCurrentTab] = useState<TabIds>(TabIds.ACTIONS);
 
   const _setTimestampedActor = (updatedActor: OSEActor) => {
@@ -36,7 +32,9 @@ function ReactorSheetProvider({
     setActorData(updatedActor.system);
   };
 
-  async function updateActor(updateData: { [key: string]: string | number }): Promise<OSEActor | void> {
+  async function updateActor(updateData: {
+    [key: string]: string | number;
+  }): Promise<OSEActor | void> {
     if (actor.update) {
       return await actor.update(updateData).then((updatedActor) => {
         if (updatedActor) {
@@ -49,10 +47,13 @@ function ReactorSheetProvider({
   }
 
   useEffect(() => {
-    const handleUpdate = foundry.utils.debounce(({ document }: { document: OSEActor }) => {
-      _setTimestampedActor(document);
-      setItems([...(document.items.contents as OseItem[])]);
-    }, 200);
+    const handleUpdate = foundry.utils.debounce(
+      ({ document }: { document: OSEActor }) => {
+        _setTimestampedActor(document);
+        setItems([...(document.items.contents as OseItem[])]);
+      },
+      200
+    );
     contextConnector.onUpdate(handleUpdate);
 
     return () => {
@@ -76,7 +77,11 @@ function ReactorSheetProvider({
     updateActor,
   };
 
-  return <ReactorSheetContext.Provider value={context}>{children}</ReactorSheetContext.Provider>;
+  return (
+    <ReactorSheetContext.Provider value={context}>
+      {children}
+    </ReactorSheetContext.Provider>
+  );
 }
 
 export default ReactorSheetProvider;

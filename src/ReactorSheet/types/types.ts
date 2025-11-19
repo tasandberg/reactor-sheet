@@ -22,14 +22,10 @@ export interface ReactorSheetContextValue {
   actorData: OSEActor["_source"]["system"];
   currentTab: TabIds;
   setCurrentTab: (tabId: TabIds) => void;
-<<<<<<< HEAD
-  updateActor: (updateData: { [key: string]: string | number | string[] }) => Promise<OSEActor | void>;
-=======
   oseMode: { advanced: boolean; classic: boolean };
   updateActor: (updateData: {
     [key: string]: string | number | string[];
   }) => Promise<OSEActor | void>;
->>>>>>> 3160ed8 (Add OSE mode setting)
 }
 
 export type OSESave = "breath" | "death" | "paralysis" | "spell" | "wand";
@@ -113,8 +109,14 @@ export type OSEActor = Actor & {
       fastForward?: boolean;
     }
   ) => void;
-  rollExploration: (action: string, options: { event?: Event; fastForward?: boolean; chatMessage?: string }) => void;
-  rollSave: (save: OSESave, options: { event?: Event; fastForward?: boolean; chatMessage?: string }) => void;
+  rollExploration: (
+    action: string,
+    options: { event?: Event; fastForward?: boolean; chatMessage?: string }
+  ) => void;
+  rollSave: (
+    save: OSESave,
+    options: { event?: Event; fastForward?: boolean; chatMessage?: string }
+  ) => void;
   update: (updateData: { [key: string]: string | number }) => Promise<OSEActor>;
 };
 
