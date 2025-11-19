@@ -60,6 +60,8 @@ export const Flex = styled.div<{
   $justify?: string;
   $gap?: keyof typeof spacer;
   $wrap?: boolean;
+  $width?: string | number;
+  $grow?: number;
 }>`
   display: flex;
   flex-direction: ${(props) => (props.$dir ? props.$dir : "row")};
@@ -67,8 +69,9 @@ export const Flex = styled.div<{
   align-items: ${(props) => (props.$align ? props.$align : "center")};
   justify-content: ${(props) =>
     props.$justify ? props.$justify : "flex-start"};
-  width: 100%;
+  width: ${(props) => (props.$width ? props.$width : "100%")};
   flex-wrap: ${(props) => (props.$wrap ? "wrap" : "nowrap")};
+  flex-grow: ${(props) => (props.$grow ? props.$grow : 0)};
 `;
 
 export const Row = styled(Flex)`

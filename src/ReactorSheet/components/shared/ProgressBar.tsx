@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { colors } from "./elements-vars";
 
 export const ProgressBar = styled.div<{ $percentage: number; $color?: string }>`
   width: 100%;
@@ -6,9 +7,9 @@ export const ProgressBar = styled.div<{ $percentage: number; $color?: string }>`
   max-width: 200px;
   position: relative;
   border-radius: 25px;
-  box-shadow: inset 0 0 7px #000000;
-  background: #222;
-  border: 1px solid black;
+  box-sizing: border-box;
+  background: ${colors.bgDark3};
+  border: 0.5px solid black;
   display: flex;
   align-items: center;
   justify-content: start;
@@ -19,6 +20,9 @@ export const ProgressBar = styled.div<{ $percentage: number; $color?: string }>`
     content: "";
     position: absolute;
     top: 0;
+    box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.5);
+    border: 1px solid #000;
+    box-sizing: border-box;
     left: ${(props) => props.$percentage - 100}%;
     width: 100%;
     height: 100%;
@@ -35,7 +39,6 @@ export const ProgressBar = styled.div<{ $percentage: number; $color?: string }>`
   span {
     position: relative;
     color: var(--color-text-emphatic);
-    text-shadow: 0 0 3px goldenrod;
     letter-spacing: -0.8px;
   }
 `;

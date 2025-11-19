@@ -1,7 +1,34 @@
 import { useEffect, useState, type SyntheticEvent } from "react";
 import { useReactorSheetContext } from "../context";
-import { IncrementButton, TextSmall } from "../shared/elements";
+import { TextSmall, Text, TextTiny, Row, Column } from "../shared/elements";
 import { ProgressBar } from "../shared/ProgressBar";
+import styled from "styled-components";
+import { colors } from "../shared/elements-vars";
+
+const IncButton = styled.div`
+  font-size: 8px;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  background-color: ${colors.bgDark1};
+  border: 1px solid ${colors.label};
+  box-sizing: border-box;
+  padding: 4px;
+  opacity: 0.7;
+
+  &:hover {
+    opacity: 1;
+  }
+  &:first-child {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+  }
+  &:last-child {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+`;
 
 export default function HitPoints() {
   const { actor, updateActor } = useReactorSheetContext();
@@ -77,31 +104,42 @@ export default function HitPoints() {
       <button onClick={onChangeHp}>Done</button>
     </form>
   ) : (
-    <div className="flex-row align-center gap-1 w-100">
+    <Row style={{ height: "28px" }} $gap="xs">
       <ProgressBar
         $color="green"
         $percentage={(currentHp / actor.system.hp.max) * 100}
         onClick={() => setIsEditing(true)}
         className="cursor-pointer"
+        style={{ flexGrow: 1, flexShrink: 0, width: "100%" }}
       >
-        <TextSmall>
-          {currentHp} / {actor.system.hp.max}
-        </TextSmall>
+        <Text className="mr-1">{currentHp}</Text>
+        <TextTiny>/ {actor.system.hp.max}</TextTiny>
       </ProgressBar>
-      <IncrementButton
-        onClick={async () =>
-          await updateActor({ "system.hp.value": clampHp(currentHp - 1) })
-        }
+      <Row
+        $width="auto"
+        style={{
+          gap: 2,
+          height: "100%",
+          flexGrow: 0,
+        }}
       >
-        <i className="fas fa-minus" />
-      </IncrementButton>
-      <IncrementButton
-        onClick={async () =>
-          await updateActor({ "system.hp.value": clampHp(currentHp + 1) })
-        }
-      >
-        <i className="fas fa-plus" />
-      </IncrementButton>
-    </div>
+        <IncButton
+          role="button"
+          onClick={async () =>
+            await updateActor({ "system.hp.value": clampHp(currentHp - 1) })
+          }
+        >
+          <i className="fas fa-minus" />
+        </IncButton>
+        <IncButton
+          role="button"
+          onClick={async () =>
+            await updateActor({ "system.hp.value": clampHp(currentHp + 1) })
+          }
+        >
+          <i className="fas fa-plus" />
+        </IncButton>
+      </Row>
+    </Row>
   );
 }
