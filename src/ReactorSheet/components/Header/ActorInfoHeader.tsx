@@ -1,23 +1,26 @@
 import type { OSEActor } from "@src/ReactorSheet/types/types";
 import { InlineInput } from "../InlineInput";
-import { Column, Row, Text, TextSmall, TextTiny } from "../shared/elements";
+import {
+  Column,
+  Row,
+  Text,
+  TextLarge,
+  TextSmall,
+  TextTiny,
+} from "../shared/elements";
 import ActorImage from "./ActorImage";
 import { colors } from "../shared/elements-vars";
-import HitPoints from "./HitPoints";
-import GenericProgress from "../shared/GenericProgress";
-import ACShield from "./ACShield";
 
 export default function ActorInfoHeader({
   actor,
   handleChange,
-  xpProgress,
 }: {
   actor: OSEActor;
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   xpProgress: number;
 }) {
   return (
-    <Row $align="center" $gap="md" style={{ height: "70px" }}>
+    <Row $align="start" $gap="md" style={{ height: "auto" }}>
       <div
         style={{
           minWidth: "70px",
@@ -33,7 +36,6 @@ export default function ActorInfoHeader({
         $align="start"
         style={{
           height: "100%",
-          flexGrow: 2,
           minWidth: 190,
         }}
       >
@@ -52,36 +54,38 @@ export default function ActorInfoHeader({
         </Text>
       </Column>
       <Column
-        style={{
-          flexGrow: 1,
-          height: "100%",
-          boxSizing: "border-box",
-        }}
-        $gap="xs"
-        $align="start"
+        $gap="none"
         $justify="center"
+        style={{
+          padding: 4,
+          border: `2px double ${colors.hint}`,
+          backgroundColor: colors.bgDark2,
+          borderRadius: 4,
+          width: 100,
+          height: "100%",
+        }}
       >
-        <Row>
-          <TextSmall $color="label" style={{ width: 40 }}>
-            HP:
-          </TextSmall>
-          <div style={{ width: 100 }}>
-            <HitPoints />
-          </div>
-        </Row>
-        <Row $align="center">
-          <TextSmall $color="label" style={{ width: 40 }}>
-            XP:
-          </TextSmall>
-          <div style={{ width: 100 }}>
-            <GenericProgress max={100} value={xpProgress} />
-          </div>
-          <TextTiny>{xpProgress}%</TextTiny>
-        </Row>
+        <TextSmall $color="label">HP</TextSmall>
+        <TextLarge $font="sans">{actor.system.hp.value}</TextLarge>
+
+        <TextTiny $color="label">Max: {actor.system.hp.max}</TextTiny>
       </Column>
-      <div>
-        <ACShield width={55} />
-      </div>
+      <Column
+        $gap="none"
+        $justify="center"
+        style={{
+          padding: 4,
+          border: `2px double ${colors.hint}`,
+          backgroundColor: colors.bgDark2,
+          borderRadius: 4,
+          width: 100,
+          height: "100%",
+        }}
+      >
+        <TextSmall $color="label">AC</TextSmall>
+        <TextLarge $font="sans">{actor.system.aac.value}</TextLarge>
+        <TextTiny $color="label">Base: {actor.system.aac.base}</TextTiny>
+      </Column>
     </Row>
   );
 }

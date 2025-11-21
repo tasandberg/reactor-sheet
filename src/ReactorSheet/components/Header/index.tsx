@@ -36,7 +36,7 @@ export default function Header() {
     >
       <div
         style={{
-          height: collapsed ? "85px" : "200px",
+          height: collapsed ? "85px" : "300px",
           transition: "height 0.5s ease-in-out",
           overflow: "hidden",
           width: 600,

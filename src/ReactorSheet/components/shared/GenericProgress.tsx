@@ -7,10 +7,9 @@ const GenericProgressBar = styled.div<{
   $fg?: string;
 }>`
   width: 100%;
-  height: 8px;
-  border-radius: 4px;
+  height: 10px;
   overflow: hidden;
-  background-color: ${(props) => props.$bg || colors.bgDark3};
+  background-color: ${(props) => props.$bg || colors.bgDark5};
   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
 
   .generic-progress-bar-fill {
@@ -25,15 +24,21 @@ export default function GenericProgress({
   max,
   value,
   styles,
+  fg,
+  bg,
 }: {
   max: number;
   value: number;
   styles?: React.CSSProperties;
+  fg?: string;
+  bg?: string;
 }) {
   return (
     <GenericProgressBar
       $percent={Math.clamp(0, (value / max) * 100, 100)}
       style={styles}
+      $fg={fg}
+      $bg={bg}
     >
       <div className="generic-progress-bar-fill" />
     </GenericProgressBar>

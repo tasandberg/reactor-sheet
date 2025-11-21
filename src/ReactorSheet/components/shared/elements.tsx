@@ -85,8 +85,10 @@ export const Column = styled(Flex)`
 export const Grid = styled.div<{
   $colTemplate?: string;
   $gap?: keyof typeof spacer;
+  $width?: string | number;
 }>`
   display: grid;
+  width: ${({ $width }) => ($width ? $width : "100%")};
   grid-template-columns: ${({ $colTemplate }) =>
     $colTemplate ? $colTemplate : "repeat(auto-fill, 1fr)"};
   gap: ${({ $gap }) => ($gap ? spacer[$gap] : spacer.sm)};
