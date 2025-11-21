@@ -10,6 +10,7 @@ import {
 } from "../shared/elements";
 import ActorImage from "./ActorImage";
 import { colors } from "../shared/elements-vars";
+import ActorInfoHeaderHP from "./ActorInfoHeaderHP";
 
 export default function ActorInfoHeader({
   actor,
@@ -53,23 +54,9 @@ export default function ActorInfoHeader({
           {`Level ${actor.system.details.level} ${actor.system.details.class}`}
         </Text>
       </Column>
-      <Column
-        $gap="none"
-        $justify="center"
-        style={{
-          padding: 4,
-          border: `2px double ${colors.hint}`,
-          backgroundColor: colors.bgDark2,
-          borderRadius: 4,
-          width: 100,
-          height: "100%",
-        }}
-      >
-        <TextSmall $color="label">HP</TextSmall>
-        <TextLarge $font="sans">{actor.system.hp.value}</TextLarge>
-
-        <TextTiny $color="label">Max: {actor.system.hp.max}</TextTiny>
-      </Column>
+      <Row $width={100} style={{ height: 70 }} $gap="md" $align="start">
+        <ActorInfoHeaderHP />
+      </Row>
       <Column
         $gap="none"
         $justify="center"

@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { colors, fontSizes } from "../shared/elements-vars";
+import { CharacterInputField } from "./shared-elements";
 
 const CharacterInputContainer = styled.div<{ $fill: boolean }>`
   display: flex;
@@ -40,29 +41,6 @@ const InputContainer = styled.div`
   align-items: center;
   line-height: 1.2;
   padding: 4px 8px;
-`;
-
-const CharacterInputField = styled.input`
-  flex: 1;
-  margin: 0px;
-  border: none;
-  font-size: ${fontSizes.sm};
-  padding: 4px 8px;
-  border-radius: 0;
-  margin: 0;
-  border-radius: 0;
-  background-color: transparent;
-  color: ${colors.emphatic};
-  width: 100%;
-  outline: none;
-  display: flex;
-  align-items: center;
-  line-height: 1.2;
-
-  &:focus {
-    background-color: ${colors.bgDark3};
-    border-color: ${colors.label};
-  }
 `;
 
 export default function CharacterInput({
