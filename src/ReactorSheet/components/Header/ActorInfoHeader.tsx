@@ -1,16 +1,9 @@
 import type { OSEActor } from "@src/ReactorSheet/types/types";
 import { InlineInput } from "../InlineInput";
-import {
-  Column,
-  Row,
-  Text,
-  TextLarge,
-  TextSmall,
-  TextTiny,
-} from "../shared/elements";
+import { Column, Row, Text } from "../shared/elements";
 import ActorImage from "./ActorImage";
-import { colors } from "../shared/elements-vars";
 import ActorInfoHeaderHP from "./ActorInfoHeaderHP";
+import ActorInfoHeaderAC from "./ActorInfoHeaderAC";
 
 export default function ActorInfoHeader({
   actor,
@@ -56,23 +49,8 @@ export default function ActorInfoHeader({
       </Column>
       <Row $width={100} style={{ height: 70 }} $gap="md" $align="start">
         <ActorInfoHeaderHP />
+        <ActorInfoHeaderAC />
       </Row>
-      <Column
-        $gap="none"
-        $justify="center"
-        style={{
-          padding: 4,
-          border: `2px double ${colors.hint}`,
-          backgroundColor: colors.bgDark2,
-          borderRadius: 4,
-          width: 100,
-          height: "100%",
-        }}
-      >
-        <TextSmall $color="label">AC</TextSmall>
-        <TextLarge $font="sans">{actor.system.aac.value}</TextLarge>
-        <TextTiny $color="label">Base: {actor.system.aac.base}</TextTiny>
-      </Column>
     </Row>
   );
 }
