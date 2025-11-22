@@ -1,5 +1,5 @@
 import { useReactorSheetContext } from "../context";
-import { Row, Column, TextSmall } from "../shared/elements";
+import { Column, TextSmall } from "../shared/elements";
 import styled from "styled-components";
 import { colors, fontSizes } from "../shared/elements-vars";
 import Heart from "./HPHeart";
@@ -30,6 +30,12 @@ const IncButton = styled.div`
   }
 `;
 
+const HPContainer = styled.div`
+  display: grid;
+  grid-template-columns: min-content max-content;
+  height: 100%;
+  width: 100%;
+`;
 export default function ActorInfoHeaderHP() {
   const { actor, updateActor } = useReactorSheetContext();
 
@@ -48,82 +54,86 @@ export default function ActorInfoHeaderHP() {
   };
 
   return (
-    <Column
-      $gap="none"
-      $align="center"
-      $justify="center"
-      style={{ height: "100%", padding: 4 }}
-    >
-      <TextSmall $color="label">Hit Points</TextSmall>
-      <Row style={{ gap: "2px" }} $align="center">
-        <Column
-          $width="auto"
-          style={{
-            gap: 2,
-            flexGrow: 0,
-          }}
+    <HPContainer>
+      <div
+        style={{
+          gridColumn: "1/-1",
+          textAlign: "center",
+        }}
+      >
+        <TextSmall $color="label">Hit Points</TextSmall>
+      </div>
+      {/* Controls */}
+      <Column
+        $width="auto"
+        $align="center"
+        $justify="center"
+        style={{
+          gap: 2,
+          flexGrow: 0,
+        }}
+      >
+        <IncButton
+          role="button"
+          title={"Increase Hit Points by 1"}
+          onClick={async () =>
+            await updateActor({
+              "system.hp.value": clampHp(currentHp + 1),
+            })
+          }
         >
-          <IncButton
-            role="button"
-            title={"Increase Hit Points by 1"}
-            onClick={async () =>
-              await updateActor({
-                "system.hp.value": clampHp(currentHp + 1),
-              })
-            }
-          >
-            <i className="fas fa-plus" />
-          </IncButton>
-          <IncButton
-            role="button"
-            title={"Reduce Hit Points by 1"}
-            onClick={async () =>
-              await updateActor({
-                "system.hp.value": clampHp(currentHp - 1),
-              })
-            }
-          >
-            <i className="fas fa-minus" />
-          </IncButton>
-        </Column>
-        <Column $gap="none" $align="center" $justify="center">
-          <div
+          <i className="fas fa-plus" />
+        </IncButton>
+        <IncButton
+          role="button"
+          title={"Reduce Hit Points by 1"}
+          onClick={async () =>
+            await updateActor({
+              "system.hp.value": clampHp(currentHp - 1),
+            })
+          }
+        >
+          <i className="fas fa-minus" />
+        </IncButton>
+      </Column>
+      <Column $gap="none" $align="center" $justify="start">
+        <div
+          style={{
+            width: 35,
+            height: 35,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 0,
+          }}
+          className="position-relative"
+        >
+          <CharacterInputField
             style={{
-              width: 50,
-              height: 50,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              fontSize: fontSizes.md,
+              width: Math.min(String(maxHp).length * 15, 30),
+              // border: "1px solid red",
+              padding: 0,
+              textAlign: "center",
+              position: "absolute",
+              marginTop: "-4px",
             }}
-            className="position-relative"
-          >
-            <CharacterInputField
-              style={{
-                fontSize: fontSizes.md,
-                width: Math.min(String(maxHp).length * 15, 30),
-                // border: "1px solid red",
-                padding: 0,
-                textAlign: "center",
-                position: "absolute",
-                marginTop: "-4px",
-              }}
-              onKeyDown={preventTabbing}
-              type="number"
-              tabIndex={-1}
-              name="hp"
-              min={0}
-              max={maxHp}
-              onChange={async (e) => {
-                const newHp = clampHp(Number(e.target.value));
-                e.target.value = String(newHp);
-                await updateActor({ "system.hp.value": newHp });
-              }}
-              value={String(currentHp)}
-            />
-            <Heart value={currentHp} max={maxHp} styles={{ margin: "-5px" }} />
-          </div>
-        </Column>
-      </Row>
-    </Column>
+            onKeyDown={preventTabbing}
+            type="number"
+            tabIndex={-1}
+            name="hp"
+            min={0}
+            max={maxHp}
+            onChange={async (e) => {
+              const newHp = clampHp(Number(e.target.value));
+              e.target.value = String(newHp);
+              await updateActor({ "system.hp.value": newHp });
+            }}
+            value={String(currentHp)}
+          />
+          <Heart value={currentHp} max={maxHp} />
+        </div>
+      </Column>
+    </HPContainer>
   );
 }

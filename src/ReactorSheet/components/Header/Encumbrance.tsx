@@ -1,16 +1,21 @@
 import { useReactorSheetContext } from "../context";
-import { Row, TextTiny } from "../shared/elements";
+import { TextTiny } from "../shared/elements";
+import HeaderSection from "./HeaderSection";
 
 export default function Encumbrance() {
   const { actorData } = useReactorSheetContext();
   const { encumbrance } = actorData;
 
   return (
-    <Row $align="center">
-      <progress value={encumbrance.value} max={encumbrance.max} />
+    <HeaderSection label="Encumbrance">
+      <progress
+        value={encumbrance.value}
+        max={encumbrance.max}
+        style={{ marginTop: 0 }}
+      />
       <TextTiny>
         {encumbrance.value}/{encumbrance.max}gp
       </TextTiny>
-    </Row>
+    </HeaderSection>
   );
 }

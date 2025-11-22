@@ -60,7 +60,7 @@ export default function InventoryItem({ item }: { item: OseItem }) {
   return (
     <>
       <ItemSquareContainer
-        onClick={() => item.sheet.render(true)}
+        onDoubleClick={() => item.sheet.render(true)}
         onContextMenu={showMenu}
         onMouseLeave={hideMenu}
         ref={ref}

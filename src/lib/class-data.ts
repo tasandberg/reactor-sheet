@@ -74,7 +74,7 @@ export function getHitDice(
   level: number
 ): string | undefined {
   const oseClass = new OseClassData(className);
-  if (!oseClass?.levels) return undefined;
+  if (!oseClass?.levels) return "1d6";
   const levelData = oseClass.levels[level - 1];
   return levelData ? levelData.hd : undefined;
 }

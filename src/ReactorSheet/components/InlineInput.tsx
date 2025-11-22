@@ -5,11 +5,10 @@ import styled from "styled-components";
  * turns into an input field when clicked on.
  */
 export const InlineInput = styled.input<{ $outline?: boolean }>`
-  box-sizing: border-box;
   width: 100%;
   font-size: inherit;
   font-family: inherit;
-  line-height: inherit;
+  line-height: 1.2;
   margin: 0;
   &:focus {
     margin: 0;

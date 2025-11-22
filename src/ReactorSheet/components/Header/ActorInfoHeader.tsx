@@ -1,13 +1,31 @@
 import type { OSEActor } from "@src/ReactorSheet/types/types";
 import { InlineInput } from "../InlineInput";
-import { Column, Row, Text } from "../shared/elements";
+import { Column, Row, Text, TextSmall, TextTiny } from "../shared/elements";
 import ActorImage from "./ActorImage";
 import ActorInfoHeaderHP from "./ActorInfoHeaderHP";
 import ActorInfoHeaderAC from "./ActorInfoHeaderAC";
+import styled from "styled-components";
+
+const InfoRightSection = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  height: 70px;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 4px;
+
+  & > div {
+    border-radius: 5px;
+    padding: 2px 8px;
+    height: 100%;
+  }
+`;
 
 export default function ActorInfoHeader({
   actor,
   handleChange,
+  xpProgress,
 }: {
   actor: OSEActor;
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -25,7 +43,7 @@ export default function ActorInfoHeader({
         <ActorImage />
       </div>
       <Column
-        $gap="none"
+        $gap="xs"
         $justify="start"
         $align="start"
         style={{
@@ -43,14 +61,26 @@ export default function ActorInfoHeader({
             onBlur={handleChange}
           />
         </Text>
-        <Text $color="label">
+        <TextSmall $color="label" style={{ marginTop: -6 }}>
           {`Level ${actor.system.details.level} ${actor.system.details.class}`}
-        </Text>
+        </TextSmall>
+        <Row $gap="xs" $align="center">
+          <progress
+            max={100}
+            value={xpProgress}
+            style={{ padding: 0, margin: 0, width: 80 }}
+          />
+          <TextTiny $color="hint">
+            Level {Number(actor.system.details.level) + 1}
+          </TextTiny>
+        </Row>
       </Column>
-      <Row $width={100} style={{ height: 70 }} $gap="md" $align="start">
-        <ActorInfoHeaderHP />
+      <InfoRightSection>
+        <div>
+          <ActorInfoHeaderHP />
+        </div>
         <ActorInfoHeaderAC />
-      </Row>
+      </InfoRightSection>
     </Row>
   );
 }

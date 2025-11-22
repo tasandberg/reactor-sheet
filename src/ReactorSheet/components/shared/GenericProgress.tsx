@@ -7,7 +7,7 @@ const GenericProgressBar = styled.div<{
   $fg?: string;
 }>`
   width: 100%;
-  height: 10px;
+  height: 100%;
   overflow: hidden;
   background-color: ${(props) => props.$bg || colors.bgDark5};
   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);

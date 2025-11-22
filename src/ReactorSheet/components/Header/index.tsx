@@ -26,7 +26,7 @@ export default function Header() {
     <header
       style={{
         backgroundColor: "#222",
-        boxShadow: "0 2px 5px rgba(0, 0, 0, 0.3)",
+        boxShadow: "0 4px 15px rgba(0, 0, 0, 0.5)",
         borderBottom: `1px solid ${colors.border}`,
         position: "relative",
         zIndex: 2,
@@ -36,7 +36,7 @@ export default function Header() {
     >
       <div
         style={{
-          height: collapsed ? "85px" : "300px",
+          height: collapsed ? "90px" : "375px",
           transition: "height 0.5s ease-in-out",
           overflow: "hidden",
           width: 600,

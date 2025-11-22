@@ -9,13 +9,14 @@ interface HPHeart {
 }
 
 const HeartContainer = styled.div`
-  width: 100%;
-  height: 100%;
+  width: 99%;
+  height: 99%;
 `;
 
 const HeartSvg = styled.svg`
-  width: 100%;
-  height: 100%;
+  width: 99%;
+  height: 99%;
+  overflow: visible;
 `;
 
 export default function HPHeart({ value, max, styles }: HPHeart) {
@@ -24,9 +25,15 @@ export default function HPHeart({ value, max, styles }: HPHeart) {
 
   const percentage = Math.max(0, Math.min(100, (value / max) * 100));
 
-  // Heart bounds: approximately y=3 to y=21.35 (height ~18.35)
-  const heartTop = 3;
-  const heartBottom = 21.35;
+  // Transform to scale heart from its original bounds to fill 0,0 24,24
+  // Original bounds: x: 2-22 (width 20), y: 3-21.35 (height 18.35)
+  // Scale factors: x: 24/20 = 1.2, y: 24/18.35 = 1.308
+  // Translate: move from (2,3) to (0,0): translate(-2, -3) then scale
+  const heartTransform = "translate(-2, -3) scale(1.2, 1.308)";
+
+  // Update bounds for the scaled heart
+  const heartTop = 0;
+  const heartBottom = 24;
   const heartHeight = heartBottom - heartTop;
 
   return (
@@ -34,7 +41,7 @@ export default function HPHeart({ value, max, styles }: HPHeart) {
       <HeartSvg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <mask id="heart-mask">
-            <path d={heartPath} fill="white" />
+            <path d={heartPath} fill="white" transform={heartTransform} />
           </mask>
           <clipPath id="fill-clip">
             <rect
@@ -45,8 +52,8 @@ export default function HPHeart({ value, max, styles }: HPHeart) {
             />
           </clipPath>
           <linearGradient id="heart-gradient" x1="0%" y1="100%" x2="0%" y2="0%">
-            <stop offset="0%" stopColor="transparent" />
-            <stop offset="10%" stopColor="#5d142b" />
+            <stop offset="0%" stopColor="#5d142b" />
+            <stop offset="100%" stopColor="#8a1f3d" />
           </linearGradient>
         </defs>
 
@@ -68,7 +75,7 @@ export default function HPHeart({ value, max, styles }: HPHeart) {
           fill="url(#heart-gradient)"
           mask="url(#heart-mask)"
           clipPath="url(#fill-clip)"
-          transform="rotate(3 12 12)"
+          transform="rotate(4 12 12)"
         />
 
         {/* Heart outline */}
@@ -77,6 +84,7 @@ export default function HPHeart({ value, max, styles }: HPHeart) {
           fill="none"
           stroke={colors.hint}
           strokeWidth={0.5}
+          transform={heartTransform}
         />
       </HeartSvg>
     </HeartContainer>
