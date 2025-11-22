@@ -10,7 +10,7 @@ export const CharacterInputField = styled.input<{
   border: none;
   font-size: ${(props) => props.$fontSize || fontSizes.sm};
   padding: 4px 8px;
-  border-radius: 0;
+  border-radius: 4px;
   margin: 0;
   border-radius: 0;
   background-color: transparent;
@@ -29,5 +29,9 @@ export const CharacterInputField = styled.input<{
   &:focus {
     background-color: ${(props) => props.$focusBg || colors.bgDark3};
     border-color: ${colors.label};
+  }
+
+  &:disabled {
+    color: ${colors.label};
   }
 `;

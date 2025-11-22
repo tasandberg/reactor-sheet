@@ -6,7 +6,7 @@ const CharacterInputContainer = styled.div<{ $fill: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  width: auto;
+  width: 100%;
   box-sizing: border-box;
   &:focus-within {
     border-color: ${colors.label};
@@ -41,6 +41,8 @@ const CharacterInputLabel = styled.label`
 const InputContainer = styled.div`
   line-height: 1.2;
   padding: 4px 8px;
+  width: 100%;
+  text-align: right;
 `;
 
 export default function CharacterInput({

@@ -27,8 +27,9 @@ const DetailBox = styled(Column)<{ $grow?: number }>`
 export default function ActorInfo() {
   const { actor, updateActor, oseMode } = useReactorSheetContext();
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    updateActor({ [name]: value });
+    const { name, value, type } = event.target;
+    const parsedValue = type === "number" ? Number(value) : value;
+    updateActor({ [name]: parsedValue });
   };
 
   const nextLevel = getNextLevelXp(
@@ -116,7 +117,8 @@ export default function ActorInfo() {
           <CharacterInput
             label="Experience"
             name="system.details.xp.value"
-            defaultValue={actor.system.details.xp.value}
+            type="number"
+            defaultValue={Number(actor.system.details.xp.value)}
             style={{ textAlign: "right" }}
             onBlur={handleChange}
           />
@@ -125,7 +127,6 @@ export default function ActorInfo() {
             name="system.details.xp.next"
             defaultValue={nextLevel}
             style={{ textAlign: "right" }}
-            onBlur={handleChange}
             disabled
           />
           <CharacterInput

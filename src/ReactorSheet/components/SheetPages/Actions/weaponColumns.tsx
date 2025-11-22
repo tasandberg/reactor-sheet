@@ -2,7 +2,6 @@ import type { OSEActor, OseWeapon } from "@src/ReactorSheet/types/types";
 import type { GridTableColumn } from "../../shared/constants";
 import styled from "styled-components";
 import { Row, Text, TextSmall, TextTiny } from "../../shared/elements";
-import { InlineRollButton } from "../../shared/InlineRollButton";
 import { colors, fontSizes } from "../../shared/elements-vars";
 
 const DiceHoverButton = styled.button`
@@ -24,26 +23,49 @@ const DiceHoverButton = styled.button`
   }
 `;
 
+// eslint-disable-next-line react-refresh/only-export-components
 function InlineWeaponRollButton({
   formula,
   flavor,
   mod,
+  missile,
 }: {
+  missile?: boolean;
   formula: string;
   flavor: string;
   mod: string;
 }) {
   return (
-    <InlineRollButton formula={formula} flavor={flavor}>
+    <a
+      className="inline-roll roll"
+      data-mode="roll"
+      data-formula={formula}
+      data-tooltip-text={formula}
+      data-flavor={flavor}
+      style={{
+        background: "none",
+        border: "none",
+        padding: 0,
+        width: "100%",
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 4,
+      }}
+    >
       <Text $color="hint">
         <i
-          className="fa fa-sword"
-          style={{ fontSize: fontSizes.xs, color: colors.hint }}
+          className={missile ? "fa fa-bow-arrow" : "fa fa-sword"}
+          style={{
+            fontSize: fontSizes.sm,
+            color: colors.hint,
+            alignSelf: "center",
+          }}
         />
         {": "}
       </Text>
-      <Text>{mod}</Text>
-    </InlineRollButton>
+      <TextSmall>{mod}</TextSmall>
+    </a>
   );
 }
 
@@ -126,6 +148,7 @@ export const weaponActionColumns = (
               formula={`1d20+${scores.dex.mod}`}
               flavor={`${actor.name} attacks with ${item.name} (ranged)`}
               mod={getModString(scores.dex.mod)}
+              missile
             />
           );
         }
@@ -171,6 +194,7 @@ export const weaponActionColumns = (
               formula={`${item.system.damage}`}
               flavor={`${actor.name} deals damage with ${item.name} (ranged)`}
               mod={item.system.damage}
+              missile
             />
           );
         }
