@@ -15,7 +15,7 @@ const GridTableWrapper = styled.div<{
 
 const GridTableHeader = styled.span`
   text-transform: uppercase;
-  font-size: ${fontSizes.tiny};
+  font-size: ${fontSizes.xs};
   color: ${colors.label};
 `;
 

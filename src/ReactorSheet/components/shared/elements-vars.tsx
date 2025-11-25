@@ -1,9 +1,10 @@
 export const fontSizes = {
-  tiny: "0.7rem",
-  small: "0.85rem",
-  medium: "1rem",
-  large: "1.5rem",
-  huge: "2rem",
+  xs: "0.7rem",
+  sm: "0.85rem",
+  md: "1rem",
+  lg: "1.5rem",
+  xl: "2rem",
+  xxl: "3rem",
 };
 
 export const spacer = {
@@ -20,6 +21,8 @@ export const colors = {
   secondary: "var(--color-text-secondary)",
   emphatic: "var(--color-text-emphatic)",
   highlight: "var(--color-text-highlight)",
+  subtle: "var(--color-text-subtle)",
+  selection: "var(--color-text-selection)",
   border: "rgba(114, 112, 114, 0.5)",
   hint: "var(--color-form-hint)",
   label: "var(--color-form-label)",
@@ -35,6 +38,7 @@ export const colors = {
 export const fontFamily = {
   sans: "var(--font-sans)",
   serif: "var(--font-serif)",
+  modesto: "'Modesto Condensed', serif",
 };
 
 export const diceIcon = {

@@ -8,3 +8,11 @@ declare global {
   const fromUuid = foundry.utils.fromUuid;
   const fromUuidSync = foundry.utils.fromUuidSync;
 }
+
+declare interface CONFIG extends foundry.config {
+  OSE: {
+    classes: {
+      classic: Record<string, OseClass>;
+    };
+  };
+}

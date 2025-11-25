@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import Header from "./Header";
 import TabContent from "./TabContent";
-import Footer from "./Footer";
 
 const LayoutComponent = styled.main<{ $debug: boolean }>`
   flex-direction: column;
@@ -24,7 +23,6 @@ export const Layout = () => {
     <LayoutComponent $debug={false}>
       <Header />
       <TabContent />
-      <Footer />
     </LayoutComponent>
   );
 };

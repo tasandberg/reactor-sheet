@@ -2,7 +2,6 @@ import type { OSEActor, OseWeapon } from "@src/ReactorSheet/types/types";
 import type { GridTableColumn } from "../../shared/constants";
 import styled from "styled-components";
 import { Row, Text, TextSmall, TextTiny } from "../../shared/elements";
-import { InlineRollButton } from "../../shared/InlineRollButton";
 import { colors, fontSizes } from "../../shared/elements-vars";
 
 const DiceHoverButton = styled.button`
@@ -23,6 +22,52 @@ const DiceHoverButton = styled.button`
     }
   }
 `;
+
+// eslint-disable-next-line react-refresh/only-export-components
+function InlineWeaponRollButton({
+  formula,
+  flavor,
+  mod,
+  missile,
+}: {
+  missile?: boolean;
+  formula: string;
+  flavor: string;
+  mod: string;
+}) {
+  return (
+    <a
+      className="inline-roll roll"
+      data-mode="roll"
+      data-formula={formula}
+      data-tooltip-text={formula}
+      data-flavor={flavor}
+      style={{
+        background: "none",
+        border: "none",
+        padding: 0,
+        width: "100%",
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 4,
+      }}
+    >
+      <Text $color="hint">
+        <i
+          className={missile ? "fa fa-bow-arrow" : "fa fa-sword"}
+          style={{
+            fontSize: fontSizes.sm,
+            color: colors.hint,
+            alignSelf: "center",
+          }}
+        />
+        {": "}
+      </Text>
+      <TextSmall>{mod}</TextSmall>
+    </a>
+  );
+}
 
 function getModString(mod: number) {
   return mod >= 0 ? `+${mod}` : `-${Math.abs(mod)}`;
@@ -80,27 +125,6 @@ export const weaponActionColumns = (
         );
       },
     },
-    // {
-    //   header: "Notes",
-    //   name: "notes",
-    //   justify: "start",
-    //   align: "start",
-    //   width: "200px",
-    //   renderCell: (item) => (
-    //     <div className="flex-row" style={{ flexWrap: "wrap", gap: "0.5rem" }}>
-    //       {item.system.qualities.map((q, i) => (
-    //         <Badge
-    //           key={`qt${i}${q.label}`}
-    //           title={q.label}
-    //           style={{ display: "inline" }}
-    //           className="badge"
-    //         >
-    //           <i className={"pr-1 fa " + q.icon} /> {q.label}
-    //         </Badge>
-    //       ))}
-    //     </div>
-    //   ),
-    // },
     {
       header: "Hit",
       name: "hit",
@@ -111,36 +135,21 @@ export const weaponActionColumns = (
         let [meleeMod, missileMod] = [null, null];
         if (item.system.melee) {
           meleeMod = (
-            <InlineRollButton
+            <InlineWeaponRollButton
               formula={`1d20+${scores.str.mod}`}
               flavor={`${actor.name} attacks with ${item.name}`}
-            >
-              <Text>
-                <i
-                  className="fa fa-sword"
-                  style={{ fontSize: fontSizes.tiny, color: colors.hint }}
-                />
-                {": "}
-                {getModString(scores.str.mod)}
-              </Text>
-            </InlineRollButton>
+              mod={getModString(scores.str.mod)}
+            />
           );
         }
         if (item.system.missile && scores.dex.mod !== 0) {
           missileMod = (
-            <InlineRollButton
+            <InlineWeaponRollButton
               formula={`1d20+${scores.dex.mod}`}
               flavor={`${actor.name} attacks with ${item.name} (ranged)`}
-            >
-              <Text>
-                <i
-                  className="fa fa-bow-arrow"
-                  style={{ fontSize: fontSizes.tiny, color: colors.hint }}
-                />
-                {": "}
-                {getModString(scores.dex.mod)}
-              </Text>
-            </InlineRollButton>
+              mod={getModString(scores.dex.mod)}
+              missile
+            />
           );
         }
         return (
@@ -171,38 +180,22 @@ export const weaponActionColumns = (
         let missileDmg = null;
         if (item.system.melee) {
           meleeDmg = (
-            <InlineRollButton
+            <InlineWeaponRollButton
               formula={`${item.system.damage}+${scores.str.mod}`}
               flavor={`${actor.name} deals damage with ${item.name}`}
-            >
-              <Text>
-                <i
-                  className="fa fa-sword"
-                  style={{ fontSize: fontSizes.tiny, color: colors.hint }}
-                />
-                {": "}
-                {item.system.damage}
-                {getModString(scores.str.mod)}
-              </Text>
-            </InlineRollButton>
+              mod={item.system.damage + getModString(scores.str.mod)}
+            />
           );
         }
 
         if (item.system.missile) {
           missileDmg = (
-            <InlineRollButton
+            <InlineWeaponRollButton
               formula={`${item.system.damage}`}
               flavor={`${actor.name} deals damage with ${item.name} (ranged)`}
-            >
-              <Text>
-                <i
-                  className="fa fa-bow-arrow"
-                  style={{ fontSize: fontSizes.tiny, color: colors.hint }}
-                />
-                {": "}
-                {item.system.damage}
-              </Text>
-            </InlineRollButton>
+              mod={item.system.damage}
+              missile
+            />
           );
         }
 

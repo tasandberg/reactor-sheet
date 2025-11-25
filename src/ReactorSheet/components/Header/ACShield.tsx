@@ -15,8 +15,8 @@ import { ShieldBorder } from "@src/svg/ShieldBorder";
 //   color: ${colors.hint};
 // `;
 
-export default function ACShield() {
+export default function ACShield({ width = 50 }: { width?: number }) {
   const { actorData } = useReactorSheetContext();
 
-  return <ShieldBorder width={60} value={actorData.aac.value} />;
+  return <ShieldBorder width={width} value={actorData.aac.value} />;
 }

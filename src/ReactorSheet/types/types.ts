@@ -1,7 +1,7 @@
-import type ContextConnector from "@src/applications/context-connector";
 import type OseDataModelCharacterAC from "./data-model-character-ac";
 import type OseDataModelCharacterScores from "./data-model-character-scores";
 import type { TabIds } from "../components/shared/tabs";
+import type { ContextConnector } from "foundry-vtt-react";
 
 // Add props as needed
 export type ReactorContext = {
@@ -22,6 +22,7 @@ export interface ReactorSheetContextValue {
   actorData: OSEActor["_source"]["system"];
   currentTab: TabIds;
   setCurrentTab: (tabId: TabIds) => void;
+  oseMode: { advanced: boolean; classic: boolean };
   updateActor: (updateData: {
     [key: string]: string | number | string[];
   }) => Promise<OSEActor | void>;
@@ -71,6 +72,7 @@ export type OSEActor = Actor & {
       encounter: number;
       overland: number;
     };
+    requirements: string;
     spells: {
       spellList: OseSpellList;
       slots: { [n: number]: { used: number; max: number } };
@@ -135,6 +137,7 @@ export type OseItem = Omit<Item, "type"> & {
     tags?: { label: string; value: string; icon: string }[];
     treasure: boolean;
     weight: number;
+    requirements?: string;
   };
   rollWeapon: (options: { skipDialog: boolean }) => void;
   update: (updateData: {

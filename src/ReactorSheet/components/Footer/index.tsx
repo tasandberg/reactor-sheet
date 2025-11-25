@@ -1,14 +1,10 @@
 import { useReactorSheetContext } from "../context";
 import { Column, Row, Text, TextSmall } from "../shared/elements";
 import { colors } from "../shared/elements-vars";
+import Money from "../shared/Money";
 
 export default function Footer() {
   const { actor } = useReactorSheetContext();
-  const treasures = Object.values(actor.system.treasures);
-
-  const currencies = ["GP", "SP", "CP", "PP", "EP"]
-    .map((cur) => treasures.find((t) => t.name === cur))
-    .filter((t) => !!t);
 
   return (
     <div
@@ -45,23 +41,7 @@ export default function Footer() {
             </div>
           </Row>
         </Column>
-        <Column $align="start" style={{ height: "100%" }}>
-          <Text $color="label">Wealth</Text>
-          <Row style={{ flexWrap: "wrap" }}>
-            {currencies.map((cur) => (
-              <Row
-                key={`footer-${cur.name}`}
-                style={{ gap: 2, width: "auto", marginRight: 4 }}
-              >
-                <img src={cur?.img} width="14" />
-                <TextSmall $color="label">{cur?.name}: </TextSmall>
-                <TextSmall $color="emphatic">
-                  {cur?.system.quantity.value}
-                </TextSmall>
-              </Row>
-            ))}
-          </Row>
-        </Column>
+        <Money />
       </Row>
     </div>
   );
