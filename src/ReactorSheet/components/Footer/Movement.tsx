@@ -1,6 +1,6 @@
 import { useReactorSheetContext } from "../context";
 import HeaderSection from "../Header/HeaderSection";
-import { Row, TextSmall } from "../shared/elements";
+import { TextSmall } from "../shared/elements";
 
 export default function Movement() {
   const { actor } = useReactorSheetContext();

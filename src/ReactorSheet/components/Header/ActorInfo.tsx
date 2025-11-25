@@ -177,11 +177,6 @@ export default function ActorInfo() {
         <Movement />
         <Encumbrance />
       </Row>
-      {/* <CharacterDetails
-        actor={actor}
-        handleChange={handleChange}
-        oseMode={oseMode}
-      /> */}
     </Column>
   );
 }
