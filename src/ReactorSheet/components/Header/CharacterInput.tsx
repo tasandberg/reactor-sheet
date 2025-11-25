@@ -32,7 +32,8 @@ const CharacterInputLabel = styled.label`
   white-space: nowrap;
   display: flex;
   flex-direction: row;
-  font-size: ${fontSizes.sm};
+  font-size: ${fontSizes.xs};
+  text-transform: uppercase;
   width: 65px;
   align-items: center;
   justify-content: start;

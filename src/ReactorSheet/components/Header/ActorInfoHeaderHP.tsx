@@ -35,6 +35,7 @@ const HPContainer = styled.div`
   grid-template-columns: min-content max-content;
   height: 100%;
   width: 100%;
+  gap: 2px;
 `;
 export default function ActorInfoHeaderHP() {
   const { actor, updateActor } = useReactorSheetContext();

@@ -1,9 +1,7 @@
-import { OSE_ADVANCED_CLASSES } from "./ose-advanced-classes";
-import { OSE_CLASSIC_CLASSES } from "./ose-classic-classes";
+import { CLASSIC_FANTASY_CLASSES } from "./ose-classic-classes";
 
 const ALL_CLASSES = {
-  ...OSE_CLASSIC_CLASSES,
-  ...OSE_ADVANCED_CLASSES,
+  ...CLASSIC_FANTASY_CLASSES,
 };
 
 type OSE_CLASS_NAMES = keyof typeof ALL_CLASSES;
@@ -14,7 +12,7 @@ export class OseClassData {
   levels?: {
     xp: number;
     hd: string;
-    thaco: number;
+    thac0: number;
     saves: number[];
   }[];
 

@@ -1,11 +1,6 @@
 import { useReactorSheetContext } from "../context";
 import { Column, Row } from "../shared/elements";
-import React from "react";
-import {
-  getHitDice,
-  getNextLevelXp,
-  getPreviousLevelXp,
-} from "@src/lib/class-data";
+import React, { useMemo } from "react";
 import ActorInfoHeader from "./ActorInfoHeader";
 import CharacterInput from "./CharacterInput";
 import styled from "styled-components";
@@ -15,6 +10,7 @@ import Money from "../shared/Money";
 import Movement from "../Footer/Movement";
 import Encumbrance from "./Encumbrance";
 import HeaderSection from "./HeaderSection";
+import { getLevelXp, getHitDice } from "@src/util/class-data";
 
 const DetailBox = styled(Column)<{ $grow?: number }>`
   justify-content: start;
@@ -25,28 +21,35 @@ const DetailBox = styled(Column)<{ $grow?: number }>`
 `;
 
 export default function ActorInfo() {
-  const { actor, updateActor, oseMode } = useReactorSheetContext();
+  const { actor, updateActor, actorData, oseMode } = useReactorSheetContext();
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = event.target;
     const parsedValue = type === "number" ? Number(value) : value;
     updateActor({ [name]: parsedValue });
   };
 
-  const nextLevel = getNextLevelXp(
-    actor.system.details.class,
-    Number(actor.system.details.level)
+  const nextLevelXp = useMemo(
+    () =>
+      getLevelXp(
+        actor.system.details.class,
+        Number(actor.system.details.level) + 1
+      ),
+    [actor.system.details.class, actor.system.details.level]
   );
-  console.log("class", actor);
 
-  const previousLevel = getPreviousLevelXp(
-    actor.system.details.class,
-    Number(actor.system.details.level)
+  const currentLevelXp = useMemo(
+    () =>
+      getLevelXp(
+        actor.system.details.class,
+        Number(actor.system.details.level)
+      ),
+    [actor.system.details.class, actor.system.details.level]
   );
 
   const xpProgress = Math.clamp(
     Math.floor(
-      ((actor.system.details.xp.value - previousLevel) /
-        (nextLevel - previousLevel)) *
+      ((actor.system.details.xp.value - currentLevelXp!) /
+        (nextLevelXp! - currentLevelXp!)) *
         100
     ),
     0,
@@ -118,35 +121,39 @@ export default function ActorInfo() {
             label="Experience"
             name="system.details.xp.value"
             type="number"
-            defaultValue={Number(actor.system.details.xp.value)}
+            defaultValue={Number(actorData.details.xp.value)}
+            key={"xp-" + actorData.details.xp.value}
             style={{ textAlign: "right" }}
             onBlur={handleChange}
           />
           <CharacterInput
             label="Next Level"
             name="system.details.xp.next"
-            defaultValue={nextLevel}
+            defaultValue={actor.system.details.xp.next || nextLevelXp}
             style={{ textAlign: "right" }}
-            disabled
+            onBlur={handleChange}
+            disabled={!!nextLevelXp}
           />
-          <CharacterInput
-            label="Hit Dice"
-            name="system.details.hitDice"
-            renderInput={
-              <div className="w-100">
-                <a
-                  className="inline-roll roll text-sm"
-                  data-mode="roll"
-                  data-formula={hitDice}
-                  data-tooltip-text={`Hit Dice ${hitDice}`}
-                  data-flavor={`Hit Die`}
-                >
-                  <i className={diceIcon[hitDice.slice(1, 3)]} />
-                  {hitDice}
-                </a>
-              </div>
-            }
-          />
+          {hitDice && (
+            <CharacterInput
+              label="Hit Dice"
+              name="system.details.hitDice"
+              renderInput={
+                <div className="w-100">
+                  <a
+                    className="inline-roll roll text-sm"
+                    data-mode="roll"
+                    data-formula={hitDice}
+                    data-tooltip-text={`Hit Dice ${hitDice}`}
+                    data-flavor={`Hit Die`}
+                  >
+                    <i className={diceIcon[hitDice.slice(1, 3)]} />
+                    {hitDice}
+                  </a>
+                </div>
+              }
+            />
+          )}
         </DetailBox>
         <DetailBox style={{ width: "calc(33% - 4px)" }}>
           <CharacterInput

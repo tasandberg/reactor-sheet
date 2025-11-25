@@ -4,16 +4,28 @@ export type Attribute = (typeof ATTRIBUTES)[number];
 
 export type OseClass = {
   name: string;
-  abilitiesPack?: string;
+  abilitiesPack: string;
+  spellsPack?: string;
+  requirements: Partial<Record<Attribute, number>>;
   levels: {
     xp: number;
     hd: string;
-    thaco: number;
+    thac0: number;
     saves: number[];
     spells?: number[];
   }[];
   skillChecks?: Record<string, number>[];
+  source: string;
 };
+
+export type ClassicClassName =
+  | "Cleric"
+  | "Dwarf"
+  | "Elf"
+  | "Fighter"
+  | "Halfling"
+  | "Magic-User"
+  | "Thief";
 
 /**
  * Represents a playable race in OSE Advanced Fantasy.

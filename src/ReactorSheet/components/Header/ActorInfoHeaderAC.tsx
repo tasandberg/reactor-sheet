@@ -5,7 +5,7 @@ import { colors } from "../shared/elements-vars";
 const ACContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 2px;
 `;
 
 export default function ActorInfoHeaderAC() {
@@ -30,8 +30,8 @@ export default function ActorInfoHeaderAC() {
           style={{
             position: "absolute",
             color: colors.hint,
-            fontSize: 38,
-            top: 0,
+            fontSize: 40,
+            top: -1,
           }}
         ></i>
         <i
@@ -39,12 +39,12 @@ export default function ActorInfoHeaderAC() {
           style={{
             position: "absolute",
             color: colors.bgDark3,
-            fontSize: 36,
-            top: 1,
+            fontSize: 38,
+            top: 0,
           }}
         ></i>
 
-        <Text $color="emphatic" style={{ marginTop: -4 }}>
+        <Text $color="emphatic" style={{ marginTop: 0 }}>
           15
         </Text>
       </div>

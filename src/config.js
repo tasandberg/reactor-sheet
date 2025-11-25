@@ -1,4 +1,5 @@
 import { APP_ID } from "./constants";
+import { CLASSIC_FANTASY_CLASSES } from "./lib/ose-classic-classes";
 import { OSE_MODES } from "./lib/ose-compendiums";
 
 export function setupConfig() {
@@ -15,4 +16,8 @@ export function setupConfig() {
       [OSE_MODES.ADVANCED]: "Advanced Fantasy",
     },
   });
+
+  CONFIG.OSE.classes = {
+    classic: CLASSIC_FANTASY_CLASSES,
+  };
 }
