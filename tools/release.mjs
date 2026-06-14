@@ -3,7 +3,7 @@ import { writeFileSync } from 'fs';
 import { execSync } from 'child_process';
 
 const args = process.argv.slice(2);
-const { version: currentVersion, url: githubRepository }= moduleManifest.version;
+const { version: currentVersion, url: githubRepository } = moduleManifest;
 
 function getArguments() {
   const releaseType = args.find(arg => arg.startsWith('--type='))?.split('=')[1];

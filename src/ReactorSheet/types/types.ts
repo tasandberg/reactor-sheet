@@ -1,7 +1,7 @@
-import type ContextConnector from "@src/applications/context-connector";
 import type OseDataModelCharacterAC from "./data-model-character-ac";
 import type OseDataModelCharacterScores from "./data-model-character-scores";
 import type { TabIds } from "../components/shared/tabs";
+import type { ContextConnector } from "foundry-vtt-react";
 
 // Add props as needed
 export type ReactorContext = {

@@ -36,11 +36,16 @@ const config: UserConfig = {
     outDir: path.resolve(__dirname, "dist"),
     emptyOutDir: true,
     sourcemap: true,
-    lib: {
-      name: APP_NAME,
-      entry: path.resolve(__dirname, "src/_main.js"),
-      formats: ["es"],
-      fileName: "main",
+
+    rollupOptions: {
+      input: path.resolve(__dirname, "src/main.ts"),
+      output: {
+        dir: path.resolve(__dirname, "dist"),
+        entryFileNames: `[name].js`,
+        assetFileNames: `[name].[ext]`,
+        format: "es",
+        name: APP_NAME,
+      },
     },
   },
 };
