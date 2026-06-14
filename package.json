@@ -17,7 +17,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "clsx": "^2.1.1",
-    "foundry-vtt-react": "^0.1.4",
+    "foundry-vtt-react": "github:tasandberg/foundry-vtt-react#feat/vite-plugin-foundry-react",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "styled-components": "^6.1.19"
@@ -37,7 +37,10 @@
     "sass-embedded": "^1.91.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.39.1",
-    "vite": "^7.1.2",
+    "vite": "^7.3.5",
     "vite-plugin-svgr": "^4.5.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["foundry-vtt-react"]
   }
 }

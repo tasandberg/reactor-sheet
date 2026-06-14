@@ -1,56 +1,27 @@
-import type { UserConfig } from "vite";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import foundryReact from "foundry-vtt-react/vite";
 import svgr from "vite-plugin-svgr";
 import path from "path";
-import APP_INFO from "./module.json";
 
-const APP_NAME = APP_INFO.id;
-
-const config: UserConfig = {
-  root: "src/",
-  publicDir: path.resolve(__dirname, "public"),
-  base: "/modules/" + APP_NAME + "/dist",
-  server: {
-    port: 30001,
-    open: true,
-
-    proxy: {
-      [`^(?!/modules/${APP_NAME}/dist)`]: "http://localhost:30000/",
-      "/socket.io": {
-        target: "ws://localhost:30000",
-        ws: true,
-      },
-    },
-  },
+// foundryReact() owns the Foundry-specific config (base, root, server.proxy,
+// build input/output) — derived from module.json. Only app-specific config lives here.
+export default defineConfig({
+  plugins: [react(), foundryReact(), svgr()],
   define: {
     "process.env": {},
   },
   resolve: {
+    // Note: react/react-dom dedupe is handled by foundryReact() — no need to set it here.
     alias: {
       // Allow absolute imports from the src directory
       "@src": path.resolve(__dirname, "src"),
     },
   },
   build: {
-    outDir: path.resolve(__dirname, "dist"),
-    emptyOutDir: true,
     sourcemap: true,
-
-    rollupOptions: {
-      input: path.resolve(__dirname, "src/main.ts"),
-      output: {
-        dir: path.resolve(__dirname, "dist"),
-        entryFileNames: `[name].js`,
-        assetFileNames: `[name].[ext]`,
-        format: "es",
-        name: APP_NAME,
-      },
-    },
   },
-};
-
-export default defineConfig({
-  plugins: [react(), svgr()],
-  ...config,
+  server: {
+    open: true,
+  },
 });

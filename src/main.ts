@@ -3,11 +3,11 @@ import logger from "./util/logger";
 
 export function initialize() {
   foundry.helpers.Hooks.once("init", () => {
-    logger("Foundry React Module | Initializing module");
+    logger("Initializing module");
   });
 
   foundry.helpers.Hooks.once("ready", async () => {
-    logger("Foundry React Module | Initializing React application");
+    logger("Initializing React application");
     foundry.documents.collections.Actors.registerSheet(
       game.system?.id,
       ReactorSheet,
@@ -15,7 +15,7 @@ export function initialize() {
         types: ["character", "npc"],
         makeDefault: true,
         label: "Re-Actor Character Sheet",
-      }
+      },
     );
   });
 }
