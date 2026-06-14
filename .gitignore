@@ -25,3 +25,6 @@ dist-ssr
 foundry
 foundry-config.json
 build/
+
+# Local planning docs (not committed)
+docs/plans/

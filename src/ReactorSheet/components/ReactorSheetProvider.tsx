@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { ReactorSheetContext } from "./context";
 import type { OSEActor, OseItem, ReactorContext } from "../types/types";
-import ContextConnector from "@src/applications/context-connector";
+import type { ContextConnector } from "foundry-vtt-react";
 import { TabIds } from "./shared/tabs";
 
 function ReactorSheetProvider({
@@ -52,6 +52,10 @@ function ReactorSheetProvider({
       200
     );
     contextConnector.onUpdate(handleUpdate);
+
+    return () => {
+      contextConnector.tearDown(handleUpdate);
+    };
   }, [contextConnector]);
 
   const context = {

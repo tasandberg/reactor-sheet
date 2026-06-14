@@ -1,7 +1,8 @@
 import ReactorSheetApp from "@src/ReactorSheet";
-import ReactApplication from "./react-application";
 
-class ReactorSheet extends ReactApplication {
+import { ReactActorSheetV2 } from "foundry-vtt-react";
+
+class ReactorSheet extends ReactActorSheetV2 {
   reactApp = ReactorSheetApp;
   static DEFAULT_OPTIONS = {
     window: {

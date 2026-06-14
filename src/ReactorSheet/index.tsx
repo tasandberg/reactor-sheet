@@ -13,12 +13,21 @@ function ReactorSheetApp({
   const appRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    function stopPropagation(event: MouseEvent) {
+      event.stopPropagation();
+    }
+    let appRefCurrent: HTMLDivElement | null = null;
     if (appRef.current) {
       // Prevent crazy event propagation in foundry
-      appRef.current.addEventListener("mousedown", (event) => {
-        event.stopPropagation();
-      });
+      appRefCurrent = appRef.current;
+      appRefCurrent.addEventListener("mousedown", stopPropagation);
     }
+
+    return () => {
+      if (appRefCurrent) {
+        appRefCurrent.removeEventListener("mousedown", stopPropagation);
+      }
+    };
   }, [appRef]);
 
   return (
