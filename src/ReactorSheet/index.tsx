@@ -1,4 +1,5 @@
 import type { ReactorSheetAppProps } from "./types/types";
+import "./styles/vellum/fonts.css";
 import "./styles/vellum/tokens.css";
 import "./styles/vellum/components.css";
 import "./styles/styles.scss";
