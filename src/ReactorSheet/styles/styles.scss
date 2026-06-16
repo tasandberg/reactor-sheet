@@ -2,30 +2,14 @@
 
 /** Purely for namespacing default style overrides */
 
+// The window element (.reactor-sheet) is Foundry's territory — its titlebar and
+// frame controls must stay untouched. We only set structural/integration bits here;
+// all appearance + the element reset live on .reactor-sheet-app (our React content).
 .reactor-sheet {
   overflow: visible;
   height: 100%;
-  background-color: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  font-size: 16px; // 1rem anchor; never override on <html>
   min-width: 320px; // handoff min footprint
   min-height: 360px;
-
-  // Scoped element reset — Foundry's layered element styles lose to these
-  // unlayered rules; classed Vellum controls (.btn/.input/.select) still win.
-  button,
-  input,
-  select,
-  textarea {
-    all: unset;
-    box-sizing: border-box;
-    font-family: var(--sans);
-  }
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
 
   .controls-dropdown {
     z-index: 3;
@@ -54,8 +38,27 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 16px;
   border-radius: var(--r-sm);
   min-width: 320px;
   container-type: inline-size; // layout reflows to window width, not viewport
   container-name: sheet;
+
+  // Scoped element reset — ONLY elements WE render inside the React app, never
+  // Foundry's window-frame controls. Classed Vellum controls (.btn/.input) still win.
+  button,
+  input,
+  select,
+  textarea {
+    all: unset;
+    box-sizing: border-box;
+    font-family: var(--sans);
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 }
