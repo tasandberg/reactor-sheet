@@ -3,9 +3,6 @@
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/workspaces/reactor-sheet",
-  "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
-  },
   "forwardPorts": [30001, 30000],
   "portsAttributes": {
     "30001": { "label": "Vite dev (open this — proxies Foundry)", "onAutoForward": "openPreview" },
