@@ -175,7 +175,7 @@
 }
 // borderless: just the stamp label + value, so HP/AC stay the only "boxes"
 .rs-tile {
-  width: 64px; // uniform
+  width: 52px; // uniform, compact
   flex: 0 0 auto;
   display: flex;
   flex-direction: column;
@@ -184,9 +184,10 @@
   padding: 2px 0 0;
   text-align: center;
 }
-.rs-tile .stamp { display: block; width: 100%; text-align: center; } // black bg fills box like the others
+// smaller, snugger stamp than the default .sm
+.rs-tile .stamp { display: block; width: 100%; text-align: center; font-size: var(--fs-3xs, 10px); padding: 3px 4px 2px; }
 .rs-tile-v {
-  font-family: var(--mono); font-size: var(--fs-xs, 12px); color: var(--text);
+  font-family: var(--mono); font-size: var(--fs-2xs, 11px); color: var(--text);
 }
 // MOVE tile reveals the movement bands on hover
 .rs-tile-move { position: relative; cursor: default; }
