@@ -123,8 +123,8 @@
   position: relative;
   background: var(--surface);
   border: 1px solid var(--border-soft, #2c2823);
-  border-radius: 9px;
-  padding: 7px 10px 8px;
+  border-radius: 7px;
+  padding: 4px 8px 5px;
   text-align: center;
 }
 .rs-vital.hp { border-color: color-mix(in srgb, var(--crimson) 55%, transparent); }
@@ -135,13 +135,13 @@
   color: var(--text-mute);
 }
 .rs-vital .vv-big {
-  font-family: var(--display); font-size: var(--fs-4xl, 28px);
-  line-height: 1.05; margin: 2px 0 1px; color: var(--text);
+  font-family: var(--display); font-size: var(--fs-2xl, 21px);
+  line-height: 1.05; margin: 1px 0; color: var(--text);
 }
 .rs-vital.hp .vv-big { color: var(--crimson); }
 .rs-vital.ac .vv-big { color: var(--teal); }
 .rs-vital .vv-sub {
-  font-family: var(--mono); font-size: var(--fs-xs, 12px);
+  font-family: var(--mono); font-size: var(--fs-2xs, 11px);
   color: var(--text-mute);
 }
 
@@ -150,20 +150,20 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-width: 94px;
+  min-width: 84px;
 }
 .ss-row {
   display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
-  padding: 5px 4px 4px;
+  padding: 3px 4px;
   border-bottom: 1px solid var(--border-soft, #2c2823);
 }
 .rs-substack .ss-row:last-child { border-bottom: none; }
 .ss-k {
-  font-family: var(--display); font-size: var(--fs-2xs, 11px);
+  font-family: var(--display); font-size: var(--fs-3xs, 10px);
   letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-mute);
 }
 .ss-v {
-  font-family: var(--mono); font-size: var(--fs-sm, 13px); color: var(--text);
+  font-family: var(--mono); font-size: var(--fs-xs, 12px); color: var(--text);
 }
 
 // --- abilities ---
