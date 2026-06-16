@@ -34,7 +34,9 @@ export function Shell({ tabs, active, onSelect, children }: Props) {
               </div>
               <div className="rs-right">
                 <TabBar tabs={tabs} active={active} onSelect={onSelect} />
-                {children}
+                <div id="rs-tabpanel" role="tabpanel">
+                  {children}
+                </div>
               </div>
             </div>
           </div>

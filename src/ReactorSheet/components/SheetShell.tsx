@@ -1,6 +1,6 @@
 import { Shell, type TabItem } from "./shell";
 import { useReactorSheetContext } from "./context";
-import { tabs, TabIds } from "./shared/tabs";
+import { tabs } from "./shared/tabs";
 import getLabel from "@src/util/getLabel";
 
 /**
@@ -25,7 +25,10 @@ export default function SheetShell() {
     <Shell
       tabs={items}
       active={activeTab.id}
-      onSelect={(id) => setCurrentTab(id as TabIds)}
+      onSelect={(id) => {
+        const next = visible.find((t) => t.id === id);
+        if (next) setCurrentTab(next.id);
+      }}
     >
       <activeTab.Content />
     </Shell>
