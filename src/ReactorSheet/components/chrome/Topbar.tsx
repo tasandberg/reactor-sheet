@@ -1,34 +1,52 @@
 import type { TopbarVM } from "../../viewModels/types";
-import { ProgressBar } from "../ui/ProgressBar";
-import { Button } from "../ui/Button";
+import { useTheme } from "../../theme-context";
 
 type Props = { vm: TopbarVM };
 
-/** Persistent topbar: level, XP progress, next level. Buttons are inert in the
- *  display pass (wired in the interactive pass). */
+/** Persistent topbar: level, XP, and chrome actions. The bar stays dark in both
+ *  themes (--ink). Rest/Level Up/Edit are inert in the display pass; the theme
+ *  toggle is live. */
 export function Topbar({ vm }: Props) {
+  const { toggle } = useTheme();
+  const pct = vm.xp.next > 0 ? Math.min(100, (vm.xp.value / vm.xp.next) * 100) : 0;
+
   return (
     <div className="rs-topbar-inner">
-      <div className="rs-topbar-lv">
+      <div className="rs-tb-lv">
         <b>Lv {vm.level}</b>
-        <span>{vm.xp.value.toLocaleString()}</span>
+        <span className="cur">{vm.xp.value.toLocaleString()}</span>
       </div>
-      <div className="rs-topbar-xp">
-        <ProgressBar value={vm.xp.value} max={vm.xp.next} color="var(--gold)" />
-        <span className="xp-val">
-          {vm.xp.value.toLocaleString()} / {vm.xp.next.toLocaleString()} XP
-        </span>
+      <div className="rs-tb-xp" title={`${vm.xp.value.toLocaleString()} XP`}>
+        <div className="rs-tb-bar">
+          <i style={{ width: `${pct}%` }} />
+          <span className="v">{vm.xp.value.toLocaleString()} XP</span>
+        </div>
       </div>
-      <div className="rs-topbar-lv">
+      <div className="rs-tb-lv next">
         <b>Lv {vm.nextLevel}</b>
-        <span>{vm.xp.next.toLocaleString()}</span>
+        <span className="cur">{vm.xp.next.toLocaleString()}</span>
       </div>
-      <div className="rs-topbar-actions">
-        <Button size="sm" variant="ghost" disabled>Rest</Button>
-        <Button size="sm" variant="ghost" disabled>Level Up</Button>
-        <Button size="sm" variant="ghost" disabled>Edit</Button>
-        <Button size="sm" variant="ghost" disabled>Theme</Button>
-      </div>
+      <button type="button" className="rs-tb-btn" disabled>
+        <span className="i" aria-hidden="true">☾</span>
+        <span className="lbl">Rest</span>
+      </button>
+      <button type="button" className="rs-tb-btn up" disabled>
+        <span className="i" aria-hidden="true">▲</span>
+        <span className="lbl">Level Up</span>
+      </button>
+      <button type="button" className="rs-tb-btn" disabled>
+        <span className="i" aria-hidden="true">✎</span>
+        <span className="lbl">Edit</span>
+      </button>
+      <button
+        type="button"
+        className="rs-tb-btn icon"
+        onClick={toggle}
+        title="Toggle colour scheme"
+        aria-label="Toggle colour scheme"
+      >
+        <span className="i" aria-hidden="true">◐</span>
+      </button>
     </div>
   );
 }

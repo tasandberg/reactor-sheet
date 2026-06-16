@@ -1,19 +1,68 @@
 // Display-layout helpers for the Actions tab + chrome (pass 1).
 // Pure layout on top of the Vellum component classes; colors come from tokens.
 
-// --- topbar ---
+// --- topbar (ported from prototype .fvtt-topbar) ---
+// Always dark: --ink and the stamp-* text tokens are constant across themes, so
+// the bar reads identically in dark and cream.
+.rs-topbar {
+  background: var(--ink, #070605);
+  border-bottom: 1px solid var(--border, #3a342c);
+  padding: 6px 12px;
+}
 .rs-topbar-inner {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
 }
-.rs-topbar-lv { display: flex; flex-direction: column; line-height: 1; }
-.rs-topbar-lv b { font-family: var(--display); font-size: var(--fs-lg, 18px); }
-.rs-topbar-lv span { font-size: var(--fs-3xs, 10px); color: var(--text-mute, #8a8270); }
-.rs-topbar-xp { flex: 1; min-width: 120px; display: flex; flex-direction: column; gap: 3px; }
-.rs-topbar-xp .xp-val { font-family: var(--mono); font-size: var(--fs-2xs, 11px); color: var(--text-mute, #8a8270); }
-.rs-topbar-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.rs-tb-lv {
+  display: flex; flex-direction: column; align-items: center;
+  line-height: 1.05; flex-shrink: 0; white-space: nowrap;
+}
+.rs-tb-lv b {
+  font-family: var(--display); font-size: var(--fs-sm, 13px);
+  letter-spacing: 0.05em; color: var(--gold);
+}
+.rs-tb-lv.next b { color: var(--stamp-text-dim, #b5ad97); }
+.rs-tb-lv .cur {
+  font-family: var(--mono); font-size: var(--fs-3xs, 10px);
+  color: var(--stamp-text-faint, rgba(229, 222, 200, 0.35)); margin-top: 1px;
+}
+.rs-tb-xp { flex: 1; min-width: 44px; }
+.rs-tb-bar {
+  position: relative; height: 16px;
+  border: 1px solid rgba(229, 222, 200, 0.22);
+  border-radius: 999px; background: rgba(0, 0, 0, 0.35);
+  overflow: hidden; display: flex; align-items: center; justify-content: center;
+}
+.rs-tb-bar i {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  background: linear-gradient(90deg, var(--gold-dim, var(--gold)), var(--gold));
+  border-radius: 999px;
+}
+.rs-tb-bar .v {
+  position: relative; z-index: 1;
+  font-family: var(--mono); font-size: var(--fs-3xs, 10px);
+  color: var(--stamp-text, #e5dec8); text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+// Buttons qualified with .rs-topbar to beat the `.reactor-sheet-app button`
+// reset (0,1,1) — same fix as .rs-tabrail .rs-tab (see shell.scss).
+.rs-topbar .rs-tb-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: transparent;
+  border: 1px solid rgba(229, 222, 200, 0.18);
+  color: var(--stamp-text-dim, #b5ad97);
+  font-family: var(--sans); font-weight: 500;
+  font-size: var(--fs-3xs, 10px); letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 6px 11px 5px; border-radius: 5px; cursor: pointer;
+  white-space: nowrap; transition: color 0.12s, border-color 0.12s, background 0.12s;
+}
+.rs-topbar .rs-tb-btn:hover:not(:disabled) { color: var(--stamp-text, #e5dec8); border-color: rgba(229, 222, 200, 0.4); }
+.rs-topbar .rs-tb-btn:disabled { cursor: default; } // inert (display pass) — keep full fidelity, no dimming
+.rs-topbar .rs-tb-btn.up { background: var(--gold); border-color: var(--gold); color: var(--on-accent, #070605); }
+.rs-topbar .rs-tb-btn.up:hover:not(:disabled) { background: var(--gold-dim, var(--gold)); }
+.rs-topbar .rs-tb-btn.icon { padding: 6px 8px; }
+.rs-topbar .rs-tb-btn .i { font-size: 12px; line-height: 1; }
 
 // --- identity header ---
 .rs-identity { display: flex; gap: 14px; align-items: center; }

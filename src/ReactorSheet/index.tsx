@@ -5,6 +5,7 @@ import "./styles/vellum/components.css";
 import "./styles/styles.scss";
 import ReactorSheetProvider from "./components/ReactorSheetProvider";
 import SheetShell from "./components/SheetShell";
+import { ThemeProvider } from "./ThemeProvider";
 import { useEffect, useRef } from "react";
 
 function ReactorSheetApp({
@@ -33,15 +34,19 @@ function ReactorSheetApp({
   }, [appRef]);
 
   return (
-    <div className="reactor-sheet-app" ref={appRef}>
-      <ReactorSheetProvider
-        initialActor={actor!}
-        source={source!}
-        contextConnector={contextConnector}
-      >
-        <SheetShell />
-      </ReactorSheetProvider>
-    </div>
+    <ThemeProvider>
+      {(theme) => (
+        <div className="reactor-sheet-app" data-theme={theme === "dark" ? undefined : theme} ref={appRef}>
+          <ReactorSheetProvider
+            initialActor={actor!}
+            source={source!}
+            contextConnector={contextConnector}
+          >
+            <SheetShell />
+          </ReactorSheetProvider>
+        </div>
+      )}
+    </ThemeProvider>
   );
 }
 
