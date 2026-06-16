@@ -1,0 +1,309 @@
+{
+  "about": {
+    "homepage": "https://www.ladle.dev",
+    "github": "https://github.com/tajo/ladle",
+    "version": 1
+  },
+  "stories": {
+    "controls--button--variants": {
+      "name": "Variants",
+      "levels": [
+        "Controls",
+        "Button"
+      ],
+      "locStart": 5,
+      "locEnd": 14,
+      "filePath": "src/ReactorSheet/components/ui/Button.stories.tsx",
+      "namedExport": "Variants",
+      "meta": {}
+    },
+    "layout--card--basic": {
+      "name": "Basic",
+      "levels": [
+        "Layout",
+        "Card"
+      ],
+      "locStart": 6,
+      "locEnd": 10,
+      "filePath": "src/ReactorSheet/components/ui/Card.stories.tsx",
+      "namedExport": "Basic",
+      "meta": {}
+    },
+    "layout--card--key-value": {
+      "name": "Key value",
+      "levels": [
+        "Layout",
+        "Card"
+      ],
+      "locStart": 12,
+      "locEnd": 19,
+      "filePath": "src/ReactorSheet/components/ui/Card.stories.tsx",
+      "namedExport": "KeyValue",
+      "meta": {}
+    },
+    "controls--check--states": {
+      "name": "States",
+      "levels": [
+        "Controls",
+        "Check"
+      ],
+      "locStart": 5,
+      "locEnd": 10,
+      "filePath": "src/ReactorSheet/components/ui/Check.stories.tsx",
+      "namedExport": "States",
+      "meta": {}
+    },
+    "display--die--dice": {
+      "name": "Dice",
+      "levels": [
+        "Display",
+        "Die"
+      ],
+      "locStart": 5,
+      "locEnd": 14,
+      "filePath": "src/ReactorSheet/components/ui/Die.stories.tsx",
+      "namedExport": "Dice",
+      "meta": {}
+    },
+    "overlays--empty--no-spells": {
+      "name": "No spells",
+      "levels": [
+        "Overlays",
+        "Empty"
+      ],
+      "locStart": 6,
+      "locEnd": 12,
+      "filePath": "src/ReactorSheet/components/ui/Empty.stories.tsx",
+      "namedExport": "NoSpells",
+      "meta": {}
+    },
+    "controls--field--states": {
+      "name": "States",
+      "levels": [
+        "Controls",
+        "Field"
+      ],
+      "locStart": 5,
+      "locEnd": 14,
+      "filePath": "src/ReactorSheet/components/ui/Field.stories.tsx",
+      "namedExport": "States",
+      "meta": {}
+    },
+    "overlays--menu--list": {
+      "name": "List",
+      "levels": [
+        "Overlays",
+        "Menu"
+      ],
+      "locStart": 5,
+      "locEnd": 15,
+      "filePath": "src/ReactorSheet/components/ui/Menu.stories.tsx",
+      "namedExport": "List",
+      "meta": {}
+    },
+    "overlays--menu--popover": {
+      "name": "Popover",
+      "levels": [
+        "Overlays",
+        "Menu"
+      ],
+      "locStart": 17,
+      "locEnd": 29,
+      "filePath": "src/ReactorSheet/components/ui/Menu.stories.tsx",
+      "namedExport": "Popover",
+      "meta": {}
+    },
+    "overlays--modal--level-up": {
+      "name": "Level up",
+      "levels": [
+        "Overlays",
+        "Modal"
+      ],
+      "locStart": 7,
+      "locEnd": 29,
+      "filePath": "src/ReactorSheet/components/ui/Modal.stories.tsx",
+      "namedExport": "LevelUp",
+      "meta": {}
+    },
+    "display--progressbar--bars": {
+      "name": "Bars",
+      "levels": [
+        "Display",
+        "Progressbar"
+      ],
+      "locStart": 5,
+      "locEnd": 12,
+      "filePath": "src/ReactorSheet/components/ui/ProgressBar.stories.tsx",
+      "namedExport": "Bars",
+      "meta": {}
+    },
+    "controls--radio--states": {
+      "name": "States",
+      "levels": [
+        "Controls",
+        "Radio"
+      ],
+      "locStart": 5,
+      "locEnd": 12,
+      "filePath": "src/ReactorSheet/components/ui/Radio.stories.tsx",
+      "namedExport": "States",
+      "meta": {}
+    },
+    "layout--sectiontitle--with-hint": {
+      "name": "With hint",
+      "levels": [
+        "Layout",
+        "Sectiontitle"
+      ],
+      "locStart": 5,
+      "locEnd": 7,
+      "filePath": "src/ReactorSheet/components/ui/SectionTitle.stories.tsx",
+      "namedExport": "WithHint",
+      "meta": {}
+    },
+    "layout--sectiontitle--without-hint": {
+      "name": "Without hint",
+      "levels": [
+        "Layout",
+        "Sectiontitle"
+      ],
+      "locStart": 9,
+      "locEnd": 9,
+      "filePath": "src/ReactorSheet/components/ui/SectionTitle.stories.tsx",
+      "namedExport": "WithoutHint",
+      "meta": {}
+    },
+    "controls--segmented--interactive": {
+      "name": "Interactive",
+      "levels": [
+        "Controls",
+        "Segmented"
+      ],
+      "locStart": 6,
+      "locEnd": 18,
+      "filePath": "src/ReactorSheet/components/ui/Segmented.stories.tsx",
+      "namedExport": "Interactive",
+      "meta": {}
+    },
+    "controls--select--states": {
+      "name": "States",
+      "levels": [
+        "Controls",
+        "Select"
+      ],
+      "locStart": 5,
+      "locEnd": 19,
+      "filePath": "src/ReactorSheet/components/ui/Select.stories.tsx",
+      "namedExport": "States",
+      "meta": {}
+    },
+    "overlays--skeleton--bars": {
+      "name": "Bars",
+      "levels": [
+        "Overlays",
+        "Skeleton"
+      ],
+      "locStart": 5,
+      "locEnd": 12,
+      "filePath": "src/ReactorSheet/components/ui/Skeleton.stories.tsx",
+      "namedExport": "Bars",
+      "meta": {}
+    },
+    "display--stamp--sizes": {
+      "name": "Sizes",
+      "levels": [
+        "Display",
+        "Stamp"
+      ],
+      "locStart": 5,
+      "locEnd": 11,
+      "filePath": "src/ReactorSheet/components/ui/Stamp.stories.tsx",
+      "namedExport": "Sizes",
+      "meta": {}
+    },
+    "controls--stepper--interactive": {
+      "name": "Interactive",
+      "levels": [
+        "Controls",
+        "Stepper"
+      ],
+      "locStart": 6,
+      "locEnd": 9,
+      "filePath": "src/ReactorSheet/components/ui/Stepper.stories.tsx",
+      "namedExport": "Interactive",
+      "meta": {}
+    },
+    "data--table--weapons": {
+      "name": "Weapons",
+      "levels": [
+        "Data",
+        "Table"
+      ],
+      "locStart": 6,
+      "locEnd": 28,
+      "filePath": "src/ReactorSheet/components/ui/Table.stories.tsx",
+      "namedExport": "Weapons",
+      "meta": {}
+    },
+    "navigation--tabs--sheet-tabs": {
+      "name": "Sheet tabs",
+      "levels": [
+        "Navigation",
+        "Tabs"
+      ],
+      "locStart": 6,
+      "locEnd": 21,
+      "filePath": "src/ReactorSheet/components/ui/Tabs.stories.tsx",
+      "namedExport": "SheetTabs",
+      "meta": {}
+    },
+    "display--tag--intents": {
+      "name": "Intents",
+      "levels": [
+        "Display",
+        "Tag"
+      ],
+      "locStart": 5,
+      "locEnd": 14,
+      "filePath": "src/ReactorSheet/components/ui/Tag.stories.tsx",
+      "namedExport": "Intents",
+      "meta": {}
+    },
+    "controls--textarea--states": {
+      "name": "States",
+      "levels": [
+        "Controls",
+        "Textarea"
+      ],
+      "locStart": 5,
+      "locEnd": 10,
+      "filePath": "src/ReactorSheet/components/ui/Textarea.stories.tsx",
+      "namedExport": "States",
+      "meta": {}
+    },
+    "overlays--toast--intents": {
+      "name": "Intents",
+      "levels": [
+        "Overlays",
+        "Toast"
+      ],
+      "locStart": 5,
+      "locEnd": 12,
+      "filePath": "src/ReactorSheet/components/ui/Toast.stories.tsx",
+      "namedExport": "Intents",
+      "meta": {}
+    },
+    "controls--toggle--states": {
+      "name": "States",
+      "levels": [
+        "Controls",
+        "Toggle"
+      ],
+      "locStart": 5,
+      "locEnd": 10,
+      "filePath": "src/ReactorSheet/components/ui/Toggle.stories.tsx",
+      "namedExport": "States",
+      "meta": {}
+    }
+  }
+}
