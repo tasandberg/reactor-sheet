@@ -2,7 +2,7 @@ import { Shell, type TabItem } from "./shell";
 import { useReactorSheetContext } from "./context";
 import { tabs, TabIds } from "./shared/tabs";
 import getLabel from "@src/util/getLabel";
-import { Topbar, IdentityHeader, Vitals, SubStats } from "./chrome";
+import { Topbar, HeaderBand } from "./chrome";
 import { ActionsView, SavesExploration } from "./actions";
 import { selectTopbar } from "../viewModels/topbar";
 import { selectIdentity } from "../viewModels/identity";
@@ -21,13 +21,11 @@ export default function SheetShell() {
   const items: TabItem[] = visible.map((t) => ({
     id: t.id,
     label: getLabel(t.label),
-    icon: <i className={t.icon} aria-hidden="true" />,
+    icon: <span aria-hidden="true">{t.icon}</span>,
   }));
 
   const activeTab = visible.find((t) => t.id === currentTab) ?? visible[0];
   if (!activeTab) return null;
-
-  const vitals = selectVitals(actor);
 
   return (
     <Shell
@@ -38,9 +36,7 @@ export default function SheetShell() {
         if (next) setCurrentTab(next.id);
       }}
       topbar={<Topbar vm={selectTopbar(actor)} />}
-      header={<IdentityHeader vm={selectIdentity(actor)} />}
-      vitals={<Vitals vm={vitals} />}
-      subStats={<SubStats vm={vitals} />}
+      header={<HeaderBand identity={selectIdentity(actor)} vitals={selectVitals(actor)} />}
       railExtra={<SavesExploration saves={selectSaves(actor)} exploration={selectExploration(actor)} />}
     >
       {activeTab.id === TabIds.ACTIONS ? <ActionsView actor={actor} /> : <activeTab.Content />}

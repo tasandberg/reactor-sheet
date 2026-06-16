@@ -24,32 +24,32 @@ export type TabDef = {
 export const tabs = (actor: OSEActor) =>
   [
     {
-      icon: "fas fa-axe-battle",
+      icon: "◈",
       label: "OSE.category.actions",
       Content: Actions,
       id: TabIds.ACTIONS,
     },
     {
-      icon: "fas fa-treasure-chest",
+      icon: "▤",
       label: "OSE.category.inventory",
       Content: InventoryPage,
       id: TabIds.INVENTORY,
     },
     {
-      icon: "fas fa-bolt",
+      icon: "✦",
       label: "OSE.category.spells",
       Content: Spells,
       id: TabIds.SPELLS,
       disabled: !actor.system.spells.enabled,
     },
     {
-      icon: "fas fa-user-gear",
+      icon: "❖",
       label: "OSE.category.abilities",
       Content: Abilities,
       id: TabIds.ABILITIES,
     },
     {
-      icon: "fa-regular fa-file",
+      icon: "✎",
       label: "OSE.category.notes",
       Content: Notes,
       id: TabIds.NOTES,

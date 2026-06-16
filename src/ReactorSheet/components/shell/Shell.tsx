@@ -10,11 +10,9 @@ type Props = {
   onSelect: (id: string) => void;
   /** Active tab body — rendered in the right pane. */
   children: ReactNode;
-  /** Optional chrome slots; each falls back to its P3 placeholder. */
+  /** Optional chrome slots; each falls back to its placeholder. */
   topbar?: ReactNode;
   header?: ReactNode;
-  vitals?: ReactNode;
-  subStats?: ReactNode;
   railExtra?: ReactNode;
 };
 
@@ -22,7 +20,7 @@ type Props = {
  * Presentational app shell. Chrome regions are slots (placeholder fallback);
  * the right pane mounts the active tab body. Responsive reflow lives in shell.scss.
  */
-export function Shell({ tabs, active, onSelect, children, topbar, header, vitals, subStats, railExtra }: Props) {
+export function Shell({ tabs, active, onSelect, children, topbar, header, railExtra }: Props) {
   return (
     <>
       <div className="rs-topbar">
@@ -33,9 +31,7 @@ export function Shell({ tabs, active, onSelect, children, topbar, header, vitals
           <div className="rs-pad">
             <div className="rs-twopane">
               <div className="rs-left">
-                {header ?? <Placeholder label="Header" hint="portrait · name · class · alignment (P4b)" />}
-                {vitals ?? <Placeholder label="Vitals" hint="HP · AC (P4c)" />}
-                {subStats ?? <Placeholder label="Sub-stats" hint="Init · HD · Move (P4d)" />}
+                {header ?? <Placeholder label="Header" hint="portrait · name · class · alignment · vitals (P4b)" />}
                 <div className="rs-rail-extra">
                   {railExtra ?? <Placeholder label="Saves & Skills" hint="D/W/P/B/S · exploration — expanded rail (P4d)" />}
                 </div>

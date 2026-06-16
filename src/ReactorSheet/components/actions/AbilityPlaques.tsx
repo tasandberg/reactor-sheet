@@ -1,6 +1,4 @@
 import type { AbilityVM } from "../../viewModels/types";
-import { KvCard } from "../ui/Card";
-import { Stamp } from "../ui/Stamp";
 import { SectionTitle } from "../ui/SectionTitle";
 
 type Props = { abilities: AbilityVM[] };
@@ -12,11 +10,11 @@ export function AbilityPlaques({ abilities }: Props) {
       <SectionTitle hint="roll-under d20">Abilities</SectionTitle>
       <div className="rs-abilities">
         {abilities.map((a) => (
-          <KvCard key={a.key}>
-            <div className="head"><Stamp>{a.label}</Stamp></div>
-            <div className="val">{a.value}</div>
-            <Stamp className="rs-mod">{a.modLabel}</Stamp>
-          </KvCard>
+          <div className="rs-abil" key={a.key}>
+            <div className="ak">{a.label}</div>
+            <div className="av">{a.value}</div>
+            <div className="am">{a.modLabel}</div>
+          </div>
         ))}
       </div>
     </section>
