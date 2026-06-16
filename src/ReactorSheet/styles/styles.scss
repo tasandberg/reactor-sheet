@@ -88,6 +88,16 @@
   }
 }
 
+// Accent by character kind. Player characters use the brass --gold (default);
+// retainers/hirelings (system.retainer.enabled) get a teal accent. data-kind is
+// set on the window in reactor-sheet.js _onRender; the token overrides cascade to
+// the whole sheet (plaque brackets, mod pills, XP bar, Level-Up, active tab, …).
+.reactor-sheet[data-kind="hireling"] {
+  --gold: var(--teal);
+  --gold-dim: var(--teal-dim);
+  --gold-soft: color-mix(in srgb, var(--teal) 30%, transparent);
+}
+
 .reactor-sheet-app {
   display: flex;
   flex-direction: column;
