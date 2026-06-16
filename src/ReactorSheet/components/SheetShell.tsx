@@ -37,7 +37,7 @@ export default function SheetShell() {
       }}
       topbar={<Topbar vm={selectTopbar(actor)} />}
       header={<HeaderBand identity={selectIdentity(actor)} vitals={selectVitals(actor)} />}
-      railExtra={<SavesExploration saves={selectSaves(actor)} exploration={selectExploration(actor)} />}
+      railExtra={<SavesExploration saves={selectSaves(actor)} exploration={selectExploration(actor)} tabbed />}
     >
       {activeTab.id === TabIds.ACTIONS ? <ActionsView actor={actor} /> : <activeTab.Content />}
     </Shell>

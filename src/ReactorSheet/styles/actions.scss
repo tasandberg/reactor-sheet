@@ -240,6 +240,32 @@
   font-size: var(--fs-xs, 12px); color: var(--text-mute); letter-spacing: 0;
 }
 
+// --- saves/exploration tab nav (rail, large view) — keeps the column above the fold ---
+// Qualified with .rs-se-nav so the buttons beat the .reactor-sheet-app reset (0,1,1).
+.rs-se-nav {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 10px;
+  border-bottom: 2px solid var(--border);
+}
+.rs-se-nav .rs-se-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  padding: 6px 4px 7px;
+  color: var(--text-mute);
+  font-family: var(--display);
+  font-size: var(--fs-md, 15px);
+  letter-spacing: 0.02em;
+  text-align: center;
+  cursor: pointer;
+  transition: color 0.12s, border-color 0.12s;
+}
+.rs-se-nav .rs-se-tab:hover { color: var(--text-dim); }
+.rs-se-nav .rs-se-tab.active { color: var(--text); border-bottom-color: var(--gold); }
+
 // --- attacks + tables ---
 .rs-weapon { display: flex; align-items: center; gap: 8px; }
 .rs-weapon img { width: 28px; height: 28px; border-radius: var(--r-sm, 4px); background: var(--surface, #23201a); }
