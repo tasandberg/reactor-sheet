@@ -173,17 +173,15 @@
   display: flex;
   gap: 6px;
 }
+// borderless: just the stamp label + value, so HP/AC stay the only "boxes"
 .rs-tile {
   width: 64px; // uniform
   flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  background: var(--surface);
-  border: 1px solid var(--border-soft, #2c2823);
-  border-radius: 6px;
-  padding: 4px 4px 5px;
+  gap: 4px;
+  padding: 2px 0 0;
   text-align: center;
 }
 .rs-tile .stamp { display: block; width: 100%; text-align: center; } // black bg fills box like the others
@@ -250,10 +248,11 @@
   border-bottom: 1px solid var(--border-soft);
 }
 // Muted mono modifier below the underline
-// ink chip with bright accent text — pops in both themes
+// black→gold gradient chip + inset gold glow, bright accent text
 .rs-abil .am {
   align-self: center;
-  background: var(--ink);
+  background: linear-gradient(180deg, var(--ink), color-mix(in srgb, var(--ink) 65%, var(--gold)));
+  box-shadow: inset 0 0 5px color-mix(in srgb, var(--gold) 22%, transparent);
   color: var(--gold-bright);
   border-radius: 99px;
   padding: 1px 10px 2px;
