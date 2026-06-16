@@ -162,7 +162,9 @@
   .rs-twopane .rs-class { text-align: center; }
   .rs-twopane .rs-vitals { grid-template-columns: 1fr 1fr; }
   .rs-twopane .rs-substack { grid-column: 1 / -1; flex-direction: row; justify-content: space-between; min-width: 0; gap: 6px; }
-  .rs-twopane .ss-row { border-bottom: none; flex: 1; justify-content: center; gap: 6px; background: var(--surface); border: 1px solid var(--border-soft, #2c2823); border-radius: 6px; }
+  .rs-twopane .ss-row { flex: 1; justify-content: center; gap: 6px; background: var(--surface); border: 1px solid var(--border-soft, #2c2823); border-radius: 6px; }
+  // beat .rs-substack .ss-row:last-child (vertical-stack rule) so the Move tile keeps its bottom border
+  .rs-twopane .rs-substack .ss-row:last-child { border-bottom: 1px solid var(--border-soft, #2c2823); }
 }
 
 @container app (min-width: 800px) {
