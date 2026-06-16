@@ -21,10 +21,10 @@
     border-bottom: 1px solid #000;
   }
   .window-title {
-    font-family: var(--sans);
-    font-weight: 600;
-    font-size: var(--fs-sm, 13px);
-    letter-spacing: 0.01em;
+    font-family: var(--display); // IM Fell English SC — chiseled small-caps
+    font-weight: 400;
+    font-size: var(--fs-md, 15px);
+    letter-spacing: 0.03em;
     color: var(--stamp-text, #e5dec8);
   }
   // Direct children only — the controls-dropdown menu items are also
