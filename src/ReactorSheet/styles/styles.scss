@@ -1,4 +1,5 @@
 @use "util";
+@use "shell";
 
 /** Purely for namespacing default style overrides */
 
@@ -20,7 +21,11 @@
     backdrop-filter: none;
     padding: 0;
 
-    & > * {
+    // foundry-vtt-react mounts our app under two nested wrapper divs
+    // (#react-app-root → #react-application-inner). Both need height:100% so the
+    // .reactor-sheet-app flex chain can fill the window and .rs-sheet can scroll.
+    & > *,
+    & > * > * {
       height: 100%;
     }
   }
@@ -44,8 +49,8 @@
   font-size: 16px;
   border-radius: var(--r-sm);
   min-width: 320px;
-  container-type: inline-size; // layout reflows to window width, not viewport
-  container-name: sheet;
+  container-type: inline-size; // outer frame: drives vertical rail ⇄ horizontal tab bar
+  container-name: app;
 
   // Scoped element reset — ONLY elements WE render inside the React app, never
   // Foundry's window-frame controls. Classed Vellum controls (.btn/.input) still win.
