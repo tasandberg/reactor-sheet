@@ -30,7 +30,11 @@ export function Shell({ tabs, active, onSelect, children }: Props) {
                 <Placeholder label="Header" hint="portrait · name · class · alignment (P4b)" />
                 <Placeholder label="Vitals" hint="HP · AC (P4c)" />
                 <Placeholder label="Sub-stats" hint="Init · HD · Move (P4d)" />
-                <Placeholder label="Saves & Skills" hint="D/W/P/B/S · exploration (P4d)" />
+                {/* Saves & Skills only lives in the left rail when expanded; collapsed,
+                    it renders inside the Actions tab content (P4d/P6). */}
+                <div className="rs-rail-extra">
+                  <Placeholder label="Saves & Skills" hint="D/W/P/B/S · exploration — expanded rail (P4d)" />
+                </div>
               </div>
               <div className="rs-right">
                 <TabBar tabs={tabs} active={active} onSelect={onSelect} />

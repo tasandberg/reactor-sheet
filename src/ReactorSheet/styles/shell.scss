@@ -123,6 +123,10 @@
 }
 .rs-ph-hint { font-size: var(--fs-3xs, 10px); color: var(--text-faint, #6a6354); }
 
+// Saves & Skills relocates: hidden in the left column when collapsed (it renders
+// inside the Actions tab content there), shown in the left rail when expanded.
+.rs-rail-extra { display: none; }
+
 // === container reflow ===
 @container sheet (min-width: 600px) { .rs-pad { padding: 18px 20px; } }
 
@@ -141,6 +145,7 @@
     padding-bottom: 0;
     margin-bottom: 0;
   }
+  .rs-rail-extra { display: block; margin-top: 12px; }
 }
 
 @container app (min-width: 800px) {

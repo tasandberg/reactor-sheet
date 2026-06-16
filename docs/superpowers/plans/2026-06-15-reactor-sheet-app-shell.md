@@ -188,6 +188,10 @@ Create `src/ReactorSheet/styles/shell.scss`:
 }
 .rs-ph-hint { font-size: var(--fs-3xs, 10px); color: var(--text-faint, #6a6354); }
 
+// Saves & Skills relocates: hidden in the left column when collapsed (it renders
+// inside the Actions tab content there), shown in the left rail when expanded.
+.rs-rail-extra { display: none; }
+
 // === container reflow ===
 @container sheet (min-width: 600px) { .rs-pad { padding: 18px 20px; } }
 
@@ -206,6 +210,7 @@ Create `src/ReactorSheet/styles/shell.scss`:
     padding-bottom: 0;
     margin-bottom: 0;
   }
+  .rs-rail-extra { display: block; margin-top: 12px; }
 }
 
 @container app (min-width: 800px) {
@@ -471,7 +476,12 @@ export function Shell({ tabs, active, onSelect, children }: Props) {
                 <Placeholder label="Header" hint="portrait · name · class · alignment (P4b)" />
                 <Placeholder label="Vitals" hint="HP · AC (P4c)" />
                 <Placeholder label="Sub-stats" hint="Init · HD · Move (P4d)" />
-                <Placeholder label="Saves & Skills" hint="D/W/P/B/S · exploration (P4d)" />
+                {/* Saves & Skills only lives in the left rail when expanded; collapsed,
+                    it renders inside the Actions tab content (P4d/P6). Mirrors the
+                    prototype's .fvtt-rail-extra (display:none → block at two-pane). */}
+                <div className="rs-rail-extra">
+                  <Placeholder label="Saves & Skills" hint="D/W/P/B/S · exploration — expanded rail (P4d)" />
+                </div>
               </div>
               <div className="rs-right">
                 <TabBar tabs={tabs} active={active} onSelect={onSelect} />
