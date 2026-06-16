@@ -249,11 +249,11 @@
   border-bottom: 1px solid var(--border-soft);
 }
 // Muted mono modifier below the underline
-// ink chip; glow on the text itself
+// ink chip; white text with a gold glow
 .rs-abil .am {
   align-self: center;
   background: var(--ink);
-  color: var(--gold-bright);
+  color: var(--stamp-text, #e5dec8);
   text-shadow: 0 0 7px color-mix(in srgb, var(--gold-bright) 70%, transparent);
   border-radius: 99px;
   padding: 1px 10px 2px;
