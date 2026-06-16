@@ -175,12 +175,14 @@
   flex-direction: column;
   align-items: center;
   min-height: 80px;
-  background: var(--surface); // flat — no gradient
+  background: linear-gradient(180deg, var(--surface-2, #2e2a23), var(--surface, #23201a)); // dark: subtle lift
   border: 1px solid var(--gold-soft);
   border-radius: 4px;
   padding: 8px 6px 20px;
   text-align: center;
 }
+// Cream flats out (per the design guide); dark keeps the gradient above.
+[data-theme="cream"] .rs-abil { background: var(--surface); }
 .rs-abil::before {
   content: "";
   position: absolute; inset: 3px;
@@ -217,8 +219,7 @@
   position: absolute; left: 50%; bottom: -1px;
   transform: translateX(-50%);
   min-width: 38px;
-  background: var(--gold); // gold-filled pill
-  border: 1px solid var(--gold-dim);
+  background: var(--gold); // gold-filled pill, no border (both schemes)
   border-radius: 99px;
   padding: 2px 9px 1px;
   font-family: var(--mono); font-size: var(--fs-xs, 12px);
