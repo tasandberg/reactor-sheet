@@ -231,8 +231,8 @@
   overflow: hidden;
 }
 // Cream flats out; dark keeps the gradient above.
-// very subtle gradient in light mode
-[data-theme="cream"] .rs-abil { background: linear-gradient(180deg, var(--surface), color-mix(in srgb, var(--surface) 70%, var(--surface-2))); }
+// visible-but-soft gradient in light mode
+[data-theme="cream"] .rs-abil { background: linear-gradient(180deg, var(--surface), color-mix(in srgb, var(--surface-2) 80%, var(--surface))); }
 // Stamp bar spans full width at the top
 .rs-abil .rs-abil-k {
   display: block;
@@ -250,14 +250,16 @@
   border-bottom: 1px solid var(--border-soft);
 }
 // Muted mono modifier below the underline
+// accent-filled chip — pops in both themes (on-accent text: ink on dark, cream on light)
 .rs-abil .am {
-  color: var(--gold); // accent (teal for retainers via --gold override)
+  align-self: center;
+  background: var(--gold);
+  color: var(--on-accent);
+  border-radius: 99px;
+  padding: 1px 10px 2px;
   font-family: var(--mono); font-size: var(--fs-xs, 12px); font-weight: 700;
-  text-align: center;
   margin-top: 4px;
 }
-// light mode: darker/bolder accent so it pops against the cream box
-[data-theme="cream"] .rs-abil .am { color: var(--gold-dim); }
 
 // --- section title override (prototype: 2px border-bottom, not 3px thick) ---
 .section-title {
