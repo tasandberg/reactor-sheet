@@ -16,6 +16,20 @@ export function HeaderBand({ identity, vitals }: Props) {
       <div className="rs-ident">
         <div className="rs-name">{identity.name}</div>
         <div className="rs-class">{identity.classLabel} {identity.level} · {identity.alignment}</div>
+      </div>
+      <div className="rs-stats">
+        <div className="rs-vitals">
+          <div className="rs-vital hp">
+            <Stamp className="vv-l">HP</Stamp>
+            <div className="vv-big">{vitals.hp.value}</div>
+            <div className="vv-sub">/{vitals.hp.max}</div>
+          </div>
+          <div className="rs-vital ac">
+            <Stamp className="vv-l">AC</Stamp>
+            <div className="vv-big">{vitals.ac.ascending}</div>
+            <div className="vv-sub">asc</div>
+          </div>
+        </div>
         <div className="rs-substats">
           <div className="rs-tile">
             <Stamp>INIT</Stamp>
@@ -34,18 +48,6 @@ export function HeaderBand({ identity, vitals }: Props) {
               <span className="r"><span className="k">Travel</span><span className="vv">{m.travel} mi</span></span>
             </span>
           </div>
-        </div>
-      </div>
-      <div className="rs-vitals">
-        <div className="rs-vital hp">
-          <Stamp className="vv-l">HP</Stamp>
-          <div className="vv-big">{vitals.hp.value}</div>
-          <div className="vv-sub">/{vitals.hp.max}</div>
-        </div>
-        <div className="rs-vital ac">
-          <Stamp className="vv-l">AC</Stamp>
-          <div className="vv-big">{vitals.ac.ascending}</div>
-          <div className="vv-sub">asc</div>
         </div>
       </div>
     </div>

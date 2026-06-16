@@ -158,14 +158,13 @@
   .rs-rail-extra { display: block; margin-top: 12px; }
   .actions-only { display: none; }
 
-  // header band reflow in the narrow left rail — stack vertically, portrait bigger
+  // header band reflow in the narrow left rail — stack vertically
   .rs-twopane .rs-head { flex-direction: column; align-items: center; gap: 12px; }
-  .rs-twopane .rs-portrait-wrap { width: 100%; max-width: 120px; height: auto; aspect-ratio: 1; margin: 0 auto; }
+  .rs-twopane .rs-portrait-wrap { align-self: center; width: 120px; height: 120px; }
   .rs-twopane .rs-ident { align-items: center; text-align: center; }
   .rs-twopane .rs-name { text-align: center; }
   .rs-twopane .rs-class { text-align: center; }
-  .rs-twopane .rs-substats { justify-content: center; }
-  .rs-twopane .rs-vitals { margin-left: 0; width: 100%; }
+  .rs-twopane .rs-stats { width: 100%; }
 }
 
 @container app (min-width: 800px) {

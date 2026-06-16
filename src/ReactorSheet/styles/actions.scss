@@ -67,13 +67,13 @@
 // --- header band ---
 .rs-head {
   display: flex;
-  align-items: center;
+  align-items: stretch; // items fill the row height; HP/AC opt out (top-aligned)
   gap: 14px;
 }
 .rs-portrait-wrap {
   position: relative;
-  width: 100px;
-  height: 100px; // fixed square — approximates the header row height
+  align-self: stretch; // fill the full row height (flush name-top → tiles-bottom)
+  width: 110px;
   flex: 0 0 auto;
 }
 .rs-portrait {
@@ -91,7 +91,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  justify-content: center;
+  justify-content: flex-start; // name flush to the top
 }
 .rs-name {
   font-family: var(--display);
@@ -109,15 +109,18 @@
   .rs-name { font-size: var(--fs-5xl, 33px); }
 }
 
-// --- vitals (HP/AC boxes, floated right inline in .rs-head) ---
-.rs-vitals {
-  margin-left: auto;
-  align-self: center;
-  display: grid;
-  grid-template-columns: 1fr 1fr; // boxes fill the container; widen via the container, not the box
-  gap: 9px;
-  width: 200px;
+// --- stats block: HP/AC row above the Init/HD/Move row (right side) ---
+.rs-stats {
   flex: 0 0 auto;
+  width: 232px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rs-vitals {
+  display: grid;
+  grid-template-columns: 1fr 1fr; // HP/AC fill the stats width
+  gap: 8px;
 }
 .rs-vital {
   position: relative;
@@ -129,10 +132,11 @@
 }
 .rs-vital.hp { border-color: color-mix(in srgb, var(--crimson) 55%, transparent); }
 .rs-vital.ac { border-color: color-mix(in srgb, var(--teal) 50%, transparent); }
-// .vv-l is now a <Stamp> — override stamp defaults to center it at top
+// .vv-l is a <Stamp>; fill the box width (black bar) like the others
 .rs-vital .vv-l {
   display: block;
-  margin: 0 auto 2px;
+  width: 100%;
+  margin: 0 0 2px;
 }
 .rs-vital .vv-big {
   font-family: var(--display); font-size: var(--fs-2xl, 21px);
@@ -145,15 +149,13 @@
   color: var(--text-mute);
 }
 
-// --- Init/HD/Move boxes (small, square-ish; in the name/info stack) ---
+// --- Init/HD/Move boxes (row below HP/AC; fill the stats width) ---
 .rs-substats {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); // uniform, fill width
   gap: 6px;
-  margin-top: 6px;
 }
 .rs-tile {
-  width: 64px; // uniform width across INIT/HD/MOVE
-  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -164,6 +166,7 @@
   padding: 4px 4px 5px;
   text-align: center;
 }
+.rs-tile .stamp { display: block; width: 100%; text-align: center; } // black bg fills box like the others
 .rs-tile-v {
   font-family: var(--mono); font-size: var(--fs-xs, 12px); color: var(--text);
 }
@@ -208,7 +211,7 @@
   overflow: hidden;
 }
 // Cream flats out; dark keeps the gradient above.
-[data-theme="cream"] .rs-abil { background: var(--surface); }
+[data-theme="cream"] .rs-abil { background: linear-gradient(180deg, var(--surface), var(--surface-2)); } // slight gradient in light mode
 // Stamp bar spans full width at the top
 .rs-abil .rs-abil-k {
   display: block;
@@ -227,7 +230,7 @@
 }
 // Muted mono modifier below the underline
 .rs-abil .am {
-  color: var(--text-mute);
+  color: var(--gold); // accent (teal for retainers via --gold override)
   font-family: var(--mono); font-size: var(--fs-xs, 12px);
   text-align: center;
   margin-top: 4px;
