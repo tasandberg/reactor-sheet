@@ -50,7 +50,10 @@
   background: var(--bg-2, #1f1c17);
   border-left: 1px solid var(--border, #3a342c);
 }
-.rs-tab {
+// Qualified with .rs-tabrail so these win over the `.reactor-sheet-app button`
+// reset (0,1,1) in styles.scss — otherwise `all: unset` strips writing-mode/flex
+// and the label renders as clipped horizontal text instead of the vertical rail.
+.rs-tabrail .rs-tab {
   position: relative;
   flex: 0 0 auto;
   min-height: 96px;
@@ -160,7 +163,8 @@
     margin-bottom: 14px;
     border-bottom: 2px solid var(--border, #3a342c);
   }
-  .rs-htab {
+  // Qualified (see .rs-tabrail .rs-tab note) so it beats the button reset.
+  .rs-htabs .rs-htab {
     display: inline-flex;
     align-items: center;
     gap: 7px;
