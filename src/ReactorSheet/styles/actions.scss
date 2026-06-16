@@ -175,7 +175,7 @@
   flex-direction: column;
   align-items: center;
   min-height: 80px;
-  background: linear-gradient(180deg, var(--surface-2, #2e2a23), var(--surface, #23201a));
+  background: var(--surface); // flat — no gradient
   border: 1px solid var(--gold-soft);
   border-radius: 4px;
   padding: 8px 6px 20px;
@@ -217,12 +217,12 @@
   position: absolute; left: 50%; bottom: -1px;
   transform: translateX(-50%);
   min-width: 38px;
-  background: var(--ink);
+  background: var(--gold); // gold-filled pill
   border: 1px solid var(--gold-dim);
   border-radius: 99px;
   padding: 2px 9px 1px;
   font-family: var(--mono); font-size: var(--fs-xs, 12px);
-  font-weight: 600; color: var(--gold);
+  font-weight: 600; color: var(--on-accent); // light in cream, dark-ink in dark
 }
 
 // --- section title override (prototype: 2px border-bottom, not 3px thick) ---
