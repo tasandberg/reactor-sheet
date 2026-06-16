@@ -817,9 +817,10 @@ body {
   border-radius: 0;
 }
 
-.die.crit  { background: linear-gradient(145deg, oklch(0.6 0.18 25), oklch(0.4 0.15 25)); color: oklch(1 0 0); }
+.die.crit  { background: linear-gradient(145deg, oklch(0.6 0.16 150), oklch(0.4 0.14 150)); color: oklch(1 0 0); }
 .die.crit::after { border-color: oklch(1 0 0 / 0.18); }
-.die.fumble { background: linear-gradient(145deg, oklch(0.3 0.02 60), oklch(0.18 0.01 60)); color: var(--text-faint); }
+.die.fumble { background: linear-gradient(145deg, oklch(0.5 0.17 25), oklch(0.32 0.14 25)); color: oklch(0.94 0 0); }
+.die.fumble::after { border-color: oklch(1 0 0 / 0.14); }
 .die.rolling {
   animation: tumble 0.55s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
