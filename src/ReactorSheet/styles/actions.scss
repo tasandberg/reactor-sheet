@@ -67,20 +67,16 @@
 // --- header band ---
 .rs-head {
   display: flex;
-  align-items: stretch; // children fill the top-row height
+  align-items: center;
   gap: 14px;
 }
 .rs-portrait-wrap {
   position: relative;
-  align-self: stretch; // fill the row height …
-  aspect-ratio: 1; // … as a square column (width derives from the stretched height)
-  max-height: 132px; // safety cap so it can't run away
+  width: 100px;
+  height: 100px; // fixed square — approximates the header row height
   flex: 0 0 auto;
 }
 .rs-portrait {
-  // absolutely positioned so the IMG's intrinsic size doesn't drive the wrap width
-  position: absolute;
-  inset: 0;
   width: 100%;
   height: 100%;
   border-radius: 6px;
@@ -156,8 +152,8 @@
   margin-top: 6px;
 }
 .rs-tile {
-  flex: 1 1 0;
-  max-width: 56px; // square-ish cap
+  width: 64px; // uniform width across INIT/HD/MOVE
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
