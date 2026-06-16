@@ -21,7 +21,11 @@
     backdrop-filter: none;
     padding: 0;
 
-    & > * {
+    // foundry-vtt-react mounts our app under two nested wrapper divs
+    // (#react-app-root → #react-application-inner). Both need height:100% so the
+    // .reactor-sheet-app flex chain can fill the window and .rs-sheet can scroll.
+    & > *,
+    & > * > * {
       height: 100%;
     }
   }
