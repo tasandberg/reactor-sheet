@@ -250,11 +250,11 @@
   border-bottom: 1px solid var(--border-soft);
 }
 // Muted mono modifier below the underline
-// accent-filled chip — pops in both themes (on-accent text: ink on dark, cream on light)
+// black chip with accent text — pops in both themes
 .rs-abil .am {
   align-self: center;
-  background: var(--gold);
-  color: var(--on-accent);
+  background: var(--ink);
+  color: var(--gold);
   border-radius: 99px;
   padding: 1px 10px 2px;
   font-family: var(--mono); font-size: var(--fs-xs, 12px); font-weight: 700;
