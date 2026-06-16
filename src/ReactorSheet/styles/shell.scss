@@ -171,7 +171,16 @@
   .rs-twopane .rs-class { text-align: center; }
   .rs-twopane .rs-vitals { width: 100%; }
   .rs-twopane .rs-substats { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; }
-  .rs-twopane .rs-tile { width: auto; }
+  // rail (the larger view): keep the boxed tiles at normal size
+  .rs-twopane .rs-tile {
+    width: auto;
+    background: var(--surface);
+    border: 1px solid var(--border-soft, #2c2823);
+    border-radius: 6px;
+    padding: 5px 6px 6px;
+  }
+  .rs-twopane .rs-tile .stamp { font-size: var(--fs-2xs, 11px); padding: 5px 8px 3px; }
+  .rs-twopane .rs-tile-v { font-size: var(--fs-xs, 12px); }
 }
 
 @container app (min-width: 800px) {
