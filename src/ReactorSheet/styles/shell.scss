@@ -126,6 +126,9 @@
 // Saves & Skills relocates: hidden in the left column when collapsed (it renders
 // inside the Actions tab content there), shown in the left rail when expanded.
 .rs-rail-extra { display: none; }
+// Saves & Exploration show inside the Actions body when collapsed; the matching
+// @container rule below hides them once they relocate into the expanded rail.
+.actions-only { display: block; }
 
 // === container reflow ===
 @container sheet (min-width: 600px) { .rs-pad { padding: 18px 20px; } }
@@ -146,6 +149,7 @@
     margin-bottom: 0;
   }
   .rs-rail-extra { display: block; margin-top: 12px; }
+  .actions-only { display: none; }
 }
 
 @container app (min-width: 800px) {

@@ -1,0 +1,63 @@
+// Display-layout helpers for the Actions tab + chrome (pass 1).
+// Pure layout on top of the Vellum component classes; colors come from tokens.
+
+// --- topbar ---
+.rs-topbar-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.rs-topbar-lv { display: flex; flex-direction: column; line-height: 1; }
+.rs-topbar-lv b { font-family: var(--display); font-size: var(--fs-lg, 18px); }
+.rs-topbar-lv span { font-size: var(--fs-3xs, 10px); color: var(--text-mute, #8a8270); }
+.rs-topbar-xp { flex: 1; min-width: 120px; display: flex; flex-direction: column; gap: 3px; }
+.rs-topbar-xp .xp-val { font-family: var(--mono); font-size: var(--fs-2xs, 11px); color: var(--text-mute, #8a8270); }
+.rs-topbar-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+// --- identity header ---
+.rs-identity { display: flex; gap: 14px; align-items: center; }
+.rs-identity .portrait {
+  width: 96px; height: 96px; flex: 0 0 auto;
+  border: 1px solid var(--border, #3a342c); border-radius: var(--r-md, 6px);
+  object-fit: cover; background: var(--surface, #23201a);
+}
+.rs-identity .ident { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.rs-identity .name { font-family: var(--display); font-size: var(--fs-4xl, 28px); line-height: 1; }
+.rs-identity .sub { font-family: var(--display); color: var(--gold); font-size: var(--fs-md, 15px); }
+
+// --- vitals ---
+.rs-vitals { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.rs-vitals .hp .val { color: var(--crimson, #b54b4b); }
+.rs-vitals .ac .val { color: var(--teal, #2f8f8f); }
+
+// --- sub-stats ---
+.rs-substats { display: flex; flex-direction: column; gap: 4px; margin-top: 12px; }
+.rs-substat { display: flex; justify-content: space-between; gap: 8px; font-size: var(--fs-sm, 13px); }
+.rs-substat .k { color: var(--text-mute, #8a8270); }
+.rs-substat .v { font-family: var(--mono); }
+
+// --- abilities ---
+.rs-abilities { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+@container sheet (min-width: 470px) { .rs-abilities { grid-template-columns: repeat(6, 1fr); } }
+.rs-abilities .kv-card { align-items: center; text-align: center; gap: 4px; }
+.rs-abilities .rs-mod { align-self: center; }
+
+// --- attacks + tables ---
+.rs-weapon { display: flex; align-items: center; gap: 8px; }
+.rs-weapon img { width: 28px; height: 28px; border-radius: var(--r-sm, 4px); background: var(--surface, #23201a); }
+.rs-weapon .wname { font-weight: 600; }
+.rs-quals { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px; }
+
+// --- wealth + movement ---
+.rs-wm { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 6px; }
+.rs-wm .grp { display: flex; flex-direction: column; gap: 4px; }
+.rs-coins, .rs-moves { display: flex; gap: 12px; flex-wrap: wrap; font-size: var(--fs-sm, 13px); }
+.rs-coin { display: flex; align-items: center; gap: 4px; }
+.rs-coin img { width: 14px; height: 14px; }
+.rs-coin .v { font-family: var(--mono); }
+.rs-move .k { color: var(--text-mute, #8a8270); margin-right: 4px; }
+.rs-move .v { font-family: var(--mono); }
+
+// section spacing in the Actions body
+.rs-section + .rs-section { margin-top: 20px; }
