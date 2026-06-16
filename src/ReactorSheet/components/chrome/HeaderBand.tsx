@@ -1,9 +1,10 @@
 import type { IdentityVM, VitalsVM } from "../../viewModels/types";
 import { formatMod } from "../../viewModels/format";
+import { Stamp } from "../ui/Stamp";
 
 type Props = { identity: IdentityVM; vitals: VitalsVM };
 
-/** Portrait + name/class row + HP/AC vitals + Init/HD/Move substack in one band. */
+/** Portrait + name/class row + HP/AC vitals + Init/HD/Move stamp tiles. */
 export function HeaderBand({ identity, vitals }: Props) {
   return (
     <div className="rs-head">
@@ -17,19 +18,28 @@ export function HeaderBand({ identity, vitals }: Props) {
         </div>
         <div className="rs-vitals">
           <div className="rs-vital hp">
-            <div className="vv-l">Hit Points</div>
+            <Stamp className="vv-l">HP</Stamp>
             <div className="vv-big">{vitals.hp.value}</div>
-            <div className="vv-sub">Maximum {vitals.hp.max}</div>
+            <div className="vv-sub">/{vitals.hp.max}</div>
           </div>
           <div className="rs-vital ac">
-            <div className="vv-l">Armor Class</div>
+            <Stamp className="vv-l">AC</Stamp>
             <div className="vv-big">{vitals.ac.ascending}</div>
-            <div className="vv-sub">AAC · DAC {vitals.ac.descending}</div>
+            <div className="vv-sub">asc</div>
           </div>
-          <div className="rs-substack">
-            <div className="ss-row"><span className="ss-k">Init</span><span className="ss-v">{formatMod(vitals.initMod)}</span></div>
-            <div className="ss-row"><span className="ss-k">HD</span><span className="ss-v">{vitals.hd}</span></div>
-            <div className="ss-row"><span className="ss-k">Move</span><span className="ss-v">{vitals.move}′</span></div>
+        </div>
+        <div className="rs-substats">
+          <div className="rs-tile">
+            <Stamp>INIT</Stamp>
+            <div className="rs-tile-v">{formatMod(vitals.initMod)}</div>
+          </div>
+          <div className="rs-tile">
+            <Stamp>HD</Stamp>
+            <div className="rs-tile-v">{vitals.hd}</div>
+          </div>
+          <div className="rs-tile">
+            <Stamp>MOVE</Stamp>
+            <div className="rs-tile-v">{vitals.move}′</div>
           </div>
         </div>
       </div>
