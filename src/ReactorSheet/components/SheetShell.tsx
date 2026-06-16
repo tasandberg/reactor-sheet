@@ -15,7 +15,13 @@ import { selectExploration } from "../viewModels/exploration";
  * and mounts the Actions body (other tabs still render their legacy Content).
  */
 export default function SheetShell() {
-  const { actor, currentTab, setCurrentTab } = useReactorSheetContext();
+  const { actor, currentTab, setCurrentTab, updateActor } = useReactorSheetContext();
+
+  const vitals = selectVitals(actor);
+  const onAdjustHp = (delta: number) => {
+    const next = Math.max(0, Math.min(vitals.hp.max, vitals.hp.value + delta));
+    if (next !== vitals.hp.value) void updateActor({ "system.hp.value": next });
+  };
 
   const visible = tabs(actor).filter((t) => !t.disabled);
   const items: TabItem[] = visible.map((t) => ({
@@ -36,7 +42,7 @@ export default function SheetShell() {
         if (next) setCurrentTab(next.id);
       }}
       topbar={<Topbar vm={selectTopbar(actor)} />}
-      header={<HeaderBand identity={selectIdentity(actor)} vitals={selectVitals(actor)} />}
+      header={<HeaderBand identity={selectIdentity(actor)} vitals={vitals} onAdjustHp={onAdjustHp} />}
       railExtra={<SavesExploration saves={selectSaves(actor)} exploration={selectExploration(actor)} tabbed />}
     >
       {activeTab.id === TabIds.ACTIONS ? <ActionsView actor={actor} /> : <activeTab.Content />}

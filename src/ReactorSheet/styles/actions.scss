@@ -65,18 +65,27 @@
 .rs-topbar .rs-tb-btn .i { font-size: 12px; line-height: 1; }
 
 // --- header band ---
+// Grid areas let medium and rail arrange the same markup differently:
+// medium = portrait | (name over Init/HD/Move) | HP/AC right.
 .rs-head {
-  display: flex;
-  align-items: stretch; // items fill the row height; HP/AC opt out (top-aligned)
-  gap: 14px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    "portrait ident  vitals"
+    "portrait subs   vitals";
+  gap: 8px 14px;
+  align-items: start;
 }
 .rs-portrait-wrap {
+  grid-area: portrait;
   position: relative;
-  align-self: stretch; // fill the full row height (flush name-top → tiles-bottom)
+  align-self: stretch; // span both rows = full header height
   width: 110px;
-  flex: 0 0 auto;
 }
 .rs-portrait {
+  // absolute so the IMG's intrinsic size can't inflate the row height
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   border-radius: 6px;
@@ -86,12 +95,11 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 .rs-ident {
-  flex: 1;
+  grid-area: ident;
   min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  justify-content: flex-start; // name flush to the top
 }
 .rs-name {
   font-family: var(--display);
@@ -109,17 +117,13 @@
   .rs-name { font-size: var(--fs-5xl, 33px); }
 }
 
-// --- stats block: HP/AC row above the Init/HD/Move row (right side) ---
-.rs-stats {
-  flex: 0 0 auto;
-  width: 232px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+// --- HP/AC (right column in medium; top-aligned, content height) ---
 .rs-vitals {
+  grid-area: vitals;
+  align-self: start;
+  width: 256px;
   display: grid;
-  grid-template-columns: 1fr 1fr; // HP/AC fill the stats width
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
 }
 .rs-vital {
@@ -148,14 +152,30 @@
   font-family: var(--mono); font-size: var(--fs-2xs, 11px);
   color: var(--text-mute);
 }
+// HP steppers: − / + flank the value, revealed on hover
+.rs-vital .vv-row { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.rs-vital .vv-step {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px;
+  border: 1px solid var(--border, #3a342c); border-radius: 4px;
+  color: var(--text-dim, #b5ad97); cursor: pointer;
+  font-family: var(--sans); font-size: 13px; line-height: 1;
+  opacity: 0; transition: opacity 0.12s, border-color 0.12s, color 0.12s;
+}
+.rs-vital.hp:hover .vv-step,
+.rs-vital.hp:focus-within .vv-step { opacity: 1; }
+.rs-vital .vv-step:hover { border-color: var(--gold); color: var(--text, #e5dec8); }
 
-// --- Init/HD/Move boxes (row below HP/AC; fill the stats width) ---
+// --- Init/HD/Move (under the name in medium; uniform tiles) ---
 .rs-substats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); // uniform, fill width
+  grid-area: subs;
+  align-self: start;
+  display: flex;
   gap: 6px;
 }
 .rs-tile {
+  width: 64px; // uniform
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -211,7 +231,8 @@
   overflow: hidden;
 }
 // Cream flats out; dark keeps the gradient above.
-[data-theme="cream"] .rs-abil { background: linear-gradient(180deg, var(--surface), var(--surface-2)); } // slight gradient in light mode
+// very subtle gradient in light mode
+[data-theme="cream"] .rs-abil { background: linear-gradient(180deg, var(--surface), color-mix(in srgb, var(--surface) 70%, var(--surface-2))); }
 // Stamp bar spans full width at the top
 .rs-abil .rs-abil-k {
   display: block;
@@ -231,10 +252,12 @@
 // Muted mono modifier below the underline
 .rs-abil .am {
   color: var(--gold); // accent (teal for retainers via --gold override)
-  font-family: var(--mono); font-size: var(--fs-xs, 12px);
+  font-family: var(--mono); font-size: var(--fs-xs, 12px); font-weight: 700;
   text-align: center;
   margin-top: 4px;
 }
+// light mode: darker/bolder accent so it pops against the cream box
+[data-theme="cream"] .rs-abil .am { color: var(--gold-dim); }
 
 // --- section title override (prototype: 2px border-bottom, not 3px thick) ---
 .section-title {
