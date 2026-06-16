@@ -1,5 +1,5 @@
 import type { TopbarVM } from "../../viewModels/types";
-import { useTheme } from "../../theme-context";
+import { toggleTheme } from "../../theme";
 
 type Props = { vm: TopbarVM };
 
@@ -7,7 +7,6 @@ type Props = { vm: TopbarVM };
  *  themes (--ink). Rest/Level Up/Edit are inert in the display pass; the theme
  *  toggle is live. */
 export function Topbar({ vm }: Props) {
-  const { toggle } = useTheme();
   const pct = vm.xp.next > 0 ? Math.min(100, (vm.xp.value / vm.xp.next) * 100) : 0;
 
   return (
@@ -41,7 +40,7 @@ export function Topbar({ vm }: Props) {
       <button
         type="button"
         className="rs-tb-btn icon"
-        onClick={toggle}
+        onClick={toggleTheme}
         title="Toggle colour scheme"
         aria-label="Toggle colour scheme"
       >

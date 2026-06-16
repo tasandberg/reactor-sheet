@@ -5,20 +5,18 @@ import "./styles/vellum/components.css";
 import "./styles/styles.scss";
 import ReactorSheetProvider from "./components/ReactorSheetProvider";
 import SheetShell from "./components/SheetShell";
-import { ThemeProvider } from "./ThemeProvider";
-import { applyTheme } from "./theme";
-import { useTheme } from "./theme-context";
+import { applyTheme, getTheme } from "./theme";
 import { useEffect, useLayoutEffect, useRef, type ReactNode } from "react";
 
-/** App root element. Applies the active theme imperatively (applyTheme: dark =
- *  no attribute) before paint, and stops mousedown bubbling into Foundry. */
+/** App root element. Applies the persisted theme before paint, and stops
+ *  mousedown bubbling into Foundry. Theme changes after mount are driven
+ *  directly by toggleTheme() (see theme.ts), not React state. */
 function ThemedRoot({ children }: { children: ReactNode }) {
-  const { theme } = useTheme();
   const appRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    if (appRef.current) applyTheme(appRef.current, theme);
-  }, [theme]);
+    if (appRef.current) applyTheme(appRef.current, getTheme());
+  }, []);
 
   useEffect(() => {
     const el = appRef.current;
@@ -42,17 +40,15 @@ function ReactorSheetApp({
   contextConnector,
 }: ReactorSheetAppProps) {
   return (
-    <ThemeProvider>
-      <ThemedRoot>
-        <ReactorSheetProvider
-          initialActor={actor!}
-          source={source!}
-          contextConnector={contextConnector}
-        >
-          <SheetShell />
-        </ReactorSheetProvider>
-      </ThemedRoot>
-    </ThemeProvider>
+    <ThemedRoot>
+      <ReactorSheetProvider
+        initialActor={actor!}
+        source={source!}
+        contextConnector={contextConnector}
+      >
+        <SheetShell />
+      </ReactorSheetProvider>
+    </ThemedRoot>
   );
 }
 
