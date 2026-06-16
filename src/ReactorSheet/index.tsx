@@ -3,9 +3,8 @@ import "./styles/vellum/fonts.css";
 import "./styles/vellum/tokens.css";
 import "./styles/vellum/components.css";
 import "./styles/styles.scss";
-import { Layout } from "./components/Layout";
 import ReactorSheetProvider from "./components/ReactorSheetProvider";
-import Nav from "./components/Nav";
+import SheetShell from "./components/SheetShell";
 import { useEffect, useRef } from "react";
 
 function ReactorSheetApp({
@@ -40,8 +39,7 @@ function ReactorSheetApp({
         source={source!}
         contextConnector={contextConnector}
       >
-        <Layout />
-        <Nav />
+        <SheetShell />
       </ReactorSheetProvider>
     </div>
   );
