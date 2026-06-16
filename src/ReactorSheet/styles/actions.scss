@@ -66,34 +66,29 @@
 
 // --- header band ---
 .rs-head {
-  display: grid;
-  grid-template-columns: auto 1fr;
+  display: flex;
+  align-items: center;
   gap: 14px;
-  align-items: stretch;
 }
 .rs-portrait-wrap {
   position: relative;
-  width: 144px;
+  width: 56px;
   flex: 0 0 auto;
 }
 .rs-portrait {
   width: 100%;
-  min-height: 132px;
   aspect-ratio: 1;
   border-radius: 6px;
   object-fit: cover;
   background: radial-gradient(circle at 50% 35%, #2c281f, #15130e);
   border: 2px solid var(--gold-dim);
-  box-shadow:
-    0 0 0 4px var(--bg),
-    0 0 0 5px rgba(200, 158, 84, 0.35),
-    0 6px 16px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 .rs-ident {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 11px;
+  gap: 2px;
   justify-content: center;
 }
 .rs-name {
@@ -112,12 +107,12 @@
   .rs-name { font-size: var(--fs-5xl, 33px); }
 }
 
-// --- vitals row (HP/AC boxes, inside .rs-ident) ---
+// --- vitals (HP/AC boxes, floated right inline in .rs-head) ---
 .rs-vitals {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  margin-left: auto;
+  display: flex;
   gap: 9px;
-  align-items: stretch;
+  flex: 0 0 auto;
 }
 .rs-vital {
   position: relative;

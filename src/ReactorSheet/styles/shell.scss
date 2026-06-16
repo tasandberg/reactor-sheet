@@ -158,13 +158,14 @@
   .rs-rail-extra { display: block; margin-top: 12px; }
   .actions-only { display: none; }
 
-  // header band reflow in the narrow left rail
-  .rs-twopane .rs-head { grid-template-columns: 1fr; gap: 12px; }
-  .rs-twopane .rs-portrait-wrap { width: 100%; max-width: 150px; margin: 0 auto; }
-  .rs-twopane .rs-ident { justify-content: flex-start; text-align: center; }
+  // header band reflow in the narrow left rail — stack vertically, portrait bigger
+  .rs-twopane .rs-head { flex-direction: column; align-items: center; gap: 12px; }
+  .rs-twopane .rs-portrait-wrap { width: 100%; max-width: 120px; margin: 0 auto; }
+  .rs-twopane .rs-ident { align-items: center; text-align: center; }
   .rs-twopane .rs-name { text-align: center; }
   .rs-twopane .rs-class { text-align: center; }
-  // rail: HP/AC stay 2-col; tiles row already 3-col, no override needed
+  .rs-twopane .rs-vitals { margin-left: 0; justify-content: center; }
+  // tiles row already 3-col, no override needed
 }
 
 @container app (min-width: 800px) {
