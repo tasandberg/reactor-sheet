@@ -136,7 +136,7 @@
 // === container reflow ===
 @container sheet (min-width: 600px) { .rs-pad { padding: 18px 20px; } }
 
-@container sheet (min-width: 760px) {
+@container sheet (min-width: 700px) {
   .rs-pad { padding: 22px 24px; }
   .rs-twopane {
     display: grid;
