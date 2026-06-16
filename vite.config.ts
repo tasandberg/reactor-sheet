@@ -8,7 +8,9 @@ import path from "path";
 // foundryReact() owns the Foundry-specific config (base, root, server.proxy,
 // build input/output) — derived from module.json. Only app-specific config lives here.
 const config: UserConfig = {
-  plugins: [react(), foundryReact(), svgr()],
+  // FOUNDRY_URL lets a cloud/devcontainer point Vite at Foundry on another host
+  // (e.g. the compose service `foundry`). Unset → plugin default http://localhost:30000.
+  plugins: [react(), foundryReact({ foundryUrl: process.env.FOUNDRY_URL }), svgr()],
   define: {
     "process.env": {},
   },

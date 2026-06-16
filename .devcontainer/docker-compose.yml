@@ -1,0 +1,36 @@
+# Codespaces / devcontainer stack: Foundry + the React dev box on one network.
+# Self-contained (no sibling-repo mounts) — uses the *released* OSE system, not the
+# local masquerade dev setup. License + OSE install are provisioned via secrets / one-time UI.
+services:
+  foundry:
+    image: felddy/foundryvtt:13
+    hostname: foundry
+    init: true
+    volumes:
+      - foundry-data:/data
+    environment:
+      # Provided by Codespaces secrets (Settings → Codespaces → Secrets) or a local .env.
+      FOUNDRY_USERNAME: ${FOUNDRY_USERNAME:-}
+      FOUNDRY_PASSWORD: ${FOUNDRY_PASSWORD:-}
+      FOUNDRY_ADMIN_KEY: ${FOUNDRY_ADMIN_KEY:-}
+      FOUNDRY_LICENSE_KEY: ${FOUNDRY_LICENSE_KEY:-}
+      # Foundry sits behind Vite's proxy (and Codespaces' HTTPS edge). Trust it.
+      FOUNDRY_PROXY_SSL: "true"
+      FOUNDRY_PROXY_PORT: "443"
+    expose:
+      - "30000"
+
+  app:
+    image: mcr.microsoft.com/devcontainers/typescript-node:22
+    command: sleep infinity
+    volumes:
+      - ..:/workspaces/reactor-sheet:cached
+    working_dir: /workspaces/reactor-sheet
+    environment:
+      # Vite's foundryReact() proxies non-bundle requests here (see vite.config.ts).
+      FOUNDRY_URL: http://foundry:30000
+    depends_on:
+      - foundry
+
+volumes:
+  foundry-data:

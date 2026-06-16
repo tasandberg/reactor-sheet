@@ -1,0 +1,25 @@
+{
+  "name": "reactor-sheet (Foundry + Vite)",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/reactor-sheet",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "forwardPorts": [30001, 30000],
+  "portsAttributes": {
+    "30001": { "label": "Vite dev (open this — proxies Foundry)", "onAutoForward": "openPreview" },
+    "30000": { "label": "Foundry (direct / first-run setup)", "onAutoForward": "silent" }
+  },
+  "postCreateCommand": "corepack enable && pnpm install",
+  "secrets": {
+    "FOUNDRY_USERNAME": { "description": "Foundry account username (license auth)" },
+    "FOUNDRY_PASSWORD": { "description": "Foundry account password" },
+    "FOUNDRY_ADMIN_KEY": { "description": "Foundry admin access key" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+    }
+  }
+}
