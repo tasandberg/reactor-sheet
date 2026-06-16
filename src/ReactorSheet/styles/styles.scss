@@ -4,14 +4,40 @@
 
 /** Purely for namespacing default style overrides */
 
-// The window element (.reactor-sheet) is Foundry's territory — its titlebar and
-// frame controls must stay untouched. We only set structural/integration bits here;
-// all appearance + the element reset live on .reactor-sheet-app (our React content).
+// The window element (.reactor-sheet) is Foundry's frame. We theme its titlebar
+// to match our top-bar (opt-in; default v14 frame is grey) and set structural
+// bits here; all content appearance + the element reset live on .reactor-sheet-app.
+// Scoped to .reactor-sheet so no other Foundry window is touched. Tokens read from
+// global :root (the header sits outside [data-theme], so it stays dark in both themes).
 .reactor-sheet {
   overflow: visible;
   height: 100%;
   min-width: 320px; // handoff min footprint
   min-height: 360px;
+
+  // --- titlebar: near-black to match the top-bar, design-system font ---
+  .window-header {
+    background: var(--ink, #070605);
+    border-bottom: 1px solid #000;
+  }
+  .window-title {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: var(--fs-sm, 13px);
+    letter-spacing: 0.01em;
+    color: var(--stamp-text, #e5dec8);
+  }
+  // Direct children only — the controls-dropdown menu items are also
+  // .header-control but sit on their own (light) menu background.
+  .window-header > .header-control {
+    color: var(--stamp-text-dim, #b5ad97);
+    &:hover {
+      color: var(--stamp-text, #e5dec8);
+    }
+    &[data-action="close"]:hover {
+      color: var(--crimson, #c75044);
+    }
+  }
 
   .controls-dropdown {
     z-index: 3;
