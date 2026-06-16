@@ -112,10 +112,10 @@
   .rs-name { font-size: var(--fs-5xl, 33px); }
 }
 
-// --- vitals row (inside .rs-ident) ---
+// --- vitals row (HP/AC boxes, inside .rs-ident) ---
 .rs-vitals {
   display: grid;
-  grid-template-columns: 1fr 1fr auto;
+  grid-template-columns: 1fr 1fr;
   gap: 9px;
   align-items: stretch;
 }
@@ -129,10 +129,10 @@
 }
 .rs-vital.hp { border-color: color-mix(in srgb, var(--crimson) 55%, transparent); }
 .rs-vital.ac { border-color: color-mix(in srgb, var(--teal) 50%, transparent); }
+// .vv-l is now a <Stamp> — override stamp defaults to center it at top
 .rs-vital .vv-l {
-  font-family: var(--sans); font-weight: 600;
-  font-size: var(--fs-3xs, 10px); letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--text-mute);
+  display: block;
+  margin: 0 auto 2px;
 }
 .rs-vital .vv-big {
   font-family: var(--display); font-size: var(--fs-2xl, 21px);
@@ -145,85 +145,67 @@
   color: var(--text-mute);
 }
 
-// --- substack (init/hd/move column) ---
-.rs-substack {
+// --- substats row (INIT / HD / MOVE tiles, below HP/AC) ---
+.rs-substats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+  margin-top: 9px;
+}
+.rs-tile {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  min-width: 84px;
+  align-items: center;
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border-soft, #2c2823);
+  border-radius: 7px;
+  padding: 5px 6px 6px;
+  text-align: center;
 }
-.ss-row {
-  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
-  padding: 3px 4px;
-  border-bottom: 1px solid var(--border-soft, #2c2823);
-}
-.rs-substack .ss-row:last-child { border-bottom: none; }
-.ss-k {
-  font-family: var(--display); font-size: var(--fs-3xs, 10px);
-  letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-mute);
-}
-.ss-v {
-  font-family: var(--mono); font-size: var(--fs-xs, 12px); color: var(--text);
+.rs-tile-v {
+  font-family: var(--mono); font-size: var(--fs-sm, 13px);
+  color: var(--text);
 }
 
 // --- abilities ---
 .rs-abilities { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 @container sheet (min-width: 470px) { .rs-abilities { grid-template-columns: repeat(6, 1fr); } }
 .rs-abil {
-  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  min-height: 80px;
+  align-items: stretch;
+  min-height: 78px;
   background: linear-gradient(180deg, var(--surface-2, #2e2a23), var(--surface, #23201a)); // dark: subtle lift
-  border: 1px solid var(--gold-soft);
-  border-radius: 4px;
-  padding: 8px 6px 20px;
-  text-align: center;
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 7px;
+  overflow: hidden;
 }
-// Cream flats out (per the design guide); dark keeps the gradient above.
+// Cream flats out; dark keeps the gradient above.
 [data-theme="cream"] .rs-abil { background: var(--surface); }
-.rs-abil::before {
-  content: "";
-  position: absolute; inset: 3px;
-  border: 1px solid var(--gold-soft);
-  border-radius: 2px;
-  pointer-events: none;
-  opacity: 0.5;
+// Stamp bar spans full width at the top
+.rs-abil .rs-abil-k {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 2px 4px 3px;
 }
-.rs-abil::after {
-  content: "";
-  position: absolute; inset: 3px;
-  pointer-events: none;
-  opacity: 0.85;
-  background:
-    linear-gradient(var(--gold), var(--gold)) 0 0 / 9px 1.5px no-repeat,
-    linear-gradient(var(--gold), var(--gold)) 0 0 / 1.5px 9px no-repeat,
-    linear-gradient(var(--gold), var(--gold)) 100% 0 / 9px 1.5px no-repeat,
-    linear-gradient(var(--gold), var(--gold)) 100% 0 / 1.5px 9px no-repeat,
-    linear-gradient(var(--gold), var(--gold)) 0 100% / 9px 1.5px no-repeat,
-    linear-gradient(var(--gold), var(--gold)) 0 100% / 1.5px 9px no-repeat,
-    linear-gradient(var(--gold), var(--gold)) 100% 100% / 9px 1.5px no-repeat,
-    linear-gradient(var(--gold), var(--gold)) 100% 100% / 1.5px 9px no-repeat;
-}
-.rs-abil .ak {
-  font-family: var(--display); font-size: var(--fs-sm, 13px);
-  line-height: 1; letter-spacing: 0.1em; color: var(--gold);
-}
+// Big serif value with faint underline separator
 .rs-abil .av {
-  flex: 1; display: flex; align-items: center; justify-content: center;
-  font-family: var(--display); font-size: var(--fs-4xl, 28px);
+  font-family: var(--display); font-size: var(--fs-3xl, 24px);
   line-height: 1; color: var(--text);
+  text-align: center;
+  padding: 4px 0 4px;
+  margin-top: 4px;
+  border-bottom: 1px solid var(--border-soft);
 }
+// Muted mono modifier below the underline
 .rs-abil .am {
-  position: absolute; left: 50%; bottom: -1px;
-  transform: translateX(-50%);
-  min-width: 38px;
-  background: var(--gold); // gold-filled pill, no border (both schemes)
-  border-radius: 99px;
-  padding: 2px 9px 1px;
+  color: var(--text-mute);
   font-family: var(--mono); font-size: var(--fs-xs, 12px);
-  font-weight: 600; color: var(--on-accent); // light in cream, dark-ink in dark
+  text-align: center;
+  margin-top: 4px;
 }
 
 // --- section title override (prototype: 2px border-bottom, not 3px thick) ---

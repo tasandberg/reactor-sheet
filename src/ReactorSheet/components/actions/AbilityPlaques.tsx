@@ -1,5 +1,6 @@
 import type { AbilityVM } from "../../viewModels/types";
 import { SectionTitle } from "../ui/SectionTitle";
+import { Stamp } from "../ui/Stamp";
 
 type Props = { abilities: AbilityVM[] };
 
@@ -11,7 +12,7 @@ export function AbilityPlaques({ abilities }: Props) {
       <div className="rs-abilities">
         {abilities.map((a) => (
           <div className="rs-abil" key={a.key}>
-            <div className="ak">{a.label}</div>
+            <Stamp className="rs-abil-k">{a.label}</Stamp>
             <div className="av">{a.value}</div>
             <div className="am">{a.modLabel}</div>
           </div>
