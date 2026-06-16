@@ -250,6 +250,10 @@
 }
 .rs-se-nav .rs-se-tab {
   flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
@@ -259,10 +263,10 @@
   font-family: var(--display);
   font-size: var(--fs-md, 15px);
   letter-spacing: 0.02em;
-  text-align: center;
   cursor: pointer;
   transition: color 0.12s, border-color 0.12s;
 }
+.rs-se-nav .rs-se-tab i { font-size: 0.78em; opacity: 0.85; } // small, inline with the label
 .rs-se-nav .rs-se-tab:hover { color: var(--text-dim); }
 .rs-se-nav .rs-se-tab.active { color: var(--text); border-bottom-color: var(--gold); }
 

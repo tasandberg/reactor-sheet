@@ -71,7 +71,7 @@ export function SavesExploration({ saves, exploration, tabbed = false }: Props) 
           className={cx("rs-se-tab", tab === "saves" && "active")}
           onClick={() => setTab("saves")}
         >
-          <i className="fas fa-skull-crossbones" aria-hidden="true" style={{ marginRight: 6 }} />
+          <i className="fas fa-skull-crossbones" aria-hidden="true" />
           Saves
         </button>
         <button
@@ -81,7 +81,7 @@ export function SavesExploration({ saves, exploration, tabbed = false }: Props) 
           className={cx("rs-se-tab", tab === "exploration" && "active")}
           onClick={() => setTab("exploration")}
         >
-          <i className="fas fa-door-open" aria-hidden="true" style={{ marginRight: 6 }} />
+          <i className="fas fa-door-open" aria-hidden="true" />
           Exploration
         </button>
       </div>
