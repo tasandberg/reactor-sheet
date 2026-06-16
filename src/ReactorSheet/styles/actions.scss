@@ -73,10 +73,14 @@
 .rs-portrait-wrap {
   position: relative;
   align-self: stretch; // fill the row height …
-  aspect-ratio: 1; // … as a square column
+  aspect-ratio: 1; // … as a square column (width derives from the stretched height)
+  max-height: 132px; // safety cap so it can't run away
   flex: 0 0 auto;
 }
 .rs-portrait {
+  // absolutely positioned so the IMG's intrinsic size doesn't drive the wrap width
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   border-radius: 6px;
@@ -145,27 +149,30 @@
   color: var(--text-mute);
 }
 
-// --- Init/HD/Move pills (in the name/info stack) ---
-.rs-pills {
+// --- Init/HD/Move boxes (small, square-ish; in the name/info stack) ---
+.rs-substats {
   display: flex;
-  flex-wrap: wrap;
   gap: 6px;
   margin-top: 6px;
 }
-.rs-pill {
-  display: inline-flex;
+.rs-tile {
+  flex: 1 1 0;
+  max-width: 56px; // square-ish cap
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 2px;
   background: var(--surface);
   border: 1px solid var(--border-soft, #2c2823);
-  border-radius: 99px;
-  padding: 2px 9px 2px 3px;
+  border-radius: 6px;
+  padding: 4px 4px 5px;
+  text-align: center;
 }
-.rs-pill .v {
+.rs-tile-v {
   font-family: var(--mono); font-size: var(--fs-xs, 12px); color: var(--text);
 }
-// MOVE pill reveals the movement bands on hover
-.rs-pill-move { position: relative; cursor: default; }
+// MOVE tile reveals the movement bands on hover
+.rs-tile-move { position: relative; cursor: default; }
 .rs-move-pop {
   position: absolute;
   top: calc(100% + 6px);
@@ -184,8 +191,8 @@
   visibility: hidden;
   transition: opacity 0.12s;
 }
-.rs-pill-move:hover .rs-move-pop,
-.rs-pill-move:focus-within .rs-move-pop { opacity: 1; visibility: visible; }
+.rs-tile-move:hover .rs-move-pop,
+.rs-tile-move:focus-within .rs-move-pop { opacity: 1; visibility: visible; }
 .rs-move-pop .r { display: flex; justify-content: space-between; gap: 12px; }
 .rs-move-pop .k { font-family: var(--sans); font-size: var(--fs-xs, 12px); color: var(--text-dim, #b5ad97); }
 .rs-move-pop .vv { font-family: var(--mono); font-size: var(--fs-xs, 12px); color: var(--text); }

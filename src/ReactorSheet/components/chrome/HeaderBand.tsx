@@ -16,24 +16,24 @@ export function HeaderBand({ identity, vitals }: Props) {
       <div className="rs-ident">
         <div className="rs-name">{identity.name}</div>
         <div className="rs-class">{identity.classLabel} {identity.level} · {identity.alignment}</div>
-        <div className="rs-pills">
-          <span className="rs-pill">
+        <div className="rs-substats">
+          <div className="rs-tile">
             <Stamp>INIT</Stamp>
-            <span className="v">{formatMod(vitals.initMod)}</span>
-          </span>
-          <span className="rs-pill">
+            <div className="rs-tile-v">{formatMod(vitals.initMod)}</div>
+          </div>
+          <div className="rs-tile">
             <Stamp>HD</Stamp>
-            <span className="v">{vitals.hd}</span>
-          </span>
-          <span className="rs-pill rs-pill-move">
+            <div className="rs-tile-v">{vitals.hd}</div>
+          </div>
+          <div className="rs-tile rs-tile-move">
             <Stamp>MOVE</Stamp>
-            <span className="v">{vitals.move}′</span>
+            <div className="rs-tile-v">{vitals.move}′</div>
             <span className="rs-move-pop" role="tooltip">
               <span className="r"><span className="k">Encounter</span><span className="vv">{m.encounter}′</span></span>
               <span className="r"><span className="k">Explore</span><span className="vv">{m.explore}′</span></span>
               <span className="r"><span className="k">Travel</span><span className="vv">{m.travel} mi</span></span>
             </span>
-          </span>
+          </div>
         </div>
       </div>
       <div className="rs-vitals">
