@@ -248,10 +248,11 @@
   border-bottom: 1px solid var(--border-soft);
 }
 // Muted mono modifier below the underline
-// black→gold gradient chip, bright accent text
+// ink chip with inset gold glow, bright accent text
 .rs-abil .am {
   align-self: center;
-  background: linear-gradient(180deg, var(--ink), color-mix(in srgb, var(--ink) 65%, var(--gold)));
+  background: var(--ink);
+  box-shadow: inset 0 0 5px color-mix(in srgb, var(--gold) 22%, transparent);
   color: var(--gold-bright);
   border-radius: 99px;
   padding: 1px 10px 2px;
