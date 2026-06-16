@@ -45,7 +45,9 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  padding-top: 14px;
+  // No top padding: the first/active tab sits flush against the top bar.
+  // (The 14px the prototype used reads as a stray light block in cream.)
+  padding-top: 0;
   gap: 6px;
   background: var(--bg-2, #1f1c17);
   border-left: 1px solid var(--border, #3a342c);
