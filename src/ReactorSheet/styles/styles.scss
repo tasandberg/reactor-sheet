@@ -47,6 +47,10 @@
     overflow: hidden;
     backdrop-filter: none;
     padding: 0;
+    // Match Foundry's rounded window frame so our content doesn't poke out at
+    // the bottom corners (top stays square under the titlebar).
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
 
     // foundry-vtt-react mounts our app under two nested wrapper divs
     // (#react-app-root → #react-application-inner). Both need height:100% so the
@@ -106,7 +110,7 @@
   color: var(--text);
   font-family: var(--sans);
   font-size: 16px;
-  border-radius: var(--r-sm);
+  border-radius: 0 0 8px 8px; // square top (under titlebar), rounded bottom to match the frame
   min-width: 320px;
   container-type: inline-size; // outer frame: drives vertical rail ⇄ horizontal tab bar
   container-name: app;

@@ -142,7 +142,9 @@
   .rs-pad { padding: 22px 24px; }
   .rs-twopane {
     display: grid;
-    grid-template-columns: 264px 1fr;
+    // Dynamic rail: shrinks/grows with the window between bounds; the portrait
+    // (capped at 150px) stays put. Narrower than the old fixed 264px.
+    grid-template-columns: clamp(190px, 24%, 224px) 1fr;
     gap: 22px;
     align-items: start;
   }
