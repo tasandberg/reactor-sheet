@@ -4,6 +4,7 @@ import logger from "./util/logger";
 export function initialize() {
   foundry.helpers.Hooks.once("init", () => {
     logger("Initializing module");
+    ReactorSheet.registerSettings();
   });
 
   foundry.helpers.Hooks.once("ready", async () => {

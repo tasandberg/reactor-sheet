@@ -1,4 +1,5 @@
 import ReactorSheetApp from "@src/ReactorSheet";
+import { resolveTheme, applyTheme } from "@src/ReactorSheet/theme";
 
 import { ReactActorSheetV2 } from "foundry-vtt-react";
 
@@ -20,6 +21,29 @@ class ReactorSheet extends ReactActorSheetV2 {
       editImage: ReactorSheet.#onEditImage,
     },
   };
+
+  static registerSettings() {
+    game.settings.register("reactor-sheet", "theme", {
+      name: "Sheet theme",
+      hint: "Color theme for the Re-Actor character sheet.",
+      scope: "client",
+      config: true,
+      type: String,
+      choices: { dark: "Dark", cream: "Cream" },
+      default: "dark",
+      onChange: () => {
+        for (const app of foundry.applications.instances.values()) {
+          if (app instanceof ReactorSheet) app.render();
+        }
+      },
+    });
+  }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    const theme = resolveTheme(game.settings.get("reactor-sheet", "theme"));
+    applyTheme(this.element, theme);
+  }
 
   async _prepareContext(options) {
     const context = await super._prepareContext(options);

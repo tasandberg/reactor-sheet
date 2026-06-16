@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "preview": "vite preview",
     "link-foundry": "node tools/create-symlinks.mjs",
     "init": "node tools/init.mjs",
@@ -34,10 +36,13 @@
     "eslint-plugin-react-refresh": "^0.4.20",
     "fvtt-types": "github:League-of-Foundry-Developers/foundry-vtt-types#main",
     "globals": "^16.3.0",
+    "postcss": "^8.5.15",
+    "postcss-prefix-selector": "^2.1.1",
     "sass-embedded": "^1.91.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.39.1",
     "vite": "^8.0.16",
-    "vite-plugin-svgr": "^5.2.0"
+    "vite-plugin-svgr": "^5.2.0",
+    "vitest": "^3.2.6"
   }
 }
