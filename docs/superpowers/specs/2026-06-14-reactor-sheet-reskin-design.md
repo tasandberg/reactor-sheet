@@ -55,6 +55,40 @@ Breakpoints live in the design system CSS, not bolted on per component.
 
 ---
 
+## Build strategy (revised 2026-06-15): display-first, then enhance
+
+After P3 landed we re-sliced the remaining work. Two findings drive it:
+
+- The OSE **system already implements every roll/interaction** — `actor.rollCheck`, `rollSave`, `rollExploration`, `rollHitDice`, `item.rollWeapon`/`roll`, all funnelling through `OseDice` → the system's own chat-card templates + Dice So Nice. We **lean on these**, never reimplement. (This **drops the original P5** "reimplement `queueRoll`" — see P5 note below.)
+- All derived values are precomputed on `actor.system.*` (mods, AC/AAC, saves, movement, slots), so the display layer is pure binding.
+
+Each tab now ships in **two passes**:
+
+1. **Display pass (read-only):** pure view-models map `actor.system.*` → Vellum `ui/` components. No rolls, no edits, no writes.
+2. **Interactive pass (enhance):** wire the already-rendered controls to the system's existing methods (one-line calls). Edit-mode + Rest/Level-Up flows come **last**.
+
+We sequence **by tab, not by chrome-vs-body** — build one complete tab display-first, look at it, enhance it, then move on. **First tab: Actions.**
+
+### Actions tab — display ↔ interactive map
+
+| Region | Display pass (read-only) → view-model | Interactive pass → existing system method |
+|---|---|---|
+| Topbar | Lv · XP bar · Lv+1 → `topbar` *(new)* | Rest / Level-Up / Edit flows *(last)* |
+| Header | portrait · name · class · alignment → `identity` *(P1)* | FilePicker on `img` |
+| Vitals | HP · AC boxes → `vitals` *(P1)* | HP steppers, AC system toggle |
+| Sub-stats | Init · HD · Move → `vitals` *(P1)* | `actor.rollHitDice({event})` (HD) |
+| Abilities | 6 plaques (value+mod) → `abilities` *(new)* | `actor.rollCheck(score, {event})` |
+| Attacks | weapons table → `attacks` *(new)* | `item.rollWeapon({skipDialog})` |
+| Saves | D/W/P/B/S → `saves` *(new)* | `actor.rollSave(save, {event})` |
+| Exploration | 1-in-6 checks → `exploration` *(new)* | `actor.rollExploration(expl, {event})` |
+| Wealth · Movement | coins · move rates → `wealth` *(new)* / `vitals` | — |
+
+Roll call-sites + data access already exist in the legacy `SheetPages/Actions/*` and old `Header`/`Footer`/`ActorScores` — we reuse those expressions and replace only the presentation (`GridTable`/styled-components → `ui/` kit).
+
+**Mapping to the original phases below:** P4a–d + P6a collapse into **"Actions display"** then **"Actions interactive"**; **P5 is replaced** by per-control system-method wiring (no bespoke roll pipeline); **P7** (edit-mode, Rest, Level-Up) stays last. The phase descriptions below remain the canonical scope reference for *what* each region contains.
+
+---
+
 ## Phases & chunks
 
 Each chunk lists: scope · depends-on · the contract it exposes/consumes.
@@ -88,6 +122,8 @@ Each chunk lists: scope · depends-on · the contract it exposes/consumes.
 **Depends on:** P3 (4c also consumes P5 for rolls)
 
 ### P5 — Roll pipeline → Foundry chat
+> **REVISED 2026-06-15 — superseded.** The system already does all of this via `OseDice` (chat cards + DSN). We do **not** build a bespoke roll pipeline; the interactive pass wires controls directly to `actor.rollX`/`item.rollX`. Kept below for historical context only.
+
 **Scope:** Reimplement the prototype's `queueRoll` contract as Foundry `Roll` + `ChatMessage` + a chat-card template. Respect roll-under (ability/skill), roll-over (save), AAC-hit (attack); crit (nat 20) / fumble (nat 1); damage verdict. Kinds: attack, damage, ability, save, skill, spell, hd, init, rest, levelup, info. Optional brief toast as a nicety; Foundry chat is canonical.
 **Depends on:** P3
 **Contract:** A roll API consumed by 4c, 6a, 6c. *Build right after P3.*
