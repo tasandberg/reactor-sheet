@@ -12,7 +12,7 @@
 .reactor-sheet {
   overflow: visible;
   height: 100%;
-  min-width: 320px; // handoff min footprint
+  min-width: 640px; // keep the inline header (portrait + name + HP/AC) from clipping
   min-height: 360px;
 
   // --- titlebar: near-black to match the top-bar, design-system font ---
