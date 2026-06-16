@@ -61,8 +61,30 @@
     cursor: pointer;
   }
 
+  // Foundry renders this when resizable; draw a visible diagonal grip so the
+  // affordance reads against our theme. Decoration only — drag stays Foundry's.
   .window-resize-handle {
     z-index: 5;
+    overflow: visible;
+    color: var(--text-mute, #8a8270);
+
+    &::after {
+      content: "";
+      position: absolute;
+      right: 2px;
+      bottom: 2px;
+      width: 12px;
+      height: 12px;
+      pointer-events: none;
+      background:
+        linear-gradient(135deg, transparent 0 42%, currentColor 42% 54%, transparent 54%),
+        linear-gradient(135deg, transparent 0 68%, currentColor 68% 80%, transparent 80%);
+      opacity: 0.6;
+    }
+    &:hover {
+      color: var(--gold);
+      &::after { opacity: 1; }
+    }
   }
 }
 
