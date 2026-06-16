@@ -11,40 +11,35 @@ export function applyTheme(root: HTMLElement, theme: Theme): void {
   else root.setAttribute("data-theme", theme);
 }
 
-// --- module-level theme store -------------------------------------------------
-// Single source of truth, kept OUTSIDE React on purpose: the toggle flips the
-// DOM attribute directly, so it never depends on context propagation, ref
-// timing, or a re-render round-trip (all of which proved flaky in the Foundry
-// mount). Persisted to localStorage; shared across any open sheets.
-const KEY = "reactor-sheet:theme";
+// --- theme toggle -------------------------------------------------------------
+// The single source of truth is the client setting `reactor-sheet.theme`. Its
+// onChange re-renders every sheet, and reactor-sheet.js `_onRender` applies the
+// theme to each *window* element (this.element). The toggle therefore flips the
+// SETTING — not a DOM attribute on the inner app, which the window's
+// setting-driven data-theme would just override by inheritance.
+const SETTING_NS = "reactor-sheet";
+const SETTING_KEY = "theme";
 
-let current: Theme = (() => {
+type GameSettings = {
+  get(ns: string, key: string): unknown;
+  set(ns: string, key: string, value: unknown): Promise<unknown>;
+};
+const getGame = (): { settings?: GameSettings } | undefined =>
+  (globalThis as unknown as { game?: { settings?: GameSettings } }).game;
+
+export function getThemeSetting(): Theme {
   try {
-    return resolveTheme(localStorage.getItem(KEY));
+    return resolveTheme(getGame()?.settings?.get(SETTING_NS, SETTING_KEY));
   } catch {
     return "dark";
   }
-})();
-
-export function getTheme(): Theme {
-  return current;
 }
 
-/** Apply the current theme to every mounted sheet root. */
-export function applyThemeToAll(): void {
-  if (typeof document === "undefined") return;
-  document
-    .querySelectorAll<HTMLElement>(".reactor-sheet-app")
-    .forEach((el) => applyTheme(el, current));
-}
-
-/** Flip dark⇄cream, persist, and apply to the live DOM. */
+/** Flip dark⇄cream via the client setting; onChange re-renders sheets and
+ *  `_onRender` applies it. No-ops outside Foundry (Ladle/tests). */
 export function toggleTheme(): void {
-  current = current === "dark" ? "cream" : "dark";
-  try {
-    localStorage.setItem(KEY, current);
-  } catch {
-    /* storage unavailable — keep in-memory only */
-  }
-  applyThemeToAll();
+  const settings = getGame()?.settings;
+  if (!settings) return;
+  const next: Theme = getThemeSetting() === "dark" ? "cream" : "dark";
+  void settings.set(SETTING_NS, SETTING_KEY, next);
 }

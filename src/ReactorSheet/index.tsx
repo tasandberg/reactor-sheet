@@ -5,18 +5,13 @@ import "./styles/vellum/components.css";
 import "./styles/styles.scss";
 import ReactorSheetProvider from "./components/ReactorSheetProvider";
 import SheetShell from "./components/SheetShell";
-import { applyTheme, getTheme } from "./theme";
-import { useEffect, useLayoutEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
-/** App root element. Applies the persisted theme before paint, and stops
- *  mousedown bubbling into Foundry. Theme changes after mount are driven
- *  directly by toggleTheme() (see theme.ts), not React state. */
+/** App root element. Theme is owned by the window (reactor-sheet.js `_onRender`
+ *  sets data-theme on this.element from the client setting), so this only stops
+ *  mousedown bubbling into Foundry. */
 function ThemedRoot({ children }: { children: ReactNode }) {
   const appRef = useRef<HTMLDivElement>(null);
-
-  useLayoutEffect(() => {
-    if (appRef.current) applyTheme(appRef.current, getTheme());
-  }, []);
 
   useEffect(() => {
     const el = appRef.current;
