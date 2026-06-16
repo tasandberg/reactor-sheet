@@ -3,11 +3,9 @@ import { selectAbilities } from "../../viewModels/abilities";
 import { selectAttacks } from "../../viewModels/attacks";
 import { selectSaves } from "../../viewModels/saves";
 import { selectExploration } from "../../viewModels/exploration";
-import { selectWealthMovement } from "../../viewModels/wealthMovement";
 import { AbilityPlaques } from "./AbilityPlaques";
 import { AttacksTable } from "./AttacksTable";
 import { SavesExploration } from "./SavesExploration";
-import { WealthMovement } from "./WealthMovement";
 
 type Props = { actor: OSEActor };
 
@@ -21,7 +19,6 @@ export function ActionsView({ actor }: Props) {
       <div className="actions-only">
         <SavesExploration saves={selectSaves(actor)} exploration={selectExploration(actor)} />
       </div>
-      <WealthMovement vm={selectWealthMovement(actor)} />
     </>
   );
 }

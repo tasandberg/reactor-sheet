@@ -11,6 +11,7 @@ describe("selectVitals", () => {
       initMod: 1,
       hd: "3d4",
       move: 120,
+      moveBands: { encounter: 40, explore: 120, travel: 24 },
     });
   });
 });

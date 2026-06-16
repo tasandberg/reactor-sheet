@@ -15,6 +15,8 @@ export interface VitalsVM {
   initMod: number;
   hd: string;
   move: number;
+  /** Movement bands for the MOVE pill popover (per-round / per-turn / per-day). */
+  moveBands: { encounter: number; explore: number; travel: number };
 }
 
 export interface AbilityVM {

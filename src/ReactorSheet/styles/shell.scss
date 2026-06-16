@@ -160,12 +160,12 @@
 
   // header band reflow in the narrow left rail — stack vertically, portrait bigger
   .rs-twopane .rs-head { flex-direction: column; align-items: center; gap: 12px; }
-  .rs-twopane .rs-portrait-wrap { width: 100%; max-width: 120px; margin: 0 auto; }
+  .rs-twopane .rs-portrait-wrap { align-self: center; width: 100%; max-width: 120px; margin: 0 auto; }
   .rs-twopane .rs-ident { align-items: center; text-align: center; }
   .rs-twopane .rs-name { text-align: center; }
   .rs-twopane .rs-class { text-align: center; }
-  .rs-twopane .rs-vitals { margin-left: 0; justify-content: center; }
-  // tiles row already 3-col, no override needed
+  .rs-twopane .rs-pills { justify-content: center; }
+  .rs-twopane .rs-vitals { margin-left: 0; width: 100%; }
 }
 
 @container app (min-width: 800px) {

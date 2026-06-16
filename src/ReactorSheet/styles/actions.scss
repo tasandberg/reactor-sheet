@@ -67,17 +67,18 @@
 // --- header band ---
 .rs-head {
   display: flex;
-  align-items: center;
+  align-items: stretch; // children fill the top-row height
   gap: 14px;
 }
 .rs-portrait-wrap {
   position: relative;
-  width: 56px;
+  align-self: stretch; // fill the row height …
+  aspect-ratio: 1; // … as a square column
   flex: 0 0 auto;
 }
 .rs-portrait {
   width: 100%;
-  aspect-ratio: 1;
+  height: 100%;
   border-radius: 6px;
   object-fit: cover;
   background: radial-gradient(circle at 50% 35%, #2c281f, #15130e);
@@ -85,6 +86,7 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 .rs-ident {
+  flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -110,8 +112,11 @@
 // --- vitals (HP/AC boxes, floated right inline in .rs-head) ---
 .rs-vitals {
   margin-left: auto;
-  display: flex;
+  align-self: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr; // boxes fill the container; widen via the container, not the box
   gap: 9px;
+  width: 200px;
   flex: 0 0 auto;
 }
 .rs-vital {
@@ -119,7 +124,7 @@
   background: var(--surface);
   border: 1px solid var(--border-soft, #2c2823);
   border-radius: 7px;
-  padding: 4px 8px 5px;
+  padding: 6px 10px 8px;
   text-align: center;
 }
 .rs-vital.hp { border-color: color-mix(in srgb, var(--crimson) 55%, transparent); }
@@ -140,28 +145,50 @@
   color: var(--text-mute);
 }
 
-// --- substats row (INIT / HD / MOVE tiles, below HP/AC) ---
-.rs-substats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 9px;
-  margin-top: 9px;
-}
-.rs-tile {
+// --- Init/HD/Move pills (in the name/info stack) ---
+.rs-pills {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+.rs-pill {
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   background: var(--surface);
   border: 1px solid var(--border-soft, #2c2823);
-  border-radius: 7px;
-  padding: 5px 6px 6px;
-  text-align: center;
+  border-radius: 99px;
+  padding: 2px 9px 2px 3px;
 }
-.rs-tile-v {
-  font-family: var(--mono); font-size: var(--fs-sm, 13px);
-  color: var(--text);
+.rs-pill .v {
+  font-family: var(--mono); font-size: var(--fs-xs, 12px); color: var(--text);
 }
+// MOVE pill reveals the movement bands on hover
+.rs-pill-move { position: relative; cursor: default; }
+.rs-move-pop {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 20;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px 10px;
+  background: var(--bg-2, #1f1c17);
+  border: 1px solid var(--gold-soft);
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.12s;
+}
+.rs-pill-move:hover .rs-move-pop,
+.rs-pill-move:focus-within .rs-move-pop { opacity: 1; visibility: visible; }
+.rs-move-pop .r { display: flex; justify-content: space-between; gap: 12px; }
+.rs-move-pop .k { font-family: var(--sans); font-size: var(--fs-xs, 12px); color: var(--text-dim, #b5ad97); }
+.rs-move-pop .vv { font-family: var(--mono); font-size: var(--fs-xs, 12px); color: var(--text); }
 
 // --- abilities ---
 .rs-abilities { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
