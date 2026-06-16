@@ -100,6 +100,7 @@
   --gold: var(--teal);
   --gold-dim: var(--teal-dim);
   --gold-soft: color-mix(in srgb, var(--teal) 30%, transparent);
+  --gold-bright: #57c3c3; // bright teal variant for retainers
 }
 
 .reactor-sheet-app {

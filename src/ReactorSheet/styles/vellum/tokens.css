@@ -91,6 +91,7 @@
   --gold:          var(--mustard);
   --gold-dim:      var(--accent-alt-dim);
   --gold-soft:     color-mix(in srgb, var(--accent-alt) 30%, transparent);
+  --gold-bright:   #e6c87e; /* constant bright accent — pops on the ink chip in both themes */
 
   /* Section rule (under titles) */
   --section-rule:  var(--text);
