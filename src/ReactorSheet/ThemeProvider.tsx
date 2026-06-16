@@ -13,9 +13,9 @@ function read(): Theme {
 }
 
 /** Holds theme state for the sheet and exposes it via ThemeContext. The chosen
- *  theme is applied as `data-theme` on the app root in index.tsx (dark = no attr,
- *  per theme.ts convention) and persisted to localStorage. */
-export function ThemeProvider({ children }: { children: (theme: Theme) => ReactNode }) {
+ *  theme is applied to the app root with applyTheme() in index.tsx and persisted
+ *  to localStorage. */
+export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>(read);
   const toggle = useCallback(() => {
     setTheme((t) => {
@@ -28,5 +28,5 @@ export function ThemeProvider({ children }: { children: (theme: Theme) => ReactN
       return next;
     });
   }, []);
-  return <ThemeContext.Provider value={{ theme, toggle }}>{children(theme)}</ThemeContext.Provider>;
+  return <ThemeContext.Provider value={{ theme, toggle }}>{children}</ThemeContext.Provider>;
 }

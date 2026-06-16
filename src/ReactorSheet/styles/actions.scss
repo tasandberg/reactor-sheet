@@ -69,6 +69,7 @@
 .rs-identity .portrait {
   width: 96px; height: 96px; flex: 0 0 auto;
   border: 1px solid var(--border, #3a342c); border-radius: var(--r-md, 6px);
+  padding: 4px; // matte between image and border
   object-fit: cover; background: var(--surface, #23201a);
 }
 .rs-identity .ident { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
@@ -76,7 +77,7 @@
 .rs-identity .sub { font-family: var(--display); color: var(--gold); font-size: var(--fs-md, 15px); }
 
 // --- vitals ---
-.rs-vitals { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.rs-vitals { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
 .rs-vitals .hp .val { color: var(--crimson, #b54b4b); }
 .rs-vitals .ac .val { color: var(--teal, #2f8f8f); }
 
