@@ -136,8 +136,18 @@
 // right-aligned headers match their right-aligned cells
 .rs-inv .rs-inv-th-cat,
 .rs-inv .rs-inv-th-wt { justify-content: flex-end; }
-.rs-inv .rs-inv-th-eq { justify-content: center; }
-.rs-inv-th-caret { font-size: 9px; width: 7px; } // reserve space so labels don't shift
+// name column also hosts the equipped-sort handle (checkbox col is reserved for checkboxes)
+.rs-inv-th-namecell {
+  display: inline-flex; align-items: center; gap: var(--spacer-2); min-width: 0;
+}
+.rs-inv .rs-inv-th-eq {
+  font-size: var(--fs-4xs, 9px);
+  color: var(--text-faint, #6a6354);
+  opacity: 0.7;
+  &:hover { opacity: 1; }
+  &.active { opacity: 1; }
+}
+.rs-inv-th-caret { font-size: 8px; width: 6px; } // reserve space so labels don't shift
 
 // --- drag handle (col 1) ---
 .rs-inv .rs-inv-drag {
