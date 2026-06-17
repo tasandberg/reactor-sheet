@@ -10,7 +10,7 @@ import { selectIdentity } from "../viewModels/identity";
 import { selectVitals } from "../viewModels/vitals";
 import { selectSaves } from "../viewModels/saves";
 import { selectExploration } from "../viewModels/exploration";
-import { selectInventory, selectEncumbrance } from "../viewModels/inventory";
+import { selectInventory, selectEncumbrance, selectCoins } from "../viewModels/inventory";
 import type { OseItem } from "../types/types";
 
 /**
@@ -32,6 +32,9 @@ export default function SheetShell() {
     if (it && "equipped" in it.system) void it.update({ system: { equipped: !it.system.equipped } });
   };
   const onOpenItem = (id: string) => resolveItem(id)?.sheet?.render(true);
+  const onSetCoin = (id: string, value: number) => {
+    void resolveItem(id)?.update({ "system.quantity.value": value });
+  };
 
   const visible = tabs(actor).filter((t) => !t.disabled);
   const items: TabItem[] = visible.map((t) => ({
@@ -61,6 +64,8 @@ export default function SheetShell() {
         <InventoryView
           inventory={selectInventory(invItems as OseItem[])}
           encumbrance={selectEncumbrance(actor)}
+          coins={selectCoins(invItems as OseItem[])}
+          onSetCoin={onSetCoin}
           onEquip={onEquipItem}
           onOpen={onOpenItem}
         />

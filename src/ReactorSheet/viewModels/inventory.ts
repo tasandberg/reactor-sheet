@@ -1,5 +1,30 @@
 import type { OSEActor, OseItem } from "../types/types";
-import type { InventoryVM, InventoryGroup, InventoryItemVM, EncumbranceVM } from "./types";
+import type { InventoryVM, InventoryGroup, InventoryItemVM, EncumbranceVM, CoinVM } from "./types";
+
+const COIN_DENOMS = ["pp", "gp", "ep", "sp", "cp"] as const;
+
+/** Coin denomination of a treasure item: handles "GP" (actor) and "[01.00] Gold (gp)" (pack). */
+export function coinDenom(name: string): string | null {
+  return (
+    name.match(/\((pp|gp|ep|sp|cp)\)/i)?.[1]?.toLowerCase() ??
+    name.match(/^\s*(pp|gp|ep|sp|cp)\s*$/i)?.[1]?.toLowerCase() ??
+    null
+  );
+}
+
+/** The coins the actor holds, in canonical pp→cp order, with their current quantities. */
+export function selectCoins(items: OseItem[]): CoinVM[] {
+  const byDenom = new Map<string, OseItem>();
+  for (const it of items) {
+    if (!it.system?.treasure) continue;
+    const d = coinDenom(it.name as string);
+    if (d && !byDenom.has(d)) byDenom.set(d, it);
+  }
+  return COIN_DENOMS.flatMap((d) => {
+    const it = byDenom.get(d);
+    return it ? [{ denom: d.toUpperCase(), id: it._id as string, value: it.system.quantity?.value ?? 0 }] : [];
+  });
+}
 
 const GROUPS: { key: string; label: string; types: string[] }[] = [
   { key: "weapons", label: "Weapons", types: ["weapon"] },
@@ -46,7 +71,10 @@ export function selectInventory(items: OseItem[]): InventoryVM {
   const groups: InventoryGroup[] = GROUPS.map((g) => ({
     key: g.key,
     label: g.label,
-    items: items.filter((it) => g.types.includes(it.type) && !isCurrency(it)).map(toVM),
+    // Coins (currency-tagged or pp/gp/ep/sp/cp) live in the Coin editor, not the item list.
+    items: items
+      .filter((it) => g.types.includes(it.type) && !isCurrency(it) && !coinDenom(it.name as string))
+      .map(toVM),
   })).filter((g) => g.items.length > 0);
   return { groups, count: groups.reduce((n, g) => n + g.items.length, 0) };
 }

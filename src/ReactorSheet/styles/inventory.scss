@@ -119,3 +119,31 @@
   font-family: var(--display); font-size: var(--fs-xs, 12px); line-height: 1.1;
   text-align: center; color: var(--text-dim, #b5ad97);
 }
+
+// --- coin editor (pp/gp/ep/sp/cp quantity inputs) ---
+.rs-inv-coin { margin-top: 20px; }
+.rs-coins {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+.rs-coin { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.rs-coin-l {
+  font-family: var(--display); font-size: var(--fs-sm, 13px);
+  letter-spacing: 0.06em; color: var(--gold);
+}
+.rs-inv .rs-coin-in {
+  width: 100%; text-align: center;
+  padding: 8px 6px;
+  background: var(--surface, #23201a);
+  border: 1px solid var(--border, #3a342c);
+  border-radius: 6px;
+  color: var(--text, #e5dec8);
+  font-family: var(--mono); font-size: var(--fs-md, 15px);
+  transition: border-color 0.12s;
+}
+.rs-inv .rs-coin-in:focus { border-color: var(--gold); }
+.rs-inv .rs-coin-in::-webkit-inner-spin-button,
+.rs-inv .rs-coin-in::-webkit-outer-spin-button { appearance: none; margin: 0; }
+.rs-inv .rs-coin-in { -moz-appearance: textfield; appearance: textfield; }

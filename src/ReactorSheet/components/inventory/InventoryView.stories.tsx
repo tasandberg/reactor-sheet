@@ -33,6 +33,21 @@ const inventory: InventoryVM = {
 
 const encumbrance: EncumbranceVM = { enabled: true, value: 380, max: 1600, pct: 0.2375, status: "Unencumbered", move: 120 };
 
+const coins = [
+  { denom: "PP", id: "pp", value: 0 },
+  { denom: "GP", id: "gp", value: 152 },
+  { denom: "EP", id: "ep", value: 0 },
+  { denom: "SP", id: "sp", value: 8 },
+  { denom: "CP", id: "cp", value: 0 },
+];
+
 export const Default = () => (
-  <InventoryView inventory={inventory} encumbrance={encumbrance} onEquip={() => {}} onOpen={() => {}} />
+  <InventoryView
+    inventory={inventory}
+    encumbrance={encumbrance}
+    coins={coins}
+    onSetCoin={() => {}}
+    onEquip={() => {}}
+    onOpen={() => {}}
+  />
 );

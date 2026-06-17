@@ -89,6 +89,14 @@ export interface InventoryVM {
   count: number;
 }
 
+export interface CoinVM {
+  /** Uppercase denomination label, e.g. "GP". */
+  denom: string;
+  /** The backing treasure item's id (for quantity updates). */
+  id: string;
+  value: number;
+}
+
 export interface EncumbranceVM {
   enabled: boolean;
   value: number;

@@ -1,11 +1,16 @@
 import { useState } from "react";
-import type { InventoryVM, EncumbranceVM, InventoryItemVM } from "../../viewModels/types";
+import type { InventoryVM, EncumbranceVM, InventoryItemVM, CoinVM } from "../../viewModels/types";
 import { SectionTitle } from "../ui/SectionTitle";
 import { Check } from "../ui/Check";
 import { cx } from "../ui/cx";
 
 type Ops = { onEquip: (id: string) => void; onOpen: (id: string) => void };
-type Props = { inventory: InventoryVM; encumbrance: EncumbranceVM } & Ops;
+type Props = {
+  inventory: InventoryVM;
+  encumbrance: EncumbranceVM;
+  coins: CoinVM[];
+  onSetCoin: (id: string, value: number) => void;
+} & Ops;
 
 const weightLabel = (w: number) => (w > 0 ? `${w} cn` : "—");
 // Weapon damage (e.g. "1d4") for the card badge; else the qty/charges.
@@ -78,7 +83,32 @@ function InvCard({ item, onEquip, onOpen }: { item: InventoryItemVM } & Ops) {
   );
 }
 
-export function InventoryView({ inventory, encumbrance, onEquip, onOpen }: Props) {
+function CoinRow({ coin, onSetCoin }: { coin: CoinVM; onSetCoin: (id: string, value: number) => void }) {
+  return (
+    <label className="rs-coin">
+      <span className="rs-coin-l">{coin.denom}</span>
+      <input
+        type="number"
+        inputMode="numeric"
+        min={0}
+        className="rs-coin-in"
+        defaultValue={coin.value}
+        key={coin.value}
+        aria-label={`${coin.denom} quantity`}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") e.currentTarget.blur();
+        }}
+        onBlur={(e) => {
+          const n = parseInt(e.currentTarget.value, 10);
+          if (Number.isNaN(n)) e.currentTarget.value = String(coin.value);
+          else onSetCoin(coin.id, Math.max(0, n));
+        }}
+      />
+    </label>
+  );
+}
+
+export function InventoryView({ inventory, encumbrance, coins, onSetCoin, onEquip, onOpen }: Props) {
   const [view, setView] = useState<"list" | "grid">("list");
   return (
     <section className="rs-inv">
@@ -120,6 +150,17 @@ export function InventoryView({ inventory, encumbrance, onEquip, onOpen }: Props
           )}
         </div>
       ))}
+
+      {coins.length > 0 && (
+        <div className="rs-inv-coin">
+          <SectionTitle>Coin</SectionTitle>
+          <div className="rs-coins">
+            {coins.map((c) => (
+              <CoinRow key={c.id} coin={c} onSetCoin={onSetCoin} />
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 }
