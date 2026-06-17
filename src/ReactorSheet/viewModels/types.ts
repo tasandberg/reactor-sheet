@@ -62,3 +62,41 @@ export interface WealthMovementVM {
   coins: { name: string; img: string; qty: number }[];
   move: { encounter: number; explore: number; travel: number };
 }
+
+export interface InventoryItemVM {
+  id: string;
+  name: string;
+  img: string;
+  /** Inline meta line, e.g. "1d4 · melee" for weapons. "" when none. */
+  meta: string;
+  /** Short monogram for the grid card when the item has no real art. */
+  monogram: string;
+  weight: number;
+  /** null when the item type can't be equipped (no `equipped` field). */
+  equipped: boolean | null;
+  /** null unless the item is a stack (qty > 1) or charged (max set). */
+  quantity: { value: number; max: number } | null;
+}
+
+export interface InventoryGroup {
+  key: string;
+  label: string;
+  items: InventoryItemVM[];
+}
+
+export interface InventoryVM {
+  groups: InventoryGroup[];
+  count: number;
+}
+
+export interface EncumbranceVM {
+  enabled: boolean;
+  value: number;
+  max: number;
+  /** Fraction 0–1 for the progress bar. */
+  pct: number;
+  /** e.g. "Unencumbered". */
+  status: string;
+  /** Current movement (ft), e.g. 120. */
+  move: number;
+}

@@ -1,0 +1,121 @@
+// Inventory tab — list + grid views + encumbrance bar.
+// Button selectors are qualified with .rs-inv so they beat the
+// `.reactor-sheet-app button { all: unset }` reset (0,1,1) in styles.scss.
+
+.rs-inv { display: flex; flex-direction: column; }
+
+// --- header: title + hint (left), list/grid toggle (right) ---
+.rs-inv-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+.rs-inv-head .section-title { flex: 1; margin: 0; }
+
+.rs-inv-toggle {
+  flex: 0 0 auto;
+  display: inline-flex;
+  border: 1px solid var(--border, #3a342c);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.rs-inv .rs-inv-vbtn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 26px;
+  background: transparent;
+  color: var(--text-mute, #8a8270);
+  cursor: pointer;
+  font-size: 13px;
+  transition: color 0.12s, background 0.12s;
+}
+.rs-inv .rs-inv-vbtn:hover { color: var(--text-dim, #b5ad97); }
+.rs-inv .rs-inv-vbtn.active { background: var(--teal); color: var(--on-accent, #070605); }
+
+// --- encumbrance bar ---
+.rs-enc { margin: 12px 0 4px; }
+.rs-enc-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.rs-enc-l { font-family: var(--sans); font-size: var(--fs-sm, 13px); color: var(--text-dim, #b5ad97); }
+.rs-enc-l b { font-family: var(--mono); font-weight: 400; color: var(--text, #e5dec8); }
+.rs-enc-r { font-family: var(--mono); font-size: var(--fs-xs, 12px); color: var(--text-mute, #8a8270); white-space: nowrap; }
+.rs-enc-track {
+  margin-top: 6px; height: 6px; border-radius: 99px;
+  background: var(--surface-3, #3a3429); overflow: hidden;
+}
+.rs-enc-fill {
+  height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg, var(--forest, #4a7c4a), var(--mustard, #d4b878), var(--crimson, #c75044));
+}
+
+// --- category group ---
+.rs-inv-group { margin-top: 16px; }
+.rs-inv-cat {
+  font-family: var(--sans); font-size: var(--fs-2xs, 11px); font-weight: 600;
+  letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--text-mute, #8a8270);
+  padding-bottom: 4px; margin-bottom: 2px;
+  border-bottom: 1px solid var(--border-soft, #2c2823);
+}
+
+// --- list rows ---
+.rs-inv-row {
+  display: grid;
+  grid-template-columns: 26px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 2px;
+  border-bottom: 1px solid var(--border-soft, #2c2823);
+}
+.rs-inv-equip-spacer { width: 22px; }
+.rs-inv .rs-inv-name {
+  display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+  min-width: 0; background: transparent; cursor: pointer; text-align: left;
+}
+.rs-inv-name .nm { font-family: var(--display); font-size: var(--fs-md, 15px); color: var(--text, #e5dec8); transition: color 0.12s; }
+.rs-inv .rs-inv-name:hover .nm { color: var(--gold); }
+.rs-inv-name .qty,
+.rs-inv-name .meta { font-family: var(--mono); font-size: var(--fs-2xs, 11px); color: var(--text-mute, #8a8270); }
+.rs-inv-wt { font-family: var(--mono); font-size: var(--fs-xs, 12px); color: var(--text-mute, #8a8270); white-space: nowrap; }
+
+// --- grid cards ---
+.rs-inv-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+  gap: 12px 10px;
+  margin-top: 10px;
+}
+.rs-inv-card { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.rs-inv-cardtile {
+  position: relative; width: 100%; aspect-ratio: 1;
+  border-radius: 6px; background: var(--ink, #070605);
+  border: 1px solid var(--border, #3a342c);
+}
+.rs-inv .rs-inv-cardbtn {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.rs-inv-cardbtn img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
+.rs-inv-cardbtn .mono {
+  font-family: var(--display); font-size: var(--fs-2xl, 21px);
+  letter-spacing: 0.04em; color: var(--stamp-text, #e5dec8);
+}
+.rs-inv .rs-inv-cardeq {
+  position: absolute; top: 4px; right: 4px;
+  width: 18px; height: 18px; border-radius: 4px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--surface-3, #3a3429); color: var(--text-faint, #6a6354);
+  border: 1px solid var(--border, #3a342c); cursor: pointer; font-size: 10px;
+}
+.rs-inv .rs-inv-cardeq.on { background: var(--teal); color: var(--on-accent, #070605); border-color: var(--teal); }
+.rs-inv-cardbadge {
+  position: absolute; right: 4px; bottom: 4px;
+  font-family: var(--mono); font-size: var(--fs-3xs, 10px);
+  color: var(--text-dim, #b5ad97);
+  background: rgba(0, 0, 0, 0.55); border: 1px solid var(--border, #3a342c);
+  border-radius: 3px; padding: 0 4px;
+}
+.rs-inv-cardname {
+  font-family: var(--display); font-size: var(--fs-xs, 12px); line-height: 1.1;
+  text-align: center; color: var(--text-dim, #b5ad97);
+}
