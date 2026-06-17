@@ -7,12 +7,12 @@
 .rs-topbar {
   background: var(--ink, #070605);
   border-bottom: 1px solid var(--border, #3a342c);
-  padding: 6px 12px;
+  padding: var(--spacer-1) var(--spacer-3);
 }
 .rs-topbar-inner {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--spacer-2);
   flex-wrap: wrap;
 }
 .rs-tb-lv {
@@ -80,7 +80,7 @@
   grid-template-areas:
     "portrait ident  vitals"
     "portrait subs   vitals";
-  gap: 8px 14px;
+  gap: var(--spacer-2) var(--spacer-4);
   align-items: start;
 }
 .rs-portrait-wrap {
@@ -135,7 +135,7 @@
   width: 200px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: var(--spacer-2);
 }
 .rs-vital {
   position: relative;
@@ -164,7 +164,7 @@
   color: var(--text-mute);
 }
 .rs-vital .vv-sub .short { display: none; } // full label by default; short shows at XS
-.rs-vital .vv-row { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.rs-vital .vv-row { display: flex; align-items: center; justify-content: center; gap: var(--spacer-2); }
 // medium+: − / + steppers revealed on hover
 .rs-vital .vv-step {
   display: inline-flex; align-items: center; justify-content: center;
@@ -209,7 +209,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: var(--spacer-1);
   padding: 2px 0 0;
   text-align: center;
 }
@@ -229,7 +229,7 @@
   display: flex;
   flex-direction: column;
   gap: 3px;
-  padding: 8px 10px;
+  padding: var(--spacer-2) var(--spacer-2);
   background: var(--bg-2, #1f1c17);
   border: 1px solid var(--gold-soft);
   border-radius: 8px;
@@ -240,12 +240,12 @@
 }
 .rs-tile-move:hover .rs-move-pop,
 .rs-tile-move:focus-within .rs-move-pop { opacity: 1; visibility: visible; }
-.rs-move-pop .r { display: flex; justify-content: space-between; gap: 12px; }
+.rs-move-pop .r { display: flex; justify-content: space-between; gap: var(--spacer-3); }
 .rs-move-pop .k { font-family: var(--sans); font-size: var(--fs-xs, 12px); color: var(--text-dim, #b5ad97); }
 .rs-move-pop .vv { font-family: var(--mono); font-size: var(--fs-xs, 12px); color: var(--text); }
 
 // --- abilities ---
-.rs-abilities { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.rs-abilities { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacer-2); }
 @container sheet (min-width: 470px) { .rs-abilities { grid-template-columns: repeat(6, 1fr); } }
 .rs-abil {
   display: flex;
@@ -296,9 +296,9 @@
 .section-title {
   font-family: var(--display); font-size: var(--fs-xl, 18px); font-weight: 400;
   letter-spacing: 0.02em; color: var(--text);
-  margin: 0 0 10px; padding-bottom: 4px;
+  margin: 0 0 var(--spacer-2); padding-bottom: var(--spacer-1);
   border-bottom: 2px solid var(--border);
-  display: flex; align-items: baseline; gap: 8px; flex-wrap: nowrap;
+  display: flex; align-items: baseline; gap: var(--spacer-2); flex-wrap: nowrap;
   line-height: unset;
 }
 .section-title .hint {
@@ -310,8 +310,8 @@
 // Qualified with .rs-se-nav so the buttons beat the .reactor-sheet-app reset (0,1,1).
 .rs-se-nav {
   display: flex;
-  gap: 4px;
-  margin-bottom: 10px;
+  gap: var(--spacer-1);
+  margin-bottom: var(--spacer-2);
   border-bottom: 2px solid var(--border);
 }
 .rs-se-nav .rs-se-tab {
@@ -344,17 +344,17 @@
 .rs-quals .tag { display: inline-flex; align-items: center; gap: 4px; }
 
 // --- wealth + movement ---
-.rs-wm { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 6px; }
-.rs-wm .grp { display: flex; flex-direction: column; gap: 4px; }
-.rs-coins, .rs-moves { display: flex; gap: 12px; flex-wrap: wrap; font-size: var(--fs-sm, 13px); }
-.rs-coin { display: flex; align-items: center; gap: 4px; }
+.rs-wm { display: flex; flex-wrap: wrap; gap: var(--spacer-6); margin-top: 6px; }
+.rs-wm .grp { display: flex; flex-direction: column; gap: var(--spacer-1); }
+.rs-coins, .rs-moves { display: flex; gap: var(--spacer-3); flex-wrap: wrap; font-size: var(--fs-sm, 13px); }
+.rs-coin { display: flex; align-items: center; gap: var(--spacer-1); }
 .rs-coin img { width: 14px; height: 14px; }
 .rs-coin .v { font-family: var(--mono); }
-.rs-move .k { color: var(--text-mute, #8a8270); margin-right: 4px; }
+.rs-move .k { color: var(--text-mute, #8a8270); margin-right: var(--spacer-1); }
 .rs-move .v { font-family: var(--mono); }
 
 // section spacing in the Actions body
-.rs-section + .rs-section { margin-top: 20px; }
+.rs-section + .rs-section { margin-top: var(--spacer-5); }
 
 // --- topbar overflow menu (XS: ⋮ button + popover) ---
 .rs-tb-menu-wrap {
@@ -367,7 +367,7 @@
   z-index: 20;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacer-1);
   padding: 6px;
   background: var(--bg-2, #1f1c17);
   border: 1px solid var(--border, #3a342c);
@@ -395,7 +395,7 @@
   .rs-ident { overflow: hidden; } // keep a long name from pushing HP/AC off-screen
   .rs-name { font-size: var(--fs-2xl, 21px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   // HP/AC: 52×76 narrow-tall boxes, content top-aligned (prototype spec)
-  .rs-vitals { width: 112px; gap: 8px; grid-template-columns: repeat(2, 52px); align-items: stretch; }
+  .rs-vitals { width: 112px; gap: var(--spacer-2); grid-template-columns: repeat(2, 52px); align-items: stretch; }
   .rs-vital {
     display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
     gap: 1px;
@@ -418,7 +418,7 @@
   // attack tags: icon-only (hide the label text)
   .rs-quals .lbl { display: none; }
   // abilities: 6-across in one compact row
-  .rs-abilities { grid-template-columns: repeat(6, 1fr); gap: 4px; }
+  .rs-abilities { grid-template-columns: repeat(6, 1fr); gap: var(--spacer-1); }
   .rs-abil { min-height: 0; padding: 5px 3px 6px; }
   .rs-abil .rs-abil-k { font-size: var(--fs-3xs, 10px); padding: 2px 2px 3px; }
   .rs-abil .av { font-size: var(--fs-xl, 18px); padding: 3px 0; }

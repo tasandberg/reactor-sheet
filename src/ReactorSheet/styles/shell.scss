@@ -7,7 +7,7 @@
 
 .rs-topbar {
   flex: 0 0 auto;
-  padding: 10px 16px;
+  padding: var(--spacer-2) var(--spacer-4);
 }
 
 .rs-body {
@@ -29,10 +29,10 @@
   scrollbar-color: var(--surface-3, #3a3429) transparent;
 }
 
-.rs-pad { padding: 16px; }
+.rs-pad { padding: var(--spacer-4); }
 
 .rs-twopane > .rs-left {
-  padding-bottom: 15px;
+  padding-bottom: 15px; // intentional: 15px optical offset, leave raw
   border-bottom: 1px solid var(--border-soft, #2c2823);
   margin-bottom: 3px;
 }
@@ -48,7 +48,7 @@
   // No top padding: the first/active tab sits flush against the top bar.
   // (The 14px the prototype used reads as a stray light block in cream.)
   padding-top: 0;
-  gap: 6px;
+  gap: var(--spacer-1);
   background: var(--bg-2, #1f1c17);
   border-left: 1px solid var(--border, #3a342c);
 }
@@ -62,7 +62,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--spacer-2);
   background: transparent;
   border: none;
   border-left: 2px solid transparent;
@@ -74,7 +74,7 @@
   font-size: var(--fs-sm, 13px);
   font-weight: 500;
   letter-spacing: 0.04em;
-  padding: 10px 0;
+  padding: var(--spacer-2) 0;
   transition: color 0.12s, background 0.12s;
 }
 .rs-tab .rs-tab-ic {
@@ -111,7 +111,7 @@
   align-items: center;
   justify-content: center;
   gap: 3px;
-  padding: 8px 4px 6px;
+  padding: var(--spacer-2) var(--spacer-1) 6px;
   background: transparent;
   border: none;
   border-top: 2px solid transparent;
@@ -145,16 +145,16 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: var(--spacer-1);
   text-align: center;
   min-height: 64px;
-  padding: 14px;
+  padding: var(--spacer-4);
   border: 1px dashed var(--border, #3a342c);
   border-radius: var(--r-md, 6px);
   color: var(--text-mute, #8a8270);
   background: color-mix(in srgb, var(--surface, #23201a) 40%, transparent);
 }
-.rs-placeholder + .rs-placeholder { margin-top: 12px; }
+.rs-placeholder + .rs-placeholder { margin-top: var(--spacer-3); }
 .rs-ph-label {
   font-family: var(--sans);
   font-size: var(--fs-sm, 13px);
@@ -171,16 +171,16 @@
 .actions-only { display: block; }
 
 // === container reflow ===
-@container sheet (min-width: 600px) { .rs-pad { padding: 18px 20px; } }
+@container sheet (min-width: 600px) { .rs-pad { padding: 18px var(--spacer-5); } }
 
 @container sheet (min-width: 630px) {
-  .rs-pad { padding: 22px 24px; }
+  .rs-pad { padding: var(--spacer-6) var(--spacer-6); }
   .rs-twopane {
     display: grid;
     // Dynamic rail: shrinks/grows with the window between bounds; the portrait
     // (capped at 150px) stays put. Narrower than the old fixed 264px.
     grid-template-columns: clamp(190px, 24%, 224px) 1fr;
-    gap: 22px;
+    gap: var(--spacer-6);
     align-items: start;
   }
   .rs-twopane > .rs-left {
@@ -190,7 +190,7 @@
     padding-bottom: 0;
     margin-bottom: 0;
   }
-  .rs-rail-extra { display: block; margin-top: 12px; }
+  .rs-rail-extra { display: block; margin-top: var(--spacer-3); }
   .actions-only { display: none; }
 
   // header band reflow in the narrow left rail — stack: portrait, name, HP/AC, Init/HD/Move
@@ -198,7 +198,7 @@
     grid-template-columns: 1fr;
     grid-template-areas: "portrait" "ident" "vitals" "subs";
     justify-items: center;
-    gap: 12px;
+    gap: var(--spacer-3);
   }
   .rs-twopane .rs-portrait-wrap { align-self: center; width: 120px; height: 120px; }
   .rs-twopane .rs-ident { align-items: center; text-align: center; }
@@ -212,7 +212,7 @@
     background: var(--surface);
     border: 1px solid var(--border-soft, #2c2823);
     border-radius: 6px;
-    padding: 5px 6px 6px;
+    padding: 5px 6px var(--spacer-1); // 5px optical top, 6px optical sides, 4px bottom
   }
   .rs-twopane .rs-tile .stamp { font-size: var(--fs-2xs, 11px); padding: 5px 8px 3px; }
   .rs-twopane .rs-tile-v { font-size: var(--fs-xs, 12px); }
@@ -224,20 +224,20 @@
   .rs-tabrail { display: none; }
   .rs-htabs {
     display: flex;
-    gap: 4px;
-    margin-bottom: 14px;
+    gap: var(--spacer-1);
+    margin-bottom: var(--spacer-4);
     border-bottom: 2px solid var(--border, #3a342c);
   }
   // Qualified (see .rs-tabrail .rs-tab note) so it beats the button reset.
   .rs-htabs .rs-htab {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
+    gap: var(--spacer-2); // 7→8 (nearest token)
     background: transparent;
     border: none;
     border-bottom: 2px solid transparent;
     margin-bottom: -2px;
-    padding: 7px 13px 9px;
+    padding: 7px 13px 9px; // optical vertical padding: leave raw
     color: var(--text-mute, #8a8270);
     font-family: var(--sans);
     font-weight: 500;
@@ -273,6 +273,6 @@
     background: var(--bg-2, #1f1c17);
   }
   // content clears the bottom bar
-  .rs-sheet { padding-bottom: 4px; }
-  .rs-pad { padding-bottom: 68px; }
+  .rs-sheet { padding-bottom: var(--spacer-1); }
+  .rs-pad { padding-bottom: 68px; } // 68px = bottom-bar height clearance; no clean token
 }
