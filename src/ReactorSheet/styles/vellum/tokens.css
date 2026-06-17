@@ -204,7 +204,7 @@ body {
   gap: 12px;
   padding-bottom: 6px;
   border-bottom: 3px solid var(--section-rule);
-  margin: 0 0 14px 0;
+  margin: 22px 0 14px 0;
   line-height: 1.1;
   text-transform: none;
 }
