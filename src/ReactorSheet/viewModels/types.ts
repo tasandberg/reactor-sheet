@@ -63,21 +63,29 @@ export interface WealthMovementVM {
   move: { encounter: number; explore: number; travel: number };
 }
 
+export type InventorySortKey = "category" | "name" | "weight";
+
 export interface InventoryItemVM {
   id: string;
   name: string;
   img: string;
+  category: string;        // "Weapon" | "Armour" | "Gear" | "Container"
+  categoryRank: number;    // weapon 0, armour 1, gear 2, container 3
   /** Inline meta line, e.g. "1d4 · melee" for weapons. "" when none. */
   meta: string;
   /** Short monogram for the grid card when the item has no real art. */
   monogram: string;
   weight: number;
+  sort: number;            // foundry item.sort (manual order)
   /** null when the item type can't be equipped (no `equipped` field). */
   equipped: boolean | null;
   /** null unless the item is a stack (qty > 1) or charged (max set). */
   quantity: { value: number; max: number } | null;
+  isContainer: boolean;
+  children: InventoryItemVM[]; // [] unless container; nested by containerId
 }
 
+/** @deprecated use InventoryVM.items (flat list with containers carrying children) */
 export interface InventoryGroup {
   key: string;
   label: string;
@@ -85,8 +93,10 @@ export interface InventoryGroup {
 }
 
 export interface InventoryVM {
-  groups: InventoryGroup[];
+  items: InventoryItemVM[];  // top-level only; containers carry their children
   count: number;
+  /** @deprecated kept for grid view compatibility */
+  groups: InventoryGroup[];
 }
 
 export interface CoinVM {
