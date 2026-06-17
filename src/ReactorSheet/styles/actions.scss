@@ -102,6 +102,7 @@
 .rs-ident {
   grid-area: ident;
   min-width: 0;
+  overflow: hidden; // long names ellipsize instead of pushing HP/AC off-screen
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -112,6 +113,9 @@
   line-height: 0.95;
   letter-spacing: 0.01em;
   color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .rs-class {
   font-family: var(--display);
