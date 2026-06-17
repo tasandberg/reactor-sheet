@@ -367,9 +367,11 @@
   .rs-portrait-wrap { width: 56px; }
   .rs-ident { overflow: hidden; } // keep a long name from pushing HP/AC off-screen
   .rs-name { font-size: var(--fs-xl, 18px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .rs-vitals { width: 132px; gap: 6px; }
-  .rs-vital { padding: 4px 6px 6px; }
-  .rs-vital .vv-big { font-size: var(--fs-2xl, 21px); }
+  .rs-vitals { width: 116px; gap: 6px; }
+  .rs-vital { padding: 3px 5px 5px; }
+  .rs-vital .vv-l { font-size: var(--fs-3xs, 10px); padding: 3px 4px 2px; }
+  .rs-vital .vv-big { font-size: var(--fs-xl, 18px); }
+  .rs-vital .vv-sub { font-size: var(--fs-3xs, 10px); }
   // Init/HD/Move: full-width boxed row (like the rail)
   .rs-substats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
   .rs-tile {
@@ -381,6 +383,12 @@
   }
   .rs-tile .stamp { font-size: var(--fs-2xs, 11px); padding: 5px 8px 3px; }
   .rs-tile-v { font-size: var(--fs-xs, 12px); }
+  // abilities: 6-across in one compact row
+  .rs-abilities { grid-template-columns: repeat(6, 1fr); gap: 4px; }
+  .rs-abil { min-height: 0; padding: 5px 3px 6px; }
+  .rs-abil .rs-abil-k { font-size: var(--fs-3xs, 10px); padding: 2px 2px 3px; }
+  .rs-abil .av { font-size: var(--fs-xl, 18px); padding: 3px 0; }
+  .rs-abil .am { font-size: var(--fs-3xs, 10px); padding: 0 6px 1px; }
   // topbar: collapse Rest / Level Up / Edit into the ⋮ overflow
   .rs-tb-actions { display: none; }
   .rs-tb-overflow { display: inline-flex; }
