@@ -18,8 +18,8 @@ export default function SheetShell() {
   const { actor, currentTab, setCurrentTab, updateActor } = useReactorSheetContext();
 
   const vitals = selectVitals(actor);
-  const onAdjustHp = (delta: number) => {
-    const next = Math.max(0, Math.min(vitals.hp.max, vitals.hp.value + delta));
+  const onSetHp = (value: number) => {
+    const next = Math.max(0, Math.min(vitals.hp.max, value));
     if (next !== vitals.hp.value) void updateActor({ "system.hp.value": next });
   };
 
@@ -42,7 +42,7 @@ export default function SheetShell() {
         if (next) setCurrentTab(next.id);
       }}
       topbar={<Topbar vm={selectTopbar(actor)} />}
-      header={<HeaderBand identity={selectIdentity(actor)} vitals={vitals} onAdjustHp={onAdjustHp} />}
+      header={<HeaderBand identity={selectIdentity(actor)} vitals={vitals} onSetHp={onSetHp} />}
       railExtra={<SavesExploration saves={selectSaves(actor)} exploration={selectExploration(actor)} tabbed />}
     >
       {activeTab.id === TabIds.ACTIONS ? <ActionsView actor={actor} /> : <activeTab.Content />}

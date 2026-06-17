@@ -5,13 +5,13 @@ import { Stamp } from "../ui/Stamp";
 type Props = {
   identity: IdentityVM;
   vitals: VitalsVM;
-  /** Adjust current HP by delta; when provided, − / + steppers show on hover. */
-  onAdjustHp?: (delta: number) => void;
+  /** Commit a new current-HP value; when provided, HP renders an editable input. */
+  onSetHp?: (value: number) => void;
 };
 
 /** Header band. Grid areas (see actions.scss) place: portrait · name+Init/HD/Move
  *  · HP/AC in medium, and stack them in the rail. */
-export function HeaderBand({ identity, vitals, onAdjustHp }: Props) {
+export function HeaderBand({ identity, vitals, onSetHp }: Props) {
   const m = vitals.moveBands;
   return (
     <div className="rs-head">
@@ -45,12 +45,28 @@ export function HeaderBand({ identity, vitals, onAdjustHp }: Props) {
         <div className="rs-vital hp">
           <Stamp className="vv-l">HP</Stamp>
           <div className="vv-row">
-            {onAdjustHp && (
-              <button type="button" className="vv-step" aria-label="Lose 1 HP" onClick={() => onAdjustHp(-1)}>−</button>
-            )}
-            <div className="vv-big">{vitals.hp.value}</div>
-            {onAdjustHp && (
-              <button type="button" className="vv-step" aria-label="Heal 1 HP" onClick={() => onAdjustHp(1)}>+</button>
+            {onSetHp ? (
+              <input
+                className="vv-big vv-input"
+                type="text"
+                inputMode="numeric"
+                aria-label="Current HP"
+                defaultValue={vitals.hp.value}
+                key={vitals.hp.value}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") e.currentTarget.blur();
+                }}
+                onBlur={(e) => {
+                  const n = parseInt(e.currentTarget.value, 10);
+                  if (Number.isNaN(n)) {
+                    e.currentTarget.value = String(vitals.hp.value);
+                    return;
+                  }
+                  onSetHp(Math.max(0, Math.min(vitals.hp.max, n)));
+                }}
+              />
+            ) : (
+              <div className="vv-big">{vitals.hp.value}</div>
             )}
           </div>
           <div className="vv-sub">
