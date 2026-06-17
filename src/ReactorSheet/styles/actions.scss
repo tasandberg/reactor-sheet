@@ -161,6 +161,7 @@
   font-family: var(--mono); font-size: var(--fs-2xs, 11px);
   color: var(--text-mute);
 }
+.rs-vital .vv-sub .short { display: none; } // full label by default; short shows at XS
 // HP steppers: − / + flank the value, revealed on hover
 .rs-vital .vv-row { display: flex; align-items: center; justify-content: center; gap: 8px; }
 .rs-vital .vv-step {
@@ -376,6 +377,8 @@
   .rs-vital .vv-l { font-size: var(--fs-3xs, 10px); padding: 3px 4px 2px; }
   .rs-vital .vv-big { font-size: var(--fs-xl, 18px); }
   .rs-vital .vv-sub { font-size: var(--fs-3xs, 10px); }
+  .rs-vital .vv-sub .full { display: none; }
+  .rs-vital .vv-sub .short { display: inline; }
   // Init/HD/Move: full-width boxed row (like the rail)
   .rs-substats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
   .rs-tile {

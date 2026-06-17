@@ -53,14 +53,20 @@ export function HeaderBand({ identity, vitals, onAdjustHp }: Props) {
               <button type="button" className="vv-step" aria-label="Heal 1 HP" onClick={() => onAdjustHp(1)}>+</button>
             )}
           </div>
-          <div className="vv-sub">Maximum {vitals.hp.max}</div>
+          <div className="vv-sub">
+            <span className="full">Maximum {vitals.hp.max}</span>
+            <span className="short">/{vitals.hp.max}</span>
+          </div>
         </div>
         <div className="rs-vital ac">
           <Stamp className="vv-l">AC</Stamp>
           <div className="vv-row">
             <div className="vv-big">{vitals.ac.ascending}</div>
           </div>
-          <div className="vv-sub">Ascending</div>
+          <div className="vv-sub">
+            <span className="full">Ascending</span>
+            <span className="short">asc</span>
+          </div>
         </div>
       </div>
     </div>
