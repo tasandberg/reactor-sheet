@@ -182,9 +182,12 @@
   min-width: 0;
   text-align: center;
   cursor: text;
-  border-bottom: 1px solid transparent; // affordance only while editing
+  border: 1px solid transparent; // plain value until focused
+  border-radius: 4px;
+  padding: 1px 0;
 }
-.rs-vital .vv-input:focus { border-bottom-color: var(--crimson); }
+// active/edit: full crimson box around the value (prototype)
+.rs-vital .vv-input:focus { border-color: var(--crimson); }
 
 // --- Init/HD/Move (under the name in medium; uniform tiles) ---
 .rs-substats {
