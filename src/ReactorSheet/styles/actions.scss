@@ -376,16 +376,16 @@
     grid-template-areas:
       "portrait ident vitals"
       "subs     subs  subs";
-    gap: 8px 10px;
+    gap: 12px;
   }
-  .rs-portrait-wrap { width: 56px; }
+  .rs-portrait-wrap { width: 64px; }
   .rs-ident { overflow: hidden; } // keep a long name from pushing HP/AC off-screen
-  .rs-name { font-size: var(--fs-xl, 18px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .rs-vitals { width: 116px; gap: 6px; }
-  .rs-vital { padding: 3px 5px 5px; }
-  .rs-vital .vv-l { font-size: var(--fs-3xs, 10px); padding: 3px 4px 2px; }
-  .rs-vital .vv-big { font-size: var(--fs-xl, 18px); }
-  .rs-vital .vv-sub { font-size: var(--fs-3xs, 10px); }
+  .rs-name { font-size: var(--fs-2xl, 21px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rs-vitals { width: 144px; gap: 8px; }
+  .rs-vital { padding: 6px 8px 9px; }
+  .rs-vital .vv-l { font-size: var(--fs-2xs, 11px); padding: 4px 6px 3px; }
+  .rs-vital .vv-big { font-size: var(--fs-3xl, 24px); }
+  .rs-vital .vv-sub { font-size: var(--fs-2xs, 11px); }
   .rs-vital .vv-sub .full { display: none; }
   .rs-vital .vv-sub .short { display: inline; }
   // HP value becomes an editable input (steppers/static value are medium+ only)
