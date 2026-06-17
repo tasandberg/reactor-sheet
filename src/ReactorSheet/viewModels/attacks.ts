@@ -8,10 +8,14 @@ export function selectAttacks(actor: OSEActor): AttackVM[] {
   const out: AttackVM[] = [];
   for (const w of weapons) {
     if (!w.system.equipped) continue;
-    // Dedupe, and drop Melee/Missile (already shown as the kind tag).
-    const qualities = [
-      ...new Set((w.system.qualities ?? []).map((q) => q.label)),
-    ].filter((l) => l !== "Melee" && l !== "Missile");
+    // Dedupe by label, drop Melee/Missile (shown as the kind tag), keep the OSE icon.
+    const seen = new Set<string>();
+    const qualities: { label: string; icon: string }[] = [];
+    for (const q of w.system.qualities ?? []) {
+      if (q.label === "Melee" || q.label === "Missile" || seen.has(q.label)) continue;
+      seen.add(q.label);
+      qualities.push({ label: q.label, icon: q.icon ?? "" });
+    }
     const make = (kind: "melee" | "missile"): AttackVM => ({
       id: `${w.name}-${kind}`,
       name: w.name as string,

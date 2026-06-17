@@ -20,7 +20,10 @@ describe("selectAttacks", () => {
 
   it("carries quality labels and skips non-equipped weapons", () => {
     const staff = vm.find((a) => a.name === "Quarterstaff")!;
-    expect(staff.qualities).toEqual(["Two-handed", "Slow"]);
+    expect(staff.qualities).toEqual([
+      { label: "Two-handed", icon: "fa-hand-fist" },
+      { label: "Slow", icon: "fa-hourglass" },
+    ]);
     expect(vm.every((a) => a.name !== "Quarterstaff" || a.kind === "melee")).toBe(true);
   });
 });

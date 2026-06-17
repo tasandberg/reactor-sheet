@@ -218,7 +218,9 @@
   .rs-twopane .rs-tile-v { font-size: var(--fs-xs, 12px); }
 }
 
-@container app (min-width: 800px) {
+// Center tabs replace the right rail exactly when the two-pane engages.
+// sheet two-pane = 630; rail is 40px wide, so sheet 630 ⟺ app ≈ 670.
+@container app (min-width: 670px) {
   .rs-tabrail { display: none; }
   .rs-htabs {
     display: flex;

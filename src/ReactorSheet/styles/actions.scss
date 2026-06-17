@@ -322,6 +322,7 @@
 .rs-weapon img { width: 28px; height: 28px; border-radius: var(--r-sm, 4px); background: var(--surface, #23201a); }
 .rs-weapon .wname { font-weight: 600; }
 .rs-quals { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px; }
+.rs-quals .tag { display: inline-flex; align-items: center; gap: 4px; }
 
 // --- wealth + movement ---
 .rs-wm { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 6px; }
@@ -379,17 +380,11 @@
   .rs-vital .vv-sub { font-size: var(--fs-3xs, 10px); }
   .rs-vital .vv-sub .full { display: none; }
   .rs-vital .vv-sub .short { display: inline; }
-  // Init/HD/Move: full-width boxed row (like the rail)
+  // Init/HD/Move: borderless + small, three across (inherit the compact base)
   .rs-substats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-  .rs-tile {
-    width: auto;
-    background: var(--surface);
-    border: 1px solid var(--border-soft, #2c2823);
-    border-radius: 6px;
-    padding: 5px 6px 6px;
-  }
-  .rs-tile .stamp { font-size: var(--fs-2xs, 11px); padding: 5px 8px 3px; }
-  .rs-tile-v { font-size: var(--fs-xs, 12px); }
+  .rs-tile { width: auto; }
+  // attack tags: icon-only (hide the label text)
+  .rs-quals .lbl { display: none; }
   // abilities: 6-across in one compact row
   .rs-abilities { grid-template-columns: repeat(6, 1fr); gap: 4px; }
   .rs-abil { min-height: 0; padding: 5px 3px 6px; }

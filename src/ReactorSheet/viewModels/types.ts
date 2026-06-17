@@ -35,7 +35,7 @@ export interface AttackVM {
   kindLabel: string;
   hitLabel: string;
   damage: string;
-  qualities: string[];
+  qualities: { label: string; icon: string }[];
 }
 
 export interface SaveVM {

@@ -2,6 +2,7 @@ import type { AttackVM } from "../../viewModels/types";
 import { Table, Th, Td, Tr } from "../ui/Table";
 import { Tag } from "../ui/Tag";
 import { SectionTitle } from "../ui/SectionTitle";
+import { cx } from "../ui/cx";
 
 type Props = { attacks: AttackVM[] };
 
@@ -29,9 +30,15 @@ export function AttacksTable({ attacks }: Props) {
                       {a.name} <span style={{ opacity: 0.6 }}>({a.kind})</span>
                     </div>
                     <div className="rs-quals">
-                      <Tag intent={a.kind === "melee" ? "mustard" : "teal"}>{a.kindLabel}</Tag>
+                      <Tag intent={a.kind === "melee" ? "mustard" : "teal"}>
+                        <i className={cx("fa-solid", a.kind === "melee" ? "fa-sword" : "fa-bow-arrow")} aria-hidden="true" />
+                        <span className="lbl">{a.kindLabel}</span>
+                      </Tag>
                       {a.qualities.map((q) => (
-                        <Tag key={q}>{q}</Tag>
+                        <Tag key={q.label}>
+                          {q.icon && <i className={cx("fa-solid", q.icon)} aria-hidden="true" />}
+                          <span className="lbl">{q.label}</span>
+                        </Tag>
                       ))}
                     </div>
                   </div>
