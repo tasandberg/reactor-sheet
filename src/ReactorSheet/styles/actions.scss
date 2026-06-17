@@ -351,3 +351,37 @@
   min-width: 130px;
 }
 .rs-tb-menu .rs-tb-btn { width: 100%; justify-content: flex-start; }
+
+// === XS / mobile (≤560px app): compact header + topbar overflow ===
+// MUST live here (after the base .rs-head / .rs-tb-* rules) to win the cascade —
+// shell.scss loads earlier, so XS overrides placed there lose at equal specificity.
+@container app (max-width: 560px) {
+  // header: portrait | name | compact HP/AC on top; Init/HD/Move full-width below
+  .rs-head {
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas:
+      "portrait ident vitals"
+      "subs     subs  subs";
+    gap: 8px 10px;
+  }
+  .rs-portrait-wrap { width: 56px; }
+  .rs-ident { overflow: hidden; } // keep a long name from pushing HP/AC off-screen
+  .rs-name { font-size: var(--fs-xl, 18px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rs-vitals { width: 132px; gap: 6px; }
+  .rs-vital { padding: 4px 6px 6px; }
+  .rs-vital .vv-big { font-size: var(--fs-2xl, 21px); }
+  // Init/HD/Move: full-width boxed row (like the rail)
+  .rs-substats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .rs-tile {
+    width: auto;
+    background: var(--surface);
+    border: 1px solid var(--border-soft, #2c2823);
+    border-radius: 6px;
+    padding: 5px 6px 6px;
+  }
+  .rs-tile .stamp { font-size: var(--fs-2xs, 11px); padding: 5px 8px 3px; }
+  .rs-tile-v { font-size: var(--fs-xs, 12px); }
+  // topbar: collapse Rest / Level Up / Edit into the ⋮ overflow
+  .rs-tb-actions { display: none; }
+  .rs-tb-overflow { display: inline-flex; }
+}

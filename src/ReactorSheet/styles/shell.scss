@@ -260,8 +260,9 @@
 
 // === XS tier (≤ 560c on app) ===
 // Bottom bar replaces the rail; header reflows to compact single-column.
+// XS nav swap only — the header + topbar XS overrides live in actions.scss (after
+// the base rules) so they win the cascade; shell.scss loads first and would lose.
 @container app (max-width: 560px) {
-  // nav swap
   .rs-tabrail { display: none; }
   .rs-bottombar {
     display: flex;
@@ -269,46 +270,7 @@
     border-top: 1px solid var(--border, #3a342c);
     background: var(--bg-2, #1f1c17);
   }
-
-  // give the scroll area bottom breathing room so content clears the bar (~60px)
+  // content clears the bottom bar
   .rs-sheet { padding-bottom: 4px; }
   .rs-pad { padding-bottom: 68px; }
-
-  // header compact reflow
-  .rs-head {
-    grid-template-columns: auto 1fr;
-    grid-template-areas:
-      "portrait ident"
-      "portrait vitals"
-      "subs     subs";
-    gap: 6px 10px;
-  }
-  .rs-portrait-wrap { width: 64px; height: 64px; }
-  .rs-name { font-size: var(--fs-3xl, 24px) !important; }
-  .rs-vitals {
-    width: auto;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-  }
-  .rs-substats {
-    grid-area: subs;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-    width: 100%;
-  }
-  // box the tiles (like the two-pane rail view)
-  .rs-tile {
-    width: auto;
-    background: var(--surface);
-    border: 1px solid var(--border-soft, #2c2823);
-    border-radius: 6px;
-    padding: 5px 6px 6px;
-  }
-  .rs-tile .stamp { font-size: var(--fs-2xs, 11px); padding: 5px 8px 3px; }
-  .rs-tile-v { font-size: var(--fs-xs, 12px); }
-
-  // topbar: hide inline action buttons; show the overflow toggle
-  .rs-tb-actions { display: none; }
-  .rs-tb-overflow { display: inline-flex; }
 }
