@@ -7,11 +7,15 @@
 // --- header: title + hint (left), list/grid toggle (right) ---
 .rs-inv-head {
   display: flex;
-  align-items: flex-end;
+  align-items: center; // toggle inline with the title
   justify-content: space-between;
   gap: 12px;
+  // own the rule so it spans the full width (under the toggle too)
+  padding-bottom: 6px;
+  margin-bottom: 14px;
+  border-bottom: 3px solid var(--section-rule);
 }
-.rs-inv-head .section-title { flex: 1; margin: 0; }
+.rs-inv-head .section-title { flex: 1; margin: 0; padding-bottom: 0; border-bottom: none; }
 
 .rs-inv-toggle {
   flex: 0 0 auto;
