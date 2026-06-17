@@ -19,11 +19,19 @@
   --sans:          "Inter", -apple-system, system-ui, "Helvetica Neue", sans-serif;
   --mono:          "JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace;
 
-  /* Spacing rhythm */
+  /* Corner radii */
   --r-sm:          4px;
   --r-md:          6px;
   --r-lg:          10px;
   --r-xl:          14px;
+
+  /* Space scale (4px base) */
+  --space-2xs:     4px;
+  --space-xs:      8px;
+  --space-sm:      12px;
+  --space-md:      16px;
+  --space-lg:      24px;
+  --space-xl:      32px;
 
   /* ─── Type scale ───────────────────────────────────────────────────
      rem-based, anchored on the 16px document root (1rem = 16px).
@@ -204,7 +212,7 @@ body {
   gap: 12px;
   padding-bottom: 6px;
   border-bottom: 3px solid var(--section-rule);
-  margin: 22px 0 14px 0;
+  margin: var(--space-lg) 0 var(--space-sm) 0;
   line-height: 1.1;
   text-transform: none;
 }

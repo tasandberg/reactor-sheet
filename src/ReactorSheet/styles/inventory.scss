@@ -12,7 +12,7 @@
   gap: 12px;
   // own the rule so it spans the full width (under the toggle too)
   padding-bottom: 6px;
-  margin: 22px 0 14px; // match .section-title breathing room (it neutralizes the inner one)
+  margin: var(--space-lg) 0 var(--space-sm); // match .section-title breathing room (it neutralizes the inner one)
   border-bottom: 3px solid var(--section-rule);
 }
 .rs-inv-head .section-title { flex: 1; margin: 0; padding-bottom: 0; border-bottom: none; }
