@@ -115,6 +115,30 @@
   }
 }
 
+// --- sortable column-header row (table head) ---
+.rs-inv-headrow {
+  padding-top: 0;
+  padding-bottom: var(--spacer-1);
+  border-bottom: 2px solid var(--border, #3a342c);
+  &:hover { background: transparent; }
+}
+.rs-inv .rs-inv-th {
+  display: inline-flex; align-items: center; gap: var(--spacer-1);
+  min-width: 0;
+  background: transparent; cursor: pointer;
+  font-family: var(--sans); font-size: var(--fs-3xs, 10px); font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-faint, #6a6354);
+  transition: color 0.12s;
+  &:hover { color: var(--text-dim, #b5ad97); }
+  &.active { color: var(--text, #e5dec8); }
+}
+// right-aligned headers match their right-aligned cells
+.rs-inv .rs-inv-th-cat,
+.rs-inv .rs-inv-th-wt { justify-content: flex-end; }
+.rs-inv .rs-inv-th-eq { justify-content: center; }
+.rs-inv-th-caret { font-size: 9px; width: 7px; } // reserve space so labels don't shift
+
 // --- drag handle (col 1) ---
 .rs-inv .rs-inv-drag {
   display: inline-flex; align-items: center; justify-content: center;

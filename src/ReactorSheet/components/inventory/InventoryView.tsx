@@ -23,8 +23,9 @@ import type {
   InventoryItemVM,
   CoinVM,
   InventorySortKey,
+  SortDir,
 } from "../../viewModels/types";
-import { sortInventory } from "../../viewModels/inventory";
+import { sortInventory, SORT_DEFAULT_DIR } from "../../viewModels/inventory";
 import { SectionTitle } from "../ui/SectionTitle";
 import { Check } from "../ui/Check";
 import { Tag } from "../ui/Tag";
@@ -170,7 +171,7 @@ function ContainerRow({
   item,
   collapsed,
   dropTarget,
-  sortKey,
+  sort,
   onToggleCollapse,
   onEquip,
   onOpen,
@@ -178,7 +179,7 @@ function ContainerRow({
   item: InventoryItemVM;
   collapsed: boolean;
   dropTarget: string | null;
-  sortKey: InventorySortKey;
+  sort: SortState;
   onToggleCollapse: (id: string) => void;
   onEquip: (id: string) => void;
   onOpen: (id: string) => void;
@@ -187,7 +188,7 @@ function ContainerRow({
   const isDropTarget = dropTarget === item.id;
   const style: React.CSSProperties = { transform: CSS.Transform.toString(transform), transition };
 
-  const sortedChildren = sortInventory(item.children, sortKey);
+  const sortedChildren = sortInventory(item.children, sort.key, sort.dir);
   const childIds = sortedChildren.map((c) => c.id);
 
   return (
@@ -277,11 +278,63 @@ function InvCard({ item, onEquip, onOpen }: { item: InventoryItemVM; onEquip: (i
 // Sort control
 // ---------------------------------------------------------------------------
 
+type SortState = { key: InventorySortKey; dir: SortDir };
+
+// Grid view uses a compact button group (list view sorts via column headers).
 const SORT_OPTIONS: { key: InventorySortKey; label: string }[] = [
   { key: "category", label: "Category" },
   { key: "name", label: "Name" },
   { key: "weight", label: "Weight" },
 ];
+
+// ---------------------------------------------------------------------------
+// Sortable list column headers (table behaviour)
+// ---------------------------------------------------------------------------
+
+function SortHeader({
+  col,
+  label,
+  className,
+  sort,
+  onSort,
+}: {
+  col: InventorySortKey;
+  label: React.ReactNode;
+  className?: string;
+  sort: SortState;
+  onSort: (key: InventorySortKey) => void;
+}) {
+  const active = sort.key === col;
+  return (
+    <button
+      type="button"
+      className={cx("rs-inv-th", className, active && "active")}
+      aria-sort={active ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}
+      onClick={() => onSort(col)}
+    >
+      {label}
+      <i
+        className={cx("rs-inv-th-caret", "fa-solid", active && (sort.dir === "asc" ? "fa-caret-up" : "fa-caret-down"))}
+        aria-hidden="true"
+      />
+    </button>
+  );
+}
+
+function SortHeaderRow({ sort, onSort }: { sort: SortState; onSort: (key: InventorySortKey) => void }) {
+  return (
+    <div className="rs-inv-row rs-inv-headrow" role="row">
+      <span aria-hidden="true" /> {/* drag handle col */}
+      <SortHeader col="equipped" label={<i className="fa-solid fa-check" aria-label="Equipped" />} className="rs-inv-th-eq" sort={sort} onSort={onSort} />
+      <SortHeader col="name" label="Name" className="rs-inv-th-name" sort={sort} onSort={onSort} />
+      <span aria-hidden="true" /> {/* tags col */}
+      <SortHeader col="category" label="Type" className="rs-inv-th-cat" sort={sort} onSort={onSort} />
+      <span aria-hidden="true" /> {/* dmg col */}
+      <span aria-hidden="true" /> {/* qty col */}
+      <SortHeader col="weight" label="Wt" className="rs-inv-th-wt" sort={sort} onSort={onSort} />
+    </div>
+  );
+}
 
 // ---------------------------------------------------------------------------
 // Coin row
@@ -340,7 +393,7 @@ function EncumbranceBar({ e }: { e: EncumbranceVM }) {
 
 export function InventoryView({ inventory, encumbrance, coins, onSetCoin, onEquip, onOpen, onReorder, onNest }: Props) {
   const [view, setView] = useState<"list" | "grid">("list");
-  const [sortKey, setSortKey] = useState<InventorySortKey>("category");
+  const [sort, setSort] = useState<SortState>({ key: "category", dir: "asc" });
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const [activeItem, setActiveItem] = useState<InventoryItemVM | null>(null);
   const [containerDropTarget, setContainerDropTarget] = useState<string | null>(null);
@@ -358,7 +411,15 @@ export function InventoryView({ inventory, encumbrance, coins, onSetCoin, onEqui
     });
   };
 
-  const sorted = sortInventory(inventory.items, sortKey);
+  // Click a column header: same column toggles dir, new column uses its natural dir.
+  const onSort = (key: InventorySortKey) =>
+    setSort((cur) =>
+      cur.key === key
+        ? { key, dir: cur.dir === "asc" ? "desc" : "asc" }
+        : { key, dir: SORT_DEFAULT_DIR[key] },
+    );
+
+  const sorted = sortInventory(inventory.items, sort.key, sort.dir);
   const topLevelIds = sorted.map((it) => it.id);
 
   function findItem(id: UniqueIdentifier): InventoryItemVM | null {
@@ -440,18 +501,20 @@ export function InventoryView({ inventory, encumbrance, coins, onSetCoin, onEqui
     <section className="rs-inv">
       <div className="rs-inv-head">
         <SectionTitle hint="equip weapons &amp; armour to bring them into play">Inventory</SectionTitle>
-        <div className="rs-inv-sort" role="group" aria-label="Sort by">
-          {SORT_OPTIONS.map((opt) => (
-            <button
-              key={opt.key}
-              type="button"
-              className={cx("rs-inv-sort-btn", sortKey === opt.key && "active")}
-              onClick={() => setSortKey(opt.key)}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
+        {view === "grid" && (
+          <div className="rs-inv-sort" role="group" aria-label="Sort by">
+            {SORT_OPTIONS.map((opt) => (
+              <button
+                key={opt.key}
+                type="button"
+                className={cx("rs-inv-sort-btn", sort.key === opt.key && "active")}
+                onClick={() => onSort(opt.key)}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        )}
         <div className="rs-inv-toggle" role="group" aria-label="View">
           <button
             type="button"
@@ -483,6 +546,7 @@ export function InventoryView({ inventory, encumbrance, coins, onSetCoin, onEqui
         >
           <SortableContext items={topLevelIds} strategy={verticalListSortingStrategy}>
             <div className="rs-inv-list">
+              <SortHeaderRow sort={sort} onSort={onSort} />
               {sorted.map((item) =>
                 item.isContainer ? (
                   <ContainerRow
@@ -490,7 +554,7 @@ export function InventoryView({ inventory, encumbrance, coins, onSetCoin, onEqui
                     item={item}
                     collapsed={collapsed.has(item.id)}
                     dropTarget={containerDropTarget}
-                    sortKey={sortKey}
+                    sort={sort}
                     onToggleCollapse={toggleCollapse}
                     onEquip={onEquip}
                     onOpen={onOpen}

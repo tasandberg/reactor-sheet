@@ -1,5 +1,5 @@
 import type { OSEActor, OseItem } from "../types/types";
-import type { InventorySortKey, InventoryVM, InventoryItemVM, EncumbranceVM, CoinVM } from "./types";
+import type { InventorySortKey, SortDir, InventoryVM, InventoryItemVM, EncumbranceVM, CoinVM } from "./types";
 
 const COIN_DENOMS = ["pp", "gp", "ep", "sp", "cp"] as const;
 
@@ -162,22 +162,40 @@ export function selectInventory(items: OseItem[]): InventoryVM {
 // sortInventory
 // ---------------------------------------------------------------------------
 
-/** Pure sort — returns a new array, recurses into children. */
-export function sortInventory(list: InventoryItemVM[], key: InventorySortKey): InventoryItemVM[] {
+/** Natural direction each column sorts in when first selected. */
+export const SORT_DEFAULT_DIR: Record<InventorySortKey, SortDir> = {
+  category: "asc",  // rank 0→3
+  name: "asc",      // A→Z
+  weight: "desc",   // heaviest first
+  equipped: "asc",  // equipped first
+};
+
+/** Pure sort — returns a new array, recurses into children. `dir` defaults to the column's natural direction. */
+export function sortInventory(
+  list: InventoryItemVM[],
+  key: InventorySortKey,
+  dir: SortDir = SORT_DEFAULT_DIR[key],
+): InventoryItemVM[] {
+  const f = dir === "asc" ? 1 : -1;
   const sorted = [...list].sort((a, b) => {
     switch (key) {
       case "category":
-        if (a.categoryRank !== b.categoryRank) return a.categoryRank - b.categoryRank;
+        if (a.categoryRank !== b.categoryRank) return (a.categoryRank - b.categoryRank) * f;
         if (a.sort !== b.sort) return a.sort - b.sort;
         return a.name.localeCompare(b.name);
       case "name":
-        return a.name.localeCompare(b.name);
+        return a.name.localeCompare(b.name) * f;
       case "weight":
-        return b.weight - a.weight; // descending
+        return (a.weight - b.weight) * f;
+      case "equipped": {
+        const rank = (it: InventoryItemVM) => (it.equipped === true ? 0 : 1);
+        if (rank(a) !== rank(b)) return (rank(a) - rank(b)) * f;
+        return a.name.localeCompare(b.name);
+      }
     }
   });
   return sorted.map((it) =>
-    it.children.length > 0 ? { ...it, children: sortInventory(it.children, key) } : it,
+    it.children.length > 0 ? { ...it, children: sortInventory(it.children, key, dir) } : it,
   );
 }
 

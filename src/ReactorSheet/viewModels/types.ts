@@ -63,7 +63,8 @@ export interface WealthMovementVM {
   move: { encounter: number; explore: number; travel: number };
 }
 
-export type InventorySortKey = "category" | "name" | "weight";
+export type InventorySortKey = "category" | "name" | "weight" | "equipped";
+export type SortDir = "asc" | "desc";
 
 export interface InventoryItemVM {
   id: string;

@@ -134,6 +134,25 @@ describe("sortInventory", () => {
     expect(result.map((i) => i.id)).toEqual(["bx", "sw", "sh", "ro"]);
   });
 
+  it("dir reverses the column: name desc → Z→A", () => {
+    const result = sortInventory([rope, box, sword, shield], "name", "desc");
+    expect(result.map((i) => i.name)).toEqual(["Sword", "Shield", "Rope", "Box"]);
+  });
+
+  it("weight asc: lightest first", () => {
+    const result = sortInventory([rope, box, sword, shield], "weight", "asc");
+    expect(result.map((i) => i.id)).toEqual(["ro", "sh", "sw", "bx"]);
+  });
+
+  it("equipped sort: equipped first (asc), then by name", () => {
+    const a = mkVM({ id: "a", name: "Boots", equipped: false });
+    const b = mkVM({ id: "b", name: "Sword", equipped: true });
+    const c = mkVM({ id: "c", name: "Helm", equipped: true });
+    const d = mkVM({ id: "d", name: "Rope", equipped: null });
+    const result = sortInventory([a, b, c, d], "equipped", "asc");
+    expect(result.map((i) => i.id)).toEqual(["c", "b", "a", "d"]);
+  });
+
   it("recurses into children", () => {
     const parent = mkVM({
       id: "p", name: "Parent", isContainer: true,
