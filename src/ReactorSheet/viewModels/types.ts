@@ -71,8 +71,10 @@ export interface InventoryItemVM {
   img: string;
   category: string;        // "Weapon" | "Armour" | "Gear" | "Container"
   categoryRank: number;    // weapon 0, armour 1, gear 2, container 3
-  /** Inline meta line, e.g. "1d4 · melee" for weapons. "" when none. */
-  meta: string;
+  /** Weapon damage die, e.g. "1d8". "" for non-weapons. */
+  damage: string;
+  /** Item tags from system.tags (label + icon), deduped. [] if none. */
+  tags: { label: string; icon: string }[];
   /** Short monogram for the grid card when the item has no real art. */
   monogram: string;
   weight: number;

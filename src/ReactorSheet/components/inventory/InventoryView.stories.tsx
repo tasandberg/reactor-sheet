@@ -6,16 +6,17 @@ export default { title: "Inventory / InventoryView" };
 const inventory: InventoryVM = {
   count: 7,
   items: [
-    { id: "1", name: "Dagger", img: "", category: "Weapon", categoryRank: 0, meta: "1d4 · melee, missile", monogram: "DA", weight: 20, sort: 100, equipped: true, quantity: null, isContainer: false, children: [] },
-    { id: "2", name: "Quarterstaff", img: "", category: "Weapon", categoryRank: 0, meta: "1d6 · melee", monogram: "QU", weight: 40, sort: 200, equipped: false, quantity: null, isContainer: false, children: [] },
-    { id: "3", name: "Ring of Protection +1", img: "", category: "Armour", categoryRank: 1, meta: "", monogram: "RP", weight: 0, sort: 300, equipped: true, quantity: null, isContainer: false, children: [] },
+    { id: "1", name: "Dagger", img: "", category: "Weapon", categoryRank: 0, damage: "1d4", tags: [{ label: "Melee", icon: "" }, { label: "Missile", icon: "" }], monogram: "DA", weight: 20, sort: 100, equipped: true, quantity: null, isContainer: false, children: [] },
+    { id: "2", name: "Quarterstaff", img: "", category: "Weapon", categoryRank: 0, damage: "1d6", tags: [{ label: "Melee", icon: "" }, { label: "Blunt", icon: "" }], monogram: "QU", weight: 40, sort: 200, equipped: false, quantity: null, isContainer: false, children: [] },
+    { id: "3", name: "Ring of Protection +1", img: "", category: "Armour", categoryRank: 1, damage: "", tags: [], monogram: "RP", weight: 0, sort: 300, equipped: true, quantity: null, isContainer: false, children: [] },
     {
       id: "c1",
       name: "Backpack",
       img: "",
       category: "Container",
       categoryRank: 3,
-      meta: "",
+      damage: "",
+      tags: [],
       monogram: "BP",
       weight: 80,
       sort: 400,
@@ -23,11 +24,11 @@ const inventory: InventoryVM = {
       quantity: null,
       isContainer: true,
       children: [
-        { id: "4", name: "Iron Rations (7 days)", img: "", category: "Gear", categoryRank: 2, meta: "", monogram: "IR", weight: 80, sort: 100, equipped: null, quantity: { value: 7, max: 7 }, isContainer: false, children: [] },
-        { id: "5", name: "Torches", img: "", category: "Gear", categoryRank: 2, meta: "", monogram: "TO", weight: 0, sort: 200, equipped: null, quantity: { value: 6, max: 6 }, isContainer: false, children: [] },
+        { id: "4", name: "Iron Rations (7 days)", img: "", category: "Gear", categoryRank: 2, damage: "", tags: [], monogram: "IR", weight: 80, sort: 100, equipped: null, quantity: { value: 7, max: 7 }, isContainer: false, children: [] },
+        { id: "5", name: "Torches", img: "", category: "Gear", categoryRank: 2, damage: "", tags: [], monogram: "TO", weight: 0, sort: 200, equipped: null, quantity: { value: 6, max: 6 }, isContainer: false, children: [] },
       ],
     },
-    { id: "6", name: "Rope, 50'", img: "", category: "Gear", categoryRank: 2, meta: "", monogram: "RO", weight: 50, sort: 500, equipped: null, quantity: null, isContainer: false, children: [] },
+    { id: "6", name: "Rope, 50'", img: "", category: "Gear", categoryRank: 2, damage: "", tags: [], monogram: "RO", weight: 50, sort: 500, equipped: null, quantity: null, isContainer: false, children: [] },
   ],
   // legacy compat
   groups: [],

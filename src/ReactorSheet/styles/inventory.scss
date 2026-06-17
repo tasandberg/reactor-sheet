@@ -4,15 +4,14 @@
 
 .rs-inv { display: flex; flex-direction: column; }
 
-// --- header: title + hint (left), list/grid toggle (right) ---
+// --- header: title + hint (left), sort control (center), list/grid toggle (right) ---
 .rs-inv-head {
   display: flex;
-  align-items: center; // toggle inline with the title
+  align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  // own the rule so it spans the full width (under the toggle too)
-  padding-bottom: 6px;
-  margin: var(--spacer-6) 0 var(--spacer-3); // match .section-title breathing room (it neutralizes the inner one)
+  gap: var(--spacer-3);
+  padding-bottom: var(--spacer-2);
+  margin: var(--spacer-6) 0 var(--spacer-3);
   border-bottom: 3px solid var(--section-rule);
 }
 .rs-inv-head .section-title { flex: 1; margin: 0; padding-bottom: 0; border-bottom: none; }
@@ -37,13 +36,13 @@
 .rs-inv .rs-inv-vbtn.active { background: var(--teal); color: var(--on-accent, #070605); }
 
 // --- encumbrance bar ---
-.rs-enc { margin: 12px 0 4px; }
-.rs-enc-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.rs-enc { margin: var(--spacer-3) 0 var(--spacer-1); }
+.rs-enc-top { display: flex; justify-content: space-between; align-items: baseline; gap: var(--spacer-3); }
 .rs-enc-l { font-family: var(--sans); font-size: var(--fs-sm, 13px); color: var(--text-dim, #b5ad97); }
 .rs-enc-l b { font-family: var(--mono); font-weight: 400; color: var(--text, #e5dec8); }
 .rs-enc-r { font-family: var(--mono); font-size: var(--fs-xs, 12px); color: var(--text-mute, #8a8270); white-space: nowrap; }
 .rs-enc-track {
-  margin-top: 6px; height: 6px; border-radius: 99px;
+  margin-top: var(--spacer-2); height: 6px; border-radius: 99px;
   background: var(--surface-3, #3a3429); overflow: hidden;
 }
 .rs-enc-fill {
@@ -51,135 +50,177 @@
   background: linear-gradient(90deg, var(--forest, #4a7c4a), var(--mustard, #d4b878), var(--crimson, #c75044));
 }
 
-// --- sort control (in .rs-inv-head) ---
+// --- sort control (button group in .rs-inv-head) ---
 .rs-inv .rs-inv-sort {
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-family: var(--sans);
-  font-size: var(--fs-2xs, 11px);
-  color: var(--text-mute, #8a8270);
-
-  label { white-space: nowrap; }
-
-  select {
-    background: var(--surface, #23201a);
-    border: 1px solid var(--border, #3a342c);
-    border-radius: 4px;
-    color: var(--text-dim, #b5ad97);
-    font-family: var(--mono);
-    font-size: var(--fs-2xs, 11px);
-    padding: 3px 22px 3px 7px;
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a8270'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 6px center;
-    transition: border-color 0.12s, color 0.12s;
-
-    &:hover { border-color: var(--text-mute, #8a8270); color: var(--text, #e5dec8); }
-    &:focus { outline: none; border-color: var(--teal, #1f7575); }
-  }
+  gap: var(--spacer-1);
+  border: 1px solid var(--border, #3a342c);
+  border-radius: 6px;
+  overflow: hidden;
 }
+.rs-inv .rs-inv-sort-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 4px var(--spacer-2);
+  background: transparent;
+  color: var(--text-mute, #8a8270);
+  font-family: var(--sans); font-size: var(--fs-3xs, 10px);
+  letter-spacing: 0.06em; text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.12s, background 0.12s;
+}
+.rs-inv .rs-inv-sort-btn:hover { color: var(--text-dim, #b5ad97); }
+.rs-inv .rs-inv-sort-btn.active { background: var(--surface-2, #2c2823); color: var(--text, #e5dec8); }
 
-// --- category group (legacy grid view) ---
-.rs-inv-group { margin-top: 16px; }
+// --- category group (legacy — grid view section headers) ---
+.rs-inv-group { margin-top: var(--spacer-4); }
 .rs-inv-cat {
   font-family: var(--sans); font-size: var(--fs-2xs, 11px); font-weight: 600;
   letter-spacing: 0.09em; text-transform: uppercase;
   color: var(--text-mute, #8a8270);
-  padding-bottom: 4px; margin-bottom: 2px;
+  padding-bottom: var(--spacer-1); margin-bottom: var(--spacer-1);
   border-bottom: 1px solid var(--border-soft, #2c2823);
 }
 
-// --- per-row category badge (flat list) ---
-.rs-inv-rowcat {
-  font-family: var(--sans); font-size: var(--fs-3xs, 10px); font-weight: 600;
-  letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--text-faint, #6a6354);
-  white-space: nowrap;
-}
+// ---------------------------------------------------------------------------
+// List rows — 8-column grid
+//
+// Col widths (left → right):
+//   1. drag handle    18px  fixed
+//   2. equip checkbox 20px  fixed
+//   3. name           1fr   fills remaining space
+//   4. tags           auto  compact chips, min 0 (hides when empty)
+//   5. item type      52px  small-caps category badge
+//   6. dmg            36px  "1d8", "" otherwise
+//   7. qty            28px  "×N" or ""
+//   8. weight         44px  "N cn" or "—"
+// ---------------------------------------------------------------------------
 
-// --- list rows ---
 .rs-inv-row {
   display: grid;
-  grid-template-columns: 18px 26px 1fr auto auto;
+  grid-template-columns: 18px 20px 1fr auto 52px 36px 28px 44px;
   align-items: center;
-  gap: 8px;
-  padding: 7px 2px;
+  gap: var(--spacer-2);
+  padding: var(--spacer-2) var(--spacer-1);
   border-bottom: 1px solid var(--border-soft, #2c2823);
   transition: background 0.1s;
 
   &.is-container { background: var(--surface, #23201a); }
-
-  // dnd-kit drag states
-  &.is-dragging { opacity: 0.4; }
+  &.is-dragging  { opacity: 0.4; }
   &.is-drop-target {
     border-bottom-color: var(--teal, #1f7575);
     background: color-mix(in srgb, var(--teal, #1f7575) 8%, transparent);
   }
 }
 
-// --- drag handle ---
+// --- drag handle (col 1) ---
 .rs-inv .rs-inv-drag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: inline-flex; align-items: center; justify-content: center;
   color: var(--text-faint, #6a6354);
-  cursor: grab;
-  font-size: 12px;
-  line-height: 1;
-  padding: 2px;
-  border-radius: 3px;
+  cursor: grab; font-size: 12px; line-height: 1;
+  padding: var(--spacer-1); border-radius: 3px;
   transition: color 0.12s;
-
   &:active { cursor: grabbing; }
-  &:hover { color: var(--text-mute, #8a8270); }
+  &:hover  { color: var(--text-mute, #8a8270); }
 }
 
-// --- collapse chevron (container rows) ---
+// --- equip checkbox (col 2) ---
+.rs-inv-equip-spacer { display: block; width: 20px; }
+
+// --- name button (col 3) ---
+.rs-inv .rs-inv-name {
+  display: flex; align-items: baseline; gap: var(--spacer-2); flex-wrap: nowrap;
+  min-width: 0; overflow: hidden;
+  background: transparent; cursor: pointer; text-align: left;
+}
+.rs-inv-name .nm {
+  font-family: var(--display); font-size: var(--fs-md, 15px);
+  color: var(--text, #e5dec8); transition: color 0.12s;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.rs-inv .rs-inv-name:hover .nm { color: var(--gold); }
+
+// --- collapse chevron (container col 2 slot, replaces equip) ---
 .rs-inv .rs-inv-collapse {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 18px; height: 18px;
+  width: 20px; height: 20px;
   background: transparent; border: none;
   color: var(--text-mute, #8a8270);
-  cursor: pointer;
-  padding: 0;
-  border-radius: 3px;
+  cursor: pointer; padding: 0; border-radius: 3px;
   transition: color 0.12s, background 0.12s;
 
   svg, i { transition: transform 0.18s; display: block; }
-
   &.collapsed svg, &.collapsed i { transform: rotate(-90deg); }
-  &:hover { color: var(--text, #e5dec8); background: var(--surface, #23201a); }
+  &:hover { color: var(--text, #e5dec8); background: var(--surface-2, #2c2823); }
+}
+
+// --- tags (col 4) ---
+.rs-inv-tags {
+  display: flex; align-items: center; gap: var(--spacer-1); flex-wrap: nowrap;
+  min-width: 0;
+}
+.rs-inv-tag {
+  // shrink the standard .tag to feel inline in a row
+  padding: 1px var(--spacer-2) 0;
+  font-size: var(--fs-3xs, 10px);
+  white-space: nowrap;
+}
+
+// --- per-row category badge (col 5) ---
+.rs-inv-rowcat {
+  font-family: var(--sans); font-size: var(--fs-3xs, 10px); font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-faint, #6a6354);
+  white-space: nowrap; text-align: right;
+}
+
+// --- damage die (col 6) ---
+.rs-inv-dmg {
+  font-family: var(--mono); font-size: var(--fs-xs, 12px);
+  color: var(--text-mute, #8a8270);
+  text-align: right; white-space: nowrap;
+}
+
+// --- quantity (col 7) ---
+.rs-inv-qty {
+  font-family: var(--mono); font-size: var(--fs-2xs, 11px);
+  color: var(--text-mute, #8a8270);
+  text-align: right; white-space: nowrap;
+}
+
+// --- weight (col 8) ---
+.rs-inv-wt {
+  font-family: var(--mono); font-size: var(--fs-xs, 12px);
+  color: var(--text-mute, #8a8270);
+  text-align: right; white-space: nowrap;
 }
 
 // --- nested children ---
 .rs-inv-children {
-  padding-left: calc(16px + var(--rs-inv-depth, 1) * 18px);
-
-  // container rows inside a nested list bump depth for further nesting
+  padding-left: calc(var(--spacer-4) + var(--rs-inv-depth, 1) * var(--spacer-4));
   .rs-inv-children { --rs-inv-depth: 2; }
 }
-.rs-inv-equip-spacer { width: 22px; }
-.rs-inv .rs-inv-name {
-  display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
-  min-width: 0; background: transparent; cursor: pointer; text-align: left;
-}
-.rs-inv-name .nm { font-family: var(--display); font-size: var(--fs-md, 15px); color: var(--text, #e5dec8); transition: color 0.12s; }
-.rs-inv .rs-inv-name:hover .nm { color: var(--gold); }
-.rs-inv-name .qty,
-.rs-inv-name .meta { font-family: var(--mono); font-size: var(--fs-2xs, 11px); color: var(--text-mute, #8a8270); }
-.rs-inv-wt { font-family: var(--mono); font-size: var(--fs-xs, 12px); color: var(--text-mute, #8a8270); white-space: nowrap; }
 
-// --- grid cards ---
+// Drop zone: invisible hit-area on container header for nest target
+.rs-inv-drop-zone { height: 4px; }
+.rs-inv-drop-zone.is-drop-target {
+  background: color-mix(in srgb, var(--teal, #1f7575) 30%, transparent);
+  border-radius: 2px;
+}
+
+// ---------------------------------------------------------------------------
+// Grid cards
+// ---------------------------------------------------------------------------
+
 .rs-inv-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
-  gap: 12px 10px;
-  margin-top: 10px;
+  gap: var(--spacer-3) var(--spacer-2);
+  margin-top: var(--spacer-2);
 }
-.rs-inv-card { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.rs-inv-card { display: flex; flex-direction: column; align-items: center; gap: var(--spacer-2); }
 .rs-inv-cardtile {
   position: relative; width: 100%; aspect-ratio: 1;
   border-radius: 6px; background: var(--ink, #070605);
@@ -196,7 +237,7 @@
   letter-spacing: 0.04em; color: var(--stamp-text, #e5dec8);
 }
 .rs-inv .rs-inv-cardeq {
-  position: absolute; top: 4px; right: 4px;
+  position: absolute; top: var(--spacer-1); right: var(--spacer-1);
   width: 18px; height: 18px; border-radius: 4px;
   display: inline-flex; align-items: center; justify-content: center;
   background: var(--surface-3, #3a3429); color: var(--text-faint, #6a6354);
@@ -204,33 +245,36 @@
 }
 .rs-inv .rs-inv-cardeq.on { background: var(--teal); color: var(--on-accent, #070605); border-color: var(--teal); }
 .rs-inv-cardbadge {
-  position: absolute; right: 4px; bottom: 4px;
+  position: absolute; right: var(--spacer-1); bottom: var(--spacer-1);
   font-family: var(--mono); font-size: var(--fs-3xs, 10px);
   color: var(--text-dim, #b5ad97);
   background: rgba(0, 0, 0, 0.55); border: 1px solid var(--border, #3a342c);
-  border-radius: 3px; padding: 0 4px;
+  border-radius: 3px; padding: 0 var(--spacer-1);
 }
 .rs-inv-cardname {
   font-family: var(--display); font-size: var(--fs-xs, 12px); line-height: 1.1;
   text-align: center; color: var(--text-dim, #b5ad97);
 }
 
-// --- coin editor (pp/gp/ep/sp/cp quantity inputs) ---
-.rs-inv-coin { margin-top: 0; } // its .section-title now provides the breathing room
+// ---------------------------------------------------------------------------
+// Coin editor
+// ---------------------------------------------------------------------------
+
+.rs-inv-coin { margin-top: 0; }
 .rs-coins {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
-  margin-top: 10px;
+  gap: var(--spacer-2);
+  margin-top: var(--spacer-2);
 }
-.rs-coin { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.rs-coin { display: flex; flex-direction: column; align-items: center; gap: var(--spacer-1); }
 .rs-coin-l {
   font-family: var(--display); font-size: var(--fs-sm, 13px);
   letter-spacing: 0.06em; color: var(--gold);
 }
 .rs-inv .rs-coin-in {
   width: 100%; text-align: center;
-  padding: 8px 6px;
+  padding: var(--spacer-2) var(--spacer-2);
   background: var(--surface, #23201a);
   border: 1px solid var(--border, #3a342c);
   border-radius: 6px;

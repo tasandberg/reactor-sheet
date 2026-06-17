@@ -54,10 +54,20 @@ function monogram(name: string): string {
   return (words[0][0] + words[1][0]).toUpperCase();
 }
 
-function weaponMeta(item: OseItem): string {
-  const s = item.system as { damage?: string; melee?: boolean; missile?: boolean };
-  const modes = [s.melee && "melee", s.missile && "missile"].filter(Boolean).join(", ");
-  return [s.damage, modes].filter(Boolean).join(" · ");
+type RawTag = { label?: string; value?: string; icon?: string };
+
+/** Tags from system.tags, excluding Currency, deduped by label. */
+function itemTags(item: OseItem): { label: string; icon: string }[] {
+  const raw: RawTag[] = (item.system.tags as RawTag[] | undefined) ?? [];
+  const seen = new Set<string>();
+  const out: { label: string; icon: string }[] = [];
+  for (const t of raw) {
+    const label = t.label ?? t.value ?? "";
+    if (!label || label === "Currency" || seen.has(label)) continue;
+    seen.add(label);
+    out.push({ label, icon: t.icon ?? "" });
+  }
+  return out;
 }
 
 function isCurrency(item: OseItem): boolean {
@@ -69,13 +79,17 @@ function toVM(item: OseItem, children: InventoryItemVM[] = []): InventoryItemVM 
   const q = s.quantity;
   const hasQty = !!q && (q.value > 1 || (q.max ?? 0) > 1);
   const cat = categoryFor(item.type as string);
+  const dmg = item.type === "weapon"
+    ? ((s as { damage?: string }).damage ?? "")
+    : "";
   return {
     id: item._id as string,
     name: item.name as string,
     img: item.img,
     category: cat.label,
     categoryRank: cat.rank,
-    meta: item.type === "weapon" ? weaponMeta(item) : "",
+    damage: dmg,
+    tags: itemTags(item),
     monogram: monogram(item.name as string),
     weight: s.cumulativeWeight ?? s.weight ?? 0,
     sort: (item as unknown as { sort?: number }).sort ?? 0,

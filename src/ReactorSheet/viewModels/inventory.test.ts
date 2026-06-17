@@ -11,7 +11,7 @@ const mk = (
   ({ _id: opts.id ?? name, name, img: "", type, sort: opts.sort ?? 0, system }) as unknown as OseItem;
 
 const items: OseItem[] = [
-  mk("weapon", "Dagger",          { damage: "1d4", melee: true, missile: true, equipped: true, weight: 20, quantity: { value: 1, max: 0 } }),
+  mk("weapon", "Dagger",          { damage: "1d4", melee: true, missile: true, equipped: true, weight: 20, quantity: { value: 1, max: 0 }, tags: [{ label: "Light", icon: "" }, { label: "Thrown", icon: "" }] }),
   mk("armor",  "Ring of protection", { equipped: false, weight: 0, quantity: { value: 1, max: 0 } }),
   mk("item",   "Iron rations",    { weight: 80, quantity: { value: 7, max: 7 } }),
   mk("item",   "Gold piece",      { tags: [{ value: "Currency" }], quantity: { value: 50, max: 0 } }),
@@ -35,14 +35,40 @@ describe("selectInventory", () => {
     expect(rations.categoryRank).toBe(2);
   });
 
-  it("maps weapon meta, equip state, quantity, monogram", () => {
+  it("maps weapon damage, tags, equip state, quantity, monogram", () => {
     const dagger = vm.items[0];
-    expect(dagger.meta).toBe("1d4 · melee, missile");
+    expect(dagger.damage).toBe("1d4");
+    expect(dagger.tags).toEqual([
+      { label: "Light", icon: "" },
+      { label: "Thrown", icon: "" },
+    ]);
     expect(dagger.equipped).toBe(true);
     expect(dagger.quantity).toBeNull(); // qty.value = 1 — not a stack
     const rations = vm.items[2];
     expect(rations.quantity).toEqual({ value: 7, max: 7 });
     expect(rations.monogram).toBe("IR");
+  });
+
+  it("non-weapon has empty damage", () => {
+    const ring = vm.items[1];
+    expect(ring.damage).toBe("");
+  });
+
+  it("dedupes tags by label", () => {
+    const dup = mk("weapon", "Sword", {
+      damage: "1d8",
+      melee: true,
+      weight: 30,
+      tags: [{ label: "Melee", icon: "" }, { label: "Melee", icon: "" }, { label: "Heavy", icon: "" }],
+    });
+    const vm2 = selectInventory([dup]);
+    expect(vm2.items[0].tags.map((t) => t.label)).toEqual(["Melee", "Heavy"]);
+  });
+
+  it("excludes Currency label from tags list", () => {
+    const item = mk("item", "Gem", { weight: 5, tags: [{ label: "Currency", icon: "" }, { label: "Precious", icon: "" }] });
+    const vm2 = selectInventory([item]);
+    expect(vm2.items[0].tags.map((t) => t.label)).toEqual(["Precious"]);
   });
 
   it("legacy groups still present for grid view", () => {
@@ -83,7 +109,7 @@ describe("selectInventory — container tree", () => {
 describe("sortInventory", () => {
   const mkVM = (overrides: Partial<import("./types").InventoryItemVM>): import("./types").InventoryItemVM => ({
     id: "x", name: "X", img: "", category: "Gear", categoryRank: 2,
-    meta: "", monogram: "XX", weight: 0, sort: 0,
+    damage: "", tags: [], monogram: "XX", weight: 0, sort: 0,
     equipped: null, quantity: null, isContainer: false, children: [],
     ...overrides,
   });
