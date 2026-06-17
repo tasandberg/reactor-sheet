@@ -376,16 +376,24 @@
     grid-template-areas:
       "portrait ident vitals"
       "subs     subs  subs";
-    gap: 12px;
+    gap: 11px; // header row gap (prototype)
+    align-items: center; // portrait + name centered against the taller HP/AC
   }
-  .rs-portrait-wrap { width: 64px; }
+  .rs-portrait-wrap { width: 56px; }
   .rs-ident { overflow: hidden; } // keep a long name from pushing HP/AC off-screen
   .rs-name { font-size: var(--fs-2xl, 21px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .rs-vitals { width: 144px; gap: 8px; }
-  .rs-vital { padding: 6px 8px 9px; }
+  // HP/AC: 52×76 narrow-tall boxes, content top-aligned (prototype spec)
+  .rs-vitals { width: 112px; gap: 8px; align-items: stretch; }
+  .rs-vital {
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+    gap: 1px;
+    min-height: 76px;
+    padding: 5px 4px 6px;
+    border-radius: 6px;
+  }
   .rs-vital .vv-l { font-size: var(--fs-2xs, 11px); padding: 4px 6px 3px; }
   .rs-vital .vv-big { font-size: var(--fs-3xl, 24px); }
-  .rs-vital .vv-sub { font-size: var(--fs-2xs, 11px); }
+  .rs-vital .vv-sub { font-size: var(--fs-3xs, 10px); }
   .rs-vital .vv-sub .full { display: none; }
   .rs-vital .vv-sub .short { display: inline; }
   // HP value becomes an editable input (steppers/static value are medium+ only)
