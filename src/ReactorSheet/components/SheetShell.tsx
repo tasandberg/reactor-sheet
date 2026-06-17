@@ -36,11 +36,12 @@ export default function SheetShell() {
     void resolveItem(id)?.update({ "system.quantity.value": value });
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const embedUpdate = (updates: object[]) => void (actor as any).updateEmbeddedDocuments("Item", updates);
   const onReorder = (u: { id: string; sort: number }[]) =>
-    void actor.updateEmbeddedDocuments("Item", u.map((x) => ({ _id: x.id, sort: x.sort })));
-
+    embedUpdate(u.map((x) => ({ _id: x.id, sort: x.sort })));
   const onNest = (itemId: string, containerId: string | null) =>
-    void actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "system.containerId": containerId ?? "" }]);
+    embedUpdate([{ _id: itemId, "system.containerId": containerId ?? "" }]);
 
   const visible = tabs(actor).filter((t) => !t.disabled);
   const items: TabItem[] = visible.map((t) => ({
