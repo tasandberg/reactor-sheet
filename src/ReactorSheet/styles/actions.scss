@@ -162,17 +162,27 @@
   color: var(--text-mute);
 }
 .rs-vital .vv-sub .short { display: none; } // full label by default; short shows at XS
-.rs-vital .vv-row { display: flex; align-items: center; justify-content: center; }
-// HP is an editable input styled like the value; subtle underline affordance
+.rs-vital .vv-row { display: flex; align-items: center; justify-content: center; gap: 8px; }
+// medium+: − / + steppers revealed on hover
+.rs-vital .vv-step {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px;
+  border: 1px solid var(--border, #3a342c); border-radius: 4px;
+  color: var(--text-dim, #b5ad97); cursor: pointer;
+  font-family: var(--sans); font-size: 13px; line-height: 1;
+  opacity: 0; transition: opacity 0.12s, border-color 0.12s, color 0.12s;
+}
+.rs-vital.hp:hover .vv-step,
+.rs-vital.hp:focus-within .vv-step { opacity: 1; }
+.rs-vital .vv-step:hover { border-color: var(--gold); color: var(--text, #e5dec8); }
+// XS-only editable input (hidden by default; toggled in the XS block)
 .rs-vital .vv-input {
+  display: none;
   width: 2em;
   text-align: center;
   cursor: text;
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.12s;
+  border-bottom: 1px solid var(--crimson);
 }
-.rs-vital.hp:hover .vv-input { border-bottom-color: var(--border, #3a342c); }
-.rs-vital .vv-input:focus { border-bottom-color: var(--crimson); }
 
 // --- Init/HD/Move (under the name in medium; uniform tiles) ---
 .rs-substats {
@@ -378,6 +388,10 @@
   .rs-vital .vv-sub { font-size: var(--fs-3xs, 10px); }
   .rs-vital .vv-sub .full { display: none; }
   .rs-vital .vv-sub .short { display: inline; }
+  // HP value becomes an editable input (steppers/static value are medium+ only)
+  .rs-vital .vv-step { display: none; }
+  .rs-vital .vv-value { display: none; }
+  .rs-vital .vv-input { display: inline-block; }
   // Init/HD/Move: borderless + small, three across (inherit the compact base)
   .rs-substats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
   .rs-tile { width: auto; }

@@ -45,7 +45,12 @@ export function HeaderBand({ identity, vitals, onSetHp }: Props) {
         <div className="rs-vital hp">
           <Stamp className="vv-l">HP</Stamp>
           <div className="vv-row">
-            {onSetHp ? (
+            {/* medium+: − / + steppers around the value; XS: an editable input (toggled in CSS) */}
+            {onSetHp && (
+              <button type="button" className="vv-step" aria-label="Lose 1 HP" onClick={() => onSetHp(vitals.hp.value - 1)}>−</button>
+            )}
+            <div className="vv-big vv-value">{vitals.hp.value}</div>
+            {onSetHp && (
               <input
                 className="vv-big vv-input"
                 type="text"
@@ -65,8 +70,9 @@ export function HeaderBand({ identity, vitals, onSetHp }: Props) {
                   onSetHp(Math.max(0, Math.min(vitals.hp.max, n)));
                 }}
               />
-            ) : (
-              <div className="vv-big">{vitals.hp.value}</div>
+            )}
+            {onSetHp && (
+              <button type="button" className="vv-step" aria-label="Heal 1 HP" onClick={() => onSetHp(vitals.hp.value + 1)}>+</button>
             )}
           </div>
           <div className="vv-sub">
