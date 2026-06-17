@@ -12,7 +12,7 @@
 .reactor-sheet {
   overflow: visible;
   height: 100%;
-  min-width: 640px; // keep the inline header (portrait + name + HP/AC) from clipping
+  min-width: 360px; // XS compact header fits ~360px; wider layouts still work
   min-height: 360px;
 
   // --- titlebar: near-black to match the top-bar, design-system font ---

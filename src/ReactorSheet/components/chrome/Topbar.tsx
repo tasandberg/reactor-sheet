@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from "react";
 import type { TopbarVM } from "../../viewModels/types";
 import { toggleTheme } from "../../theme";
 
@@ -5,9 +6,40 @@ type Props = { vm: TopbarVM };
 
 /** Persistent topbar: level, XP, and chrome actions. The bar stays dark in both
  *  themes (--ink). Rest/Level Up/Edit are inert in the display pass; the theme
- *  toggle is live. */
+ *  toggle is live. At XS the three action buttons collapse into a ⋮ overflow menu. */
 export function Topbar({ vm }: Props) {
   const pct = vm.xp.next > 0 ? Math.min(100, (vm.xp.value / vm.xp.next) * 100) : 0;
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close on outside click.
+  useEffect(() => {
+    if (!menuOpen) return;
+    function onDown(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, [menuOpen]);
+
+  const actionButtons = (
+    <>
+      <button type="button" className="rs-tb-btn" disabled>
+        <span className="i" aria-hidden="true">☾</span>
+        <span className="lbl">Rest</span>
+      </button>
+      <button type="button" className="rs-tb-btn up" disabled>
+        <span className="i" aria-hidden="true">▲</span>
+        <span className="lbl">Level Up</span>
+      </button>
+      <button type="button" className="rs-tb-btn" disabled>
+        <span className="i" aria-hidden="true">✎</span>
+        <span className="lbl">Edit</span>
+      </button>
+    </>
+  );
 
   return (
     <div className="rs-topbar-inner">
@@ -25,18 +57,20 @@ export function Topbar({ vm }: Props) {
         <b>Lv {vm.nextLevel}</b>
         <span className="cur">{vm.xp.next.toLocaleString()}</span>
       </div>
-      <button type="button" className="rs-tb-btn" disabled>
-        <span className="i" aria-hidden="true">☾</span>
-        <span className="lbl">Rest</span>
-      </button>
-      <button type="button" className="rs-tb-btn up" disabled>
-        <span className="i" aria-hidden="true">▲</span>
-        <span className="lbl">Level Up</span>
-      </button>
-      <button type="button" className="rs-tb-btn" disabled>
-        <span className="i" aria-hidden="true">✎</span>
-        <span className="lbl">Edit</span>
-      </button>
+      {/* Inline actions (hidden at XS via .rs-tb-actions display:none) */}
+      <div className="rs-tb-actions">{actionButtons}</div>
+      {/* XS overflow ⋮ (hidden above XS via .rs-tb-overflow display:none) */}
+      <div className="rs-tb-menu-wrap" ref={menuRef}>
+        <button
+          type="button"
+          className="rs-tb-btn rs-tb-overflow"
+          aria-label="More actions"
+          onClick={() => setMenuOpen((o) => !o)}
+        >
+          <span className="i" aria-hidden="true">⋮</span>
+        </button>
+        {menuOpen && <div className="rs-tb-menu">{actionButtons}</div>}
+      </div>
       <button
         type="button"
         className="rs-tb-btn icon"

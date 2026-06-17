@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { TabRail } from "./TabRail";
 import { TabBar } from "./TabBar";
+import { BottomBar } from "./BottomBar";
 import { Placeholder } from "./Placeholder";
 import type { TabItem } from "./types";
 
@@ -47,6 +48,7 @@ export function Shell({ tabs, active, onSelect, children, topbar, header, railEx
         </div>
         <TabRail tabs={tabs} active={active} onSelect={onSelect} />
       </div>
+      <BottomBar tabs={tabs} active={active} onSelect={onSelect} />
     </>
   );
 }

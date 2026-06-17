@@ -45,6 +45,11 @@
   font-family: var(--mono); font-size: var(--fs-3xs, 10px);
   color: var(--stamp-text, #e5dec8); text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
+// XS overflow toggle: hidden by default, shown at XS via shell.scss container block.
+.rs-tb-overflow { display: none; }
+// Inline action buttons group; hidden at XS, visible otherwise.
+.rs-tb-actions { display: contents; }
+
 // Buttons qualified with .rs-topbar to beat the `.reactor-sheet-app button`
 // reset (0,1,1) — same fix as .rs-tabrail .rs-tab (see shell.scss).
 .rs-topbar .rs-tb-btn {
@@ -325,3 +330,24 @@
 
 // section spacing in the Actions body
 .rs-section + .rs-section { margin-top: 20px; }
+
+// --- topbar overflow menu (XS: ⋮ button + popover) ---
+.rs-tb-menu-wrap {
+  position: relative;
+}
+.rs-tb-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  background: var(--bg-2, #1f1c17);
+  border: 1px solid var(--border, #3a342c);
+  border-radius: 7px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  min-width: 130px;
+}
+.rs-tb-menu .rs-tb-btn { width: 100%; justify-content: flex-start; }
