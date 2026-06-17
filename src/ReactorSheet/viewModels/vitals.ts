@@ -9,5 +9,10 @@ export function selectVitals(actor: OSEActor): VitalsVM {
     initMod: scores.dex.init,
     hd: hp.hd,
     move: movement.base,
+    moveBands: {
+      encounter: movement.encounter,
+      explore: movement.base,
+      travel: movement.overland,
+    },
   };
 }

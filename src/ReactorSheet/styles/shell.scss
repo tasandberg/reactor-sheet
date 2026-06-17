@@ -45,12 +45,17 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  padding-top: 14px;
+  // No top padding: the first/active tab sits flush against the top bar.
+  // (The 14px the prototype used reads as a stray light block in cream.)
+  padding-top: 0;
   gap: 6px;
   background: var(--bg-2, #1f1c17);
   border-left: 1px solid var(--border, #3a342c);
 }
-.rs-tab {
+// Qualified with .rs-tabrail so these win over the `.reactor-sheet-app button`
+// reset (0,1,1) in styles.scss — otherwise `all: unset` strips writing-mode/flex
+// and the label renders as clipped horizontal text instead of the vertical rail.
+.rs-tabrail .rs-tab {
   position: relative;
   flex: 0 0 auto;
   min-height: 96px;
@@ -96,6 +101,41 @@
 }
 .rs-tab.active .rs-tab-ic { color: var(--gold); }
 
+// ----- bottom nav bar (XS only; hidden by default) -----
+.rs-bottombar { display: none; }
+// Qualified with .rs-bottombar so these beat the .reactor-sheet-app button reset (0,1,1).
+.rs-bottombar .rs-botbtn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 8px 4px 6px;
+  background: transparent;
+  border: none;
+  border-top: 2px solid transparent;
+  color: var(--text-mute, #8a8270);
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: var(--fs-3xs, 10px);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  transition: color 0.12s;
+}
+.rs-bottombar .rs-botbtn-ic {
+  font-size: 16px;
+  color: var(--gold-dim, var(--gold));
+  line-height: 1;
+}
+.rs-bottombar .rs-botbtn-lbl { line-height: 1; }
+.rs-bottombar .rs-botbtn:hover { color: var(--text-dim, #b5ad97); }
+.rs-bottombar .rs-botbtn.active {
+  color: var(--gold);
+  border-top-color: var(--gold);
+}
+.rs-bottombar .rs-botbtn.active .rs-botbtn-ic { color: var(--gold); }
+
 // ----- horizontal tab bar (shown when wide) -----
 .rs-htabs { display: none; }
 
@@ -126,15 +166,20 @@
 // Saves & Skills relocates: hidden in the left column when collapsed (it renders
 // inside the Actions tab content there), shown in the left rail when expanded.
 .rs-rail-extra { display: none; }
+// Saves & Exploration show inside the Actions body when collapsed; the matching
+// @container rule below hides them once they relocate into the expanded rail.
+.actions-only { display: block; }
 
 // === container reflow ===
 @container sheet (min-width: 600px) { .rs-pad { padding: 18px 20px; } }
 
-@container sheet (min-width: 760px) {
+@container sheet (min-width: 630px) {
   .rs-pad { padding: 22px 24px; }
   .rs-twopane {
     display: grid;
-    grid-template-columns: 264px 1fr;
+    // Dynamic rail: shrinks/grows with the window between bounds; the portrait
+    // (capped at 150px) stays put. Narrower than the old fixed 264px.
+    grid-template-columns: clamp(190px, 24%, 224px) 1fr;
     gap: 22px;
     align-items: start;
   }
@@ -146,9 +191,36 @@
     margin-bottom: 0;
   }
   .rs-rail-extra { display: block; margin-top: 12px; }
+  .actions-only { display: none; }
+
+  // header band reflow in the narrow left rail — stack: portrait, name, HP/AC, Init/HD/Move
+  .rs-twopane .rs-head {
+    grid-template-columns: 1fr;
+    grid-template-areas: "portrait" "ident" "vitals" "subs";
+    justify-items: center;
+    gap: 12px;
+  }
+  .rs-twopane .rs-portrait-wrap { align-self: center; width: 120px; height: 120px; }
+  .rs-twopane .rs-ident { align-items: center; text-align: center; }
+  .rs-twopane .rs-name { text-align: center; }
+  .rs-twopane .rs-class { text-align: center; }
+  .rs-twopane .rs-vitals { width: 100%; }
+  .rs-twopane .rs-substats { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; }
+  // rail (the larger view): keep the boxed tiles at normal size
+  .rs-twopane .rs-tile {
+    width: auto;
+    background: var(--surface);
+    border: 1px solid var(--border-soft, #2c2823);
+    border-radius: 6px;
+    padding: 5px 6px 6px;
+  }
+  .rs-twopane .rs-tile .stamp { font-size: var(--fs-2xs, 11px); padding: 5px 8px 3px; }
+  .rs-twopane .rs-tile-v { font-size: var(--fs-xs, 12px); }
 }
 
-@container app (min-width: 800px) {
+// Center tabs replace the right rail exactly when the two-pane engages.
+// sheet two-pane = 630; rail is 40px wide, so sheet 630 ⟺ app ≈ 670.
+@container app (min-width: 670px) {
   .rs-tabrail { display: none; }
   .rs-htabs {
     display: flex;
@@ -156,7 +228,8 @@
     margin-bottom: 14px;
     border-bottom: 2px solid var(--border, #3a342c);
   }
-  .rs-htab {
+  // Qualified (see .rs-tabrail .rs-tab note) so it beats the button reset.
+  .rs-htabs .rs-htab {
     display: inline-flex;
     align-items: center;
     gap: 7px;
@@ -185,4 +258,21 @@
   .rs-htab:hover { color: var(--text-dim, #b5ad97); }
   .rs-htab.active { color: var(--text, #e5dec8); border-bottom-color: var(--gold); }
   .rs-htab.active .rs-htab-ic { color: var(--gold); }
+}
+
+// === XS tier (≤ 560c on app) ===
+// Bottom bar replaces the rail; header reflows to compact single-column.
+// XS nav swap only — the header + topbar XS overrides live in actions.scss (after
+// the base rules) so they win the cascade; shell.scss loads first and would lose.
+@container app (max-width: 560px) {
+  .rs-tabrail { display: none; }
+  .rs-bottombar {
+    display: flex;
+    flex: 0 0 auto;
+    border-top: 1px solid var(--border, #3a342c);
+    background: var(--bg-2, #1f1c17);
+  }
+  // content clears the bottom bar
+  .rs-sheet { padding-bottom: 4px; }
+  .rs-pad { padding-bottom: 68px; }
 }

@@ -43,6 +43,11 @@ class ReactorSheet extends ReactActorSheetV2 {
     await super._onRender(context, options);
     const theme = resolveTheme(game.settings.get("reactor-sheet", "theme"));
     applyTheme(this.element, theme);
+    // Accent by kind: retainers/hirelings (system.retainer.enabled) go teal;
+    // everyone else keeps the brass --gold. See styles.scss [data-kind].
+    this.element.dataset.kind = this.document?.system?.retainer?.enabled
+      ? "hireling"
+      : "pc";
   }
 
   async _prepareContext(options) {

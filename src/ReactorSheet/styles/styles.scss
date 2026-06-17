@@ -1,16 +1,43 @@
 @use "util";
 @use "shell";
+@use "actions";
 
 /** Purely for namespacing default style overrides */
 
-// The window element (.reactor-sheet) is Foundry's territory — its titlebar and
-// frame controls must stay untouched. We only set structural/integration bits here;
-// all appearance + the element reset live on .reactor-sheet-app (our React content).
+// The window element (.reactor-sheet) is Foundry's frame. We theme its titlebar
+// to match our top-bar (opt-in; default v14 frame is grey) and set structural
+// bits here; all content appearance + the element reset live on .reactor-sheet-app.
+// Scoped to .reactor-sheet so no other Foundry window is touched. Tokens read from
+// global :root (the header sits outside [data-theme], so it stays dark in both themes).
 .reactor-sheet {
   overflow: visible;
   height: 100%;
-  min-width: 320px; // handoff min footprint
+  min-width: 360px; // XS compact header fits ~360px; wider layouts still work
   min-height: 360px;
+
+  // --- titlebar: near-black to match the top-bar, design-system font ---
+  .window-header {
+    background: var(--ink, #070605);
+    border-bottom: 1px solid #000;
+  }
+  .window-title {
+    font-family: var(--display); // IM Fell English SC — chiseled small-caps
+    font-weight: 400;
+    font-size: var(--fs-md, 15px);
+    letter-spacing: 0.03em;
+    color: var(--stamp-text, #e5dec8);
+  }
+  // Direct children only — the controls-dropdown menu items are also
+  // .header-control but sit on their own (light) menu background.
+  .window-header > .header-control {
+    color: var(--stamp-text-dim, #b5ad97);
+    &:hover {
+      color: var(--stamp-text, #e5dec8);
+    }
+    &[data-action="close"]:hover {
+      color: var(--crimson, #c75044);
+    }
+  }
 
   .controls-dropdown {
     z-index: 3;
@@ -20,6 +47,10 @@
     overflow: hidden;
     backdrop-filter: none;
     padding: 0;
+    // Match Foundry's rounded window frame so our content doesn't poke out at
+    // the bottom corners (top stays square under the titlebar).
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
 
     // foundry-vtt-react mounts our app under two nested wrapper divs
     // (#react-app-root → #react-application-inner). Both need height:100% so the
@@ -34,9 +65,42 @@
     cursor: pointer;
   }
 
+  // Foundry renders this when resizable; draw a visible diagonal grip so the
+  // affordance reads against our theme. Decoration only — drag stays Foundry's.
   .window-resize-handle {
     z-index: 5;
+    overflow: visible;
+    color: var(--text-mute, #8a8270);
+
+    &::after {
+      content: "";
+      position: absolute;
+      right: 2px;
+      bottom: 2px;
+      width: 12px;
+      height: 12px;
+      pointer-events: none;
+      background:
+        linear-gradient(135deg, transparent 0 42%, currentColor 42% 54%, transparent 54%),
+        linear-gradient(135deg, transparent 0 68%, currentColor 68% 80%, transparent 80%);
+      opacity: 0.6;
+    }
+    &:hover {
+      color: var(--gold);
+      &::after { opacity: 1; }
+    }
   }
+}
+
+// Accent by character kind. Player characters use the brass --gold (default);
+// retainers/hirelings (system.retainer.enabled) get a teal accent. data-kind is
+// set on the window in reactor-sheet.js _onRender; the token overrides cascade to
+// the whole sheet (plaque brackets, mod pills, XP bar, Level-Up, active tab, …).
+.reactor-sheet[data-kind="hireling"] {
+  --gold: var(--teal);
+  --gold-dim: var(--teal-dim);
+  --gold-soft: color-mix(in srgb, var(--teal) 30%, transparent);
+  --gold-bright: #57c3c3; // bright teal variant for retainers
 }
 
 .reactor-sheet-app {
@@ -47,7 +111,7 @@
   color: var(--text);
   font-family: var(--sans);
   font-size: 16px;
-  border-radius: var(--r-sm);
+  border-radius: 0 0 8px 8px; // square top (under titlebar), rounded bottom to match the frame
   min-width: 320px;
   container-type: inline-size; // outer frame: drives vertical rail ⇄ horizontal tab bar
   container-name: app;

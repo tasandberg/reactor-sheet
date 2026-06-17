@@ -39,5 +39,48 @@ export const raistlin = {
     },
     movement: { base: 120, encounter: 40, overland: 24 },
     hp: { value: 8, max: 9, hd: "3d4" },
+    saves: {
+      death: { value: 13 },
+      wand: { value: 14 },
+      paralysis: { value: 13 },
+      breath: { value: 16 },
+      spell: { value: 15 },
+    },
+    exploration: { ft: 1, ld: 2, od: 2, sd: 1 },
+    weapons: [
+      {
+        name: "Dagger",
+        img: "",
+        bonus: 0,
+        system: {
+          damage: "1d4",
+          qualities: [{ label: "Thrown", value: "thrown", icon: "fa-bullseye-pointer" }],
+          description: "",
+          melee: true,
+          missile: true,
+          equipped: true,
+        },
+      },
+      {
+        name: "Quarterstaff",
+        img: "",
+        bonus: 0,
+        system: {
+          damage: "1d6",
+          qualities: [
+            { label: "Two-handed", value: "twohanded", icon: "fa-hand-fist" },
+            { label: "Slow", value: "slow", icon: "fa-hourglass" },
+          ],
+          description: "",
+          melee: true,
+          missile: false,
+          equipped: true,
+        },
+      },
+    ],
+    treasures: {
+      gp: { name: "GP", img: "", system: { quantity: { value: 42 } } },
+      sp: { name: "SP", img: "", system: { quantity: { value: 17 } } },
+    },
   },
 } as unknown as OSEActor;
