@@ -53,8 +53,10 @@ export function HeaderBand({ identity, vitals, onSetHp }: Props) {
             {onSetHp && (
               <input
                 className="vv-big vv-input"
-                type="text"
+                type="number"
                 inputMode="numeric"
+                min={0}
+                max={vitals.hp.max}
                 aria-label="Current HP"
                 defaultValue={vitals.hp.value}
                 key={vitals.hp.value}

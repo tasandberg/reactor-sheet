@@ -186,8 +186,12 @@
   border-radius: 4px;
   padding: 1px 0;
 }
-// active/edit: full crimson box around the value (prototype)
-.rs-vital .vv-input:focus { border-color: var(--crimson); }
+// active/edit: full crimson box + darker sunken bg around the value (prototype)
+.rs-vital .vv-input:focus { border-color: var(--crimson); background: var(--bg, #181612); }
+// no number spinners
+.rs-vital .vv-input::-webkit-inner-spin-button,
+.rs-vital .vv-input::-webkit-outer-spin-button { appearance: none; margin: 0; }
+.rs-vital .vv-input { -moz-appearance: textfield; appearance: textfield; }
 
 // --- Init/HD/Move (under the name in medium; uniform tiles) ---
 .rs-substats {
