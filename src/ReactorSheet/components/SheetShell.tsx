@@ -36,6 +36,12 @@ export default function SheetShell() {
     void resolveItem(id)?.update({ "system.quantity.value": value });
   };
 
+  const onReorder = (u: { id: string; sort: number }[]) =>
+    void actor.updateEmbeddedDocuments("Item", u.map((x) => ({ _id: x.id, sort: x.sort })));
+
+  const onNest = (itemId: string, containerId: string | null) =>
+    void actor.updateEmbeddedDocuments("Item", [{ _id: itemId, "system.containerId": containerId ?? "" }]);
+
   const visible = tabs(actor).filter((t) => !t.disabled);
   const items: TabItem[] = visible.map((t) => ({
     id: t.id,
@@ -68,6 +74,8 @@ export default function SheetShell() {
           onSetCoin={onSetCoin}
           onEquip={onEquipItem}
           onOpen={onOpenItem}
+          onReorder={onReorder}
+          onNest={onNest}
         />
       ) : (
         <activeTab.Content />

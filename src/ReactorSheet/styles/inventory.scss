@@ -51,7 +51,38 @@
   background: linear-gradient(90deg, var(--forest, #4a7c4a), var(--mustard, #d4b878), var(--crimson, #c75044));
 }
 
-// --- category group ---
+// --- sort control (in .rs-inv-head) ---
+.rs-inv .rs-inv-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--sans);
+  font-size: var(--fs-2xs, 11px);
+  color: var(--text-mute, #8a8270);
+
+  label { white-space: nowrap; }
+
+  select {
+    background: var(--surface, #23201a);
+    border: 1px solid var(--border, #3a342c);
+    border-radius: 4px;
+    color: var(--text-dim, #b5ad97);
+    font-family: var(--mono);
+    font-size: var(--fs-2xs, 11px);
+    padding: 3px 22px 3px 7px;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a8270'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    transition: border-color 0.12s, color 0.12s;
+
+    &:hover { border-color: var(--text-mute, #8a8270); color: var(--text, #e5dec8); }
+    &:focus { outline: none; border-color: var(--teal, #1f7575); }
+  }
+}
+
+// --- category group (legacy grid view) ---
 .rs-inv-group { margin-top: 16px; }
 .rs-inv-cat {
   font-family: var(--sans); font-size: var(--fs-2xs, 11px); font-weight: 600;
@@ -61,14 +92,74 @@
   border-bottom: 1px solid var(--border-soft, #2c2823);
 }
 
+// --- per-row category badge (flat list) ---
+.rs-inv-rowcat {
+  font-family: var(--sans); font-size: var(--fs-3xs, 10px); font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-faint, #6a6354);
+  white-space: nowrap;
+}
+
 // --- list rows ---
 .rs-inv-row {
   display: grid;
-  grid-template-columns: 26px 1fr auto;
+  grid-template-columns: 18px 26px 1fr auto auto;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   padding: 7px 2px;
   border-bottom: 1px solid var(--border-soft, #2c2823);
+  transition: background 0.1s;
+
+  &.is-container { background: var(--surface, #23201a); }
+
+  // dnd-kit drag states
+  &.is-dragging { opacity: 0.4; }
+  &.is-drop-target {
+    border-bottom-color: var(--teal, #1f7575);
+    background: color-mix(in srgb, var(--teal, #1f7575) 8%, transparent);
+  }
+}
+
+// --- drag handle ---
+.rs-inv .rs-inv-drag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint, #6a6354);
+  cursor: grab;
+  font-size: 12px;
+  line-height: 1;
+  padding: 2px;
+  border-radius: 3px;
+  transition: color 0.12s;
+
+  &:active { cursor: grabbing; }
+  &:hover { color: var(--text-mute, #8a8270); }
+}
+
+// --- collapse chevron (container rows) ---
+.rs-inv .rs-inv-collapse {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px;
+  background: transparent; border: none;
+  color: var(--text-mute, #8a8270);
+  cursor: pointer;
+  padding: 0;
+  border-radius: 3px;
+  transition: color 0.12s, background 0.12s;
+
+  svg, i { transition: transform 0.18s; display: block; }
+
+  &.collapsed svg, &.collapsed i { transform: rotate(-90deg); }
+  &:hover { color: var(--text, #e5dec8); background: var(--surface, #23201a); }
+}
+
+// --- nested children ---
+.rs-inv-children {
+  padding-left: calc(16px + var(--rs-inv-depth, 1) * 18px);
+
+  // container rows inside a nested list bump depth for further nesting
+  .rs-inv-children { --rs-inv-depth: 2; }
 }
 .rs-inv-equip-spacer { width: 22px; }
 .rs-inv .rs-inv-name {
