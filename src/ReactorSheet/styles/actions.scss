@@ -45,8 +45,10 @@
   font-family: var(--mono); font-size: var(--fs-3xs, 10px);
   color: var(--stamp-text, #e5dec8); text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
-// XS overflow toggle: hidden by default, shown at XS via shell.scss container block.
-.rs-tb-overflow { display: none; }
+// XS overflow toggle: hidden by default, shown at XS. Qualified with .rs-topbar so
+// it beats the `.reactor-sheet-app button { all: unset }` reset (0,1,1) — otherwise
+// all:unset forces display:inline and the ⋮ shows at every width.
+.rs-topbar .rs-tb-overflow { display: none; }
 // Inline action buttons group; hidden at XS, visible otherwise.
 .rs-tb-actions { display: contents; }
 
@@ -423,5 +425,5 @@
   .rs-abil .am { font-size: var(--fs-3xs, 10px); padding: 0 6px 1px; }
   // topbar: collapse Rest / Level Up / Edit into the ⋮ overflow
   .rs-tb-actions { display: none; }
-  .rs-tb-overflow { display: inline-flex; }
+  .rs-topbar .rs-tb-overflow { display: inline-flex; }
 }
