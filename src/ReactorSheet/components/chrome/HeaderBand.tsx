@@ -1,6 +1,29 @@
+import { useLayoutEffect, useRef } from "react";
 import type { IdentityVM, VitalsVM } from "../../viewModels/types";
 import { formatMod } from "../../viewModels/format";
 import { Stamp } from "../ui/Stamp";
+
+/** Shrink a single-line element's font to fit its box (down to `min`x) instead of
+ *  truncating. Sets `--fit-scale`; CSS multiplies the base font-size by it. */
+function useFitText(text: string, min = 0.6) {
+  const ref = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const fit = () => {
+      el.style.setProperty("--fit-scale", "1");
+      const avail = el.clientWidth;
+      const needed = el.scrollWidth;
+      const scale = needed > avail && needed > 0 ? Math.max(min, avail / needed) : 1;
+      el.style.setProperty("--fit-scale", String(scale));
+    };
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [text, min]);
+  return ref;
+}
 
 type Props = {
   identity: IdentityVM;
@@ -13,13 +36,14 @@ type Props = {
  *  · HP/AC in medium, and stack them in the rail. */
 export function HeaderBand({ identity, vitals, onSetHp }: Props) {
   const m = vitals.moveBands;
+  const nameRef = useFitText(identity.name);
   return (
     <div className="rs-head">
       <div className="rs-portrait-wrap">
         <img className="rs-portrait" src={identity.img || undefined} alt={identity.name} />
       </div>
       <div className="rs-ident">
-        <div className="rs-name">{identity.name}</div>
+        <div className="rs-name" ref={nameRef}>{identity.name}</div>
         <div className="rs-class">{identity.classLabel} {identity.level} · {identity.alignment}</div>
       </div>
       <div className="rs-substats">
@@ -78,7 +102,7 @@ export function HeaderBand({ identity, vitals, onSetHp }: Props) {
             )}
           </div>
           <div className="vv-sub">
-            <span className="full">Maximum {vitals.hp.max}</span>
+            <span className="full">Max {vitals.hp.max}</span>
             <span className="short">/{vitals.hp.max}</span>
           </div>
         </div>

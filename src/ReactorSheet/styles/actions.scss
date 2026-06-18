@@ -111,13 +111,12 @@
 }
 .rs-name {
   font-family: var(--display);
-  font-size: var(--fs-4xl, 28px);
+  font-size: calc(var(--fs-4xl, 28px) * var(--fit-scale, 1));
   line-height: 0.95;
   letter-spacing: 0.01em;
   color: var(--text);
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 .rs-class {
   font-family: var(--display);
@@ -125,14 +124,14 @@
   font-size: var(--fs-md, 15px);
 }
 @container sheet (min-width: 470px) {
-  .rs-name { font-size: var(--fs-5xl, 33px); }
+  .rs-name { font-size: calc(var(--fs-5xl, 33px) * var(--fit-scale, 1)); }
 }
 
 // --- HP/AC (right column in medium; top-aligned, content height) ---
 .rs-vitals {
   grid-area: vitals;
   align-self: start;
-  width: 200px;
+  width: 184px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--spacer-2);
@@ -468,7 +467,7 @@
   .rs-portrait-wrap { width: 54px; height: 54px; align-self: center; } // 54×54 square (prototype)
   .rs-portrait { border: 1px solid var(--border, #3a342c); box-shadow: none; } // subtle 1px border at XS
   .rs-ident { overflow: hidden; } // keep a long name from pushing HP/AC off-screen
-  .rs-name { font-size: var(--fs-2xl, 21px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rs-name { font-size: calc(var(--fs-2xl, 21px) * var(--fit-scale, 1)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   // HP/AC: 52×76 narrow-tall boxes, content top-aligned (prototype spec)
   .rs-vitals { width: 112px; gap: var(--spacer-2); grid-template-columns: repeat(2, 52px); align-items: stretch; }
   .rs-vital {
