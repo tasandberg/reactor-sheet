@@ -31,3 +31,6 @@ build/
 
 # Local planning docs (not committed)
 docs/plans/
+
+# Local, uncommitted Vite overrides
+vite.config.local.json

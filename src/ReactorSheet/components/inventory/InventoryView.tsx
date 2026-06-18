@@ -328,12 +328,8 @@ function SortHeaderRow({ sort, onSort }: { sort: SortState; onSort: (key: Invent
   return (
     <div className="rs-inv-row rs-inv-headrow" role="row">
       <span aria-hidden="true" /> {/* drag handle col */}
-      <span aria-hidden="true" /> {/* equip checkbox col — reserved (containers equip here too) */}
-      {/* name + equipped sort share the name column; equipped is a small caret after the name */}
-      <span className="rs-inv-th-namecell">
-        <SortHeader col="name" label="Name" sort={sort} onSort={onSort} />
-        <SortHeader col="equipped" label={<i className="fa-solid fa-check" aria-hidden="true" />} ariaLabel="Sort by equipped" className="rs-inv-th-eq" sort={sort} onSort={onSort} />
-      </span>
+      <span aria-hidden="true" /> {/* equip checkbox col */}
+      <SortHeader col="name" label="Name" className="rs-inv-th-name" sort={sort} onSort={onSort} />
       <span aria-hidden="true" /> {/* tags col */}
       <SortHeader col="category" label="Type" className="rs-inv-th-cat" sort={sort} onSort={onSort} />
       <span aria-hidden="true" /> {/* dmg col */}

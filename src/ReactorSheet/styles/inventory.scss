@@ -36,7 +36,7 @@
 .rs-inv .rs-inv-vbtn.active { background: var(--teal); color: var(--on-accent, #070605); }
 
 // --- encumbrance bar ---
-.rs-enc { margin: var(--spacer-3) 0 var(--spacer-1); }
+.rs-enc { margin: var(--spacer-3) 0 var(--spacer-6); }
 .rs-enc-top { display: flex; justify-content: space-between; align-items: baseline; gap: var(--spacer-3); }
 .rs-enc-l { font-family: var(--sans); font-size: var(--fs-sm, 13px); color: var(--text-dim, #b5ad97); }
 .rs-enc-l b { font-family: var(--mono); font-weight: 400; color: var(--text, #e5dec8); }
@@ -89,18 +89,18 @@
 //
 // Col widths (left → right):
 //   1. drag handle    18px  fixed
-//   2. equip checkbox 20px  fixed
-//   3. name           1fr   fills remaining space
-//   4. tags           auto  compact chips, min 0 (hides when empty)
+//   2. item image     30px  thumbnail / monogram
+//   3. name           1fr   name (+count/qty) with tags beneath
+//   4. equip checkbox 22px  after the name
 //   5. item type      52px  small-caps category badge
 //   6. dmg            36px  "1d8", "" otherwise
-//   7. qty            28px  "×N" or ""
+//   7. qty            28px  reserved
 //   8. weight         44px  "N cn" or "—"
 // ---------------------------------------------------------------------------
 
 .rs-inv-row {
   display: grid;
-  grid-template-columns: 18px 20px 1fr auto 52px 36px 28px 44px;
+  grid-template-columns: 18px 30px 1fr 44px 52px 36px 40px 44px;
   align-items: center;
   gap: var(--spacer-2);
   padding: var(--spacer-2) var(--spacer-1);
@@ -133,21 +133,24 @@
   &:hover { color: var(--text-dim, #b5ad97); }
   &.active { color: var(--text, #e5dec8); }
 }
-// right-aligned headers match their right-aligned cells
-.rs-inv .rs-inv-th-cat,
+// header alignment matches the cells below it
 .rs-inv .rs-inv-th-wt { justify-content: flex-end; }
-// name column also hosts the equipped-sort handle (checkbox col is reserved for checkboxes)
-.rs-inv-th-namecell {
-  display: inline-flex; align-items: center; gap: var(--spacer-2); min-width: 0;
-}
-.rs-inv .rs-inv-th-eq {
-  font-size: var(--fs-4xs, 9px);
-  color: var(--text-faint, #6a6354);
-  opacity: 0.7;
-  &:hover { opacity: 1; }
-  &.active { opacity: 1; }
-}
+.rs-inv .rs-inv-th-cat { justify-content: center; }
 .rs-inv-th-caret { font-size: 8px; width: 6px; } // reserve space so labels don't shift
+
+// --- item image (col 2) ---
+.rs-inv-img {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px;
+  border-radius: 4px; overflow: hidden;
+  background: var(--ink, #070605);
+  border: 1px solid var(--border, #3a342c);
+  img { width: 100%; height: 100%; object-fit: cover; }
+  .mono {
+    font-family: var(--display); font-size: var(--fs-2xs, 11px);
+    letter-spacing: 0.03em; color: var(--text-dim, #b5ad97);
+  }
+}
 
 // --- drag handle (col 1) ---
 .rs-inv .rs-inv-drag {
@@ -160,8 +163,25 @@
   &:hover  { color: var(--text-mute, #8a8270); }
 }
 
-// --- equip checkbox (col 2) ---
-.rs-inv-equip-spacer { display: block; width: 20px; }
+// --- equip hand toggle (col 4, centred under the "Equip" header) ---
+.rs-inv-equip-spacer { display: block; width: 22px; justify-self: center; }
+.rs-inv .rs-inv-equip {
+  justify-self: center;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; padding: 0; border-radius: 4px;
+  background: transparent; border: none; cursor: pointer;
+  color: var(--text-faint, #6a6354); font-size: 13px;
+  transition: color 0.12s, background 0.12s;
+  &:hover { color: var(--text-dim, #b5ad97); background: var(--surface-2, #2c2823); }
+  &.is-on { color: var(--gold); }
+}
+// static "Equip" column header label (not sortable)
+.rs-inv-thlabel {
+  font-family: var(--sans); font-size: var(--fs-3xs, 10px); font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-faint, #6a6354);
+}
+.rs-inv-thlabel-eq { text-align: center; }
 
 // --- name button (col 3) ---
 .rs-inv .rs-inv-name {
@@ -176,27 +196,44 @@
 }
 .rs-inv .rs-inv-name:hover .nm { color: var(--gold); }
 
-// --- collapse chevron (container col 2 slot, replaces equip) ---
+// count/qty badge after a name, e.g. container "(3)" or stack "(7)"
+.rs-inv-count {
+  font-family: var(--mono); font-size: var(--fs-2xs, 11px);
+  color: var(--text-mute, #8a8270);
+  white-space: nowrap;
+}
+
+// name column (col 3): name (+count) row on top, tags beneath, all left-justified
+.rs-inv-name-c {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  min-width: 0; overflow: hidden;
+}
+.rs-inv-name-row {
+  display: flex; align-items: baseline; gap: var(--spacer-1);
+  min-width: 0; max-width: 100%;
+  .rs-inv-name { flex: 0 1 auto; }
+}
+
+// --- collapse chevron (small, inline with the container name text) ---
 .rs-inv .rs-inv-collapse {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 20px; height: 20px;
   background: transparent; border: none;
-  color: var(--text-mute, #8a8270);
-  cursor: pointer; padding: 0; border-radius: 3px;
-  transition: color 0.12s, background 0.12s;
+  color: var(--text-faint, #6a6354);
+  cursor: pointer; padding: 0 2px; font-size: 9px; line-height: 1;
+  transition: color 0.12s;
 
   svg, i { transition: transform 0.18s; display: block; }
   &.collapsed svg, &.collapsed i { transform: rotate(-90deg); }
-  &:hover { color: var(--text, #e5dec8); background: var(--surface-2, #2c2823); }
+  &:hover { color: var(--text, #e5dec8); }
 }
 
-// --- tags (col 4) ---
+// --- tags (beneath the name, left-justified) ---
 .rs-inv-tags {
-  display: flex; align-items: center; gap: var(--spacer-1); flex-wrap: nowrap;
+  display: flex; align-items: center; gap: var(--spacer-1); flex-wrap: wrap;
   min-width: 0;
 }
 .rs-inv-tag {
-  // shrink the standard .tag to feel inline in a row
+  // shrink the standard .tag to feel inline under the name
   padding: 1px var(--spacer-2) 0;
   font-size: var(--fs-3xs, 10px);
   white-space: nowrap;
@@ -207,7 +244,7 @@
   font-family: var(--sans); font-size: var(--fs-3xs, 10px); font-weight: 600;
   letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--text-faint, #6a6354);
-  white-space: nowrap; text-align: right;
+  white-space: nowrap; text-align: center;
 }
 
 // --- damage die (col 6) ---
@@ -217,11 +254,25 @@
   text-align: right; white-space: nowrap;
 }
 
-// --- quantity (col 7) ---
+// --- quantity (col 7): editable for stacks, empty otherwise ---
 .rs-inv-qty {
   font-family: var(--mono); font-size: var(--fs-2xs, 11px);
   color: var(--text-mute, #8a8270);
   text-align: right; white-space: nowrap;
+}
+.rs-inv .rs-inv-qtyin {
+  width: 100%; text-align: center;
+  padding: 2px 0; border-radius: 4px;
+  background: var(--surface, #23201a);
+  border: 1px solid var(--border-soft, #2c2823); // always visible so it reads as a field
+  color: var(--text-dim, #b5ad97);
+  font-family: var(--mono); font-size: var(--fs-2xs, 11px);
+  cursor: text;
+  transition: border-color 0.12s, background 0.12s;
+  &:hover { border-color: var(--border, #3a342c); }
+  &:focus { border-color: var(--gold); color: var(--text, #e5dec8); }
+  &::-webkit-inner-spin-button, &::-webkit-outer-spin-button { appearance: none; margin: 0; }
+  -moz-appearance: textfield; appearance: textfield;
 }
 
 // --- weight (col 8) ---
@@ -237,11 +288,38 @@
   .rs-inv-children { --rs-inv-depth: 2; }
 }
 
-// Drop zone: invisible hit-area on container header for nest target
-.rs-inv-drop-zone { height: 4px; }
-.rs-inv-drop-zone.is-drop-target {
-  background: color-mix(in srgb, var(--teal, #1f7575) 30%, transparent);
-  border-radius: 2px;
+// The whole container is the nest drop target — highlight the container row clearly.
+.rs-inv-container.is-drop-target {
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px var(--teal, #1f7575);
+  background: color-mix(in srgb, var(--teal, #1f7575) 8%, transparent);
+  .rs-inv-row.is-container {
+    background: color-mix(in srgb, var(--teal, #1f7575) 24%, transparent);
+  }
+}
+
+// the whole row is draggable (buttons inside still take clicks)
+.rs-inv-row.is-sortable {
+  cursor: grab;
+  &:active { cursor: grabbing; }
+}
+
+// "move out of container" drop zone — shown only while dragging
+.rs-inv-rootzone {
+  display: flex; align-items: center; justify-content: center; gap: var(--spacer-2);
+  margin-top: var(--spacer-2);
+  padding: var(--spacer-3);
+  border: 1px dashed var(--border, #3a342c); border-radius: 6px;
+  color: var(--text-faint, #6a6354);
+  font-family: var(--sans); font-size: var(--fs-2xs, 11px);
+  letter-spacing: 0.06em; text-transform: uppercase;
+  transition: border-color 0.12s, background 0.12s, color 0.12s;
+  &.is-over {
+    border-color: var(--teal, #1f7575);
+    border-style: solid;
+    background: color-mix(in srgb, var(--teal, #1f7575) 12%, transparent);
+    color: var(--text, #e5dec8);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -320,3 +398,78 @@
 .rs-inv .rs-coin-in::-webkit-inner-spin-button,
 .rs-inv .rs-coin-in::-webkit-outer-spin-button { appearance: none; margin: 0; }
 .rs-inv .rs-coin-in { -moz-appearance: textfield; appearance: textfield; }
+
+// ---------------------------------------------------------------------------
+// Collapsible sections (Equipped + Carried Items) + image strip
+// ---------------------------------------------------------------------------
+
+.rs-inv-sec { margin: var(--spacer-3) 0; }
+.rs-inv .rs-inv-sec-head {
+  display: inline-flex; align-items: center; gap: var(--spacer-2);
+  background: transparent; border: none; cursor: pointer; padding: 0 0 var(--spacer-2);
+  color: var(--text-mute, #8a8270);
+  &:hover { color: var(--text-dim, #b5ad97); }
+}
+.rs-inv-sec-caret {
+  font-size: 9px; transition: transform 0.18s;
+  .rs-inv-sec-head.is-collapsed & { transform: rotate(-90deg); }
+}
+.rs-inv-sec-title {
+  font-family: var(--sans); font-size: var(--fs-2xs, 11px); font-weight: 600;
+  letter-spacing: 0.09em; text-transform: uppercase;
+}
+.rs-inv-sec-count { font-family: var(--mono); font-size: var(--fs-2xs, 11px); color: var(--text-faint, #6a6354); }
+
+// collapsed: horizontal strip of image tiles
+.rs-equip-strip {
+  display: flex; flex-wrap: wrap; gap: var(--spacer-2);
+}
+.rs-equip-tile { position: relative; width: 38px; height: 38px; }
+.rs-inv .rs-equip-imgbtn {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 5px; overflow: hidden; cursor: pointer;
+  background: var(--ink, #070605); border: 1px solid var(--border, #3a342c);
+  img { width: 100%; height: 100%; object-fit: cover; }
+  .mono { font-family: var(--display); font-size: var(--fs-sm, 13px); color: var(--text-dim, #b5ad97); }
+  &:hover { border-color: var(--gold); }
+}
+.rs-inv .rs-equip-hand {
+  position: absolute; top: -5px; right: -5px;
+  width: 16px; height: 16px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--surface-2, #2c2823); border: 1px solid var(--border, #3a342c);
+  color: var(--gold); font-size: 8px; cursor: pointer;
+  &:hover { background: var(--surface-3, #3a3429); }
+}
+
+// ---------------------------------------------------------------------------
+// Right-click context menu
+// ---------------------------------------------------------------------------
+
+.rs-ctx {
+  position: fixed; z-index: 1000; min-width: 168px;
+  padding: var(--spacer-1);
+  background: var(--surface, #23201a);
+  border: 1px solid var(--border, #3a342c); border-radius: 6px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+}
+.rs-ctx-title {
+  font-family: var(--display); font-size: var(--fs-sm, 13px);
+  color: var(--text-dim, #b5ad97);
+  padding: var(--spacer-1) var(--spacer-2) var(--spacer-2);
+  border-bottom: 1px solid var(--border-soft, #2c2823);
+  margin-bottom: var(--spacer-1);
+}
+.rs-inv .rs-ctx-item {
+  display: flex; align-items: center; gap: var(--spacer-2); width: 100%;
+  padding: var(--spacer-2); border-radius: 4px;
+  background: transparent; border: none; cursor: pointer; text-align: left;
+  font-family: var(--sans); font-size: var(--fs-sm, 13px);
+  color: var(--text, #e5dec8);
+  i { width: 16px; text-align: center; color: var(--text-mute, #8a8270); }
+  &:hover { background: var(--surface-2, #2c2823); }
+  &:disabled { opacity: 0.4; cursor: default; }
+  &.is-danger:hover { background: color-mix(in srgb, var(--crimson, #c75044) 18%, transparent); }
+  &.is-danger i { color: var(--crimson, #c75044); }
+}

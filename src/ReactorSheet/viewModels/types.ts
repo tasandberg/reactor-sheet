@@ -27,14 +27,27 @@ export interface AbilityVM {
   modLabel: string;
 }
 
+/** A clickable roll: what to show on the pill, the dice formula, and chat flavour. */
+export interface RollSpec {
+  /** Display label, e.g. "1d20 +1(str)" or "1d8". */
+  label: string;
+  /** Foundry roll formula, e.g. "1d20+1". */
+  formula: string;
+  /** Chat-message flavour. */
+  flavor: string;
+}
+
 export interface AttackVM {
   id: string;
+  itemId: string;
   name: string;
   img: string;
   kind: "melee" | "missile";
   kindLabel: string;
-  hitLabel: string;
-  damage: string;
+  /** To-hit roll (1d20 + ability mod). */
+  hit: RollSpec;
+  /** Damage roll (weapon die + ability mod). */
+  dmg: RollSpec;
   qualities: { label: string; icon: string }[];
 }
 
@@ -63,7 +76,7 @@ export interface WealthMovementVM {
   move: { encounter: number; explore: number; travel: number };
 }
 
-export type InventorySortKey = "category" | "name" | "weight" | "equipped";
+export type InventorySortKey = "manual" | "category" | "name" | "weight";
 export type SortDir = "asc" | "desc";
 
 export interface InventoryItemVM {
@@ -79,7 +92,7 @@ export interface InventoryItemVM {
   /** Short monogram for the grid card when the item has no real art. */
   monogram: string;
   weight: number;
-  sort: number;            // foundry item.sort (manual order)
+  sort: number;            // manual order — reactor-sheet `order` flag (falls back to item.sort)
   /** null when the item type can't be equipped (no `equipped` field). */
   equipped: boolean | null;
   /** null unless the item is a stack (qty > 1) or charged (max set). */
@@ -96,7 +109,9 @@ export interface InventoryGroup {
 }
 
 export interface InventoryVM {
-  items: InventoryItemVM[];  // top-level only; containers carry their children
+  items: InventoryItemVM[];  // top-level only; containers carry their children. Excludes equipped.
+  /** Currently-equipped items, shown in the equipped shelf (and pulled from `items`). */
+  equipped: InventoryItemVM[];
   count: number;
   /** @deprecated kept for grid view compatibility */
   groups: InventoryGroup[];

@@ -1,6 +1,10 @@
 import type { OSEActor } from "../types/types";
-import type { AttackVM } from "./types";
-import { formatMod } from "./format";
+import type { AttackVM, RollSpec } from "./types";
+
+/** Term to append to a formula for a mod, e.g. +1 / -2 / "" for 0. */
+const term = (mod: number) => (mod === 0 ? "" : mod > 0 ? `+${mod}` : `${mod}`);
+/** Suffix shown on the pill, e.g. " +1(str)" / "" for 0. */
+const suffix = (mod: number, abil: string) => (mod === 0 ? "" : ` ${mod > 0 ? `+${mod}` : `${mod}`}(${abil})`);
 
 /** Equipped weapons → one row per attack mode (melee/missile). */
 export function selectAttacks(actor: OSEActor): AttackVM[] {
@@ -16,16 +20,36 @@ export function selectAttacks(actor: OSEActor): AttackVM[] {
       seen.add(q.label);
       qualities.push({ label: q.label, icon: q.icon ?? "" });
     }
-    const make = (kind: "melee" | "missile"): AttackVM => ({
-      id: `${w.name}-${kind}`,
-      name: w.name as string,
-      img: w.img,
-      kind,
-      kindLabel: kind === "melee" ? "Melee" : "Missile",
-      hitLabel: formatMod(kind === "melee" ? scores.str.mod : scores.dex.mod),
-      damage: w.system.damage,
-      qualities,
-    });
+    const die = w.system.damage;
+    const make = (kind: "melee" | "missile"): AttackVM => {
+      const ranged = kind === "missile";
+      // to-hit: str for melee, dex for missile. damage: str for melee, none for missile.
+      const hitMod = ranged ? scores.dex.mod : scores.str.mod;
+      const hitAbil = ranged ? "dex" : "str";
+      const dmgMod = ranged ? 0 : scores.str.mod;
+      const tail = ranged ? " (ranged)" : "";
+      const hit: RollSpec = {
+        label: `1d20${suffix(hitMod, hitAbil)}`,
+        formula: `1d20${term(hitMod)}`,
+        flavor: `${actor.name} attacks with ${w.name}${tail}`,
+      };
+      const dmg: RollSpec = {
+        label: `${die}${suffix(dmgMod, "str")}`,
+        formula: `${die}${term(dmgMod)}`,
+        flavor: `${actor.name} deals damage with ${w.name}${tail}`,
+      };
+      return {
+        id: `${w._id}-${kind}`,
+        itemId: w._id as string,
+        name: w.name as string,
+        img: w.img,
+        kind,
+        kindLabel: kind === "melee" ? "Melee" : "Missile",
+        hit,
+        dmg,
+        qualities,
+      };
+    };
     if (w.system.melee) out.push(make("melee"));
     if (w.system.missile) out.push(make("missile"));
   }

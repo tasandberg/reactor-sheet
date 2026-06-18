@@ -1,5 +1,11 @@
 import type { OSEActor, OseItem } from "../types/types";
 import type { InventorySortKey, SortDir, InventoryVM, InventoryItemVM, EncumbranceVM, CoinVM } from "./types";
+import { FLAGS, readFlag } from "../flags";
+
+/** Manual order position: our own flag, falling back to Foundry's sort for un-migrated items. */
+function orderOf(item: OseItem): number {
+  return readFlag<number>(item, FLAGS.order) ?? (item as unknown as { sort?: number }).sort ?? 0;
+}
 
 const COIN_DENOMS = ["pp", "gp", "ep", "sp", "cp"] as const;
 
@@ -92,7 +98,7 @@ function toVM(item: OseItem, children: InventoryItemVM[] = []): InventoryItemVM 
     tags: itemTags(item),
     monogram: monogram(item.name as string),
     weight: s.cumulativeWeight ?? s.weight ?? 0,
-    sort: (item as unknown as { sort?: number }).sort ?? 0,
+    sort: orderOf(item),
     equipped: "equipped" in s ? !!s.equipped : null,
     quantity: hasQty ? { value: q.value, max: q.max || q.value } : null,
     isContainer: item.type === "container",
@@ -106,10 +112,21 @@ function toVM(item: OseItem, children: InventoryItemVM[] = []): InventoryItemVM 
 
 /** Equipment list for the inventory tab. Coins stay in the coin editor. */
 export function selectInventory(items: OseItem[]): InventoryVM {
-  // Exclude coins
-  const eligible = items.filter(
-    (it) => !isCurrency(it) && !coinDenom(it.name as string),
+  // Physical item types only — keeps spells, abilities, etc. out of inventory. Also exclude coins.
+  const physical = items.filter(
+    (it) =>
+      (it.type as string) in CATEGORY &&
+      !isCurrency(it) &&
+      !coinDenom(it.name as string),
   );
+
+  // Equipped items live in the equipped shelf, not the main list.
+  const isEquipped = (it: OseItem) => (it.system as { equipped?: boolean }).equipped === true;
+  const equipped = physical
+    .filter(isEquipped)
+    .sort((a, b) => orderOf(a) - orderOf(b))
+    .map((it) => toVM(it));
+  const eligible = physical.filter((it) => !isEquipped(it));
 
   // Index by id for O(1) child lookups
   const byId = new Map<string, OseItem>(eligible.map((it) => [it._id as string, it]));
@@ -132,7 +149,7 @@ export function selectInventory(items: OseItem[]): InventoryVM {
   // Build VM nodes, sorting children by sort index
   function buildVM(item: OseItem): InventoryItemVM {
     const rawChildren = childrenByContainer.get(item._id as string) ?? [];
-    rawChildren.sort((a, b) => ((a as unknown as { sort?: number }).sort ?? 0) - ((b as unknown as { sort?: number }).sort ?? 0));
+    rawChildren.sort((a, b) => orderOf(a) - orderOf(b));
     return toVM(item, rawChildren.map(buildVM));
   }
 
@@ -155,7 +172,7 @@ export function selectInventory(items: OseItem[]): InventoryVM {
     items: vmItems.filter((it) => g.types.includes(it.category.toLowerCase()) || (g.key === "gear" && it.categoryRank === 2)),
   })).filter((g) => g.items.length > 0);
 
-  return { items: vmItems, count: countAll(vmItems), groups };
+  return { items: vmItems, equipped, count: countAll(vmItems), groups };
 }
 
 // ---------------------------------------------------------------------------
@@ -164,13 +181,13 @@ export function selectInventory(items: OseItem[]): InventoryVM {
 
 /** Natural direction each column sorts in when first selected. */
 export const SORT_DEFAULT_DIR: Record<InventorySortKey, SortDir> = {
+  manual: "asc",    // by our order flag — free drag-reordering
   category: "asc",  // rank 0→3
   name: "asc",      // A→Z
   weight: "desc",   // heaviest first
-  equipped: "asc",  // equipped first
 };
 
-/** Pure sort — returns a new array, recurses into children. `dir` defaults to the column's natural direction. */
+/** Pure sort — by `key`/`dir`. Returns a new array, recurses into children. */
 export function sortInventory(
   list: InventoryItemVM[],
   key: InventorySortKey,
@@ -179,6 +196,9 @@ export function sortInventory(
   const f = dir === "asc" ? 1 : -1;
   const sorted = [...list].sort((a, b) => {
     switch (key) {
+      case "manual":
+        if (a.sort !== b.sort) return (a.sort - b.sort) * f;
+        return a.name.localeCompare(b.name);
       case "category":
         if (a.categoryRank !== b.categoryRank) return (a.categoryRank - b.categoryRank) * f;
         if (a.sort !== b.sort) return a.sort - b.sort;
@@ -187,11 +207,6 @@ export function sortInventory(
         return a.name.localeCompare(b.name) * f;
       case "weight":
         return (a.weight - b.weight) * f;
-      case "equipped": {
-        const rank = (it: InventoryItemVM) => (it.equipped === true ? 0 : 1);
-        if (rank(a) !== rank(b)) return (rank(a) - rank(b)) * f;
-        return a.name.localeCompare(b.name);
-      }
     }
   });
   return sorted.map((it) =>

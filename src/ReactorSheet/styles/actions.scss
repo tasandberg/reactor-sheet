@@ -343,6 +343,70 @@
 .rs-quals { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px; }
 .rs-quals .tag { display: inline-flex; align-items: center; gap: 4px; }
 
+// --- attacks: one row per mode, aligned grid (Item / Hit / Damage / Attack!) ---
+.rs-atk-table { display: flex; flex-direction: column; }
+.rs-atk-row {
+  display: grid;
+  grid-template-columns: 1fr max-content max-content max-content;
+  align-items: center;
+  gap: var(--spacer-4);
+  padding: var(--spacer-3) var(--spacer-1);
+  border-bottom: 1px solid var(--border-soft, #2c2823);
+}
+// column headers
+.rs-atk-head {
+  padding-top: 0; padding-bottom: var(--spacer-2);
+  border-bottom: 2px solid var(--border, #3a342c);
+}
+.rs-atk-h {
+  font-family: var(--sans); font-size: var(--fs-3xs, 10px); font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-faint, #6a6354);
+}
+.rs-atk-h-go { justify-self: center; }
+// col 1: image + name/tags
+.rs-atk-item { display: flex; align-items: center; gap: var(--spacer-3); min-width: 0; }
+.rs-atk-img { width: 36px; height: 36px; border-radius: 5px; object-fit: cover; background: var(--ink, #070605); border: 1px solid var(--border, #3a342c); }
+.rs-atk-main { flex: 1 1 auto; min-width: 0; }
+.rs-atk-name {
+  font-family: var(--display); font-size: var(--fs-md, 15px); color: var(--text, #e5dec8);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.rs-atk-kind { color: var(--text-mute, #8a8270); }
+.rs-atk-quals { display: flex; gap: var(--spacer-1); flex-wrap: wrap; margin-top: 2px; }
+
+// reusable link-style button: accent colour denotes a clickable roll/link.
+// (qualified with .reactor-sheet-app to beat the `button { all: unset }` reset.)
+.reactor-sheet-app .rs-link {
+  display: inline-flex; align-items: center; gap: var(--spacer-1);
+  background: none; border: none; padding: 0;
+  color: var(--gold); cursor: pointer;
+  font-family: inherit; font-size: inherit;
+  transition: color 0.12s, filter 0.12s;
+  i { font-size: 0.85em; }
+  &:hover:not(:disabled) { text-decoration: underline; filter: brightness(1.12); }
+  &:disabled { color: var(--text-mute, #8a8270); cursor: default; text-decoration: none; }
+}
+
+// Hit / Damage roll links
+.rs-atk-roll {
+  flex: 0 0 auto;
+  font-family: var(--mono); font-size: var(--fs-sm, 13px);
+  white-space: nowrap;
+}
+
+// composite attack button (Attack! column)
+.rs-atk-go {
+  justify-self: center;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 32px; border-radius: 6px;
+  background: var(--teal); color: var(--on-accent, #070605);
+  border: 1px solid var(--teal); cursor: pointer; font-size: 14px;
+  transition: filter 0.12s;
+  &:hover:not(:disabled) { filter: brightness(1.12); }
+  &:disabled { cursor: default; opacity: 0.5; }
+}
+
 // --- wealth + movement ---
 .rs-wm { display: flex; flex-wrap: wrap; gap: var(--spacer-6); margin-top: 6px; }
 .rs-wm .grp { display: flex; flex-direction: column; gap: var(--spacer-1); }
@@ -355,6 +419,17 @@
 
 // section spacing in the Actions body
 .rs-section + .rs-section { margin-top: var(--spacer-5); }
+
+// --- rollable affordance (ability plaques + table rows wired to system rolls) ---
+.rs-abil.rollable { cursor: pointer; transition: border-color 0.12s, box-shadow 0.12s; }
+.rs-abil.rollable:hover { border-color: var(--gold); }
+.table tr.rollable { cursor: pointer; }
+.table tr.rollable:hover td { background: color-mix(in srgb, var(--gold) 9%, transparent); }
+.rs-abil.rollable:focus-visible,
+.table tr.rollable:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: -2px;
+}
 
 // --- topbar overflow menu (XS: ⋮ button + popover) ---
 .rs-tb-menu-wrap {

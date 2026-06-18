@@ -10,12 +10,17 @@ describe("selectAttacks", () => {
     expect(dagger.map((a) => a.kind)).toEqual(["melee", "missile"]);
   });
 
-  it("uses STR mod for melee hit, DEX mod for missile hit", () => {
+  it("builds hit/damage roll specs: STR for melee, DEX hit for missile (no missile dmg mod)", () => {
     const melee = vm.find((a) => a.name === "Dagger" && a.kind === "melee")!;
     const missile = vm.find((a) => a.name === "Dagger" && a.kind === "missile")!;
-    expect(melee.hitLabel).toBe("+0"); // STR 9 → +0
-    expect(missile.hitLabel).toBe("+1"); // DEX 13 → +1
-    expect(melee.damage).toBe("1d4");
+    // STR 9 → +0: no suffix, plain formula
+    expect(melee.hit.label).toBe("1d20");
+    expect(melee.hit.formula).toBe("1d20");
+    expect(melee.dmg.label).toBe("1d4");
+    // DEX 13 → +1 on the to-hit; missile damage gets no ability mod
+    expect(missile.hit.label).toBe("1d20 +1(dex)");
+    expect(missile.hit.formula).toBe("1d20+1");
+    expect(missile.dmg.label).toBe("1d4");
   });
 
   it("carries quality labels and skips non-equipped weapons", () => {

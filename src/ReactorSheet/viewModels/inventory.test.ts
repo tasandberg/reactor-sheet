@@ -11,7 +11,7 @@ const mk = (
   ({ _id: opts.id ?? name, name, img: "", type, sort: opts.sort ?? 0, system }) as unknown as OseItem;
 
 const items: OseItem[] = [
-  mk("weapon", "Dagger",          { damage: "1d4", melee: true, missile: true, equipped: true, weight: 20, quantity: { value: 1, max: 0 }, tags: [{ label: "Light", icon: "" }, { label: "Thrown", icon: "" }] }),
+  mk("weapon", "Dagger",          { damage: "1d4", melee: true, missile: true, equipped: false, weight: 20, quantity: { value: 1, max: 0 }, tags: [{ label: "Light", icon: "" }, { label: "Thrown", icon: "" }] }),
   mk("armor",  "Ring of protection", { equipped: false, weight: 0, quantity: { value: 1, max: 0 } }),
   mk("item",   "Iron rations",    { weight: 80, quantity: { value: 7, max: 7 } }),
   mk("item",   "Gold piece",      { tags: [{ value: "Currency" }], quantity: { value: 50, max: 0 } }),
@@ -42,7 +42,7 @@ describe("selectInventory", () => {
       { label: "Light", icon: "" },
       { label: "Thrown", icon: "" },
     ]);
-    expect(dagger.equipped).toBe(true);
+    expect(dagger.equipped).toBe(false);
     expect(dagger.quantity).toBeNull(); // qty.value = 1 — not a stack
     const rations = vm.items[2];
     expect(rations.quantity).toEqual({ value: 7, max: 7 });
@@ -73,6 +73,24 @@ describe("selectInventory", () => {
 
   it("legacy groups still present for grid view", () => {
     expect(vm.groups.map((g) => g.key)).toContain("weapons");
+  });
+
+  it("equipped items go to the equipped shelf, not the main list", () => {
+    const vm2 = selectInventory([
+      mk("weapon", "Sword", { equipped: true, weight: 30 }),
+      mk("armor", "Shield", { equipped: false, weight: 10 }),
+    ]);
+    expect(vm2.equipped.map((i) => i.name)).toEqual(["Sword"]);
+    expect(vm2.items.map((i) => i.name)).toEqual(["Shield"]);
+  });
+
+  it("excludes non-physical types (spells, abilities)", () => {
+    const vm2 = selectInventory([
+      mk("weapon", "Sword", { weight: 30 }),
+      mk("spell", "Magic Missile", {}),
+      mk("ability", "Listening at Doors", {}),
+    ]);
+    expect(vm2.items.map((i) => i.name)).toEqual(["Sword"]);
   });
 });
 
@@ -144,13 +162,11 @@ describe("sortInventory", () => {
     expect(result.map((i) => i.id)).toEqual(["ro", "sh", "sw", "bx"]);
   });
 
-  it("equipped sort: equipped first (asc), then by name", () => {
-    const a = mkVM({ id: "a", name: "Boots", equipped: false });
-    const b = mkVM({ id: "b", name: "Sword", equipped: true });
-    const c = mkVM({ id: "c", name: "Helm", equipped: true });
-    const d = mkVM({ id: "d", name: "Rope", equipped: null });
-    const result = sortInventory([a, b, c, d], "equipped", "asc");
-    expect(result.map((i) => i.id)).toEqual(["c", "b", "a", "d"]);
+  it("equipped state does not affect order (no hoisting)", () => {
+    const a = mkVM({ id: "a", name: "Aaa", categoryRank: 2, equipped: false });
+    const b = mkVM({ id: "b", name: "Zzz", categoryRank: 2, equipped: true });
+    // pure name order — equipped Zzz stays after Aaa
+    expect(sortInventory([a, b], "name").map((i) => i.id)).toEqual(["a", "b"]);
   });
 
   it("recurses into children", () => {

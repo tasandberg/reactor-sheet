@@ -4,13 +4,14 @@ import { tabs, TabIds } from "./shared/tabs";
 import getLabel from "@src/util/getLabel";
 import { Topbar, HeaderBand } from "./chrome";
 import { ActionsView, SavesExploration } from "./actions";
-import { InventoryView } from "./inventory";
+import { InventoryViewDnd as InventoryView } from "./inventory";
 import { selectTopbar } from "../viewModels/topbar";
 import { selectIdentity } from "../viewModels/identity";
 import { selectVitals } from "../viewModels/vitals";
 import { selectSaves } from "../viewModels/saves";
 import { selectExploration } from "../viewModels/exploration";
 import { selectInventory, selectEncumbrance, selectCoins } from "../viewModels/inventory";
+import { flagPath, FLAGS } from "../flags";
 import type { OseItem } from "../types/types";
 
 /**
@@ -29,19 +30,39 @@ export default function SheetShell() {
   const resolveItem = (id: string) => (invItems as OseItem[]).find((i) => i._id === id);
   const onEquipItem = (id: string) => {
     const it = resolveItem(id);
-    if (it && "equipped" in it.system) void it.update({ system: { equipped: !it.system.equipped } });
+    if (!it || !("equipped" in it.system)) return;
+    const equipped = !it.system.equipped;
+    const update: Record<string, unknown> = { system: { equipped } };
+    // Equipping pulls the item out of any container it lives in.
+    if (equipped && (it.system as { containerId?: string }).containerId) {
+      (update.system as Record<string, unknown>).containerId = "";
+    }
+    void it.update(update);
   };
   const onOpenItem = (id: string) => resolveItem(id)?.sheet?.render(true);
   const onSetCoin = (id: string, value: number) => {
     void resolveItem(id)?.update({ "system.quantity.value": value });
   };
+  const onSetQty = (id: string, value: number) => {
+    void resolveItem(id)?.update({ "system.quantity.value": value });
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const embedUpdate = (updates: object[]) => void (actor as any).updateEmbeddedDocuments("Item", updates);
+  // Manual order is stored in our own flag (not Foundry's `sort`, which the core
+  // sheet and other modules also write).
   const onReorder = (u: { id: string; sort: number }[]) =>
-    embedUpdate(u.map((x) => ({ _id: x.id, sort: x.sort })));
+    embedUpdate(u.map((x) => ({ _id: x.id, [flagPath(FLAGS.order)]: x.sort })));
   const onNest = (itemId: string, containerId: string | null) =>
     embedUpdate([{ _id: itemId, "system.containerId": containerId ?? "" }]);
+  const onDeleteItem = (id: string) => {
+    const it = resolveItem(id);
+    if (!it) return;
+    // Deleting a container: move its contents back to the top level first.
+    const kids = (invItems as OseItem[]).filter((c) => (c.system as { containerId?: string }).containerId === id);
+    if (kids.length) embedUpdate(kids.map((k) => ({ _id: k._id, "system.containerId": "" })));
+    void it.delete();
+  };
 
   const visible = tabs(actor).filter((t) => !t.disabled);
   const items: TabItem[] = visible.map((t) => ({
@@ -63,7 +84,15 @@ export default function SheetShell() {
       }}
       topbar={<Topbar vm={selectTopbar(actor)} />}
       header={<HeaderBand identity={selectIdentity(actor)} vitals={vitals} onSetHp={onSetHp} />}
-      railExtra={<SavesExploration saves={selectSaves(actor)} exploration={selectExploration(actor)} tabbed />}
+      railExtra={
+        <SavesExploration
+          saves={selectSaves(actor)}
+          exploration={selectExploration(actor)}
+          onRollSave={(key) => actor.rollSave(key, {})}
+          onRollExploration={(key) => actor.rollExploration(key, {})}
+          tabbed
+        />
+      }
     >
       {activeTab.id === TabIds.ACTIONS ? (
         <ActionsView actor={actor} />
@@ -75,6 +104,8 @@ export default function SheetShell() {
           onSetCoin={onSetCoin}
           onEquip={onEquipItem}
           onOpen={onOpenItem}
+          onDelete={onDeleteItem}
+          onSetQty={onSetQty}
           onReorder={onReorder}
           onNest={onNest}
         />

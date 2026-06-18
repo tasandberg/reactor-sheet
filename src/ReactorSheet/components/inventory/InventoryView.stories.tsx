@@ -30,6 +30,7 @@ const inventory: InventoryVM = {
     },
     { id: "6", name: "Rope, 50'", img: "", category: "Gear", categoryRank: 2, damage: "", tags: [], monogram: "RO", weight: 50, sort: 500, equipped: null, quantity: null, isContainer: false, children: [] },
   ],
+  equipped: [],
   // legacy compat
   groups: [],
 };
