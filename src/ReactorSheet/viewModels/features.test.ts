@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, vi } from "vitest";
-import { selectFeatures } from "./features";
+import { groupFeaturesByClass, selectFeatures } from "./features";
+import type { FeatureVM } from "./features";
 import type { OSEActor, OseAbility } from "../types/types";
 
 // selectFeatures composes the roll tag from CONFIG.OSE.roll_type (a Foundry global).
@@ -65,5 +66,42 @@ describe("selectFeatures", () => {
     const item = ability({ _id: "a1", name: "Hear Noise", system: { roll: "1d6", rollTarget: 1 } });
     selectFeatures(actorWith([item]))[0].onRoll!();
     expect(item.roll).toHaveBeenCalledOnce();
+  });
+});
+
+describe("groupFeaturesByClass", () => {
+  const feat = (id: string, requirements?: string): FeatureVM => ({
+    id,
+    name: id,
+    img: "",
+    description: "",
+    requirements,
+    rollable: false,
+    onDelete: () => {},
+  });
+
+  it("groups by the requirements slug and sorts the actor's own class first", () => {
+    const groups = groupFeaturesByClass(
+      [feat("a", "thief"), feat("b", "magic-user"), feat("c", "magic-user")],
+      "Magic User" // free-text class normalizes to the "magic-user" slug
+    );
+    expect(groups.map((g) => g.slug)).toEqual(["magic-user", "thief"]);
+    expect(groups[0].isOwnClass).toBe(true);
+    expect(groups[0].label).toBe("Magic User"); // keeps the actor's own casing
+    expect(groups[0].features.map((f) => f.id)).toEqual(["b", "c"]);
+    expect(groups[1].isOwnClass).toBe(false);
+    expect(groups[1].label).toBe("Thief"); // title-cased from the slug
+  });
+
+  it("buckets features with no requirements into an 'Other' group", () => {
+    const groups = groupFeaturesByClass([feat("a")], "Fighter");
+    expect(groups).toHaveLength(1);
+    expect(groups[0].slug).toBe("");
+    expect(groups[0].label).toBe("Other");
+    expect(groups[0].isOwnClass).toBe(false);
+  });
+
+  it("returns no groups when there are no features", () => {
+    expect(groupFeaturesByClass([], "Cleric")).toEqual([]);
   });
 });
