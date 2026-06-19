@@ -7,9 +7,12 @@ function orderOf(item: OseItem): number {
   return readFlag<number>(item, FLAGS.order) ?? (item as unknown as { sort?: number }).sort ?? 0;
 }
 
-/** Manual order within the equipped tray: its own flag, falling back to the list order. */
+/** Manual order within the equipped tray: its OWN flag, independent of the list
+ *  `order` (so reordering the All-Items list never moves a tile). Items without an
+ *  explicit equippedOrder fall back to 0 (ties broken by name in sortEquipped);
+ *  newly-equipped items get an explicit "last" value on equip. */
 function equippedOrderOf(item: OseItem): number {
-  return readFlag<number>(item, FLAGS.equippedOrder) ?? orderOf(item);
+  return readFlag<number>(item, FLAGS.equippedOrder) ?? 0;
 }
 
 const COIN_DENOMS = ["pp", "gp", "ep", "sp", "cp"] as const;

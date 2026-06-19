@@ -11,7 +11,7 @@ import { selectVitals } from "../viewModels/vitals";
 import { selectSaves } from "../viewModels/saves";
 import { selectExploration } from "../viewModels/exploration";
 import { selectInventory, selectEncumbrance, selectCoins } from "../viewModels/inventory";
-import { flagPath, FLAGS } from "../flags";
+import { flagPath, FLAGS, readFlag } from "../flags";
 import { useToast } from "./ui/toastContext";
 import type { OseItem } from "../types/types";
 
@@ -35,16 +35,27 @@ export default function SheetShell() {
     if (!it || !("equipped" in it.system)) return;
     const equipped = !it.system.equipped;
     const fromContainerId = (it.system as { containerId?: string }).containerId;
-    const update: Record<string, unknown> = { system: { equipped } };
+    const update: Record<string, unknown> = { "system.equipped": equipped };
     // Equipping pulls the item out of any container it lives in.
     const leftContainer = equipped && !!fromContainerId;
-    if (leftContainer) (update.system as Record<string, unknown>).containerId = "";
+    if (leftContainer) update["system.containerId"] = "";
+    if (equipped) {
+      // A newly-equipped item goes to the END of the tray (its own order, set
+      // explicitly so it never inherits — and so list reorders never move it).
+      const maxEq = (invItems as OseItem[])
+        .filter((i) => i._id !== id && !!(i.system as { equipped?: boolean }).equipped)
+        .reduce((m, i) => Math.max(m, readFlag<number>(i, FLAGS.equippedOrder) ?? 0), 0);
+      update[flagPath(FLAGS.equippedOrder)] = maxEq + 100;
+    }
     void it.update(update);
     if (leftContainer) {
       const container = resolveItem(fromContainerId!);
-      const msg = `${it.name} equipped — removed from ${container?.name ?? "container"}`;
-      toast({ intent: "success", title: "Equipped", message: msg, icon: <i className="fa-solid fa-hand" aria-hidden="true" /> });
-      (globalThis as { ui?: { notifications?: { info?: (m: string) => void } } }).ui?.notifications?.info?.(msg);
+      toast({
+        intent: "success",
+        title: "Equipped",
+        message: `${it.name} equipped — removed from ${container?.name ?? "container"}`,
+        icon: <i className="fa-solid fa-hand" aria-hidden="true" />,
+      });
     }
   };
   const onOpenItem = (id: string) => resolveItem(id)?.sheet?.render(true);
@@ -76,11 +87,12 @@ export default function SheetShell() {
     embedUpdate([update]);
     if (containerId && wasEquipped) {
       const container = resolveItem(containerId);
-      const msg = `${it?.name} unequipped — stowed in ${container?.name ?? "container"}`;
-      // Custom in-sheet toast…
-      toast({ intent: "warning", title: "Unequipped", message: msg, icon: <i className="fa-regular fa-hand" aria-hidden="true" /> });
-      // …and a generic Foundry notification, for side-by-side comparison.
-      (globalThis as { ui?: { notifications?: { warn?: (m: string) => void } } }).ui?.notifications?.warn(msg);
+      toast({
+        intent: "warning",
+        title: "Unequipped",
+        message: `${it?.name} unequipped — stowed in ${container?.name ?? "container"}`,
+        icon: <i className="fa-regular fa-hand" aria-hidden="true" />,
+      });
     }
   };
   const onDeleteItem = (id: string) => {
