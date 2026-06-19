@@ -27,8 +27,13 @@ type RowOpts = {
   ownZone?: string;
   /** Accept a row dragged in from another group as a before/after drop here
    *  (used to un-nest: a nested row dropped among root rows routes through onNest
-   *  with zone:null at this drop position). */
-  acceptCrossGroup?: boolean;
+   *  with zone:null at this drop position). A predicate can restrict which source
+   *  groups are accepted (e.g. exclude the equipped tray, whose drops are handled
+   *  by a dedicated dropzone). */
+  acceptCrossGroup?: boolean | ((fromGroup: string) => boolean);
+  /** Edge-detection axis for before/after. 'y' (default) splits on clientY;
+   *  'x' splits on clientX — for a horizontal (flex-wrap) row like the equipped tray. */
+  axis?: "x" | "y";
   onStart?: () => void;
   onEnd?: () => void;
 };
@@ -50,11 +55,17 @@ export function useDragReorder(opts: {
   const [over, setOver] = useState<OverState | null>(null);
   const clear = () => { setDrag(null); setOver(null); };
 
-  // before/after from the pointer's position within the hovered row
-  const edgeWhere = (e: DragEvent<HTMLElement>): DropWhere => {
+  // before/after from the pointer's position within the hovered row, along `axis`
+  const edgeWhere = (e: DragEvent<HTMLElement>, axis: "x" | "y"): DropWhere => {
     const r = e.currentTarget.getBoundingClientRect();
-    return e.clientY < r.top + r.height / 2 ? "before" : "after";
+    return axis === "x"
+      ? e.clientX < r.left + r.width / 2 ? "before" : "after"
+      : e.clientY < r.top + r.height / 2 ? "before" : "after";
   };
+
+  // Whether this row accepts a cross-group drop from `fromGroup`.
+  const accepts = (o: RowOpts, fromGroup: string): boolean =>
+    typeof o.acceptCrossGroup === "function" ? o.acceptCrossGroup(fromGroup) : !!o.acceptCrossGroup;
 
   // Draggable + droppable row.
   const rowProps = (group: string, idx: number, o: RowOpts = {}): Handlers => ({
@@ -73,10 +84,10 @@ export function useDragReorder(opts: {
       const crossGroup = !into && drag.group !== group;
       // Reorder only within the same group, unless this row accepts a cross-group
       // drop (un-nest): then show a before/after line and route through onNest.
-      if (crossGroup && !o.acceptCrossGroup) return;
+      if (crossGroup && !accepts(o, drag.group)) return;
       e.preventDefault();
       e.dataTransfer.dropEffect = "move";
-      const where: DropWhere = into ? "into" : edgeWhere(e);
+      const where: DropWhere = into ? "into" : edgeWhere(e, o.axis ?? "y");
       if (!over || over.group !== group || over.idx !== idx || over.where !== where)
         setOver({ group, idx, where });
     },
@@ -85,7 +96,7 @@ export function useDragReorder(opts: {
       const isSelf = drag.group === group && drag.idx === idx;
       const into = !!o.container && !isSelf;
       const crossGroup = !into && drag.group !== group;
-      if (crossGroup && !o.acceptCrossGroup) { clear(); return; }
+      if (crossGroup && !accepts(o, drag.group)) { clear(); return; }
       e.preventDefault();
       if (into) {
         onNest?.({ fromGroup: drag.group, from: drag.idx, targetIdx: idx, zone: o.containerZone ?? null });

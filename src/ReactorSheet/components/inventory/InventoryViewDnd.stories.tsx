@@ -12,6 +12,7 @@ const item = (o: Partial<InventoryItemVM> & { id: string; name: string }): Inven
   monogram: o.name.slice(0, 2).toUpperCase(),
   weight: 0,
   sort: 0,
+  equippedSort: 0,
   equipped: null,
   quantity: null,
   isContainer: false,
@@ -62,6 +63,7 @@ export const Default = () => (
       onDelete={log("delete")}
       onConsume={log("consume")}
       onReorder={log("reorder")}
+      onReorderEquipped={log("reorderEquipped")}
       onNest={log("nest")}
     />
   </div>

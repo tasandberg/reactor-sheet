@@ -56,6 +56,9 @@ export default function SheetShell() {
   // sheet and other modules also write).
   const onReorder = (u: { id: string; sort: number }[]) =>
     embedUpdate(u.map((x) => ({ _id: x.id, [flagPath(FLAGS.order)]: x.sort })));
+  // The equipped tray has its own order, stored in a separate flag.
+  const onReorderEquipped = (u: { id: string; sort: number }[]) =>
+    embedUpdate(u.map((x) => ({ _id: x.id, [flagPath(FLAGS.equippedOrder)]: x.sort })));
   const onNest = (itemId: string, containerId: string | null) =>
     embedUpdate([{ _id: itemId, "system.containerId": containerId ?? "" }]);
   const onDeleteItem = (id: string) => {
@@ -110,6 +113,7 @@ export default function SheetShell() {
           onDelete={onDeleteItem}
           onConsume={onConsume}
           onReorder={onReorder}
+          onReorderEquipped={onReorderEquipped}
           onNest={onNest}
         />
       ) : (

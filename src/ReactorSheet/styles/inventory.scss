@@ -279,6 +279,14 @@
   &:active { cursor: grabbing; }
 }
 
+// Dragging an equipped tray tile down into the list → unequip drop target.
+.rs-inv-list.is-unequip-target {
+  border-radius: var(--r-md, 6px);
+  outline: 2px dashed color-mix(in oklab, var(--teal) 60%, transparent);
+  outline-offset: 2px;
+  background: color-mix(in oklab, var(--teal) 5%, transparent);
+}
+
 // ---------------------------------------------------------------------------
 // Coin editor
 // ---------------------------------------------------------------------------
@@ -355,6 +363,17 @@
   background: color-mix(in oklab, var(--teal) 8%, transparent);
 }
 .rs-equip-tcard { position: relative; }
+// tiles drag to reorder within the tray (own order)
+.rs-equip-tcard.is-sortable { cursor: grab; &:active { cursor: grabbing; } }
+.rs-equip-tcard.dragging { opacity: 0.4; }
+// horizontal insertion line on the leading/trailing edge of the hovered tile (teal)
+.rs-equip-tcard.drop-before::before,
+.rs-equip-tcard.drop-after::after {
+  content: ""; position: absolute; top: 2px; bottom: 2px; width: 2px;
+  background: var(--teal, #1f7575); border-radius: 2px; pointer-events: none;
+}
+.rs-equip-tcard.drop-before::before { left: -5px; }
+.rs-equip-tcard.drop-after::after  { right: -5px; }
 .rs-inv .rs-equip-tt {
   position: relative; width: 50px; height: 50px; padding: 0;
   display: grid; place-items: center; cursor: pointer;

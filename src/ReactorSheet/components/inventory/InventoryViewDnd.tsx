@@ -30,6 +30,8 @@ type Ops = {
   onDelete: (id: string) => void;
   onConsume: (id: string) => void;
   onReorder: (updates: { id: string; sort: number }[]) => void;
+  /** Persist the equipped tray's own order (writes the `equippedOrder` flag). */
+  onReorderEquipped: (updates: { id: string; sort: number }[]) => void;
   onNest: (itemId: string, containerId: string | null) => void;
 };
 
@@ -48,6 +50,7 @@ type SortState = { key: InventorySortKey; dir: SortDir };
 type Groups = Record<string, string[]>;
 
 const ROOT = "root";
+const EQUIPPED = "equipped"; // drag group for the equipped-tray tiles (own order)
 const gkey = (containerId: string) => `c:${containerId}`;
 const groupContainerId = (key: string) => (key === ROOT ? null : key.slice(2));
 
@@ -198,7 +201,9 @@ function SortableRow({
       className={cx("rs-inv-row", "is-sortable", dnd.rowClass(group, index))}
       style={depth > 0 ? ({ "--rs-inv-depth": depth } as React.CSSProperties) : undefined}
       onContextMenu={(e) => onContext(e, item)}
-      {...dnd.rowProps(group, index, { ownZone: group, acceptCrossGroup: group === ROOT })}
+      // Root rows accept a container child dropped among them (un-nest), but NOT a
+      // tray tile — equipped-tray drags onto the list are routed to unequip instead.
+      {...dnd.rowProps(group, index, { ownZone: group, acceptCrossGroup: group === ROOT ? (from) => from !== EQUIPPED : false })}
     >
       <span className="rs-inv-drag" aria-hidden="true">
         <i className="fa-solid fa-grip-lines" />
@@ -257,7 +262,7 @@ function ContainerRow({
       <div
         className={cx("rs-inv-row", "is-container", "is-sortable", dnd.rowClass(ROOT, index))}
         onContextMenu={(e) => onContext(e, item)}
-        {...dnd.rowProps(ROOT, index, { container: collapsed, containerZone: item.id, ownZone: ROOT, acceptCrossGroup: true })}
+        {...dnd.rowProps(ROOT, index, { container: collapsed, containerZone: item.id, ownZone: ROOT, acceptCrossGroup: (from) => from !== EQUIPPED })}
       >
         <span className="rs-inv-drag" aria-hidden="true">
           <i className="fa-solid fa-grip-lines" />
@@ -413,30 +418,37 @@ function equippedDetail(item: InventoryItemVM): string {
 
 function EquippedTray({
   items,
+  dnd,
   onOpen,
   onContext,
-  dragActive,
+  equipDropActive,
   onEquipDrop,
 }: {
   items: InventoryItemVM[];
+  dnd: Dnd;
   onOpen: (id: string) => void;
   onContext: OnContext;
-  /** A row is mid-drag — the tray is a live equip drop target. */
-  dragActive: boolean;
+  /** An All-Items row is mid-drag — the tray is a live equip drop target. */
+  equipDropActive: boolean;
   /** Drop landed on the tray → equip the dragged item. */
   onEquipDrop: () => void;
 }) {
   const [over, setOver] = useState(false);
-  const dropping = dragActive && over;
+  const dropping = equipDropActive && over;
   return (
     <div
       className={cx("rs-equip-tray", dropping && "is-drop-target")}
-      onDragOver={dragActive ? (e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; setOver(true); } : undefined}
+      onDragOver={equipDropActive ? (e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; setOver(true); } : undefined}
       onDragLeave={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setOver(false); }}
-      onDrop={dragActive ? (e) => { e.preventDefault(); onEquipDrop(); setOver(false); } : undefined}
+      onDrop={equipDropActive ? (e) => { e.preventDefault(); onEquipDrop(); setOver(false); } : undefined}
     >
-      {items.map((item) => (
-        <div key={item.id} className="rs-equip-tcard" onContextMenu={(e) => onContext(e, item)}>
+      {items.map((item, i) => (
+        <div
+          key={item.id}
+          className={cx("rs-equip-tcard", "is-sortable", dnd.rowClass(EQUIPPED, i))}
+          onContextMenu={(e) => onContext(e, item)}
+          {...dnd.rowProps(EQUIPPED, i, { ownZone: EQUIPPED, axis: "x" })}
+        >
           <button type="button" className="rs-equip-tt" onClick={() => onOpen(item.id)} aria-label={item.name} title={item.name}>
             {item.img ? <img src={item.img} alt="" /> : <span className="rs-equip-tt-ic">{item.monogram}</span>}
           </button>
@@ -522,11 +534,14 @@ function ItemContextMenu({
 // Root
 // ---------------------------------------------------------------------------
 
-export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onEquip, onOpen, onDelete, onConsume, onReorder, onNest }: Props) {
+export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onEquip, onOpen, onDelete, onConsume, onReorder, onReorderEquipped, onNest }: Props) {
   // Default to manual order so drag-to-reorder drops stick anywhere in the list.
   const [sort, setSort] = useState<SortState>({ key: "manual", dir: "asc" });
   const [expanded, setExpanded] = useState<Set<string>>(new Set()); // containers collapsed by default
   const [groups, setGroups] = useState<Groups>(() => buildGroups(inventory.items, sort));
+  // The equipped tray keeps its OWN order (ids), independent of the All-Items list.
+  const [equippedIds, setEquippedIds] = useState<string[]>(() => inventory.equipped.map((it) => it.id));
+  const [listOver, setListOver] = useState(false); // tray tile hovering the list → unequip
   const [menu, setMenu] = useState<MenuState | null>(null);
 
   const openMenu: OnContext = (e, item) => {
@@ -537,6 +552,10 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
   const byId = indexById(inventory.items);
   const groupsRef = useRef(groups);
   groupsRef.current = groups;
+  // Holds the *rendered* tray ids (stale ids dropped), kept index-aligned with the
+  // tiles so the drag handlers splice the same array the user sees. Assigned below
+  // once `trayIds` is computed.
+  const equippedIdsRef = useRef<string[]>(equippedIds);
 
   // Root of this sheet's inventory — scope sticky-offset queries here, NOT
   // document-wide, since multiple sheets can be open at once.
@@ -551,6 +570,14 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
     setGroups(buildGroups(inventory.items, sort));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataSig]);
+
+  // Rebuild the tray order from props whenever the equipped set or its order
+  // (equippedSort) changes. `inventory.equipped` is already sorted by the VM.
+  const equipSig = inventory.equipped.map((it) => `${it.id},${it.equippedSort}`).join("|");
+  useEffect(() => {
+    setEquippedIds(inventory.equipped.map((it) => it.id));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [equipSig]);
 
   // Persist a freshly-mutated groups map: renumber each group's sorts (i+1)*100 and
   // emit only the items whose order or container actually changed. Same diff the old
@@ -570,10 +597,31 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
     if (reorder.length) onReorder(reorder);
   }
 
-  // Commit handlers for the drag hook. Each mutates the local groups immediately
+  // Persist the tray order: renumber (i+1)*100, emit only changed items.
+  function persistEquipped(next: string[]) {
+    const cur = new Map(inventory.equipped.map((it) => [it.id, it.equippedSort] as const));
+    const updates: { id: string; sort: number }[] = [];
+    next.forEach((id, i) => {
+      const order = (i + 1) * 100;
+      if (cur.get(id) !== order) updates.push({ id, sort: order });
+    });
+    if (updates.length) onReorderEquipped(updates);
+  }
+
+  // Commit handlers for the drag hook. Each mutates the local order immediately
   // (so the dropped item re-renders in place at once) then persists the diff.
   const dnd = useDragReorder({
     onReorder: ({ group, from, to }) => {
+      // Tray tiles reorder in their own group → persist the equippedOrder flag.
+      if (group === EQUIPPED) {
+        const ids = [...equippedIdsRef.current];
+        const [moved] = ids.splice(from, 1);
+        if (moved === undefined) return;
+        ids.splice(to, 0, moved);
+        setEquippedIds(ids);
+        persistEquipped(ids);
+        return;
+      }
       const ids = [...(groupsRef.current[group] ?? [])];
       const [moved] = ids.splice(from, 1);
       if (moved === undefined) return;
@@ -615,9 +663,15 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
     });
 
   const sortedTop = sortInventory(inventory.items, sort.key, sort.dir);
-  const sortedEquipped = sortInventory(inventory.equipped, sort.key, sort.dir);
+  // Tray uses its own order (equippedIds), NOT the All-Items sort. Drop stale ids
+  // (item just unequipped/deleted) so tile indices match the array the drag
+  // handlers splice — keep `trayItems`/`trayIds` index-aligned.
+  const trayItems = equippedIds.map((id) => byId.get(id)).filter((it): it is InventoryItemVM => !!it);
+  const trayIds = trayItems.map((it) => it.id);
+  equippedIdsRef.current = trayIds; // drag handlers splice the rendered order
 
   const rootIds = groups[ROOT] ?? [];
+  const equippedDragActive = dnd.drag?.group === EQUIPPED; // a tray tile is mid-drag
 
   return (
     <section className="rs-inv">
@@ -634,10 +688,12 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
           <div className="rs-inv-sec rs-inv-sec--equipped">
             <SectionCount title="Equipped items" items={inventory.equipped} />
             <EquippedTray
-              items={sortedEquipped}
+              items={trayItems}
+              dnd={dnd}
               onOpen={onOpen}
               onContext={openMenu}
-              dragActive={dnd.drag != null}
+              // Equip-by-drop only for an All-Items row drag (not a tray-internal reorder).
+              equipDropActive={dnd.drag != null && dnd.drag.group !== EQUIPPED}
               onEquipDrop={() => {
                 const d = dnd.drag;
                 const id = d ? (groupsRef.current[d.group] ?? [])[d.idx] : undefined;
@@ -653,7 +709,22 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
       </div>
 
       <section className="rs-inv-sec rs-inv-sec--carried">
-        <div className="rs-inv-list">
+        <div
+          className={cx("rs-inv-list", equippedDragActive && listOver && "is-unequip-target")}
+          // Drag a tray tile down into the list → unequip it (the row already exists
+          // here; this just flips the equipped flag). Rows themselves reject the
+          // EQUIPPED group, so this wrapper is the sole handler for that drag.
+          onDragOver={equippedDragActive ? (e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; setListOver(true); } : undefined}
+          onDragLeave={equippedDragActive ? (e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setListOver(false); } : undefined}
+          onDrop={equippedDragActive ? (e) => {
+            e.preventDefault();
+            const d = dnd.drag;
+            const id = d ? equippedIdsRef.current[d.idx] : undefined;
+            if (id) onEquip(id); // toggles equipped off
+            setListOver(false);
+            dnd.clear();
+          } : undefined}
+        >
           <SortHeaderRow sort={sort} onSort={onSort} />
           {rootIds.map((id, index) => {
             const item = byId.get(id);

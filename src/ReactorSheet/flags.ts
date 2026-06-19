@@ -14,6 +14,9 @@ export const MODULE_ID = "reactor-sheet";
 export const FLAGS = {
   /** Manual order position of an item within its list (the main list or a container). */
   order: "order",
+  /** Manual order position of an equipped item within the equipped tray —
+   *  independent of `order` (its row position in the All-Items list). */
+  equippedOrder: "equippedOrder",
 } as const;
 export type FlagKey = (typeof FLAGS)[keyof typeof FLAGS];
 

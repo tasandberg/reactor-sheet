@@ -7,6 +7,11 @@ function orderOf(item: OseItem): number {
   return readFlag<number>(item, FLAGS.order) ?? (item as unknown as { sort?: number }).sort ?? 0;
 }
 
+/** Manual order within the equipped tray: its own flag, falling back to the list order. */
+function equippedOrderOf(item: OseItem): number {
+  return readFlag<number>(item, FLAGS.equippedOrder) ?? orderOf(item);
+}
+
 const COIN_DENOMS = ["pp", "gp", "ep", "sp", "cp"] as const;
 
 /** Coin denomination of a treasure item: handles "GP" (actor) and "[01.00] Gold (gp)" (pack). */
@@ -99,6 +104,7 @@ function toVM(item: OseItem, children: InventoryItemVM[] = []): InventoryItemVM 
     monogram: monogram(item.name as string),
     weight: s.cumulativeWeight ?? s.weight ?? 0,
     sort: orderOf(item),
+    equippedSort: equippedOrderOf(item),
     equipped: "equipped" in s ? !!s.equipped : null,
     quantity: hasQty ? { value: q.value, max: q.max || q.value } : null,
     isContainer: item.type === "container",
@@ -153,11 +159,12 @@ export function selectInventory(items: OseItem[]): InventoryVM {
   }
 
   // Equipped subset for the tray — pulled from the same tree (items still lists
-  // them as rows). Flatten so an equipped nested item is included too.
+  // them as rows). Flatten so an equipped nested item is included too, then order
+  // by the tray's own `equippedOrder` flag (independent of the list `order`).
   function flatten(list: InventoryItemVM[]): InventoryItemVM[] {
     return list.flatMap((it) => [it, ...flatten(it.children)]);
   }
-  const equipped = flatten(vmItems).filter((it) => it.equipped === true);
+  const equipped = sortEquipped(flatten(vmItems).filter((it) => it.equipped === true));
 
   // Legacy groups for grid view compatibility
   const GROUPS = [
@@ -210,6 +217,13 @@ export function sortInventory(
   });
   return sorted.map((it) =>
     it.children.length > 0 ? { ...it, children: sortInventory(it.children, key, dir) } : it,
+  );
+}
+
+/** Order the equipped-tray subset by each item's `equippedSort` (ties broken by name). */
+export function sortEquipped(items: InventoryItemVM[]): InventoryItemVM[] {
+  return [...items].sort((a, b) =>
+    a.equippedSort !== b.equippedSort ? a.equippedSort - b.equippedSort : a.name.localeCompare(b.name),
   );
 }
 

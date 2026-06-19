@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { selectInventory, selectEncumbrance, sortInventory } from "./inventory";
+import { selectInventory, selectEncumbrance, sortInventory, sortEquipped } from "./inventory";
 import type { OseItem, OSEActor } from "../types/types";
+import { MODULE_ID, FLAGS } from "../flags";
 
 const mk = (
   type: string,
@@ -138,7 +139,7 @@ describe("selectInventory — container tree", () => {
 describe("sortInventory", () => {
   const mkVM = (overrides: Partial<import("./types").InventoryItemVM>): import("./types").InventoryItemVM => ({
     id: "x", name: "X", img: "", category: "Gear", categoryRank: 2,
-    damage: "", tags: [], monogram: "XX", weight: 0, sort: 0,
+    damage: "", tags: [], monogram: "XX", weight: 0, sort: 0, equippedSort: 0,
     equipped: null, quantity: null, isContainer: false, children: [],
     ...overrides,
   });
@@ -190,6 +191,36 @@ describe("sortInventory", () => {
     });
     const result = sortInventory([parent], "name");
     expect(result[0].children.map((c) => c.name)).toEqual(["Ant", "Zap"]);
+  });
+});
+
+describe("sortEquipped", () => {
+  const mkVM = (id: string, name: string, equippedSort: number): import("./types").InventoryItemVM => ({
+    id, name, img: "", category: "Gear", categoryRank: 2, damage: "", tags: [],
+    monogram: "XX", weight: 0, sort: 0, equippedSort, equipped: true, quantity: null,
+    isContainer: false, children: [],
+  });
+
+  it("orders by equippedSort, ties broken by name", () => {
+    const a = mkVM("a", "Zaa", 100);
+    const b = mkVM("b", "Aaa", 300);
+    const c = mkVM("c", "Mmm", 100); // tie with a on sort → name decides
+    expect(sortEquipped([b, a, c]).map((i) => i.id)).toEqual(["c", "a", "b"]);
+  });
+});
+
+describe("selectInventory — equipped tray order", () => {
+  it("orders the equipped subset by the equippedOrder flag, independent of list order", () => {
+    const flagged = (id: string, name: string, order: number, equippedOrder: number): OseItem =>
+      ({
+        _id: id, name, img: "", type: "weapon", sort: order,
+        system: { equipped: true, weight: 10 },
+        flags: { [MODULE_ID]: { [FLAGS.order]: order, [FLAGS.equippedOrder]: equippedOrder } },
+      }) as unknown as OseItem;
+    // List order (FLAGS.order) is A,B; tray order (equippedOrder) is reversed.
+    const vm = selectInventory([flagged("a", "A", 100, 200), flagged("b", "B", 200, 100)]);
+    expect(vm.items.map((i) => i.id)).toEqual(["a", "b"]);     // list keeps `order`
+    expect(vm.equipped.map((i) => i.id)).toEqual(["b", "a"]);  // tray uses `equippedOrder`
   });
 });
 

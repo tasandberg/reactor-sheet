@@ -93,6 +93,7 @@ export interface InventoryItemVM {
   monogram: string;
   weight: number;
   sort: number;            // manual order — reactor-sheet `order` flag (falls back to item.sort)
+  equippedSort: number;    // manual order within the equipped tray — `equippedOrder` flag (falls back to `sort`)
   /** null when the item type can't be equipped (no `equipped` field). */
   equipped: boolean | null;
   /** null unless the item is a stack (qty > 1) or charged (max set). */
