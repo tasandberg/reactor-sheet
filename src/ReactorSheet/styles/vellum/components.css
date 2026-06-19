@@ -505,8 +505,11 @@
 }
 .toast-host .toast {
   pointer-events: auto;
+  /* Definite width so the body has room (an absolutely-positioned host would
+     otherwise shrink the toast to its longest word). */
+  width: min(320px, calc(100cqw - 2 * var(--spacer-3)));
   min-width: 0;
-  max-width: min(340px, calc(100cqw - 2 * var(--spacer-3)));
+  max-width: none;
 }
 
 .toast {
@@ -516,21 +519,22 @@
   border-radius: var(--r-md);
   padding: 11px 14px;
   box-shadow: 0 6px 18px oklch(0 0 0 / 0.35);
-  min-width: 280px;
+  min-width: 240px;
   max-width: 380px;
-  display: grid;
-  grid-template-columns: 18px 1fr auto;
+  display: flex;
   gap: 10px;
   align-items: flex-start;
 }
 .toast .ic {
+  flex: none;
   width: 18px;
   height: 18px;
   display: grid;
   place-items: center;
   color: var(--teal);
 }
-.toast .body { min-width: 0; }
+.toast .body { flex: 1 1 auto; min-width: 0; }
+.toast .x { flex: none; }
 .toast .ttl {
   font-family: var(--display);
   font-size: 14px;

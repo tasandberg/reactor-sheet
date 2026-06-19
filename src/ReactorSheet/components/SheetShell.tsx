@@ -43,7 +43,7 @@ export default function SheetShell() {
     if (leftContainer) {
       const container = resolveItem(fromContainerId!);
       const msg = `${it.name} equipped — removed from ${container?.name ?? "container"}`;
-      toast({ intent: "success", title: "Equipped", message: msg });
+      toast({ intent: "success", title: "Equipped", message: msg, icon: <i className="fa-solid fa-hand" aria-hidden="true" /> });
       (globalThis as { ui?: { notifications?: { info?: (m: string) => void } } }).ui?.notifications?.info?.(msg);
     }
   };
@@ -78,7 +78,7 @@ export default function SheetShell() {
       const container = resolveItem(containerId);
       const msg = `${it?.name} unequipped — stowed in ${container?.name ?? "container"}`;
       // Custom in-sheet toast…
-      toast({ intent: "warning", title: "Unequipped", message: msg });
+      toast({ intent: "warning", title: "Unequipped", message: msg, icon: <i className="fa-regular fa-hand" aria-hidden="true" /> });
       // …and a generic Foundry notification, for side-by-side comparison.
       (globalThis as { ui?: { notifications?: { warn?: (m: string) => void } } }).ui?.notifications?.warn(msg);
     }
