@@ -53,8 +53,16 @@ const gkey = (containerId: string) => `c:${containerId}`;
 const groupContainerId = (key: string) => (key === ROOT ? null : key.slice(2));
 
 const weightLabel = (w: number) => (w > 0 ? `${w} cn` : "—");
-const cardBadge = (item: InventoryItemVM) =>
-  item.damage || (item.quantity ? `${item.quantity.value}/${item.quantity.max}` : "");
+
+// "N items · X cn" — count + total weight, used by both section headers.
+function flattenItems(list: InventoryItemVM[]): InventoryItemVM[] {
+  return list.flatMap((it) => [it, ...flattenItems(it.children)]);
+}
+function sectionCountLabel(items: InventoryItemVM[]): string {
+  const all = flattenItems(items);
+  const cn = all.reduce((s, it) => s + (it.weight || 0), 0);
+  return `${all.length} ${all.length === 1 ? "item" : "items"} · ${cn} cn`;
+}
 
 // ---------------------------------------------------------------------------
 // Groups <-> VM
@@ -241,16 +249,6 @@ function SortableRow({
   );
 }
 
-// A non-draggable row used by the equipped table (same body as the main rows).
-function StaticRow({ item, onEquip, onOpen, onSetQty, onContext }: { item: InventoryItemVM; onEquip: (id: string) => void; onOpen: (id: string) => void; onSetQty: (id: string, value: number) => void; onContext: OnContext }) {
-  return (
-    <div className="rs-inv-row" onContextMenu={(e) => onContext(e, item)}>
-      <span className="rs-inv-drag" aria-hidden="true" />
-      <RowInner item={item} onEquip={onEquip} onOpen={onOpen} onSetQty={onSetQty} />
-    </div>
-  );
-}
-
 // ---------------------------------------------------------------------------
 // Container: sortable in root + droppable body (accepts nested items)
 // ---------------------------------------------------------------------------
@@ -387,39 +385,8 @@ function SortHeaderRow({ sort, onSort }: { sort: SortState; onSort: (key: Invent
 }
 
 // ---------------------------------------------------------------------------
-// Grid card / coin / encumbrance
+// Coin / encumbrance
 // ---------------------------------------------------------------------------
-
-function InvCard({ item, onEquip, onOpen }: { item: InventoryItemVM; onEquip: (id: string) => void; onOpen: (id: string) => void }) {
-  const badge = cardBadge(item);
-  return (
-    <div className="rs-inv-card">
-      <div className="rs-inv-cardtile">
-        <button type="button" className="rs-inv-cardbtn" onClick={() => onOpen(item.id)} aria-label={item.name}>
-          {item.img ? <img src={item.img} alt="" /> : <span className="mono">{item.monogram}</span>}
-        </button>
-        {item.equipped !== null && (
-          <button
-            type="button"
-            className={cx("rs-inv-cardeq", item.equipped && "on")}
-            onClick={() => onEquip(item.id)}
-            aria-label={item.equipped ? "Unequip" : "Equip"}
-          >
-            <i className="fa-solid fa-check" aria-hidden="true" />
-          </button>
-        )}
-        {badge && <span className="rs-inv-cardbadge">{badge}</span>}
-      </div>
-      <span className="rs-inv-cardname">{item.name}</span>
-    </div>
-  );
-}
-
-const SORT_OPTIONS: { key: InventorySortKey; label: string }[] = [
-  { key: "category", label: "Category" },
-  { key: "name", label: "Name" },
-  { key: "weight", label: "Weight" },
-];
 
 function CoinRow({ coin, onSetCoin }: { coin: CoinVM; onSetCoin: (id: string, value: number) => void }) {
   return (
@@ -465,45 +432,46 @@ function EncumbranceBar({ e }: { e: EncumbranceVM }) {
 }
 
 // ---------------------------------------------------------------------------
-// Collapsible section header (shared by Equipped + Carried Items)
+// Section header (static — title + "N items · X cn")
 // ---------------------------------------------------------------------------
 
-function SectionHeader({ title, count, collapsed, onToggle }: { title: string; count: number; collapsed: boolean; onToggle: () => void }) {
+function SectionCount({ title, items }: { title: string; items: InventoryItemVM[] }) {
   return (
-    <button type="button" className={cx("rs-inv-sec-head", collapsed && "is-collapsed")} aria-expanded={!collapsed} onClick={onToggle}>
-      <i className="rs-inv-sec-caret fa-solid fa-chevron-down" aria-hidden="true" />
+    <div className="rs-inv-sec-head">
       <span className="rs-inv-sec-title">{title}</span>
-      <span className="rs-inv-sec-count">{count}</span>
-    </button>
+      <span className="rs-inv-sec-count">{sectionCountLabel(items)}</span>
+    </div>
   );
 }
 
-// Collapsed section view: just the item images, in a horizontal row.
-function ImageStrip({
-  items,
-  showHand,
-  onEquip,
-  onOpen,
-  onContext,
-}: {
-  items: InventoryItemVM[];
-  showHand: boolean;
-  onEquip: (id: string) => void;
-  onOpen: (id: string) => void;
-  onContext: OnContext;
-}) {
+// ---------------------------------------------------------------------------
+// Equipped tray — dashed-bordered row of large ink-stamp tiles, one per
+// equipped item, each with a hover popover. Click a tile to unequip.
+// ---------------------------------------------------------------------------
+
+/** Popover detail line: weapon damage, else weight, else the category. */
+function equippedDetail(item: InventoryItemVM): string {
+  if (item.damage) return item.damage;
+  if (item.weight > 0) return weightLabel(item.weight);
+  return item.category;
+}
+
+function EquippedTray({ items, onOpen, onContext }: { items: InventoryItemVM[]; onOpen: (id: string) => void; onContext: OnContext }) {
   return (
-    <div className="rs-equip-strip">
+    <div className="rs-equip-tray">
       {items.map((item) => (
-        <div key={item.id} className="rs-equip-tile" onContextMenu={(e) => onContext(e, item)}>
-          <button type="button" className="rs-equip-imgbtn" onClick={() => onOpen(item.id)} aria-label={item.name}>
-            {item.img ? <img src={item.img} alt="" /> : <span className="mono">{item.monogram}</span>}
+        <div key={item.id} className="rs-equip-tcard" onContextMenu={(e) => onContext(e, item)}>
+          <button type="button" className="rs-equip-tt" onClick={() => onOpen(item.id)} aria-label={item.name} title={item.name}>
+            {item.img ? <img src={item.img} alt="" /> : <span className="rs-equip-tt-ic">{item.monogram}</span>}
           </button>
-          {showHand && (
-            <button type="button" className="rs-equip-hand" onClick={() => onEquip(item.id)} aria-label="Unequip">
-              <i className="fa-solid fa-hand" aria-hidden="true" />
-            </button>
-          )}
+          <span className="rs-equip-tt-pop" role="tooltip">
+            <span className="rs-equip-tt-pop-nm">{item.name}</span>
+            <span className="rs-equip-tt-pop-meta">
+              <span className="rs-equip-tt-pop-type">{item.category}</span>
+              <span className="rs-equip-tt-pop-dot">·</span>
+              <span className="rs-equip-tt-pop-detail">{equippedDetail(item)}</span>
+            </span>
+          </span>
         </div>
       ))}
     </div>
@@ -518,11 +486,13 @@ function ItemContextMenu({
   menu,
   onClose,
   onOpen,
+  onEquip,
   onDelete,
 }: {
   menu: MenuState;
   onClose: () => void;
   onOpen: (id: string) => void;
+  onEquip: (id: string) => void;
   onDelete: (id: string) => void;
 }) {
   useEffect(() => {
@@ -553,6 +523,11 @@ function ItemContextMenu({
       <button type="button" className="rs-ctx-item" disabled title="Coming soon">
         <i className="fa-solid fa-gift" aria-hidden="true" /> Send Item
       </button>
+      {menu.item.equipped === true && (
+        <button type="button" className="rs-ctx-item" onClick={() => { onEquip(menu.item.id); onClose(); }}>
+          <i className="fa-solid fa-hand" aria-hidden="true" /> Unequip
+        </button>
+      )}
       <button type="button" className="rs-ctx-item is-danger" onClick={() => { onDelete(menu.item.id); onClose(); }}>
         <i className="fa-solid fa-trash" aria-hidden="true" /> Delete Item
       </button>
@@ -565,13 +540,10 @@ function ItemContextMenu({
 // ---------------------------------------------------------------------------
 
 export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onEquip, onOpen, onDelete, onSetQty, onReorder, onNest }: Props) {
-  const [view, setView] = useState<"list" | "grid">("list");
   // Default to manual order so drag-to-reorder drops stick anywhere in the list.
   const [sort, setSort] = useState<SortState>({ key: "manual", dir: "asc" });
   const [expanded, setExpanded] = useState<Set<string>>(new Set()); // containers collapsed by default
   const [groups, setGroups] = useState<Groups>(() => buildGroups(inventory.items, sort));
-  const [equipCollapsed, setEquipCollapsed] = useState(true); // default: images-only strip
-  const [carriedCollapsed, setCarriedCollapsed] = useState(false); // carried items shown by default
   const [menu, setMenu] = useState<MenuState | null>(null);
 
   const openMenu: OnContext = (e, item) => {
@@ -602,7 +574,7 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
     const ro = new ResizeObserver(apply);
     if (eq) ro.observe(eq);
     return () => ro.disconnect();
-  }, [equipCollapsed, inventory.equipped.length, inventory.count]);
+  }, [inventory.equipped.length, inventory.count]);
 
   // Cheap structural signature of the inventory data (ids + nesting + order + sort key),
   // computed without sorting. Groups are rebuilt from props only when this changes.
@@ -687,85 +659,45 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
     <section className="rs-inv" ref={rootRef}>
       <div className="rs-inv-head">
         <SectionTitle hint="equip weapons &amp; armour to bring them into play">Inventory</SectionTitle>
-        {view === "grid" && (
-          <div className="rs-inv-sort" role="group" aria-label="Sort by">
-            {SORT_OPTIONS.map((opt) => (
-              <button key={opt.key} type="button" className={cx("rs-inv-sort-btn", sort.key === opt.key && "active")} onClick={() => onSort(opt.key)}>
-                {opt.label}
-              </button>
-            ))}
-          </div>
-        )}
-        <div className="rs-inv-toggle" role="group" aria-label="View">
-          <button type="button" className={cx("rs-inv-vbtn", view === "list" && "active")} aria-label="List view" onClick={() => setView("list")}>
-            <i className="fa-solid fa-list" aria-hidden="true" />
-          </button>
-          <button type="button" className={cx("rs-inv-vbtn", view === "grid" && "active")} aria-label="Grid view" onClick={() => setView("grid")}>
-            <i className="fa-solid fa-table-cells-large" aria-hidden="true" />
-          </button>
-        </div>
       </div>
 
       {encumbrance.enabled && <EncumbranceBar e={encumbrance} />}
 
-      {view === "list" ? (
-        <>
-          {inventory.equipped.length > 0 && (
-            <section className="rs-inv-sec rs-inv-sec--equipped">
-              <SectionHeader title="Equipped" count={inventory.equipped.length} collapsed={equipCollapsed} onToggle={() => setEquipCollapsed((c) => !c)} />
-              {equipCollapsed ? (
-                <ImageStrip items={inventory.equipped} showHand onEquip={onEquip} onOpen={onOpen} onContext={openMenu} />
-              ) : (
-                <div className="rs-inv-list">
-                  <SortHeaderRow sort={sort} onSort={onSort} />
-                  {sortedEquipped.map((item) => (
-                    <StaticRow key={item.id} item={item} onEquip={onEquip} onOpen={onOpen} onSetQty={onSetQty} onContext={openMenu} />
-                  ))}
-                </div>
-              )}
-            </section>
-          )}
-
-          <section className="rs-inv-sec rs-inv-sec--carried">
-            <SectionHeader title="Carried Items" count={inventory.count} collapsed={carriedCollapsed} onToggle={() => setCarriedCollapsed((c) => !c)} />
-            {carriedCollapsed ? (
-              <ImageStrip items={sortedTop} showHand={false} onEquip={onEquip} onOpen={onOpen} onContext={openMenu} />
-            ) : (
-              <div className="rs-inv-list">
-                <SortHeaderRow sort={sort} onSort={onSort} />
-                {rootIds.map((id, index) => {
-                  const item = byId.get(id);
-                  if (!item) return null;
-                  return item.isContainer ? (
-                    <ContainerRow
-                      key={id}
-                      item={item}
-                      index={index}
-                      childIds={groups[gkey(id)] ?? []}
-                      byId={byId}
-                      collapsed={!expanded.has(id)}
-                      dnd={dnd}
-                      onToggle={toggleCollapse}
-                      onEquip={onEquip}
-                      onOpen={onOpen}
-                      onSetQty={onSetQty}
-                      onContext={openMenu}
-                    />
-                  ) : (
-                    <SortableRow key={id} item={item} index={index} group={ROOT} depth={0} dnd={dnd} onEquip={onEquip} onOpen={onOpen} onSetQty={onSetQty} onContext={openMenu} />
-                  );
-                })}
-              </div>
-            )}
-          </section>
-        </>
-      ) : (
-        <div className="rs-inv-cards">
-          {sortedTop.map((it) => (
-            <InvCard key={it.id} item={it} onEquip={onEquip} onOpen={onOpen} />
-          ))}
-        </div>
+      {inventory.equipped.length > 0 && (
+        <section className="rs-inv-sec rs-inv-sec--equipped">
+          <SectionCount title="Equipped items" items={inventory.equipped} />
+          <EquippedTray items={sortedEquipped} onOpen={onOpen} onContext={openMenu} />
+        </section>
       )}
+
+      <section className="rs-inv-sec rs-inv-sec--carried">
+        <SectionCount title="All Items" items={sortedTop} />
+        <div className="rs-inv-list">
+          <SortHeaderRow sort={sort} onSort={onSort} />
+          {rootIds.map((id, index) => {
+            const item = byId.get(id);
+            if (!item) return null;
+            return item.isContainer ? (
+              <ContainerRow
+                key={id}
+                item={item}
+                index={index}
+                childIds={groups[gkey(id)] ?? []}
+                byId={byId}
+                collapsed={!expanded.has(id)}
+                dnd={dnd}
+                onToggle={toggleCollapse}
+                onEquip={onEquip}
+                onOpen={onOpen}
+                onSetQty={onSetQty}
+                onContext={openMenu}
+              />
+            ) : (
+              <SortableRow key={id} item={item} index={index} group={ROOT} depth={0} dnd={dnd} onEquip={onEquip} onOpen={onOpen} onSetQty={onSetQty} onContext={openMenu} />
+            );
+          })}
+        </div>
+      </section>
 
       {coins.length > 0 && (
         <div className="rs-inv-coin">
@@ -778,7 +710,7 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
         </div>
       )}
 
-      {menu && <ItemContextMenu menu={menu} onClose={() => setMenu(null)} onOpen={onOpen} onDelete={onDelete} />}
+      {menu && <ItemContextMenu menu={menu} onClose={() => setMenu(null)} onOpen={onOpen} onEquip={onEquip} onDelete={onDelete} />}
     </section>
   );
 }

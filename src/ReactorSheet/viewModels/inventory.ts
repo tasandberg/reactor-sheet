@@ -120,22 +120,14 @@ export function selectInventory(items: OseItem[]): InventoryVM {
       !coinDenom(it.name as string),
   );
 
-  // Equipped items live in the equipped shelf, not the main list.
-  const isEquipped = (it: OseItem) => (it.system as { equipped?: boolean }).equipped === true;
-  const equipped = physical
-    .filter(isEquipped)
-    .sort((a, b) => orderOf(a) - orderOf(b))
-    .map((it) => toVM(it));
-  const eligible = physical.filter((it) => !isEquipped(it));
-
   // Index by id for O(1) child lookups
-  const byId = new Map<string, OseItem>(eligible.map((it) => [it._id as string, it]));
+  const byId = new Map<string, OseItem>(physical.map((it) => [it._id as string, it]));
 
   // Partition: children (have a containerId pointing to a known container) vs top-level
   const childrenByContainer = new Map<string, OseItem[]>();
   const topLevel: OseItem[] = [];
 
-  for (const it of eligible) {
+  for (const it of physical) {
     const cid: string | undefined = (it.system as { containerId?: string }).containerId;
     if (cid && byId.has(cid)) {
       const bucket = childrenByContainer.get(cid) ?? [];
@@ -159,6 +151,13 @@ export function selectInventory(items: OseItem[]): InventoryVM {
   function countAll(list: InventoryItemVM[]): number {
     return list.reduce((n, it) => n + 1 + countAll(it.children), 0);
   }
+
+  // Equipped subset for the tray — pulled from the same tree (items still lists
+  // them as rows). Flatten so an equipped nested item is included too.
+  function flatten(list: InventoryItemVM[]): InventoryItemVM[] {
+    return list.flatMap((it) => [it, ...flatten(it.children)]);
+  }
+  const equipped = flatten(vmItems).filter((it) => it.equipped === true);
 
   // Legacy groups for grid view compatibility
   const GROUPS = [

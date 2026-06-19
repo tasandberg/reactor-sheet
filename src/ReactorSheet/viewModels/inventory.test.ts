@@ -75,13 +75,24 @@ describe("selectInventory", () => {
     expect(vm.groups.map((g) => g.key)).toContain("weapons");
   });
 
-  it("equipped items go to the equipped shelf, not the main list", () => {
+  it("equipped items appear in both the main list and the equipped subset", () => {
     const vm2 = selectInventory([
       mk("weapon", "Sword", { equipped: true, weight: 30 }),
       mk("armor", "Shield", { equipped: false, weight: 10 }),
     ]);
     expect(vm2.equipped.map((i) => i.name)).toEqual(["Sword"]);
-    expect(vm2.items.map((i) => i.name)).toEqual(["Shield"]);
+    expect(vm2.items.map((i) => i.name)).toEqual(["Sword", "Shield"]);
+    expect(vm2.count).toBe(2);
+  });
+
+  it("equipped subset includes an equipped nested item still listed under its container", () => {
+    const vm2 = selectInventory([
+      mk("container", "Bag", { weight: 5 }, { id: "bag" }),
+      mk("weapon", "Sword", { equipped: true, weight: 30, containerId: "bag" }, { id: "sword" }),
+    ]);
+    expect(vm2.items.map((i) => i.id)).toEqual(["bag"]);
+    expect(vm2.items[0].children.map((c) => c.id)).toEqual(["sword"]);
+    expect(vm2.equipped.map((i) => i.id)).toEqual(["sword"]);
   });
 
   it("excludes non-physical types (spells, abilities)", () => {

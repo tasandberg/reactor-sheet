@@ -109,8 +109,8 @@ export interface InventoryGroup {
 }
 
 export interface InventoryVM {
-  items: InventoryItemVM[];  // top-level only; containers carry their children. Excludes equipped.
-  /** Currently-equipped items, shown in the equipped shelf (and pulled from `items`). */
+  items: InventoryItemVM[];  // top-level only; containers carry their children. Includes equipped items.
+  /** Currently-equipped items, shown in the equipped tray (a subset of `items`). */
   equipped: InventoryItemVM[];
   count: number;
   /** @deprecated kept for grid view compatibility */

@@ -1,10 +1,10 @@
-// Inventory tab — list + grid views + encumbrance bar.
+// Inventory tab — single-column list view + encumbrance bar.
 // Button selectors are qualified with .rs-inv so they beat the
 // `.reactor-sheet-app button { all: unset }` reset (0,1,1) in styles.scss.
 
 .rs-inv { display: flex; flex-direction: column; }
 
-// --- header: title + hint (left), sort control (center), list/grid toggle (right) ---
+// --- header: title + hint ---
 .rs-inv-head {
   display: flex;
   align-items: center;
@@ -15,25 +15,6 @@
   border-bottom: 3px solid var(--section-rule);
 }
 .rs-inv-head .section-title { flex: 1; margin: 0; padding-bottom: 0; border-bottom: none; }
-
-.rs-inv-toggle {
-  flex: 0 0 auto;
-  display: inline-flex;
-  border: 1px solid var(--border, #3a342c);
-  border-radius: 6px;
-  overflow: hidden;
-}
-.rs-inv .rs-inv-vbtn {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 32px; height: 26px;
-  background: transparent;
-  color: var(--text-mute, #8a8270);
-  cursor: pointer;
-  font-size: 13px;
-  transition: color 0.12s, background 0.12s;
-}
-.rs-inv .rs-inv-vbtn:hover { color: var(--text-dim, #b5ad97); }
-.rs-inv .rs-inv-vbtn.active { background: var(--teal); color: var(--on-accent, #070605); }
 
 // --- encumbrance bar ---
 .rs-enc { margin: var(--spacer-3) 0 var(--spacer-6); }
@@ -48,40 +29,6 @@
 .rs-enc-fill {
   height: 100%; border-radius: 99px;
   background: linear-gradient(90deg, var(--forest, #4a7c4a), var(--mustard, #d4b878), var(--crimson, #c75044));
-}
-
-// --- sort control (button group in .rs-inv-head) ---
-.rs-inv .rs-inv-sort {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacer-1);
-  border: 1px solid var(--border, #3a342c);
-  border-radius: 6px;
-  overflow: hidden;
-}
-.rs-inv .rs-inv-sort-btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  padding: 4px var(--spacer-2);
-  background: transparent;
-  color: var(--text-mute, #8a8270);
-  font-family: var(--sans); font-size: var(--fs-3xs, 10px);
-  letter-spacing: 0.06em; text-transform: uppercase;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: color 0.12s, background 0.12s;
-}
-.rs-inv .rs-inv-sort-btn:hover { color: var(--text-dim, #b5ad97); }
-.rs-inv .rs-inv-sort-btn.active { background: var(--surface-2, #2c2823); color: var(--text, #e5dec8); }
-
-// --- category group (legacy — grid view section headers) ---
-.rs-inv-group { margin-top: var(--spacer-4); }
-.rs-inv-cat {
-  font-family: var(--sans); font-size: var(--fs-2xs, 11px); font-weight: 600;
-  letter-spacing: 0.09em; text-transform: uppercase;
-  color: var(--text-mute, #8a8270);
-  padding-bottom: var(--spacer-1); margin-bottom: var(--spacer-1);
-  border-bottom: 1px solid var(--border-soft, #2c2823);
 }
 
 // ---------------------------------------------------------------------------
@@ -325,52 +272,6 @@
 }
 
 // ---------------------------------------------------------------------------
-// Grid cards
-// ---------------------------------------------------------------------------
-
-.rs-inv-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
-  gap: var(--spacer-3) var(--spacer-2);
-  margin-top: var(--spacer-2);
-}
-.rs-inv-card { display: flex; flex-direction: column; align-items: center; gap: var(--spacer-2); }
-.rs-inv-cardtile {
-  position: relative; width: 100%; aspect-ratio: 1;
-  border-radius: 6px; background: var(--ink, #070605);
-  border: 1px solid var(--border, #3a342c);
-}
-.rs-inv .rs-inv-cardbtn {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-}
-.rs-inv-cardbtn img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
-.rs-inv-cardbtn .mono {
-  font-family: var(--display); font-size: var(--fs-2xl, 21px);
-  letter-spacing: 0.04em; color: var(--stamp-text, #e5dec8);
-}
-.rs-inv .rs-inv-cardeq {
-  position: absolute; top: var(--spacer-1); right: var(--spacer-1);
-  width: 18px; height: 18px; border-radius: 4px;
-  display: inline-flex; align-items: center; justify-content: center;
-  background: var(--surface-3, #3a3429); color: var(--text-faint, #6a6354);
-  border: 1px solid var(--border, #3a342c); cursor: pointer; font-size: 10px;
-}
-.rs-inv .rs-inv-cardeq.on { background: var(--teal); color: var(--on-accent, #070605); border-color: var(--teal); }
-.rs-inv-cardbadge {
-  position: absolute; right: var(--spacer-1); bottom: var(--spacer-1);
-  font-family: var(--mono); font-size: var(--fs-3xs, 10px);
-  color: var(--text-dim, #b5ad97);
-  background: rgba(0, 0, 0, 0.55); border: 1px solid var(--border, #3a342c);
-  border-radius: 3px; padding: 0 var(--spacer-1);
-}
-.rs-inv-cardname {
-  font-family: var(--display); font-size: var(--fs-xs, 12px); line-height: 1.1;
-  text-align: center; color: var(--text-dim, #b5ad97);
-}
-
-// ---------------------------------------------------------------------------
 // Coin editor
 // ---------------------------------------------------------------------------
 
@@ -402,62 +303,91 @@
 .rs-inv .rs-coin-in { -moz-appearance: textfield; appearance: textfield; }
 
 // ---------------------------------------------------------------------------
-// Collapsible sections (Equipped + Carried Items) + image strip
+// Sections (Equipped tray + All Items) + sticky pinning
 // ---------------------------------------------------------------------------
 
 .rs-inv-sec { margin: var(--spacer-3) 0; }
 
-// Sticky equipped tray + carried header. Scroll container is .rs-sheet; both pin
-// against it. The carried header's `top` is set in JS to the equipped tray's
-// measured height so it tucks flush beneath (background required so scrolled rows
-// don't bleed through).
+// Sticky equipped tray + All-Items header. Scroll container is .rs-sheet; both pin
+// against it. The carried header's `top` is set in JS to the equipped section's
+// measured height so it tucks flush beneath. Both need an opaque, full-width
+// background so rows scrolling underneath don't bleed through (and the equipped
+// tiles don't show through the header).
 .rs-inv-sec--equipped {
   position: sticky; top: 0; z-index: 7;
   background: var(--bg);
+  // Spacing to All Items lives INSIDE the opaque band (not as a transparent
+  // inter-section margin) so the two sticky bands meet flush with no see-through
+  // strip. The JS offset measures this height, so the All-Items header pins to it.
+  margin-bottom: 0;
+  padding-bottom: var(--spacer-3);
 }
+.rs-inv-sec--carried { margin-top: 0; }
 .rs-inv-sec--carried > .rs-inv-sec-head {
   position: sticky; top: 0; z-index: 6;
-  // full-width so the background masks rows scrolling beneath the pinned header
-  display: flex; width: 100%;
+}
+// static (non-collapsible) header: title on the left, "N items · X cn" on the right
+.rs-inv-sec-head {
+  display: flex; align-items: baseline; gap: var(--spacer-2); width: 100%;
+  padding: var(--spacer-1) 0 var(--spacer-2);
   background: var(--bg);
-}
-.rs-inv .rs-inv-sec-head {
-  display: inline-flex; align-items: center; gap: var(--spacer-2);
-  background: transparent; border: none; cursor: pointer; padding: 0 0 var(--spacer-2);
   color: var(--text-mute, #8a8270);
-  &:hover { color: var(--text-dim, #b5ad97); }
-}
-.rs-inv-sec-caret {
-  font-size: 9px; transition: transform 0.18s;
-  .rs-inv-sec-head.is-collapsed & { transform: rotate(-90deg); }
 }
 .rs-inv-sec-title {
   font-family: var(--sans); font-size: var(--fs-2xs, 11px); font-weight: 600;
   letter-spacing: 0.09em; text-transform: uppercase;
 }
-.rs-inv-sec-count { font-family: var(--mono); font-size: var(--fs-2xs, 11px); color: var(--text-faint, #6a6354); }
+.rs-inv-sec-count {
+  font-family: var(--mono); font-size: var(--fs-2xs, 11px);
+  color: var(--text-faint, #6a6354); margin-left: auto; white-space: nowrap;
+}
 
-// collapsed: horizontal strip of image tiles
-.rs-equip-strip {
-  display: flex; flex-wrap: wrap; gap: var(--spacer-2);
+// --- Equipped tray: dashed-bordered row of large ink-stamp tiles ---
+.rs-equip-tray {
+  display: flex; flex-wrap: wrap; gap: 9px; align-items: flex-start;
+  padding: var(--spacer-3);
+  border: 1.5px dashed var(--border-soft, #2c2823); border-radius: var(--r-md, 6px);
 }
-.rs-equip-tile { position: relative; width: 38px; height: 38px; }
-.rs-inv .rs-equip-imgbtn {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 5px; overflow: hidden; cursor: pointer;
-  background: var(--ink, #070605); border: 1px solid var(--border, #3a342c);
+.rs-equip-tcard { position: relative; }
+.rs-inv .rs-equip-tt {
+  position: relative; width: 50px; height: 50px; padding: 0;
+  display: grid; place-items: center; cursor: pointer;
+  background: var(--ink, #070605); color: var(--stamp-text, #e5dec8);
+  border: 1.5px solid var(--teal); border-radius: var(--r-sm, 4px);
+  overflow: hidden;
+  transition: transform 0.12s;
+  &:hover { transform: translateY(-1px); }
   img { width: 100%; height: 100%; object-fit: cover; }
-  .mono { font-family: var(--display); font-size: var(--fs-sm, 13px); color: var(--text-dim, #b5ad97); }
-  &:hover { border-color: var(--teal); }
 }
-.rs-inv .rs-equip-hand {
-  position: absolute; top: -5px; right: -5px;
-  width: 16px; height: 16px; border-radius: 50%;
-  display: inline-flex; align-items: center; justify-content: center;
+.rs-equip-tt-ic { font-family: var(--display); font-size: var(--fs-xl, 18px); line-height: 1; }
+
+// hover popover with item detail
+.rs-equip-tt-pop {
+  position: absolute; left: 50%; top: calc(100% + 8px); transform: translate(-50%, 4px);
+  z-index: 12; min-width: 132px; max-width: 200px;
+  display: flex; flex-direction: column; gap: 3px;
+  padding: var(--spacer-2) var(--spacer-3); border-radius: var(--r-md, 6px);
   background: var(--surface-2, #2c2823); border: 1px solid var(--border, #3a342c);
-  color: var(--teal); font-size: 8px; cursor: pointer;
-  &:hover { background: var(--surface-3, #3a3429); }
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.32);
+  opacity: 0; pointer-events: none; transition: opacity 0.12s, transform 0.12s;
+  &::before {
+    content: ""; position: absolute; left: 50%; top: -5px; transform: translateX(-50%) rotate(45deg);
+    width: 9px; height: 9px; background: var(--surface-2, #2c2823);
+    border-left: 1px solid var(--border, #3a342c); border-top: 1px solid var(--border, #3a342c);
+  }
+}
+.rs-equip-tcard:hover .rs-equip-tt-pop { opacity: 1; transform: translate(-50%, 0); }
+.rs-equip-tt-pop-nm { font-family: var(--display); font-size: var(--fs-base, 15px); color: var(--text, #e5dec8); line-height: 1.1; }
+.rs-equip-tt-pop-meta { display: flex; align-items: baseline; gap: var(--spacer-1); flex-wrap: wrap; }
+.rs-equip-tt-pop-type {
+  font-family: var(--sans); font-size: var(--fs-3xs, 10px);
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-mute, #8a8270);
+}
+.rs-equip-tt-pop-dot { color: var(--text-faint, #6a6354); }
+.rs-equip-tt-pop-detail { font-family: var(--mono); font-size: var(--fs-xs, 12px); color: var(--text-mute, #8a8270); }
+.rs-equip-tt-pop-act {
+  font-family: var(--serif); font-style: italic; font-size: var(--fs-2xs, 11px);
+  color: var(--text-faint, #6a6354); margin-top: 1px;
 }
 
 // ---------------------------------------------------------------------------
