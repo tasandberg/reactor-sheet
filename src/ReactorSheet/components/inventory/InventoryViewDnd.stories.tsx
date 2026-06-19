@@ -60,7 +60,6 @@ export const Default = () => (
       onEquip={log("equip")}
       onOpen={log("open")}
       onDelete={log("delete")}
-      onSetQty={log("setQty")}
       onReorder={log("reorder")}
       onNest={log("nest")}
     />

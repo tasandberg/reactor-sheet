@@ -43,9 +43,6 @@ export default function SheetShell() {
   const onSetCoin = (id: string, value: number) => {
     void resolveItem(id)?.update({ "system.quantity.value": value });
   };
-  const onSetQty = (id: string, value: number) => {
-    void resolveItem(id)?.update({ "system.quantity.value": value });
-  };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const embedUpdate = (updates: object[]) => void (actor as any).updateEmbeddedDocuments("Item", updates);
@@ -105,7 +102,6 @@ export default function SheetShell() {
           onEquip={onEquipItem}
           onOpen={onOpenItem}
           onDelete={onDeleteItem}
-          onSetQty={onSetQty}
           onReorder={onReorder}
           onNest={onNest}
         />

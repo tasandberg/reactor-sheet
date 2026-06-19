@@ -8,7 +8,7 @@
 //
 // Row layout (left→right): drag handle · item image · name (+qty) with tags beneath
 // · equip checkbox · type · damage · qty · weight.
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type {
   InventoryVM,
   EncumbranceVM,
@@ -20,7 +20,6 @@ import type {
 import { sortInventory, SORT_DEFAULT_DIR } from "../../viewModels/inventory";
 import { useDragReorder } from "./useDragReorder";
 import { SectionTitle } from "../ui/SectionTitle";
-import { Tag } from "../ui/Tag";
 import { cx } from "../ui/cx";
 
 type Dnd = ReturnType<typeof useDragReorder>;
@@ -29,7 +28,6 @@ type Ops = {
   onEquip: (id: string) => void;
   onOpen: (id: string) => void;
   onDelete: (id: string) => void;
-  onSetQty: (id: string, value: number) => void;
   onReorder: (updates: { id: string; sort: number }[]) => void;
   onNest: (itemId: string, containerId: string | null) => void;
 };
@@ -124,20 +122,6 @@ function RowEquip({ item, onEquip }: { item: InventoryItemVM; onEquip: (id: stri
   );
 }
 
-function RowTags({ tags }: { tags: InventoryItemVM["tags"] }) {
-  if (!tags.length) return null;
-  return (
-    <span className="rs-inv-tags">
-      {tags.map((t) => (
-        <Tag key={t.label} className="rs-inv-tag">
-          {t.icon && <i className={t.icon} aria-hidden="true" />}
-          {t.label}
-        </Tag>
-      ))}
-    </span>
-  );
-}
-
 /** Name + optional (count/qty) on top, tags beneath. `trailing` sits beside the name button (e.g. a caret). */
 function NameCell({
   item,
@@ -155,11 +139,13 @@ function NameCell({
       <div className="rs-inv-name-row">
         <button type="button" className="rs-inv-name" onClick={() => onOpen(item.id)}>
           <span className="nm">{item.name}</span>
+          {!item.isContainer && item.quantity && item.quantity.value > 1 && (
+            <span className="rs-inv-qtytag">×{item.quantity.value}</span>
+          )}
           {badge}
         </button>
         {trailing}
       </div>
-      <RowTags tags={item.tags} />
     </div>
   );
 }
@@ -168,41 +154,15 @@ function NameCell({
 // Shared row body (cols 2–8) — used by the main list AND the equipped table
 // ---------------------------------------------------------------------------
 
-// Editable quantity field (col 7) — updates the item; empty when the item isn't a stack.
-function QtyField({ item, onSetQty }: { item: InventoryItemVM; onSetQty: (id: string, value: number) => void }) {
-  const qty = item.quantity;
-  if (!qty) return <span className="rs-inv-qty" />;
-  return (
-    <input
-      type="number"
-      min={0}
-      inputMode="numeric"
-      className="rs-inv-qtyin"
-      defaultValue={qty.value}
-      key={qty.value}
-      aria-label={`${item.name} quantity`}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") e.currentTarget.blur();
-      }}
-      onBlur={(e) => {
-        const n = parseInt(e.currentTarget.value, 10);
-        if (Number.isNaN(n)) e.currentTarget.value = String(qty.value);
-        else if (n !== qty.value) onSetQty(item.id, Math.max(0, n));
-      }}
-    />
-  );
-}
-
-function RowInner({ item, onEquip, onOpen, onSetQty }: { item: InventoryItemVM; onEquip: (id: string) => void; onOpen: (id: string) => void; onSetQty: (id: string, value: number) => void }) {
+function RowInner({ item, onEquip, onOpen }: { item: InventoryItemVM; onEquip: (id: string) => void; onOpen: (id: string) => void }) {
   return (
     <>
       <ItemImage item={item} />
       <NameCell item={item} onOpen={onOpen} />
-      <RowEquip item={item} onEquip={onEquip} />
       <span className="rs-inv-rowcat">{item.category}</span>
       <span className="rs-inv-dmg">{item.damage}</span>
-      <QtyField item={item} onSetQty={onSetQty} />
       <span className="rs-inv-wt">{weightLabel(item.weight)}</span>
+      <RowEquip item={item} onEquip={onEquip} />
     </>
   );
 }
@@ -219,7 +179,6 @@ function SortableRow({
   dnd,
   onEquip,
   onOpen,
-  onSetQty,
   onContext,
 }: {
   item: InventoryItemVM;
@@ -229,7 +188,6 @@ function SortableRow({
   dnd: Dnd;
   onEquip: (id: string) => void;
   onOpen: (id: string) => void;
-  onSetQty: (id: string, value: number) => void;
   onContext: OnContext;
 }) {
   // No handle: the whole row is draggable. Clicks on the inner buttons/inputs still
@@ -244,7 +202,7 @@ function SortableRow({
       <span className="rs-inv-drag" aria-hidden="true">
         <i className="fa-solid fa-grip-lines" />
       </span>
-      <RowInner item={item} onEquip={onEquip} onOpen={onOpen} onSetQty={onSetQty} />
+      <RowInner item={item} onEquip={onEquip} onOpen={onOpen} />
     </div>
   );
 }
@@ -263,7 +221,6 @@ function ContainerRow({
   onToggle,
   onEquip,
   onOpen,
-  onSetQty,
   onContext,
 }: {
   item: InventoryItemVM;
@@ -275,7 +232,6 @@ function ContainerRow({
   onToggle: (id: string) => void;
   onEquip: (id: string) => void;
   onOpen: (id: string) => void;
-  onSetQty: (id: string, value: number) => void;
   onContext: OnContext;
 }) {
   const group = gkey(item.id);
@@ -307,11 +263,10 @@ function ContainerRow({
         </span>
         <ItemImage item={item} />
         <NameCell item={item} onOpen={onOpen} badge={<span className="rs-inv-count">{count}</span>} trailing={caret} />
-        <RowEquip item={item} onEquip={onEquip} />
         <span className="rs-inv-rowcat">{item.category}</span>
         <span className="rs-inv-dmg" />
-        <span className="rs-inv-qty" />
         <span className="rs-inv-wt">{weightLabel(item.weight)}</span>
+        <RowEquip item={item} onEquip={onEquip} />
       </div>
 
       <div
@@ -323,7 +278,7 @@ function ContainerRow({
           childIds.map((cid, i) => {
             const child = byId.get(cid);
             return child ? (
-              <SortableRow key={cid} item={child} index={i} group={group} depth={1} dnd={dnd} onEquip={onEquip} onOpen={onOpen} onSetQty={onSetQty} onContext={onContext} />
+              <SortableRow key={cid} item={child} index={i} group={group} depth={1} dnd={dnd} onEquip={onEquip} onOpen={onOpen} onContext={onContext} />
             ) : null;
           })}
       </div>
@@ -375,11 +330,10 @@ function SortHeaderRow({ sort, onSort }: { sort: SortState; onSort: (key: Invent
       <span aria-hidden="true" /> {/* drag */}
       <span aria-hidden="true" /> {/* image */}
       <SortHeader col="name" label="Name" className="rs-inv-th-name" sort={sort} onSort={onSort} />
-      <span className="rs-inv-thlabel rs-inv-thlabel-eq">Equip</span>
       <SortHeader col="category" label="Type" className="rs-inv-th-cat" sort={sort} onSort={onSort} />
       <span aria-hidden="true" /> {/* dmg */}
-      <span aria-hidden="true" /> {/* qty */}
       <SortHeader col="weight" label="Wt" className="rs-inv-th-wt" sort={sort} onSort={onSort} />
+      <span className="rs-inv-thlabel rs-inv-thlabel-eq">Equip</span>
     </div>
   );
 }
@@ -456,9 +410,30 @@ function equippedDetail(item: InventoryItemVM): string {
   return item.category;
 }
 
-function EquippedTray({ items, onOpen, onContext }: { items: InventoryItemVM[]; onOpen: (id: string) => void; onContext: OnContext }) {
+function EquippedTray({
+  items,
+  onOpen,
+  onContext,
+  dragActive,
+  onEquipDrop,
+}: {
+  items: InventoryItemVM[];
+  onOpen: (id: string) => void;
+  onContext: OnContext;
+  /** A row is mid-drag — the tray is a live equip drop target. */
+  dragActive: boolean;
+  /** Drop landed on the tray → equip the dragged item. */
+  onEquipDrop: () => void;
+}) {
+  const [over, setOver] = useState(false);
+  const dropping = dragActive && over;
   return (
-    <div className="rs-equip-tray">
+    <div
+      className={cx("rs-equip-tray", dropping && "is-drop-target")}
+      onDragOver={dragActive ? (e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; setOver(true); } : undefined}
+      onDragLeave={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setOver(false); }}
+      onDrop={dragActive ? (e) => { e.preventDefault(); onEquipDrop(); setOver(false); } : undefined}
+    >
       {items.map((item) => (
         <div key={item.id} className="rs-equip-tcard" onContextMenu={(e) => onContext(e, item)}>
           <button type="button" className="rs-equip-tt" onClick={() => onOpen(item.id)} aria-label={item.name} title={item.name}>
@@ -539,7 +514,7 @@ function ItemContextMenu({
 // Root
 // ---------------------------------------------------------------------------
 
-export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onEquip, onOpen, onDelete, onSetQty, onReorder, onNest }: Props) {
+export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onEquip, onOpen, onDelete, onReorder, onNest }: Props) {
   // Default to manual order so drag-to-reorder drops stick anywhere in the list.
   const [sort, setSort] = useState<SortState>({ key: "manual", dir: "asc" });
   const [expanded, setExpanded] = useState<Set<string>>(new Set()); // containers collapsed by default
@@ -557,25 +532,6 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
 
   // Root of this sheet's inventory — scope sticky-offset queries here, NOT
   // document-wide, since multiple sheets can be open at once.
-  const rootRef = useRef<HTMLElement>(null);
-  // Pin the Carried header flush beneath the (also-sticky) Equipped section by
-  // writing its measured height to the header's `top`. Recomputed on resize and
-  // whenever the equipped tray / carried count change its height.
-  useLayoutEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-    const eq = root.querySelector<HTMLElement>(".rs-inv-sec--equipped");
-    const hd = root.querySelector<HTMLElement>(".rs-inv-sec--carried > .rs-inv-sec-head");
-    if (!hd) return;
-    const apply = () => {
-      hd.style.top = `${eq ? eq.offsetHeight : 0}px`;
-    };
-    apply();
-    const ro = new ResizeObserver(apply);
-    if (eq) ro.observe(eq);
-    return () => ro.disconnect();
-  }, [inventory.equipped.length, inventory.count]);
-
   // Cheap structural signature of the inventory data (ids + nesting + order + sort key),
   // computed without sorting. Groups are rebuilt from props only when this changes.
   // Drag no longer mutates groups mid-gesture, so there's nothing to fight here.
@@ -618,16 +574,16 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
       setGroups(next);
       persist(next);
     },
-    onNest: ({ fromGroup, from, targetIdx, zone }) => {
+    onNest: ({ fromGroup, from, zone }) => {
       const src = [...(groupsRef.current[fromGroup] ?? [])];
       const [moved] = src.splice(from, 1);
       if (moved === undefined) return;
       const destKey = zone == null ? ROOT : gkey(zone);
       if (destKey === fromGroup) return; // already there
       const dest = [...(groupsRef.current[destKey] ?? [])];
-      // Un-nest (zone null) lands at the drop position; nesting appends.
-      if (zone == null) dest.splice(targetIdx, 0, moved);
-      else dest.push(moved);
+      // Dropping onto a dropzone (nest into a container, or un-nest to root)
+      // always lands the item at the end of the destination group.
+      dest.push(moved);
       const next = { ...groupsRef.current, [fromGroup]: src, [destKey]: dest };
       setGroups(next);
       persist(next);
@@ -656,22 +612,39 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
   const rootIds = groups[ROOT] ?? [];
 
   return (
-    <section className="rs-inv" ref={rootRef}>
+    <section className="rs-inv">
       <div className="rs-inv-head">
         <SectionTitle hint="equip weapons &amp; armour to bring them into play">Inventory</SectionTitle>
       </div>
 
       {encumbrance.enabled && <EncumbranceBar e={encumbrance} />}
 
-      {inventory.equipped.length > 0 && (
-        <section className="rs-inv-sec rs-inv-sec--equipped">
-          <SectionCount title="Equipped items" items={inventory.equipped} />
-          <EquippedTray items={sortedEquipped} onOpen={onOpen} onContext={openMenu} />
-        </section>
-      )}
+      {/* Equipped tray + All-Items header pin together as one opaque block so the
+          two never separate into a see-through gap (no JS height measuring). */}
+      <div className="rs-inv-stickyhead">
+        {inventory.equipped.length > 0 && (
+          <div className="rs-inv-sec rs-inv-sec--equipped">
+            <SectionCount title="Equipped items" items={inventory.equipped} />
+            <EquippedTray
+              items={sortedEquipped}
+              onOpen={onOpen}
+              onContext={openMenu}
+              dragActive={dnd.drag != null}
+              onEquipDrop={() => {
+                const d = dnd.drag;
+                const id = d ? (groupsRef.current[d.group] ?? [])[d.idx] : undefined;
+                const it = id ? byId.get(id) : undefined;
+                // Only equip an equippable, not-yet-equipped item (don't toggle off).
+                if (id && it && it.equipped === false) onEquip(id);
+                dnd.clear();
+              }}
+            />
+          </div>
+        )}
+        <SectionCount title="All Items" items={sortedTop} />
+      </div>
 
       <section className="rs-inv-sec rs-inv-sec--carried">
-        <SectionCount title="All Items" items={sortedTop} />
         <div className="rs-inv-list">
           <SortHeaderRow sort={sort} onSort={onSort} />
           {rootIds.map((id, index) => {
@@ -689,11 +662,10 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
                 onToggle={toggleCollapse}
                 onEquip={onEquip}
                 onOpen={onOpen}
-                onSetQty={onSetQty}
                 onContext={openMenu}
               />
             ) : (
-              <SortableRow key={id} item={item} index={index} group={ROOT} depth={0} dnd={dnd} onEquip={onEquip} onOpen={onOpen} onSetQty={onSetQty} onContext={openMenu} />
+              <SortableRow key={id} item={item} index={index} group={ROOT} depth={0} dnd={dnd} onEquip={onEquip} onOpen={onOpen} onContext={openMenu} />
             );
           })}
         </div>
