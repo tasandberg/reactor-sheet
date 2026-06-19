@@ -143,6 +143,7 @@ function NameCell({
       <div className="rs-inv-name-row">
         <button type="button" className="rs-inv-name" onClick={() => onOpen(item.id)}>
           <span className="nm">{item.name}</span>
+          {item.damage && <span className="rs-inv-qtytag">{item.damage}</span>}
           {!item.isContainer && item.quantity && item.quantity.value > 1 && (
             <span className="rs-inv-qtytag">×{item.quantity.value}</span>
           )}
@@ -164,7 +165,6 @@ function RowInner({ item, onEquip, onOpen }: { item: InventoryItemVM; onEquip: (
       <ItemImage item={item} />
       <NameCell item={item} onOpen={onOpen} />
       <span className="rs-inv-rowcat">{item.category}</span>
-      <span className="rs-inv-dmg">{item.damage}</span>
       <span className="rs-inv-wt">{weightLabel(item.weight)}</span>
       <RowEquip item={item} onEquip={onEquip} />
     </>
@@ -270,7 +270,6 @@ function ContainerRow({
         <ItemImage item={item} />
         <NameCell item={item} onOpen={onOpen} badge={<span className="rs-inv-count">{count}</span>} trailing={caret} />
         <span className="rs-inv-rowcat">{item.category}</span>
-        <span className="rs-inv-dmg" />
         <span className="rs-inv-wt">{weightLabel(item.weight)}</span>
         <RowEquip item={item} onEquip={onEquip} />
       </div>
@@ -334,7 +333,6 @@ function SortHeaderRow({ sort, onSort }: { sort: SortState; onSort: (key: Invent
       <span aria-hidden="true" /> {/* image */}
       <SortHeader col="name" label="Name" className="rs-inv-th-name" sort={sort} onSort={onSort} />
       <SortHeader col="category" label="Type" className="rs-inv-th-cat" sort={sort} onSort={onSort} />
-      <span aria-hidden="true" /> {/* dmg */}
       <SortHeader col="weight" label="Wt" className="rs-inv-th-wt" sort={sort} onSort={onSort} />
       <span className="rs-inv-thlabel rs-inv-thlabel-eq">Equip</span>
     </div>
