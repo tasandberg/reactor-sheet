@@ -1,5 +1,4 @@
 import type { AbilityVM } from "../../viewModels/types";
-import { SectionTitle } from "../ui/SectionTitle";
 import { Stamp } from "../ui/Stamp";
 import { cx } from "../ui/cx";
 import { rollable } from "./rollable";
@@ -10,7 +9,6 @@ type Props = { abilities: AbilityVM[]; onRoll?: (key: string) => void };
 export function AbilityPlaques({ abilities, onRoll }: Props) {
   return (
     <section className="rs-section">
-      <SectionTitle hint="roll-under d20">Abilities</SectionTitle>
       <div className="rs-abilities">
         {abilities.map((a) => (
           <div

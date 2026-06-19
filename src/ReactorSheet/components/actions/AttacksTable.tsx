@@ -29,13 +29,6 @@ export function AttacksTable({ attacks, onRoll, onAttack }: Props) {
     <section className="rs-section rs-atk">
       <SectionTitle hint="click to roll">Attacks</SectionTitle>
       <div className="rs-wtable">
-        <div className="rs-whdr" role="row" aria-hidden="true">
-          <span>Item</span>
-          <span>Hit</span>
-          <span>Damage</span>
-          <span>Atk</span>
-        </div>
-
         {attacks.map((a) => (
           <div key={a.id} className="rs-weapon" role="row">
             <div className="winfo">
@@ -47,17 +40,21 @@ export function AttacksTable({ attacks, onRoll, onAttack }: Props) {
               <div className="wmain">
                 <div className="wname">{a.name}</div>
                 <div className="wtags">
-                  <span className={cx("fvtt-tag", a.kind === "missile" ? "missile" : "melee")}>
+                  <span className={cx("fvtt-tag", a.kind === "missile" ? "missile" : "melee")} title={a.kindLabel}>
                     <i
                       className={cx("fa-solid", a.kind === "melee" ? "fa-sword" : "fa-bow-arrow")}
                       aria-hidden="true"
                     />
-                    <span className="lbl">{a.kindLabel}</span>
+                    <span className="tag-pop" role="tooltip">{a.kindLabel}</span>
                   </span>
                   {a.qualities.map((q) => (
-                    <span className="fvtt-tag" key={q.label}>
-                      {q.icon && <i className={cx("fa-solid", q.icon)} aria-hidden="true" />}
-                      <span className="lbl">{q.label}</span>
+                    <span className="fvtt-tag" key={q.label} title={q.label}>
+                      {q.icon ? (
+                        <i className={cx("fa-solid", q.icon)} aria-hidden="true" />
+                      ) : (
+                        <span className="tag-txt">{q.label}</span>
+                      )}
+                      {q.icon && <span className="tag-pop" role="tooltip">{q.label}</span>}
                     </span>
                   ))}
                 </div>
@@ -69,26 +66,22 @@ export function AttacksTable({ attacks, onRoll, onAttack }: Props) {
               className="wstat hit"
               disabled={!onRoll}
               onClick={() => onRoll?.(a.hit)}
-              title={`Roll to hit · ${a.hit.formula}`}
+              title={`Roll to hit · ${a.hitTip}`}
             >
-              <span className="sl">hit</span>
-              <span className="wv">
-                <i className="fa-solid fa-dice-d20" aria-hidden="true" />
-                {a.hit.label}
-              </span>
+              <i className="fa-solid fa-dice-d20" aria-hidden="true" />
+              {a.hitTerm && <span className="wv">{a.hitTerm}</span>}
+              <span className="tag-pop" role="tooltip">{a.hitTip}</span>
             </button>
             <button
               type="button"
               className="wstat dmg"
               disabled={!onRoll}
               onClick={() => onRoll?.(a.dmg)}
-              title={`Roll damage · ${a.dmg.formula}`}
+              title={`Roll damage · ${a.dmgTip}`}
             >
-              <span className="sl">dmg</span>
-              <span className="wv">
-                <i className={cx("fa-solid", dieIcon(a.dmg.formula))} aria-hidden="true" />
-                {a.dmg.label}
-              </span>
+              <i className={cx("fa-solid", dieIcon(a.dmg.formula))} aria-hidden="true" />
+              <span className="wv">{a.dmg.formula}</span>
+              <span className="tag-pop" role="tooltip">{a.dmgTip}</span>
             </button>
 
             <button
@@ -100,6 +93,7 @@ export function AttacksTable({ attacks, onRoll, onAttack }: Props) {
               aria-label={`Attack with ${a.name}`}
             >
               <i className="fa-solid fa-dice-d20" aria-hidden="true" />
+              <span>Attack</span>
             </button>
           </div>
         ))}

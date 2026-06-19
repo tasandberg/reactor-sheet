@@ -248,7 +248,7 @@
 // Box = gradient lift + gold-soft border + inner hairline frame + corner brackets.
 // Label is an ink stamp at top; big serif value fills the middle; mod is a gold
 // ink-pill pinned to the bottom edge.
-.rs-abilities { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacer-2); }
+.rs-abilities { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacer-2); margin-top: var(--spacer-4); }
 @container sheet (min-width: 470px) { .rs-abilities { grid-template-columns: repeat(6, 1fr); } }
 .rs-abil {
   position: relative;
@@ -502,21 +502,37 @@
 }
 .rs-weapon .wtags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
 
-// quality / mode tags
+// quality / mode tags — icon-only chips with a hover popover (+ native title)
 .fvtt-tag {
-  display: inline-flex; align-items: center; gap: 4px;
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center;
   font-family: var(--sans); font-size: var(--fs-3xs, 10px); letter-spacing: 0.03em;
   color: var(--text-mute, #8a8270);
   background: var(--bg-2, #1f1c17);
   border: 1px solid var(--border-soft, #2c2823);
-  border-radius: 4px;
-  padding: 1px 6px;
-  white-space: nowrap;
-  i { font-size: 0.85em; }
+  border-radius: var(--r-sm, 4px);
+  padding: var(--spacer-1);
+  white-space: nowrap; cursor: default;
+  i { font-size: var(--fs-xs, 12px); }
+  .tag-txt { padding: 0 var(--spacer-1); } // icon-less fallback
 }
 // mode tags carry the accent (melee = brass, missile = teal) on the icon
 .fvtt-tag.melee i { color: var(--gold); }
 .fvtt-tag.missile i { color: var(--teal); }
+
+// hover popover (more info) — used by tags AND the hit/dmg buttons
+.tag-pop {
+  position: absolute; bottom: calc(100% + var(--spacer-1)); left: 50%; transform: translateX(-50%);
+  z-index: 10; white-space: nowrap;
+  padding: var(--spacer-1) var(--spacer-2); border-radius: var(--r-sm, 4px);
+  background: var(--surface-2, #2e2a23); border: 1px solid var(--border, #3a342c);
+  color: var(--text-dim, #b5ad97);
+  font-family: var(--mono); font-size: var(--fs-2xs, 11px); letter-spacing: 0.02em;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  opacity: 0; pointer-events: none; transition: opacity 0.12s;
+}
+.fvtt-tag:hover .tag-pop,
+.reactor-sheet-app .wstat:hover .tag-pop { opacity: 1; }
 
 // reusable link-style button: accent colour denotes a clickable roll/link.
 // (qualified with .reactor-sheet-app to beat the `button { all: unset }` reset.)
@@ -531,42 +547,38 @@
   &:disabled { color: var(--text-mute, #8a8270); cursor: default; text-decoration: none; }
 }
 
-// Hit / Damage clickable stat cells
+// Hit / Damage — compact clickable buttons (die icon + value), with a popover.
 // (qualified with .reactor-sheet-app to beat the `button { all: unset }` reset.)
 .reactor-sheet-app .wstat {
-  display: flex; flex-direction: column; align-items: center; gap: 1px;
-  background: transparent; border: none;
-  text-align: center; cursor: pointer;
-  border-radius: 5px; padding: 4px 6px;
-  color: var(--text-dim, #b5ad97);
-  transition: background 0.12s, color 0.12s;
-  &:hover:not(:disabled) { background: var(--surface-2, #2e2a23); color: var(--text, #e5dec8); }
-  &.dmg:hover:not(:disabled) { color: var(--crimson, #c75044); }
-  &:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
-  &:disabled { cursor: default; }
-}
-.rs-weapon .wstat .sl {
-  font-family: var(--sans); font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--text-faint, #6a6354);
-}
-.rs-weapon .wstat .wv {
+  position: relative; justify-self: center;
   display: inline-flex; align-items: center; gap: var(--spacer-1);
-  font-family: var(--mono); font-size: var(--fs-sm, 13px);
-  white-space: nowrap;
-  i { font-size: 0.85em; }
+  background: var(--surface, #23201a); border: 1px solid var(--border, #3a342c);
+  cursor: pointer; border-radius: var(--r-md, 6px); padding: var(--spacer-1) var(--spacer-2);
+  color: var(--text-dim, #b5ad97);
+  font-family: var(--mono); font-size: var(--fs-sm, 13px); white-space: nowrap;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  i { font-size: 0.9em; }
+  &:hover:not(:disabled) { background: var(--surface-2, #2e2a23); border-color: var(--gold-soft); color: var(--text, #e5dec8); }
+  &.dmg:hover:not(:disabled) { color: var(--crimson, #c75044); }
+  &:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+  &:disabled { opacity: 0.5; cursor: default; }
 }
 
-// tall brass Attack button (composite hit + damage via OSE weapon dialog)
+// compact brass "Attack" button (composite hit + damage via OSE weapon dialog)
 .reactor-sheet-app .fvtt-atk {
-  width: 100%; height: 38px;
-  display: grid; place-items: center;
-  background: linear-gradient(180deg, var(--surface-2, #2e2a23), var(--surface, #23201a));
+  justify-self: center;
+  display: inline-flex; align-items: center; gap: var(--spacer-1);
+  padding: var(--spacer-1) var(--spacer-3);
+  background: transparent;
   border: 1px solid var(--gold-soft);
-  border-radius: 7px;
+  border-radius: 6px;
   color: var(--gold);
-  font-size: 16px; cursor: pointer;
+  font-family: var(--sans); font-size: var(--fs-3xs, 10px); font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  cursor: pointer;
   transition: border-color 0.12s, background 0.12s, transform 0.06s;
-  &:hover:not(:disabled) { border-color: var(--gold); background: var(--surface-3, #3a3429); }
+  i { font-size: var(--fs-sm, 13px); }
+  &:hover:not(:disabled) { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 10%, transparent); }
   &:active:not(:disabled) { transform: translateY(1px); }
   &:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
   &:disabled { opacity: 0.35; cursor: default; }

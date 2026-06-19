@@ -8,7 +8,10 @@ const toFormula = (label: string) => label.replace(/\s*\(.*\)$/, "").replace(/\s
 const W = (id: string, name: string, kind: "melee" | "missile", hit: string, dmg: string, q: { label: string; icon: string }[]): AttackVM => ({
   id, itemId: id, name, img: "", kind, kindLabel: kind === "melee" ? "Melee" : "Missile",
   hit: { label: hit, formula: toFormula(hit), flavor: `${name} attack` },
+  hitTerm: hit.replace(/^[^+-]*/, ""),
+  hitTip: hit,
   dmg: { label: dmg, formula: toFormula(dmg), flavor: `${name} damage` },
+  dmgTip: dmg,
   qualities: q,
 });
 
