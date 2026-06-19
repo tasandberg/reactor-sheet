@@ -104,8 +104,8 @@
   --gold-soft:     color-mix(in srgb, var(--accent-alt) 30%, transparent);
   --gold-bright:   #e6c87e; /* constant bright accent — pops on the ink chip in both themes */
 
-  /* Section rule (under titles) */
-  --section-rule:  var(--text);
+  /* Section rule (under titles) — muted, matches the handoff (2px --border) */
+  --section-rule:  var(--border);
 
   /* Text color when sitting ON an accent background (teal/brass) */
   --on-accent:     var(--ink);
@@ -145,7 +145,7 @@
   --accent-alt:    #8a6418;
   --accent-alt-dim:#6e4f12;
 
-  --section-rule:  var(--ink);
+  --section-rule:  var(--border);
   --on-accent:     var(--stamp-text);
 }
 
@@ -214,7 +214,7 @@ body {
   align-items: baseline;
   gap: 12px;
   padding-bottom: 6px;
-  border-bottom: 3px solid var(--section-rule);
+  border-bottom: 2px solid var(--section-rule);
   margin: var(--spacer-6) 0 var(--spacer-3) 0;
   line-height: 1.1;
   text-transform: none;
