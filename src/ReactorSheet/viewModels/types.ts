@@ -1,4 +1,4 @@
-import type { OSESave } from "../types/types";
+import type { OSESave, OseSpell } from "../types/types";
 
 export interface IdentityVM {
   name: string;
@@ -116,6 +116,17 @@ export interface InventoryVM {
   count: number;
   /** @deprecated kept for grid view compatibility */
   groups: InventoryGroup[];
+}
+
+/** One spell level's panel: capacity, the prepared rows, and the full spellbook. */
+export interface SpellLevelVM {
+  level: number;
+  /** used = memorised casts still available; max = slot capacity at this level. */
+  slots: { used: number; max: number };
+  /** Spells with `cast > 0`, shown as ready-to-cast rows. */
+  prepared: OseSpell[];
+  /** Every known spell at this level (for the expandable spellbook). */
+  spellbook: OseSpell[];
 }
 
 export interface CoinVM {
