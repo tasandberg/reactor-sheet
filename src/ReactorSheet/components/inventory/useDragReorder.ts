@@ -1,0 +1,126 @@
+// useDragReorder — lightweight drag-to-reorder on native HTML5 DnD, with an
+// insertion-line affordance (before / after) AND container nesting (into).
+//
+// The "line" is never a real DOM node: rowClass() returns " drop-before" /
+// " drop-after" / " drop-into" on the hovered row and CSS paints a 2px rule on
+// the matching edge, so the list never reflows mid-drag. State updates fire only
+// when the hovered target/edge actually changes — not every pointer frame.
+//
+// Reorders are constrained to a single `group` (items in different groups can't
+// interleave); nesting (into / out of a container) is intentionally cross-group.
+import { useState, type DragEvent } from "react";
+
+export type DropWhere = "before" | "after" | "into";
+
+type DragState = { group: string; idx: number };
+type OverState = { group: string; idx: number; where: DropWhere };
+
+export type ReorderArgs = { group: string; from: number; to: number; where: DropWhere; targetIdx: number; zone?: string };
+export type NestArgs = { fromGroup: string; from: number; targetIdx: number; zone: string | null };
+
+type RowOpts = {
+  /** This row is also a drop-into target (a container). */
+  container?: boolean;
+  /** Container id reported back as the nest target's `zone`. */
+  containerZone?: string;
+  /** Group/zone label echoed back on reorder. */
+  ownZone?: string;
+  onStart?: () => void;
+  onEnd?: () => void;
+};
+
+type Handlers = {
+  draggable?: boolean;
+  onDragStart?: (e: DragEvent<HTMLElement>) => void;
+  onDragEnd?: (e: DragEvent<HTMLElement>) => void;
+  onDragOver: (e: DragEvent<HTMLElement>) => void;
+  onDrop: (e: DragEvent<HTMLElement>) => void;
+};
+
+export function useDragReorder(opts: {
+  onReorder?: (a: ReorderArgs) => void;
+  onNest?: (a: NestArgs) => void;
+} = {}) {
+  const { onReorder, onNest } = opts;
+  const [drag, setDrag] = useState<DragState | null>(null);
+  const [over, setOver] = useState<OverState | null>(null);
+  const clear = () => { setDrag(null); setOver(null); };
+
+  // before/after from the pointer's position within the hovered row
+  const edgeWhere = (e: DragEvent<HTMLElement>): DropWhere => {
+    const r = e.currentTarget.getBoundingClientRect();
+    return e.clientY < r.top + r.height / 2 ? "before" : "after";
+  };
+
+  // Draggable + droppable row.
+  const rowProps = (group: string, idx: number, o: RowOpts = {}): Handlers => ({
+    draggable: true,
+    onDragStart: (e) => {
+      setDrag({ group, idx });
+      e.dataTransfer.effectAllowed = "move";
+      try { e.dataTransfer.setData("text/plain", `${group}:${idx}`); } catch { /* IE guard */ }
+      o.onStart?.();
+    },
+    onDragEnd: () => { clear(); o.onEnd?.(); },
+    onDragOver: (e) => {
+      if (!drag) return;
+      const isSelf = drag.group === group && drag.idx === idx;
+      const into = !!o.container && !isSelf; // a container accepts any item except itself
+      if (!into && drag.group !== group) return; // reorder only within the same group
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      const where: DropWhere = into ? "into" : edgeWhere(e);
+      if (!over || over.group !== group || over.idx !== idx || over.where !== where)
+        setOver({ group, idx, where });
+    },
+    onDrop: (e) => {
+      if (!drag) { clear(); return; }
+      const isSelf = drag.group === group && drag.idx === idx;
+      const into = !!o.container && !isSelf;
+      if (!into && drag.group !== group) { clear(); return; }
+      e.preventDefault();
+      if (into) {
+        onNest?.({ fromGroup: drag.group, from: drag.idx, targetIdx: idx, zone: o.containerZone ?? null });
+      } else {
+        const where: DropWhere = over ? over.where : "after";
+        let to = where === "after" ? idx + 1 : idx;
+        if (drag.idx < to) to -= 1; // account for the gap the removed item leaves
+        onReorder?.({ group, from: drag.idx, to, where, targetIdx: idx, zone: o.ownZone });
+      }
+      clear();
+    },
+  });
+
+  // Drop target for an empty container body (nest with no sibling rows to hover)
+  // or a "move out to root" zone (zone = null).
+  const nestProps = (group: string, idx: number, zone: string | null): Pick<Handlers, "onDragOver" | "onDrop"> => ({
+    onDragOver: (e) => {
+      if (!drag) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      if (!over || over.group !== group || over.idx !== idx || over.where !== "into")
+        setOver({ group, idx, where: "into" });
+    },
+    onDrop: (e) => {
+      if (!drag) return;
+      e.preventDefault();
+      onNest?.({ fromGroup: drag.group, from: drag.idx, targetIdx: idx, zone });
+      clear();
+    },
+  });
+
+  // " dragging" on the source + " drop-before|after|into" on the hovered target.
+  const rowClass = (group: string, idx: number): string => {
+    let s = "";
+    if (drag && drag.group === group && drag.idx === idx) s += " dragging";
+    if (over && over.group === group && over.idx === idx)
+      s += over.where === "after" ? " drop-after" : over.where === "into" ? " drop-into" : " drop-before";
+    return s;
+  };
+
+  /** True when the given group/idx is the current "into" target (for container highlight). */
+  const isInto = (group: string, idx: number) =>
+    !!over && over.group === group && over.idx === idx && over.where === "into";
+
+  return { drag, over, rowProps, nestProps, rowClass, isInto, clear };
+}

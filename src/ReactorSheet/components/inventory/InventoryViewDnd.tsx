@@ -1,16 +1,14 @@
-// Inventory list — sortable drag & drop on @dnd-kit/react.
-// Behaviour: the whole list is reorderable by dragging; rows rearrange live under
-// the cursor (move() in onDragOver) and slide into place on drop (built-in sortable
-// transitions). Dragging an item over a container's body nests it; the same groups
-// model handles reorder + nest uniformly. The previous core/sortable implementation
-// lives in ./InventoryView.tsx and is left intact for comparison.
+// Inventory list — drag & drop on native HTML5 DnD via useDragReorder.
+// Behaviour: rows DON'T rearrange live under the cursor — a CSS insertion line
+// (drop-before/after, painted on the hovered row's edge) shows where the drop
+// lands, and the reorder commits once on drop. This avoids the per-frame reflow
+// of a live-sortable. Dragging an item onto a container nests it; a root zone at
+// the bottom moves a nested item back out. The previous @dnd-kit/core
+// implementation lives in ./InventoryView.tsx and is left intact for comparison.
 //
 // Row layout (left→right): drag handle · item image · name (+qty) with tags beneath
 // · equip checkbox · type · damage · qty · weight.
 import { useEffect, useRef, useState } from "react";
-import { DragDropProvider, useDroppable } from "@dnd-kit/react";
-import { useSortable } from "@dnd-kit/react/sortable";
-import { move } from "@dnd-kit/helpers";
 import type {
   InventoryVM,
   EncumbranceVM,
@@ -20,9 +18,12 @@ import type {
   SortDir,
 } from "../../viewModels/types";
 import { sortInventory, SORT_DEFAULT_DIR } from "../../viewModels/inventory";
+import { useDragReorder } from "./useDragReorder";
 import { SectionTitle } from "../ui/SectionTitle";
 import { Tag } from "../ui/Tag";
 import { cx } from "../ui/cx";
+
+type Dnd = ReturnType<typeof useDragReorder>;
 
 type Ops = {
   onEquip: (id: string) => void;
@@ -207,7 +208,7 @@ function SortableRow({
   index,
   group,
   depth,
-  collisionPriority,
+  dnd,
   onEquip,
   onOpen,
   onSetQty,
@@ -217,22 +218,20 @@ function SortableRow({
   index: number;
   group: string;
   depth: number;
-  collisionPriority?: number;
+  dnd: Dnd;
   onEquip: (id: string) => void;
   onOpen: (id: string) => void;
   onSetQty: (id: string, value: number) => void;
   onContext: OnContext;
 }) {
-  // No handle: the whole row is draggable. dnd-kit's sensor ignores drags that
-  // start on interactive elements (the name/equip/caret buttons), so those stay clickable.
-  const { ref, isDragging } = useSortable({ id: item.id, index, group, type: "item", accept: "item", collisionPriority });
-
+  // No handle: the whole row is draggable. Clicks on the inner buttons/inputs still
+  // fire (a click is a press without movement), so name/equip/qty stay interactive.
   return (
     <div
-      ref={ref}
-      className={cx("rs-inv-row", "is-sortable", isDragging && "is-dragging")}
+      className={cx("rs-inv-row", "is-sortable", dnd.rowClass(group, index))}
       style={depth > 0 ? ({ "--rs-inv-depth": depth } as React.CSSProperties) : undefined}
       onContextMenu={(e) => onContext(e, item)}
+      {...dnd.rowProps(group, index, { ownZone: group })}
     >
       <span className="rs-inv-drag" aria-hidden="true">
         <i className="fa-solid fa-grip-lines" />
@@ -253,13 +252,14 @@ function StaticRow({ item, onEquip, onOpen, onSetQty, onContext }: { item: Inven
 }
 
 // A dedicated drop zone (shown during a drag) for moving an item out to the top level.
-// It sits in empty space below the rows, so it's the only droppable there and reliably
-// wins — even when every top-level item is a container.
-function RootZone() {
-  // High priority so a drop on the zone always un-nests, even if it grazes a container edge.
-  const { ref, isDropTarget } = useDroppable({ id: ROOT, collisionPriority: 5 });
+// Uses idx -1 as the root-zone sentinel; zone null tells the commit handler to un-nest.
+const ROOT_ZONE_IDX = -1;
+function RootZone({ dnd }: { dnd: Dnd }) {
   return (
-    <div ref={ref} className={cx("rs-inv-rootzone", isDropTarget && "is-over")}>
+    <div
+      className={cx("rs-inv-rootzone", dnd.isInto(ROOT, ROOT_ZONE_IDX) && "is-over")}
+      {...dnd.nestProps(ROOT, ROOT_ZONE_IDX, null)}
+    >
       <i className="fa-solid fa-arrow-up-from-bracket" aria-hidden="true" />
       <span>Move out of container</span>
     </div>
@@ -276,7 +276,7 @@ function ContainerRow({
   childIds,
   byId,
   collapsed,
-  isDropTarget,
+  dnd,
   onToggle,
   onEquip,
   onOpen,
@@ -288,21 +288,17 @@ function ContainerRow({
   childIds: string[];
   byId: Map<string, InventoryItemVM>;
   collapsed: boolean;
-  isDropTarget: boolean;
+  dnd: Dnd;
   onToggle: (id: string) => void;
   onEquip: (id: string) => void;
   onOpen: (id: string) => void;
   onSetQty: (id: string, value: number) => void;
   onContext: OnContext;
 }) {
-  // Low collision priority on the container's own sortable so that an item hovering it
-  // resolves to the nest droppable (priority 3) below, not a reorder-next-to-container.
-  const { ref, isDragging } = useSortable({ id: item.id, index, group: ROOT, type: "container", collisionPriority: 1 });
-  // The whole container (header + body) is the nest drop zone. Priority 3 beats the
-  // container's own sortable (1); the container's children (priority 4) still win for reorder-within.
-  // (isDropTarget is driven from onDragOver in the parent for reliable highlighting.)
-  const { ref: dropRef } = useDroppable({ id: gkey(item.id), collisionPriority: 3 });
+  const group = gkey(item.id);
   const count = item.children.length;
+  // Highlight the whole container when an item hovers the header to nest into it.
+  const isDropTarget = dnd.isInto(ROOT, index);
   const caret = (
     <button
       type="button"
@@ -315,11 +311,12 @@ function ContainerRow({
   );
 
   return (
-    <div ref={dropRef} className={cx("rs-inv-container", isDropTarget && "is-drop-target")}>
+    <div className={cx("rs-inv-container", isDropTarget && "is-drop-target")}>
+      {/* The header row reorders among root items AND accepts items dropped onto it (nest). */}
       <div
-        ref={ref}
-        className={cx("rs-inv-row", "is-container", "is-sortable", isDragging && "is-dragging")}
+        className={cx("rs-inv-row", "is-container", "is-sortable", dnd.rowClass(ROOT, index))}
         onContextMenu={(e) => onContext(e, item)}
+        {...dnd.rowProps(ROOT, index, { container: true, containerZone: item.id, ownZone: ROOT })}
       >
         <span className="rs-inv-drag" aria-hidden="true">
           <i className="fa-solid fa-grip-lines" />
@@ -333,12 +330,16 @@ function ContainerRow({
         <span className="rs-inv-wt">{weightLabel(item.weight)}</span>
       </div>
 
-      <div className={cx("rs-inv-children", collapsed && "is-collapsed")}>
+      <div
+        className={cx("rs-inv-children", collapsed && "is-collapsed")}
+        // Empty container: its body is the nest target (no sibling rows to hover).
+        {...(!collapsed && childIds.length === 0 ? dnd.nestProps(group, index, item.id) : {})}
+      >
         {!collapsed &&
           childIds.map((cid, i) => {
             const child = byId.get(cid);
             return child ? (
-              <SortableRow key={cid} item={child} index={i} group={gkey(item.id)} depth={1} collisionPriority={4} onEquip={onEquip} onOpen={onOpen} onSetQty={onSetQty} onContext={onContext} />
+              <SortableRow key={cid} item={child} index={i} group={group} depth={1} dnd={dnd} onEquip={onEquip} onOpen={onOpen} onSetQty={onSetQty} onContext={onContext} />
             ) : null;
           })}
       </div>
@@ -585,8 +586,6 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
   const [groups, setGroups] = useState<Groups>(() => buildGroups(inventory.items, sort));
   const [equipCollapsed, setEquipCollapsed] = useState(true); // default: images-only strip
   const [carriedCollapsed, setCarriedCollapsed] = useState(false); // carried items shown by default
-  const [dropContainerId, setDropContainerId] = useState<string | null>(null); // container highlighted during drag
-  const [dragActive, setDragActive] = useState(false); // a drag is in progress (shows the move-out zone)
   const [menu, setMenu] = useState<MenuState | null>(null);
 
   const openMenu: OnContext = (e, item) => {
@@ -597,20 +596,62 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
   const byId = indexById(inventory.items);
   const groupsRef = useRef(groups);
   groupsRef.current = groups;
-  const draggingRef = useRef(false);
-  const prevGroupsRef = useRef(groups);
 
   // Cheap structural signature of the inventory data (ids + nesting + order + sort key),
-  // computed without sorting. The groups are only rebuilt when this actually changes —
-  // and never mid-drag, which would fight the optimistic move().
+  // computed without sorting. Groups are rebuilt from props only when this changes.
+  // Drag no longer mutates groups mid-gesture, so there's nothing to fight here.
   let dataSig = `${sort.key}:${sort.dir}`;
   for (const it of inventory.items) {
     dataSig += `|${it.id},${it.sort}${it.isContainer ? `[${it.children.map((c) => `${c.id},${c.sort}`).join("/")}]` : ""}`;
   }
   useEffect(() => {
-    if (!draggingRef.current) setGroups(buildGroups(inventory.items, sort));
+    setGroups(buildGroups(inventory.items, sort));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataSig]);
+
+  // Persist a freshly-mutated groups map: renumber each group's sorts (i+1)*100 and
+  // emit only the items whose order or container actually changed. Same diff the old
+  // drag-end used — only the gesture that produces `next` is different now.
+  function persist(next: Groups) {
+    const origin = originContainers(inventory.items);
+    const curOrder = new Map([...byId.values()].map((it) => [it.id, it.sort] as const));
+    const reorder: { id: string; sort: number }[] = [];
+    for (const [key, ids] of Object.entries(next)) {
+      const containerId = groupContainerId(key);
+      ids.forEach((id, i) => {
+        const order = (i + 1) * 100;
+        if (curOrder.get(id) !== order) reorder.push({ id, sort: order });
+        if ((origin.get(id) ?? null) !== containerId) onNest(id, containerId);
+      });
+    }
+    if (reorder.length) onReorder(reorder);
+  }
+
+  // Commit handlers for the drag hook. Each mutates the local groups immediately
+  // (so the dropped item re-renders in place at once) then persists the diff.
+  const dnd = useDragReorder({
+    onReorder: ({ group, from, to }) => {
+      const ids = [...(groupsRef.current[group] ?? [])];
+      const [moved] = ids.splice(from, 1);
+      if (moved === undefined) return;
+      ids.splice(to, 0, moved);
+      const next = { ...groupsRef.current, [group]: ids };
+      setGroups(next);
+      persist(next);
+    },
+    onNest: ({ fromGroup, from, zone }) => {
+      const src = [...(groupsRef.current[fromGroup] ?? [])];
+      const [moved] = src.splice(from, 1);
+      if (moved === undefined) return;
+      const destKey = zone == null ? ROOT : gkey(zone);
+      if (destKey === fromGroup) return; // already there
+      const dest = [...(groupsRef.current[destKey] ?? []), moved];
+      const next = { ...groupsRef.current, [fromGroup]: src, [destKey]: dest };
+      setGroups(next);
+      persist(next);
+    },
+  });
+  const dragActive = dnd.drag != null;
 
   // Click a header: sort asc → desc → back to manual (free reorder).
   const onSort = (key: InventorySortKey) =>
@@ -630,54 +671,6 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
 
   const sortedTop = sortInventory(inventory.items, sort.key, sort.dir);
   const sortedEquipped = sortInventory(inventory.equipped, sort.key, sort.dir);
-
-  function handleDragStart() {
-    draggingRef.current = true;
-    setDragActive(true);
-    prevGroupsRef.current = groupsRef.current;
-  }
-
-  function handleDragOver(event: Parameters<NonNullable<React.ComponentProps<typeof DragDropProvider>["onDragOver"]>>[0]) {
-    setGroups((g) => move(g, event) as Groups);
-    // Highlight the container the drag is currently over.
-    const targetId = event.operation.target?.id;
-    let container: string | null = null;
-    if (targetId != null) {
-      const s = String(targetId);
-      if (s.startsWith("c:")) {
-        container = s.slice(2); // over the container body/group droppable
-      } else {
-        for (const [key, ids] of Object.entries(groupsRef.current)) {
-          if (key !== ROOT && ids.includes(s)) { container = groupContainerId(key); break; } // over a child
-        }
-      }
-    }
-    setDropContainerId(container);
-  }
-
-  function handleDragEnd(event: Parameters<NonNullable<React.ComponentProps<typeof DragDropProvider>["onDragEnd"]>>[0]) {
-    draggingRef.current = false;
-    setDragActive(false);
-    setDropContainerId(null);
-    if (event.canceled) {
-      setGroups(prevGroupsRef.current);
-      return;
-    }
-    const next = groupsRef.current;
-    const origin = originContainers(inventory.items);
-    const curOrder = new Map(byId.size ? [...byId.values()].map((it) => [it.id, it.sort] as const) : []);
-    // Only persist items whose order or container actually changed (not the whole list).
-    const reorder: { id: string; sort: number }[] = [];
-    for (const [key, ids] of Object.entries(next)) {
-      const containerId = groupContainerId(key);
-      ids.forEach((id, i) => {
-        const order = (i + 1) * 100;
-        if (curOrder.get(id) !== order) reorder.push({ id, sort: order });
-        if ((origin.get(id) ?? null) !== containerId) onNest(id, containerId);
-      });
-    }
-    if (reorder.length) onReorder(reorder);
-  }
 
   const rootIds = groups[ROOT] ?? [];
 
@@ -729,34 +722,32 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
             {carriedCollapsed ? (
               <ImageStrip items={sortedTop} showHand={false} onEquip={onEquip} onOpen={onOpen} onContext={openMenu} />
             ) : (
-              <DragDropProvider onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
-                <div className="rs-inv-list">
-                  <SortHeaderRow sort={sort} onSort={onSort} />
-                  {rootIds.map((id, index) => {
-                    const item = byId.get(id);
-                    if (!item) return null;
-                    return item.isContainer ? (
-                      <ContainerRow
-                        key={id}
-                        item={item}
-                        index={index}
-                        childIds={groups[gkey(id)] ?? []}
-                        byId={byId}
-                        collapsed={!expanded.has(id)}
-                        isDropTarget={dropContainerId === id}
-                        onToggle={toggleCollapse}
-                        onEquip={onEquip}
-                        onOpen={onOpen}
-                        onSetQty={onSetQty}
-                        onContext={openMenu}
-                      />
-                    ) : (
-                      <SortableRow key={id} item={item} index={index} group={ROOT} depth={0} onEquip={onEquip} onOpen={onOpen} onSetQty={onSetQty} onContext={openMenu} />
-                    );
-                  })}
-                  {dragActive && <RootZone />}
-                </div>
-              </DragDropProvider>
+              <div className="rs-inv-list">
+                <SortHeaderRow sort={sort} onSort={onSort} />
+                {rootIds.map((id, index) => {
+                  const item = byId.get(id);
+                  if (!item) return null;
+                  return item.isContainer ? (
+                    <ContainerRow
+                      key={id}
+                      item={item}
+                      index={index}
+                      childIds={groups[gkey(id)] ?? []}
+                      byId={byId}
+                      collapsed={!expanded.has(id)}
+                      dnd={dnd}
+                      onToggle={toggleCollapse}
+                      onEquip={onEquip}
+                      onOpen={onOpen}
+                      onSetQty={onSetQty}
+                      onContext={openMenu}
+                    />
+                  ) : (
+                    <SortableRow key={id} item={item} index={index} group={ROOT} depth={0} dnd={dnd} onEquip={onEquip} onOpen={onOpen} onSetQty={onSetQty} onContext={openMenu} />
+                  );
+                })}
+                {dragActive && <RootZone dnd={dnd} />}
+              </div>
             )}
           </section>
         </>
