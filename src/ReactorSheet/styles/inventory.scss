@@ -86,7 +86,7 @@
 }
 // header alignment matches the cells below it
 .rs-inv .rs-inv-th-wt { justify-content: flex-end; }
-.rs-inv .rs-inv-th-cat { justify-content: center; }
+.rs-inv .rs-inv-th-cat { justify-content: flex-end; }
 .rs-inv-th-caret { font-size: 8px; width: 6px; } // reserve space so labels don't shift
 
 // --- item image (col 2) ---
@@ -203,12 +203,19 @@
   white-space: nowrap;
 }
 
-// --- per-row category badge (col 5) ---
+// --- per-row category badge (col 4: Type) ---
 .rs-inv-rowcat {
   font-family: var(--sans); font-size: var(--fs-3xs, 10px); font-weight: 600;
   letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--text-faint, #6a6354);
-  white-space: nowrap; text-align: center;
+  white-space: nowrap; text-align: right;
+}
+
+// xs / mobile (bottom-tabs layout): drop the Type column to save width.
+@container app (max-width: 560px) {
+  .rs-inv-row { grid-template-columns: 18px 30px 1fr 44px 44px; }
+  .rs-inv-rowcat,
+  .rs-inv .rs-inv-th-cat { display: none; }
 }
 
 // --- damage die (col 6) ---
