@@ -1,0 +1,138 @@
+// Collapsing-header minibar (MEDIUM layout only).
+//
+// Mounted as the first child of .rs-sheet (sheet container). It pins to the top of
+// the scroller once the full header scrolls out (the `is-collapsed` class is toggled
+// in Minibar.tsx). Two container gates restrict it to the medium band:
+//   - xs  (app ≤ 560): bottom-tab layout → hidden
+//   - lg  (app ≥ 670): two-pane sticky header → hidden
+// so it only shows in the 561–669 band, AND only while collapsed.
+
+.rs-minibar {
+  position: sticky;
+  top: 0;
+  z-index: 6; // above tab content / sticky inventory heads, below Foundry chrome
+  display: flex;
+  align-items: center;
+  gap: var(--spacer-3);
+  padding: var(--spacer-2) var(--spacer-4);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border, #3a342c);
+
+  // collapsed-only reveal: slide+fade in, no layout jank (height stays 0 when hidden)
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+  transition: max-height 0.16s ease, opacity 0.16s ease, transform 0.16s ease,
+    padding 0.16s ease;
+
+  &.is-collapsed {
+    max-height: 64px;
+    padding-top: var(--spacer-2);
+    padding-bottom: var(--spacer-2);
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+}
+
+.rs-mb-portrait {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  object-fit: cover;
+  border: 1px solid var(--border-soft, #2c2823);
+}
+
+.rs-mb-ident {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.rs-mb-name {
+  font-family: var(--display);
+  font-size: var(--fs-md, 15px);
+  line-height: 1.1;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rs-mb-class {
+  font-family: var(--mono);
+  font-size: var(--fs-2xs, 11px);
+  color: var(--text-mute);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rs-mb-vitals {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--spacer-2);
+}
+
+.rs-mb-hp,
+.rs-mb-ac {
+  display: flex;
+  align-items: center;
+  gap: var(--spacer-1);
+  padding: 3px var(--spacer-2);
+  border: 1px solid var(--border-soft, #2c2823);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.rs-mb-hp { border-color: color-mix(in srgb, var(--crimson) 55%, transparent); }
+.rs-mb-ac { border-color: color-mix(in srgb, var(--teal) 50%, transparent); }
+
+.rs-mb-stamp {
+  font-family: var(--mono);
+  font-size: var(--fs-3xs, 10px);
+  letter-spacing: 0.06em;
+  color: var(--text-faint, #6a6354);
+}
+
+.rs-mb-hp-input {
+  width: 2.2em;
+  min-width: 0;
+  text-align: center;
+  cursor: text;
+  font-family: var(--display);
+  font-size: var(--fs-md, 15px);
+  color: var(--crimson);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 0 1px;
+}
+.rs-mb-hp-input:focus { border-color: var(--crimson); background: var(--bg, #181612); }
+.rs-mb-hp-input::-webkit-inner-spin-button,
+.rs-mb-hp-input::-webkit-outer-spin-button { appearance: none; margin: 0; }
+.rs-mb-hp-input { -moz-appearance: textfield; appearance: textfield; }
+.rs-mb-hp-static { cursor: default; }
+
+.rs-mb-hp-max {
+  font-family: var(--mono);
+  font-size: var(--fs-2xs, 11px);
+  color: var(--text-mute);
+}
+
+.rs-mb-ac-v {
+  font-family: var(--display);
+  font-size: var(--fs-md, 15px);
+  color: var(--teal);
+}
+
+// === medium-only gates (source of truth) ===
+// Gates resolve against the nearest `app` container (.reactor-sheet-app); the minibar
+// lives inside the `sheet` container but container queries walk up the ancestor chain.
+@container app (max-width: 560px) {
+  .rs-minibar { display: none; }
+}
+@container app (min-width: 670px) {
+  .rs-minibar { display: none; }
+}

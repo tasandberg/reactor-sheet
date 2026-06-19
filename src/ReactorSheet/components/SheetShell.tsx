@@ -2,7 +2,7 @@ import { Shell, type TabItem } from "./shell";
 import { useReactorSheetContext } from "./context";
 import { tabs, TabIds } from "./shared/tabs";
 import getLabel from "@src/util/getLabel";
-import { Topbar, HeaderBand } from "./chrome";
+import { Topbar, HeaderBand, Minibar } from "./chrome";
 import { ActionsView, SavesExploration } from "./actions";
 import { InventoryViewDnd as InventoryView } from "./inventory";
 import { selectTopbar } from "../viewModels/topbar";
@@ -124,6 +124,7 @@ export default function SheetShell() {
       }}
       topbar={<Topbar vm={selectTopbar(actor)} />}
       header={<HeaderBand identity={selectIdentity(actor)} vitals={vitals} onSetHp={onSetHp} />}
+      minibar={<Minibar identity={selectIdentity(actor)} vitals={vitals} onSetHp={onSetHp} />}
       railExtra={
         <SavesExploration
           saves={selectSaves(actor)}

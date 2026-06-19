@@ -15,13 +15,15 @@ type Props = {
   topbar?: ReactNode;
   header?: ReactNode;
   railExtra?: ReactNode;
+  /** Pinned bar inside the sheet scroller (medium layout, collapsed header). */
+  minibar?: ReactNode;
 };
 
 /**
  * Presentational app shell. Chrome regions are slots (placeholder fallback);
  * the right pane mounts the active tab body. Responsive reflow lives in shell.scss.
  */
-export function Shell({ tabs, active, onSelect, children, topbar, header, railExtra }: Props) {
+export function Shell({ tabs, active, onSelect, children, topbar, header, railExtra, minibar }: Props) {
   return (
     <>
       <div className="rs-topbar">
@@ -29,6 +31,7 @@ export function Shell({ tabs, active, onSelect, children, topbar, header, railEx
       </div>
       <div className="rs-body">
         <div className="rs-sheet">
+          {minibar}
           <div className="rs-pad">
             <div className="rs-twopane">
               <div className="rs-left">
