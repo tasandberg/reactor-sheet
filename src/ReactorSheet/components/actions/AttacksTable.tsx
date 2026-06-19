@@ -23,12 +23,6 @@ export function AttacksTable({ attacks, onRoll, onAttack }: Props) {
     <section className="rs-section rs-atk">
       <SectionTitle hint="click to roll">Attacks</SectionTitle>
       <div className="rs-wtable">
-        <div className="rs-whdr" role="row" aria-hidden="true">
-          <span>Item</span>
-          <span>Hit</span>
-          <span>Damage</span>
-          <span>Atk</span>
-        </div>
         {attacks.map((a) => (
           <div key={a.id} className="rs-weapon" role="row">
             <div className="winfo">
@@ -38,7 +32,9 @@ export function AttacksTable({ attacks, onRoll, onAttack }: Props) {
                 <span className="wic" aria-hidden="true">{monogram(a.name)}</span>
               )}
               <div className="wmain">
-                <div className="wname">{a.name}</div>
+                <div className="wname">
+                  {a.name} <span className="wkind">({a.kindLabel.toLowerCase()})</span>
+                </div>
                 <div className="wtags">
                   <span className={cx("fvtt-tag", a.kind === "missile" ? "missile" : "melee")} title={a.kindLabel}>
                     <i
@@ -68,7 +64,11 @@ export function AttacksTable({ attacks, onRoll, onAttack }: Props) {
               onClick={() => onRoll?.(a.hit)}
               title={`Roll to hit · ${a.hitTip}`}
             >
-              <span className="wv">{a.hitDisplay}</span>
+              <span className="sl">Hit</span>
+              <span className="wv">
+                <i className={cx("fa-solid", a.kind === "melee" ? "fa-sword" : "fa-bow-arrow")} aria-hidden="true" />
+                {a.hitDisplay}
+              </span>
               <span className="tag-pop" role="tooltip">{a.hitTip}</span>
             </button>
             <button
@@ -78,6 +78,7 @@ export function AttacksTable({ attacks, onRoll, onAttack }: Props) {
               onClick={() => onRoll?.(a.dmg)}
               title={`Roll damage · ${a.dmgTip}`}
             >
+              <span className="sl">Dmg</span>
               <span className="wv">{a.dmgDisplay}</span>
               <span className="tag-pop" role="tooltip">{a.dmgTip}</span>
             </button>

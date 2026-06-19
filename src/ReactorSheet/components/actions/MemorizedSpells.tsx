@@ -5,17 +5,17 @@ import { cx } from "../ui/cx";
 type Props = { actor: OSEActor };
 
 /**
- * Quick-cast list of MEMORIZED (prepared) spells. The list is stable — gated on
- * `memorized > 0` (not `cast`), so it doesn't vanish once slots are spent or
- * before a Rest. The cast button reflects remaining casts (`cast`): disabled and
- * marked "spent" at 0. Cast → `spell.spendSpell` (OSE decrements `cast` + routes
- * the roll); Rest refills `cast` to `memorized`.
+ * Quick-cast list of prepared spells. OSE populates `cast` (remaining castable
+ * slots — the same field the Spells tab's PreparedSpells filters on); `memorized`
+ * is often 0, so we gate on EITHER being > 0 to robustly catch every prepared
+ * spell. The cast button reflects remaining casts: disabled / "spent" at 0.
+ * Cast → `spell.spendSpell` (decrements `cast` + routes the roll); Rest refills it.
  */
 export function MemorizedSpells({ actor }: Props) {
-  // Same flatten as PreparedSpells: spellList is Record<level, OseSpell[]>.
+  // Same flatten + path as PreparedSpells: spellList is Record<level, OseSpell[]>.
   const spells: OseSpell[] = Object.values(actor.system.spells?.spellList ?? {})
     .flat()
-    .filter((s) => s.system.memorized > 0)
+    .filter((s) => (s.system.cast ?? 0) > 0 || (s.system.memorized ?? 0) > 0)
     .sort((a, b) => a.system.lvl - b.system.lvl);
 
   if (spells.length === 0) return null;
@@ -27,13 +27,9 @@ export function MemorizedSpells({ actor }: Props) {
       <SectionTitle hint="click to cast">Memorized Spells</SectionTitle>
       <div className="fvtt-castlist">
         {spells.map((spell) => {
-          const left = spell.system.cast;
+          const left = spell.system.cast ?? 0;
           const spent = left <= 0;
-          const meta = [
-            `Lvl ${spell.system.lvl}`,
-            spell.system.range,
-            `${left}/${spell.system.memorized} ready`,
-          ].filter(Boolean);
+          const meta = [`Lvl ${spell.system.lvl}`, spell.system.range].filter(Boolean);
           return (
             <div className={cx("fvtt-spell", spent && "spent")} key={spell._id as string}>
               <span className="chk" aria-hidden="true">✓</span>
@@ -52,7 +48,7 @@ export function MemorizedSpells({ actor }: Props) {
                 onClick={() => cast(spell)}
                 title={spent ? `${spell.name} — no casts left (Rest to recover)` : `Cast ${spell.name}`}
               >
-                {spent ? "spent" : "cast"}
+                {spent ? "spent" : left > 1 ? `cast ×${left}` : "cast"}
               </button>
             </div>
           );

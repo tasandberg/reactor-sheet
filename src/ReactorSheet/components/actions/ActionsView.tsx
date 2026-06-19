@@ -39,7 +39,7 @@ export function ActionsView({ actor }: Props) {
   const attacks = selectAttacks(actor);
   const memorizedCount = Object.values(actor.system.spells?.spellList ?? {})
     .flat()
-    .filter((s) => s.system.memorized > 0).length;
+    .filter((s) => (s.system.cast ?? 0) > 0 || (s.system.memorized ?? 0) > 0).length;
 
   const tabs: { key: SubTab; label: string; count?: number }[] = [
     { key: "attacks", label: "Attacks", count: attacks.length },

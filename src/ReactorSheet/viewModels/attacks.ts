@@ -51,7 +51,8 @@ export function selectAttacks(actor: OSEActor): AttackVM[] {
         kind,
         kindLabel: kind === "melee" ? "Melee" : "Missile",
         hit,
-        hitDisplay: `d20${signed(hitMod)}`,
+        // Hit shows just the always-signed modifier (the d20 is implied by the icon).
+        hitDisplay: signed(hitMod),
         hitTip: tip("1d20", hitMod, hitAbil),
         dmg,
         dmgDisplay: `${die}${signed(dmgMod)}`,
