@@ -1,5 +1,4 @@
 import type { AttackVM, RollSpec } from "../../viewModels/types";
-import { Tag } from "../ui/Tag";
 import { SectionTitle } from "../ui/SectionTitle";
 import { cx } from "../ui/cx";
 
@@ -17,38 +16,49 @@ function dieIcon(formula: string): string {
   return [4, 6, 8, 10, 12, 20].includes(n) ? `fa-dice-d${n}` : "fa-dice";
 }
 
-/** Equipped-weapon attacks — one row per mode. Hit/Damage are clickable roll links;
- *  the button in the Attack! column rolls the full attack. */
+/** Monogram glyph for the ink-stamp weapon icon (first letter, Title-case). */
+function monogram(name: string): string {
+  return (name.trim().charAt(0) || "?").toUpperCase();
+}
+
+/** Equipped-weapon attacks as woodcut weapon cards: ink-stamp monogram, name +
+ *  melee/missile + quality tags, clickable HIT/DMG stat cells (FA dice), and a
+ *  tall brass Attack button (full hit + damage via the OSE weapon dialog). */
 export function AttacksTable({ attacks, onRoll, onAttack }: Props) {
   return (
     <section className="rs-section rs-atk">
-      <SectionTitle hint="equipped weapons">Attacks</SectionTitle>
-      <div className="rs-atk-table">
-        <div className="rs-atk-row rs-atk-head" role="row">
-          <span className="rs-atk-h">Item</span>
-          <span className="rs-atk-h">Hit</span>
-          <span className="rs-atk-h">Damage</span>
-          <span className="rs-atk-h rs-atk-h-go">Attack!</span>
+      <SectionTitle hint="click to roll">Attacks</SectionTitle>
+      <div className="rs-wtable">
+        <div className="rs-whdr" role="row" aria-hidden="true">
+          <span>Item</span>
+          <span>Hit</span>
+          <span>Damage</span>
+          <span>Atk</span>
         </div>
 
         {attacks.map((a) => (
-          <div key={a.id} className="rs-atk-row" role="row">
-            <div className="rs-atk-item">
-              {a.img && <img className="rs-atk-img" src={a.img} alt="" />}
-              <div className="rs-atk-main">
-                <div className="rs-atk-name">
-                  {a.name} <span className="rs-atk-kind">({a.kind})</span>
-                </div>
-                <div className="rs-atk-quals">
-                  <Tag intent={a.kind === "melee" ? "mustard" : "teal"}>
-                    <i className={cx("fa-solid", a.kind === "melee" ? "fa-sword" : "fa-bow-arrow")} aria-hidden="true" />
+          <div key={a.id} className="rs-weapon" role="row">
+            <div className="winfo">
+              {a.img ? (
+                <img className="wic wic-img" src={a.img} alt="" />
+              ) : (
+                <span className="wic" aria-hidden="true">{monogram(a.name)}</span>
+              )}
+              <div className="wmain">
+                <div className="wname">{a.name}</div>
+                <div className="wtags">
+                  <span className={cx("fvtt-tag", a.kind === "missile" ? "missile" : "melee")}>
+                    <i
+                      className={cx("fa-solid", a.kind === "melee" ? "fa-sword" : "fa-bow-arrow")}
+                      aria-hidden="true"
+                    />
                     <span className="lbl">{a.kindLabel}</span>
-                  </Tag>
+                  </span>
                   {a.qualities.map((q) => (
-                    <Tag key={q.label}>
+                    <span className="fvtt-tag" key={q.label}>
                       {q.icon && <i className={cx("fa-solid", q.icon)} aria-hidden="true" />}
                       <span className="lbl">{q.label}</span>
-                    </Tag>
+                    </span>
                   ))}
                 </div>
               </div>
@@ -56,27 +66,34 @@ export function AttacksTable({ attacks, onRoll, onAttack }: Props) {
 
             <button
               type="button"
-              className="rs-link rs-atk-roll"
+              className="wstat hit"
               disabled={!onRoll}
               onClick={() => onRoll?.(a.hit)}
               title={`Roll to hit · ${a.hit.formula}`}
             >
-              <i className="fa-solid fa-dice-d20" aria-hidden="true" />
-              {a.hit.label}
+              <span className="sl">hit</span>
+              <span className="wv">
+                <i className="fa-solid fa-dice-d20" aria-hidden="true" />
+                {a.hit.label}
+              </span>
             </button>
             <button
               type="button"
-              className="rs-link rs-atk-roll"
+              className="wstat dmg"
               disabled={!onRoll}
               onClick={() => onRoll?.(a.dmg)}
               title={`Roll damage · ${a.dmg.formula}`}
             >
-              <i className={cx("fa-solid", dieIcon(a.dmg.formula))} aria-hidden="true" />
-              {a.dmg.label}
+              <span className="sl">dmg</span>
+              <span className="wv">
+                <i className={cx("fa-solid", dieIcon(a.dmg.formula))} aria-hidden="true" />
+                {a.dmg.label}
+              </span>
             </button>
+
             <button
               type="button"
-              className="rs-atk-go"
+              className="fvtt-atk"
               disabled={!onAttack}
               onClick={() => onAttack?.(a.itemId)}
               title="Attack roll (hit + damage)"
