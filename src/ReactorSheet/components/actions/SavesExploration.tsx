@@ -18,7 +18,7 @@ function saveStamp(label: string): string {
   return label.charAt(0).toUpperCase();
 }
 
-function SavesGrid({ saves, onRoll }: { saves: SaveVM[]; onRoll?: (key: OSESave) => void }) {
+export function SavesGrid({ saves, onRoll }: { saves: SaveVM[]; onRoll?: (key: OSESave) => void }) {
   return (
     <div className="fvtt-saves">
       {saves.map((s) => (
@@ -37,7 +37,7 @@ function SavesGrid({ saves, onRoll }: { saves: SaveVM[]; onRoll?: (key: OSESave)
   );
 }
 
-function ExplorationGrid({ exploration, onRoll }: { exploration: ExplorationVM[]; onRoll?: (key: string) => void }) {
+export function ExplorationGrid({ exploration, onRoll }: { exploration: ExplorationVM[]; onRoll?: (key: string) => void }) {
   return (
     <div className="fvtt-explore">
       {exploration.map((e) => (

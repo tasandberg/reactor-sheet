@@ -462,6 +462,44 @@
 .fvtt-spell.spent .chk { background: var(--surface-3, #3a3429); color: var(--text-mute, #8a8270); }
 .fvtt-spell.spent .spn { text-decoration: line-through; }
 
+// === Actions sub-tab nav (MEDIUM only) =====================================
+// At medium width the Actions sections become a horizontal tab nav; xs + lg keep
+// them stacked (and lg keeps Saves/Exploration in the rail via .actions-only).
+.rs-act-subnav { display: none; } // hidden by default (xs + lg)
+
+.reactor-sheet-app .rs-act-tab {
+  display: inline-flex; align-items: baseline; gap: var(--spacer-2);
+  background: transparent; border: none; cursor: pointer;
+  padding: var(--spacer-2) 0;
+  margin-bottom: -2px; // overlap the nav rule so the active underline sits on it
+  font-family: var(--display); font-size: var(--fs-xl, 18px);
+  color: var(--text-mute, #8a8270);
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: color 0.12s, border-color 0.12s;
+  &:hover { color: var(--text-dim, #b5ad97); }
+  &.active { color: var(--text, #e5dec8); border-bottom-color: var(--gold); }
+}
+.rs-act-tab-n {
+  font-family: var(--mono); font-size: var(--fs-2xs, 11px);
+  color: var(--text-mute, #8a8270); background: var(--surface-2, #2e2a23);
+  border-radius: 999px; padding: 1px 7px; min-width: 16px; text-align: center;
+}
+.rs-act-tab.active .rs-act-tab-n { color: var(--on-accent, #070605); background: var(--gold); }
+
+@container app (min-width: 561px) and (max-width: 669px) {
+  .rs-act-subnav {
+    display: flex; align-items: baseline; gap: var(--spacer-6);
+    margin-top: var(--spacer-5);
+    border-bottom: 2px solid var(--section-rule);
+    overflow-x: auto;
+  }
+  // show only the active section; the tab label replaces each section's title
+  .reactor-sheet-app .rs-act-sec { display: none; }
+  .reactor-sheet-app .rs-act-sec.is-active { display: block; }
+  .reactor-sheet-app .rs-act-sec .section-title { display: none; }
+}
+
 // --- attacks: woodcut weapon cards (ported from prototype .fvtt-weapon) ---
 // Card grid: Item (icon + name/tags) | Hit | Damage | tall brass Atk button.
 .rs-wtable { display: flex; flex-direction: column; gap: var(--spacer-1); }
