@@ -10,12 +10,6 @@ type Props = {
   onAttack?: (itemId: string) => void;
 };
 
-/** FA dice icon for a formula's die, e.g. "1d8+2" → "fa-dice-d8". */
-function dieIcon(formula: string): string {
-  const n = Number(formula.match(/d(\d+)/i)?.[1] ?? 0);
-  return [4, 6, 8, 10, 12, 20].includes(n) ? `fa-dice-d${n}` : "fa-dice";
-}
-
 /** Monogram glyph for the ink-stamp weapon icon (first letter, Title-case). */
 function monogram(name: string): string {
   return (name.trim().charAt(0) || "?").toUpperCase();
@@ -29,6 +23,12 @@ export function AttacksTable({ attacks, onRoll, onAttack }: Props) {
     <section className="rs-section rs-atk">
       <SectionTitle hint="click to roll">Attacks</SectionTitle>
       <div className="rs-wtable">
+        <div className="rs-whdr" role="row" aria-hidden="true">
+          <span>Item</span>
+          <span>Hit</span>
+          <span>Damage</span>
+          <span>Atk</span>
+        </div>
         {attacks.map((a) => (
           <div key={a.id} className="rs-weapon" role="row">
             <div className="winfo">
@@ -68,8 +68,7 @@ export function AttacksTable({ attacks, onRoll, onAttack }: Props) {
               onClick={() => onRoll?.(a.hit)}
               title={`Roll to hit · ${a.hitTip}`}
             >
-              <i className="fa-solid fa-dice-d20" aria-hidden="true" />
-              {a.hitTerm && <span className="wv">{a.hitTerm}</span>}
+              <span className="wv">{a.hitDisplay}</span>
               <span className="tag-pop" role="tooltip">{a.hitTip}</span>
             </button>
             <button
@@ -79,8 +78,7 @@ export function AttacksTable({ attacks, onRoll, onAttack }: Props) {
               onClick={() => onRoll?.(a.dmg)}
               title={`Roll damage · ${a.dmgTip}`}
             >
-              <i className={cx("fa-solid", dieIcon(a.dmg.formula))} aria-hidden="true" />
-              <span className="wv">{a.dmg.formula}</span>
+              <span className="wv">{a.dmgDisplay}</span>
               <span className="tag-pop" role="tooltip">{a.dmgTip}</span>
             </button>
 

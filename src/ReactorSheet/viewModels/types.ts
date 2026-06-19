@@ -46,12 +46,14 @@ export interface AttackVM {
   kindLabel: string;
   /** To-hit roll (1d20 + ability mod). */
   hit: RollSpec;
-  /** Just the hit modifier term for the button, e.g. "+1" / "-1" / "" (mod 0). */
-  hitTerm: string;
+  /** Button text — always-signed mono, e.g. "d20+2" / "d20+0". */
+  hitDisplay: string;
   /** Full hit formula with named mods for the popover, e.g. "1d20 + 1 (dex)". */
   hitTip: string;
   /** Damage roll (weapon die + ability mod). */
   dmg: RollSpec;
+  /** Button text — always-signed mono, e.g. "1d6+0" / "1d10+2". */
+  dmgDisplay: string;
   /** Full damage formula with named mods for the popover, e.g. "1d6 + 1 (str)". */
   dmgTip: string;
   qualities: { label: string; icon: string }[];

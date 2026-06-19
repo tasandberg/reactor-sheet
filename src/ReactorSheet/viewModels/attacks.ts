@@ -5,6 +5,8 @@ import type { AttackVM, RollSpec } from "./types";
 const term = (mod: number) => (mod === 0 ? "" : mod > 0 ? `+${mod}` : `${mod}`);
 /** Suffix shown on the pill, e.g. " +1(str)" / "" for 0. */
 const suffix = (mod: number, abil: string) => (mod === 0 ? "" : ` ${mod > 0 ? `+${mod}` : `${mod}`}(${abil})`);
+/** Always-signed term for the button display, e.g. "+0" / "+2" / "-1". */
+const signed = (mod: number) => (mod >= 0 ? `+${mod}` : `${mod}`);
 /** Full-formula popover line, e.g. "1d20 + 1 (dex)" / "1d6" for 0. */
 const tip = (base: string, mod: number, abil: string) =>
   mod === 0 ? base : `${base} ${mod > 0 ? "+" : "−"} ${Math.abs(mod)} (${abil})`;
@@ -49,9 +51,10 @@ export function selectAttacks(actor: OSEActor): AttackVM[] {
         kind,
         kindLabel: kind === "melee" ? "Melee" : "Missile",
         hit,
-        hitTerm: term(hitMod),
+        hitDisplay: `d20${signed(hitMod)}`,
         hitTip: tip("1d20", hitMod, hitAbil),
         dmg,
+        dmgDisplay: `${die}${signed(dmgMod)}`,
         dmgTip: tip(die, dmgMod, "str"),
         qualities,
       };

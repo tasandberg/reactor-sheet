@@ -464,7 +464,9 @@
 .rs-whdr,
 .rs-weapon {
   display: grid;
-  grid-template-columns: 1fr auto auto 52px;
+  // fixed Hit/Damage/Atk columns so buttons are a consistent width per type and
+  // double-digit dice (1d10+2) don't shift the layout.
+  grid-template-columns: minmax(0, 1fr) 62px 82px 96px;
   gap: var(--spacer-3);
   align-items: center;
 }
@@ -550,8 +552,8 @@
 // Hit / Damage — compact clickable buttons (die icon + value), with a popover.
 // (qualified with .reactor-sheet-app to beat the `button { all: unset }` reset.)
 .reactor-sheet-app .wstat {
-  position: relative; justify-self: center;
-  display: inline-flex; align-items: center; gap: var(--spacer-1);
+  position: relative; justify-self: stretch;
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--spacer-1);
   background: var(--surface, #23201a); border: 1px solid var(--border, #3a342c);
   cursor: pointer; border-radius: var(--r-md, 6px); padding: var(--spacer-1) var(--spacer-2);
   color: var(--text-dim, #b5ad97);
@@ -566,8 +568,8 @@
 
 // compact brass "Attack" button (composite hit + damage via OSE weapon dialog)
 .reactor-sheet-app .fvtt-atk {
-  justify-self: center;
-  display: inline-flex; align-items: center; gap: var(--spacer-1);
+  justify-self: stretch;
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--spacer-1);
   padding: var(--spacer-1) var(--spacer-3);
   background: transparent;
   border: 1px solid var(--gold-soft);
