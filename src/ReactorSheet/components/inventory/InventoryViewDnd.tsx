@@ -28,6 +28,7 @@ type Ops = {
   onEquip: (id: string) => void;
   onOpen: (id: string) => void;
   onDelete: (id: string) => void;
+  onConsume: (id: string) => void;
   onReorder: (updates: { id: string; sort: number }[]) => void;
   onNest: (itemId: string, containerId: string | null) => void;
 };
@@ -462,12 +463,14 @@ function ItemContextMenu({
   onClose,
   onOpen,
   onEquip,
+  onConsume,
   onDelete,
 }: {
   menu: MenuState;
   onClose: () => void;
   onOpen: (id: string) => void;
   onEquip: (id: string) => void;
+  onConsume: (id: string) => void;
   onDelete: (id: string) => void;
 }) {
   useEffect(() => {
@@ -503,6 +506,11 @@ function ItemContextMenu({
           <i className="fa-solid fa-hand" aria-hidden="true" /> Unequip
         </button>
       )}
+      {menu.item.quantity != null && (
+        <button type="button" className="rs-ctx-item" onClick={() => { onConsume(menu.item.id); onClose(); }}>
+          <i className="fa-solid fa-circle-minus" aria-hidden="true" /> Consume one
+        </button>
+      )}
       <button type="button" className="rs-ctx-item is-danger" onClick={() => { onDelete(menu.item.id); onClose(); }}>
         <i className="fa-solid fa-trash" aria-hidden="true" /> Delete Item
       </button>
@@ -514,7 +522,7 @@ function ItemContextMenu({
 // Root
 // ---------------------------------------------------------------------------
 
-export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onEquip, onOpen, onDelete, onReorder, onNest }: Props) {
+export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onEquip, onOpen, onDelete, onConsume, onReorder, onNest }: Props) {
   // Default to manual order so drag-to-reorder drops stick anywhere in the list.
   const [sort, setSort] = useState<SortState>({ key: "manual", dir: "asc" });
   const [expanded, setExpanded] = useState<Set<string>>(new Set()); // containers collapsed by default
@@ -682,7 +690,7 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
         </div>
       )}
 
-      {menu && <ItemContextMenu menu={menu} onClose={() => setMenu(null)} onOpen={onOpen} onEquip={onEquip} onDelete={onDelete} />}
+      {menu && <ItemContextMenu menu={menu} onClose={() => setMenu(null)} onOpen={onOpen} onEquip={onEquip} onConsume={onConsume} onDelete={onDelete} />}
     </section>
   );
 }
