@@ -12,6 +12,7 @@ import { selectSaves } from "../viewModels/saves";
 import { selectExploration } from "../viewModels/exploration";
 import { selectInventory, selectEncumbrance, selectCoins } from "../viewModels/inventory";
 import { flagPath, FLAGS } from "../flags";
+import { useToast } from "./ui/toastContext";
 import type { OseItem } from "../types/types";
 
 /**
@@ -20,6 +21,7 @@ import type { OseItem } from "../types/types";
  */
 export default function SheetShell() {
   const { actor, items: invItems, currentTab, setCurrentTab, updateActor } = useReactorSheetContext();
+  const toast = useToast();
 
   const vitals = selectVitals(actor);
   const onSetHp = (value: number) => {
@@ -32,12 +34,18 @@ export default function SheetShell() {
     const it = resolveItem(id);
     if (!it || !("equipped" in it.system)) return;
     const equipped = !it.system.equipped;
+    const fromContainerId = (it.system as { containerId?: string }).containerId;
     const update: Record<string, unknown> = { system: { equipped } };
     // Equipping pulls the item out of any container it lives in.
-    if (equipped && (it.system as { containerId?: string }).containerId) {
-      (update.system as Record<string, unknown>).containerId = "";
-    }
+    const leftContainer = equipped && !!fromContainerId;
+    if (leftContainer) (update.system as Record<string, unknown>).containerId = "";
     void it.update(update);
+    if (leftContainer) {
+      const container = resolveItem(fromContainerId!);
+      const msg = `${it.name} equipped — removed from ${container?.name ?? "container"}`;
+      toast({ intent: "success", title: "Equipped", message: msg });
+      (globalThis as { ui?: { notifications?: { info?: (m: string) => void } } }).ui?.notifications?.info?.(msg);
+    }
   };
   const onOpenItem = (id: string) => resolveItem(id)?.sheet?.render(true);
   const onSetCoin = (id: string, value: number) => {
@@ -59,8 +67,22 @@ export default function SheetShell() {
   // The equipped tray has its own order, stored in a separate flag.
   const onReorderEquipped = (u: { id: string; sort: number }[]) =>
     embedUpdate(u.map((x) => ({ _id: x.id, [flagPath(FLAGS.equippedOrder)]: x.sort })));
-  const onNest = (itemId: string, containerId: string | null) =>
-    embedUpdate([{ _id: itemId, "system.containerId": containerId ?? "" }]);
+  const onNest = (itemId: string, containerId: string | null) => {
+    const it = resolveItem(itemId);
+    const wasEquipped = !!(it?.system as { equipped?: boolean })?.equipped;
+    // Stowing an item in a container also unequips it.
+    const update: Record<string, unknown> = { _id: itemId, "system.containerId": containerId ?? "" };
+    if (containerId && wasEquipped) update["system.equipped"] = false;
+    embedUpdate([update]);
+    if (containerId && wasEquipped) {
+      const container = resolveItem(containerId);
+      const msg = `${it?.name} unequipped — stowed in ${container?.name ?? "container"}`;
+      // Custom in-sheet toast…
+      toast({ intent: "warning", title: "Unequipped", message: msg });
+      // …and a generic Foundry notification, for side-by-side comparison.
+      (globalThis as { ui?: { notifications?: { warn?: (m: string) => void } } }).ui?.notifications?.warn(msg);
+    }
+  };
   const onDeleteItem = (id: string) => {
     const it = resolveItem(id);
     if (!it) return;

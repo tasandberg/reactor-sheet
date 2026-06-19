@@ -54,7 +54,6 @@
   border-bottom: 1px solid var(--border-soft, #2c2823);
   transition: background 0.1s;
 
-  &.is-container { background: var(--surface, #23201a); }
   &.is-dragging,
   &.dragging     { opacity: 0.4; }
   &.is-drop-target {
@@ -182,8 +181,8 @@
 .rs-inv .rs-inv-collapse {
   display: inline-flex; align-items: center; justify-content: center;
   background: transparent; border: none;
-  color: var(--text-faint, #6a6354);
-  cursor: pointer; padding: 0 2px; font-size: 9px; line-height: 1;
+  color: var(--text-mute, #8a8270);
+  cursor: pointer; padding: 0 4px; font-size: 13px; line-height: 1;
   transition: color 0.12s;
 
   svg, i { transition: transform 0.18s; display: block; }

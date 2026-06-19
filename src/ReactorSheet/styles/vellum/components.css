@@ -491,6 +491,24 @@
 
 /* ─── Toast / notification ──────────────────────────────────────────── */
 
+/* Stack of live toasts, pinned to the sheet's bottom-right (anchored to
+   .reactor-sheet-app). Clicks pass through the gaps; each toast is clickable. */
+.toast-host {
+  position: absolute;
+  right: var(--spacer-3);
+  bottom: var(--spacer-3);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-2);
+  pointer-events: none;
+}
+.toast-host .toast {
+  pointer-events: auto;
+  min-width: 0;
+  max-width: min(340px, calc(100cqw - 2 * var(--spacer-3)));
+}
+
 .toast {
   background: var(--surface);
   border: 1px solid var(--border);

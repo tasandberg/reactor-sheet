@@ -310,12 +310,9 @@ function SortHeader({
   onSort: (key: InventorySortKey) => void;
 }) {
   const active = sort.key === col;
-  // Cycle is asc → desc → manual; the title makes that discoverable.
-  const title = active
-    ? sort.dir === SORT_DEFAULT_DIR[col]
-      ? "Sorted — click to reverse"
-      : "Sorted — click for manual order"
-    : "Click to sort";
+  // A click bakes this order into the manual baseline; clicking the active header
+  // again flips direction. Drags then override.
+  const title = active ? "Sorted — click to reverse" : "Click to sort — then drag to fine-tune";
   return (
     <button
       type="button"
@@ -535,8 +532,12 @@ function ItemContextMenu({
 // ---------------------------------------------------------------------------
 
 export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onEquip, onOpen, onDelete, onConsume, onReorder, onReorderEquipped, onNest }: Props) {
-  // Default to manual order so drag-to-reorder drops stick anywhere in the list.
-  const [sort, setSort] = useState<SortState>({ key: "manual", dir: "asc" });
+  // Rows always render in manual order (from `groups`); a sort-header click bakes the
+  // chosen order into the `order` flag and returns here, so drags keep sticking.
+  const [sort] = useState<SortState>({ key: "manual", dir: "asc" });
+  // Last sort applied via a header click — drives the column's caret/active state
+  // (we don't stay in a live sort, so this is purely the affordance). null = none.
+  const [lastSort, setLastSort] = useState<SortState | null>(null);
   const [expanded, setExpanded] = useState<Set<string>>(new Set()); // containers collapsed by default
   const [groups, setGroups] = useState<Groups>(() => buildGroups(inventory.items, sort));
   // The equipped tray keeps its OWN order (ids), independent of the All-Items list.
@@ -646,13 +647,21 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
     },
   });
 
-  // Click a header: sort asc → desc → back to manual (free reorder).
-  const onSort = (key: InventorySortKey) =>
-    setSort((cur) => {
-      if (cur.key !== key) return { key, dir: SORT_DEFAULT_DIR[key] };
-      if (cur.dir === SORT_DEFAULT_DIR[key]) return { key, dir: cur.dir === "asc" ? "desc" : "asc" };
-      return { key: "manual", dir: "asc" };
-    });
+  // Click a header: bake that sorted order into the `order` flag (the manual
+  // baseline) and stay in manual mode so later drags stick and override it.
+  // First click on a header → its natural direction; an immediate repeat click on
+  // the SAME header flips asc↔desc. (A drag in between doesn't change `lastSort`,
+  // so re-clicking the same header still flips — acceptable.)
+  const onSort = (key: InventorySortKey) => {
+    const dir: SortDir =
+      lastSort?.key === key && lastSort.dir === SORT_DEFAULT_DIR[key]
+        ? SORT_DEFAULT_DIR[key] === "asc" ? "desc" : "asc"
+        : SORT_DEFAULT_DIR[key];
+    const next = buildGroups(inventory.items, { key, dir });
+    setGroups(next);
+    persist(next);
+    setLastSort({ key, dir });
+  };
 
   const toggleCollapse = (id: string) =>
     setExpanded((prev) => {
@@ -725,7 +734,7 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
             dnd.clear();
           } : undefined}
         >
-          <SortHeaderRow sort={sort} onSort={onSort} />
+          <SortHeaderRow sort={lastSort ?? { key: "manual", dir: "asc" }} onSort={onSort} />
           {rootIds.map((id, index) => {
             const item = byId.get(id);
             if (!item) return null;

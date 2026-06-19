@@ -5,6 +5,7 @@ import "./styles/vellum/components.css";
 import "./styles/styles.scss";
 import ReactorSheetProvider from "./components/ReactorSheetProvider";
 import SheetShell from "./components/SheetShell";
+import { ToastProvider } from "./components/ui/ToastHost";
 import { useEffect, useRef, type ReactNode } from "react";
 
 /** App root element. Theme is owned by the window (reactor-sheet.js `_onRender`
@@ -36,13 +37,15 @@ function ReactorSheetApp({
 }: ReactorSheetAppProps) {
   return (
     <ThemedRoot>
-      <ReactorSheetProvider
-        initialActor={actor!}
-        source={source!}
-        contextConnector={contextConnector}
-      >
-        <SheetShell />
-      </ReactorSheetProvider>
+      <ToastProvider>
+        <ReactorSheetProvider
+          initialActor={actor!}
+          source={source!}
+          contextConnector={contextConnector}
+        >
+          <SheetShell />
+        </ReactorSheetProvider>
+      </ToastProvider>
     </ThemedRoot>
   );
 }
