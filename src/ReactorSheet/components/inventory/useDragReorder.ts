@@ -25,6 +25,10 @@ type RowOpts = {
   containerZone?: string;
   /** Group/zone label echoed back on reorder. */
   ownZone?: string;
+  /** Accept a row dragged in from another group as a before/after drop here
+   *  (used to un-nest: a nested row dropped among root rows routes through onNest
+   *  with zone:null at this drop position). */
+  acceptCrossGroup?: boolean;
   onStart?: () => void;
   onEnd?: () => void;
 };
@@ -66,7 +70,10 @@ export function useDragReorder(opts: {
       if (!drag) return;
       const isSelf = drag.group === group && drag.idx === idx;
       const into = !!o.container && !isSelf; // a container accepts any item except itself
-      if (!into && drag.group !== group) return; // reorder only within the same group
+      const crossGroup = !into && drag.group !== group;
+      // Reorder only within the same group, unless this row accepts a cross-group
+      // drop (un-nest): then show a before/after line and route through onNest.
+      if (crossGroup && !o.acceptCrossGroup) return;
       e.preventDefault();
       e.dataTransfer.dropEffect = "move";
       const where: DropWhere = into ? "into" : edgeWhere(e);
@@ -77,10 +84,17 @@ export function useDragReorder(opts: {
       if (!drag) { clear(); return; }
       const isSelf = drag.group === group && drag.idx === idx;
       const into = !!o.container && !isSelf;
-      if (!into && drag.group !== group) { clear(); return; }
+      const crossGroup = !into && drag.group !== group;
+      if (crossGroup && !o.acceptCrossGroup) { clear(); return; }
       e.preventDefault();
       if (into) {
         onNest?.({ fromGroup: drag.group, from: drag.idx, targetIdx: idx, zone: o.containerZone ?? null });
+      } else if (crossGroup) {
+        // Un-nest: drop the foreign row among this group's rows at the drop edge.
+        // No self-shift — the item leaves a different group, so `to` isn't perturbed.
+        const where: DropWhere = over ? over.where : "after";
+        const to = where === "after" ? idx + 1 : idx;
+        onNest?.({ fromGroup: drag.group, from: drag.idx, targetIdx: to, zone: null });
       } else {
         const where: DropWhere = over ? over.where : "after";
         let to = where === "after" ? idx + 1 : idx;
@@ -91,8 +105,7 @@ export function useDragReorder(opts: {
     },
   });
 
-  // Drop target for an empty container body (nest with no sibling rows to hover)
-  // or a "move out to root" zone (zone = null).
+  // Drop target for an empty container body (nest with no sibling rows to hover).
   const nestProps = (group: string, idx: number, zone: string | null): Pick<Handlers, "onDragOver" | "onDrop"> => ({
     onDragOver: (e) => {
       if (!drag) return;

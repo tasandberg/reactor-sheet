@@ -6,6 +6,7 @@ import { selectSaves } from "../../viewModels/saves";
 import { selectExploration } from "../../viewModels/exploration";
 import { AbilityPlaques } from "./AbilityPlaques";
 import { AttacksTable } from "./AttacksTable";
+import { MemorizedSpells } from "./MemorizedSpells";
 import { SavesExploration } from "./SavesExploration";
 
 type Props = { actor: OSEActor };
@@ -31,6 +32,7 @@ export function ActionsView({ actor }: Props) {
     <>
       <AbilityPlaques abilities={selectAbilities(actor)} onRoll={onAbility} />
       <AttacksTable attacks={selectAttacks(actor)} onRoll={onRoll} onAttack={onAttack} />
+      <MemorizedSpells actor={actor} />
       <div className="actions-only">
         <SavesExploration
           saves={selectSaves(actor)}

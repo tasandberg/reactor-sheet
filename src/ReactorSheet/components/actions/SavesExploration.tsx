@@ -1,7 +1,6 @@
 import { useState } from "react";
 import type { SaveVM, ExplorationVM } from "../../viewModels/types";
 import type { OSESave } from "../../types/types";
-import { Table, Td, Tr } from "../ui/Table";
 import { SectionTitle } from "../ui/SectionTitle";
 import { cx } from "../ui/cx";
 import { rollable } from "./rollable";
@@ -14,49 +13,46 @@ type Props = {
   onRollExploration?: (key: string) => void;
 };
 
-function SavesTable({ saves, onRoll }: { saves: SaveVM[]; onRoll?: (key: OSESave) => void }) {
+/** 1–2 char ink-stamp from the save label (Death → D, Paralysis → P). */
+function saveStamp(label: string): string {
+  return label.charAt(0).toUpperCase();
+}
+
+function SavesGrid({ saves, onRoll }: { saves: SaveVM[]; onRoll?: (key: OSESave) => void }) {
   return (
-    <Table>
-      <tbody>
-        {saves.map((s) => (
-          <Tr
-            key={s.key}
-            className={cx(onRoll && "rollable")}
-            title={onRoll ? `Roll ${s.label} save` : undefined}
-            {...rollable(onRoll && (() => onRoll(s.key)))}
-          >
-            <Td>
-              <i className={s.icon} style={{ marginRight: 8, opacity: 0.7 }} />
-              {s.label}
-            </Td>
-            <Td num>{s.target}</Td>
-          </Tr>
-        ))}
-      </tbody>
-    </Table>
+    <div className="fvtt-saves">
+      {saves.map((s) => (
+        <div
+          key={s.key}
+          className={cx("fvtt-save", onRoll && "rollable")}
+          title={onRoll ? `Roll ${s.label} save (≥ ${s.target})` : undefined}
+          {...rollable(onRoll && (() => onRoll(s.key)))}
+        >
+          <span className="sk" aria-hidden="true">{saveStamp(s.label)}</span>
+          <span className="sv">{s.target}</span>
+          <span className="sn">{s.label}</span>
+        </div>
+      ))}
+    </div>
   );
 }
 
-function ExplorationTable({ exploration, onRoll }: { exploration: ExplorationVM[]; onRoll?: (key: string) => void }) {
+function ExplorationGrid({ exploration, onRoll }: { exploration: ExplorationVM[]; onRoll?: (key: string) => void }) {
   return (
-    <Table>
-      <tbody>
-        {exploration.map((e) => (
-          <Tr
-            key={e.key}
-            className={cx(onRoll && "rollable")}
-            title={onRoll ? `Roll ${e.label}` : undefined}
-            {...rollable(onRoll && (() => onRoll(e.key)))}
-          >
-            <Td>
-              <i className={e.icon} style={{ marginRight: 8, opacity: 0.7 }} />
-              {e.label}
-            </Td>
-            <Td num>{e.inSix}-in-6</Td>
-          </Tr>
-        ))}
-      </tbody>
-    </Table>
+    <div className="fvtt-explore">
+      {exploration.map((e) => (
+        <div
+          key={e.key}
+          className={cx("fvtt-skill", onRoll && "rollable")}
+          title={onRoll ? `Roll ${e.label} (${e.inSix}-in-6)` : undefined}
+          {...rollable(onRoll && (() => onRoll(e.key)))}
+        >
+          <i className={cx("skic", e.icon)} aria-hidden="true" />
+          <span className="skn">{e.label}</span>
+          <span className="skv">{e.inSix}-in-6</span>
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -72,9 +68,9 @@ export function SavesExploration({ saves, exploration, tabbed = false, onRollSav
     return (
       <section className="rs-section">
         <SectionTitle hint="roll-above d20">Saving Throws</SectionTitle>
-        <SavesTable saves={saves} onRoll={onRollSave} />
+        <SavesGrid saves={saves} onRoll={onRollSave} />
         <SectionTitle hint="1-in-6">Exploration</SectionTitle>
-        <ExplorationTable exploration={exploration} onRoll={onRollExploration} />
+        <ExplorationGrid exploration={exploration} onRoll={onRollExploration} />
       </section>
     );
   }
@@ -104,9 +100,9 @@ export function SavesExploration({ saves, exploration, tabbed = false, onRollSav
         </button>
       </div>
       {tab === "saves" ? (
-        <SavesTable saves={saves} onRoll={onRollSave} />
+        <SavesGrid saves={saves} onRoll={onRollSave} />
       ) : (
-        <ExplorationTable exploration={exploration} onRoll={onRollExploration} />
+        <ExplorationGrid exploration={exploration} onRoll={onRollExploration} />
       )}
     </section>
   );

@@ -178,7 +178,8 @@
   color: var(--text-faint, #6a6354); font-size: 13px;
   transition: color 0.12s, background 0.12s;
   &:hover { color: var(--text-dim, #b5ad97); background: var(--surface-2, #2c2823); }
-  &.is-on { color: var(--gold); }
+  &.is-on { color: var(--teal); }
+  &.is-on:hover { color: var(--teal-dim); }
 }
 // static "Equip" column header label (not sortable)
 .rs-inv-thlabel {
@@ -201,10 +202,15 @@
 }
 .rs-inv .rs-inv-name:hover .nm { color: var(--gold); }
 
-// count/qty badge after a name, e.g. container "(3)" or stack "(7)"
+// container count pill (brass) — sits after the container name
 .rs-inv-count {
   font-family: var(--mono); font-size: var(--fs-2xs, 11px);
-  color: var(--text-mute, #8a8270);
+  color: var(--on-accent, #070605);
+  background: var(--accent-alt-dim);
+  border-radius: 999px;
+  padding: 1px 7px;
+  min-width: 16px;
+  text-align: center;
   white-space: nowrap;
 }
 
@@ -290,41 +296,32 @@
 // --- nested children ---
 .rs-inv-children {
   padding-left: calc(var(--spacer-4) + var(--rs-inv-depth, 1) * var(--spacer-4));
+  position: relative;
   .rs-inv-children { --rs-inv-depth: 2; }
+
+  // brass left-rail marking container membership (item icons are always ink, so a
+  // mid-brass --accent-alt-dim is used to read on dark in both themes)
+  &::before {
+    content: "";
+    position: absolute; left: var(--spacer-4); top: 0; bottom: 0;
+    border-left: 2px solid color-mix(in oklab, var(--accent-alt-dim) 55%, transparent);
+  }
+  .rs-inv-img {
+    border: 1px solid color-mix(in oklab, var(--accent-alt-dim) 60%, transparent);
+  }
 }
 
-// The whole container is the nest drop target — highlight the container row clearly.
+// The whole container is the nest drop target — brass ring (container = brass).
 .rs-inv-container.is-drop-target {
   border-radius: 4px;
-  box-shadow: inset 0 0 0 1px var(--teal, #1f7575);
-  background: color-mix(in srgb, var(--teal, #1f7575) 8%, transparent);
-  .rs-inv-row.is-container {
-    background: color-mix(in srgb, var(--teal, #1f7575) 24%, transparent);
-  }
+  box-shadow: inset 0 0 0 2px var(--accent-alt);
+  background: color-mix(in oklab, var(--accent-alt) 9%, transparent);
 }
 
 // the whole row is draggable (buttons inside still take clicks)
 .rs-inv-row.is-sortable {
   cursor: grab;
   &:active { cursor: grabbing; }
-}
-
-// "move out of container" drop zone — shown only while dragging
-.rs-inv-rootzone {
-  display: flex; align-items: center; justify-content: center; gap: var(--spacer-2);
-  margin-top: var(--spacer-2);
-  padding: var(--spacer-3);
-  border: 1px dashed var(--border, #3a342c); border-radius: 6px;
-  color: var(--text-faint, #6a6354);
-  font-family: var(--sans); font-size: var(--fs-2xs, 11px);
-  letter-spacing: 0.06em; text-transform: uppercase;
-  transition: border-color 0.12s, background 0.12s, color 0.12s;
-  &.is-over {
-    border-color: var(--teal, #1f7575);
-    border-style: solid;
-    background: color-mix(in srgb, var(--teal, #1f7575) 12%, transparent);
-    color: var(--text, #e5dec8);
-  }
 }
 
 // ---------------------------------------------------------------------------
@@ -409,6 +406,21 @@
 // ---------------------------------------------------------------------------
 
 .rs-inv-sec { margin: var(--spacer-3) 0; }
+
+// Sticky equipped tray + carried header. Scroll container is .rs-sheet; both pin
+// against it. The carried header's `top` is set in JS to the equipped tray's
+// measured height so it tucks flush beneath (background required so scrolled rows
+// don't bleed through).
+.rs-inv-sec--equipped {
+  position: sticky; top: 0; z-index: 7;
+  background: var(--bg);
+}
+.rs-inv-sec--carried > .rs-inv-sec-head {
+  position: sticky; top: 0; z-index: 6;
+  // full-width so the background masks rows scrolling beneath the pinned header
+  display: flex; width: 100%;
+  background: var(--bg);
+}
 .rs-inv .rs-inv-sec-head {
   display: inline-flex; align-items: center; gap: var(--spacer-2);
   background: transparent; border: none; cursor: pointer; padding: 0 0 var(--spacer-2);
@@ -437,14 +449,14 @@
   background: var(--ink, #070605); border: 1px solid var(--border, #3a342c);
   img { width: 100%; height: 100%; object-fit: cover; }
   .mono { font-family: var(--display); font-size: var(--fs-sm, 13px); color: var(--text-dim, #b5ad97); }
-  &:hover { border-color: var(--gold); }
+  &:hover { border-color: var(--teal); }
 }
 .rs-inv .rs-equip-hand {
   position: absolute; top: -5px; right: -5px;
   width: 16px; height: 16px; border-radius: 50%;
   display: inline-flex; align-items: center; justify-content: center;
   background: var(--surface-2, #2c2823); border: 1px solid var(--border, #3a342c);
-  color: var(--gold); font-size: 8px; cursor: pointer;
+  color: var(--teal); font-size: 8px; cursor: pointer;
   &:hover { background: var(--surface-3, #3a3429); }
 }
 

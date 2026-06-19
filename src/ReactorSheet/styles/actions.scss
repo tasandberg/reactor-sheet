@@ -335,6 +335,94 @@
 .rs-se-nav .rs-se-tab:hover { color: var(--text-dim); }
 .rs-se-nav .rs-se-tab.active { color: var(--text); border-bottom-color: var(--gold); }
 
+// --- saves & exploration cards (rows → cards; ported from .fvtt-save/.fvtt-skill) ---
+// Saves: 5-up grid of ink-stamp · mono target · tiny label.
+.fvtt-saves { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--spacer-2); }
+.fvtt-save {
+  background: var(--surface, #23201a);
+  border: 1px solid var(--border-soft, #2c2823);
+  border-radius: 7px;
+  padding: var(--spacer-2) var(--spacer-1) 7px;
+  text-align: center;
+  transition: border-color 0.12s, background 0.12s;
+}
+.fvtt-save.rollable { cursor: pointer; }
+.fvtt-save.rollable:hover { border-color: var(--gold); background: var(--surface-2, #2e2a23); }
+.fvtt-save.rollable:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+.fvtt-save .sk {
+  width: 22px; height: 22px; margin: 0 auto var(--spacer-1);
+  background: var(--ink, #070605); color: var(--stamp-text, #e5dec8);
+  border-radius: 4px; display: grid; place-items: center;
+  font-family: var(--display, serif); font-size: var(--fs-xs, 12px);
+}
+.fvtt-save .sv {
+  font-family: var(--mono, monospace); font-size: var(--fs-md, 14px);
+  color: var(--text, #e5dec8);
+}
+.fvtt-save .sn {
+  display: block;
+  font-family: var(--sans); font-size: 8px; letter-spacing: 0.04em;
+  color: var(--text-faint, #6a6354); margin-top: 2px;
+}
+
+// Exploration: 2-up grid of gold glyph · label · N-in-6 ink pill.
+.fvtt-explore { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacer-2); }
+.fvtt-skill {
+  display: flex; align-items: center; gap: var(--spacer-2);
+  background: var(--surface, #23201a);
+  border: 1px solid var(--border-soft, #2c2823);
+  border-radius: 7px;
+  padding: var(--spacer-2) var(--spacer-2) var(--spacer-2) var(--spacer-3);
+  transition: border-color 0.12s, background 0.12s;
+}
+.fvtt-skill.rollable { cursor: pointer; }
+.fvtt-skill.rollable:hover { border-color: var(--gold); background: var(--surface-2, #2e2a23); }
+.fvtt-skill.rollable:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+.fvtt-skill .skic { color: var(--gold-dim); font-size: 14px; width: 18px; text-align: center; flex: none; }
+.fvtt-skill .skn {
+  font-family: var(--sans); font-size: var(--fs-sm, 13px);
+  color: var(--text-dim, #b5ad97); flex: 1; min-width: 0;
+}
+.fvtt-skill .skv {
+  font-family: var(--mono, monospace); font-size: var(--fs-xs, 12px);
+  color: var(--text, #e5dec8);
+  background: var(--ink, #070605);
+  border: 1px solid var(--gold-soft);
+  border-radius: 5px; padding: 3px 8px 2px;
+  white-space: nowrap; flex: none;
+}
+
+// --- memorized spells quick-cast (ported from .fvtt-castlist/.fvtt-spell) ---
+.fvtt-castlist { display: flex; flex-direction: column; margin-top: 2px; }
+.fvtt-spell {
+  display: grid; grid-template-columns: 18px 1fr auto;
+  align-items: center; gap: var(--spacer-2);
+  padding: var(--spacer-2) var(--spacer-2) var(--spacer-2) var(--spacer-3);
+  background: var(--surface, #23201a);
+  border: 1px solid var(--border-soft, #2c2823);
+  border-top: none;
+}
+.fvtt-castlist .fvtt-spell:first-of-type { border-top: 1px solid var(--border-soft, #2c2823); border-radius: 7px 7px 0 0; }
+.fvtt-castlist .fvtt-spell:last-of-type { border-radius: 0 0 7px 7px; }
+.fvtt-castlist .fvtt-spell:only-of-type { border-radius: 7px; }
+.fvtt-spell .chk {
+  width: 14px; height: 14px;
+  background: var(--gold); color: var(--ink, #070605);
+  border-radius: 3px; display: grid; place-items: center;
+  font-size: 10px; font-weight: 700;
+}
+.fvtt-spell .spn {
+  font-family: var(--display, serif); font-size: var(--fs-md, 14px);
+  color: var(--text, #e5dec8);
+}
+.fvtt-spell .spm {
+  display: block;
+  font-family: var(--mono, monospace); font-size: var(--fs-3xs, 10px);
+  color: var(--text-mute, #8a8270); margin-top: 1px;
+}
+.fvtt-spell .spm span + span::before { content: " · "; }
+.fvtt-spell .sp-cast { font-family: var(--sans); }
+
 // --- attacks + tables ---
 .rs-weapon { display: flex; align-items: center; gap: 8px; }
 .rs-weapon img { width: 28px; height: 28px; border-radius: var(--r-sm, 4px); background: var(--surface, #23201a); }

@@ -155,10 +155,25 @@ export type OseWeapon = OseItem & {
   bonus: number;
 };
 
+export type OseRollType = "result" | "above" | "below";
+
 export type OseAbility = OseItem & {
   system: {
     requirements?: string;
+    /** Enriched/raw HTML feature text. */
+    description?: string;
+    /** Roll formula, e.g. "1d6". Empty for passive features. */
+    roll?: string;
+    /** result | above | below → = / ≥ / ≤ (via CONFIG.OSE.roll_type). */
+    rollType?: OseRollType;
+    /** Target number for the success comparison. 0 = none. */
+    rollTarget?: number;
+    /** Associated saving throw, if any. */
+    save?: string;
+    blindroll?: boolean;
   };
+  /** OSE item roll dispatcher — for abilities, rolls the formula + posts to chat. */
+  roll: (options?: { event?: Event }) => void;
 };
 
 export type OseSpell = OseItem & {

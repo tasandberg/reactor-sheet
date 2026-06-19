@@ -8,7 +8,7 @@
 //
 // Row layout (left→right): drag handle · item image · name (+qty) with tags beneath
 // · equip checkbox · type · damage · qty · weight.
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type {
   InventoryVM,
   EncumbranceVM,
@@ -231,7 +231,7 @@ function SortableRow({
       className={cx("rs-inv-row", "is-sortable", dnd.rowClass(group, index))}
       style={depth > 0 ? ({ "--rs-inv-depth": depth } as React.CSSProperties) : undefined}
       onContextMenu={(e) => onContext(e, item)}
-      {...dnd.rowProps(group, index, { ownZone: group })}
+      {...dnd.rowProps(group, index, { ownZone: group, acceptCrossGroup: group === ROOT })}
     >
       <span className="rs-inv-drag" aria-hidden="true">
         <i className="fa-solid fa-grip-lines" />
@@ -247,21 +247,6 @@ function StaticRow({ item, onEquip, onOpen, onSetQty, onContext }: { item: Inven
     <div className="rs-inv-row" onContextMenu={(e) => onContext(e, item)}>
       <span className="rs-inv-drag" aria-hidden="true" />
       <RowInner item={item} onEquip={onEquip} onOpen={onOpen} onSetQty={onSetQty} />
-    </div>
-  );
-}
-
-// A dedicated drop zone (shown during a drag) for moving an item out to the top level.
-// Uses idx -1 as the root-zone sentinel; zone null tells the commit handler to un-nest.
-const ROOT_ZONE_IDX = -1;
-function RootZone({ dnd }: { dnd: Dnd }) {
-  return (
-    <div
-      className={cx("rs-inv-rootzone", dnd.isInto(ROOT, ROOT_ZONE_IDX) && "is-over")}
-      {...dnd.nestProps(ROOT, ROOT_ZONE_IDX, null)}
-    >
-      <i className="fa-solid fa-arrow-up-from-bracket" aria-hidden="true" />
-      <span>Move out of container</span>
     </div>
   );
 }
@@ -297,8 +282,9 @@ function ContainerRow({
 }) {
   const group = gkey(item.id);
   const count = item.children.length;
-  // Highlight the whole container when an item hovers the header to nest into it.
-  const isDropTarget = dnd.isInto(ROOT, index);
+  // Only collapsed containers accept drop-into; an expanded one drags/drops as a
+  // normal root row (fill it by dropping among its visible children instead).
+  const isDropTarget = collapsed && dnd.isInto(ROOT, index);
   const caret = (
     <button
       type="button"
@@ -316,13 +302,13 @@ function ContainerRow({
       <div
         className={cx("rs-inv-row", "is-container", "is-sortable", dnd.rowClass(ROOT, index))}
         onContextMenu={(e) => onContext(e, item)}
-        {...dnd.rowProps(ROOT, index, { container: true, containerZone: item.id, ownZone: ROOT })}
+        {...dnd.rowProps(ROOT, index, { container: collapsed, containerZone: item.id, ownZone: ROOT, acceptCrossGroup: true })}
       >
         <span className="rs-inv-drag" aria-hidden="true">
           <i className="fa-solid fa-grip-lines" />
         </span>
         <ItemImage item={item} />
-        <NameCell item={item} onOpen={onOpen} badge={<span className="rs-inv-count">({count})</span>} trailing={caret} />
+        <NameCell item={item} onOpen={onOpen} badge={<span className="rs-inv-count">{count}</span>} trailing={caret} />
         <RowEquip item={item} onEquip={onEquip} />
         <span className="rs-inv-rowcat">{item.category}</span>
         <span className="rs-inv-dmg" />
@@ -597,6 +583,27 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
   const groupsRef = useRef(groups);
   groupsRef.current = groups;
 
+  // Root of this sheet's inventory — scope sticky-offset queries here, NOT
+  // document-wide, since multiple sheets can be open at once.
+  const rootRef = useRef<HTMLElement>(null);
+  // Pin the Carried header flush beneath the (also-sticky) Equipped section by
+  // writing its measured height to the header's `top`. Recomputed on resize and
+  // whenever the equipped tray / carried count change its height.
+  useLayoutEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const eq = root.querySelector<HTMLElement>(".rs-inv-sec--equipped");
+    const hd = root.querySelector<HTMLElement>(".rs-inv-sec--carried > .rs-inv-sec-head");
+    if (!hd) return;
+    const apply = () => {
+      hd.style.top = `${eq ? eq.offsetHeight : 0}px`;
+    };
+    apply();
+    const ro = new ResizeObserver(apply);
+    if (eq) ro.observe(eq);
+    return () => ro.disconnect();
+  }, [equipCollapsed, inventory.equipped.length, inventory.count]);
+
   // Cheap structural signature of the inventory data (ids + nesting + order + sort key),
   // computed without sorting. Groups are rebuilt from props only when this changes.
   // Drag no longer mutates groups mid-gesture, so there's nothing to fight here.
@@ -639,19 +646,21 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
       setGroups(next);
       persist(next);
     },
-    onNest: ({ fromGroup, from, zone }) => {
+    onNest: ({ fromGroup, from, targetIdx, zone }) => {
       const src = [...(groupsRef.current[fromGroup] ?? [])];
       const [moved] = src.splice(from, 1);
       if (moved === undefined) return;
       const destKey = zone == null ? ROOT : gkey(zone);
       if (destKey === fromGroup) return; // already there
-      const dest = [...(groupsRef.current[destKey] ?? []), moved];
+      const dest = [...(groupsRef.current[destKey] ?? [])];
+      // Un-nest (zone null) lands at the drop position; nesting appends.
+      if (zone == null) dest.splice(targetIdx, 0, moved);
+      else dest.push(moved);
       const next = { ...groupsRef.current, [fromGroup]: src, [destKey]: dest };
       setGroups(next);
       persist(next);
     },
   });
-  const dragActive = dnd.drag != null;
 
   // Click a header: sort asc → desc → back to manual (free reorder).
   const onSort = (key: InventorySortKey) =>
@@ -675,7 +684,7 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
   const rootIds = groups[ROOT] ?? [];
 
   return (
-    <section className="rs-inv">
+    <section className="rs-inv" ref={rootRef}>
       <div className="rs-inv-head">
         <SectionTitle hint="equip weapons &amp; armour to bring them into play">Inventory</SectionTitle>
         {view === "grid" && (
@@ -702,7 +711,7 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
       {view === "list" ? (
         <>
           {inventory.equipped.length > 0 && (
-            <section className="rs-inv-sec">
+            <section className="rs-inv-sec rs-inv-sec--equipped">
               <SectionHeader title="Equipped" count={inventory.equipped.length} collapsed={equipCollapsed} onToggle={() => setEquipCollapsed((c) => !c)} />
               {equipCollapsed ? (
                 <ImageStrip items={inventory.equipped} showHand onEquip={onEquip} onOpen={onOpen} onContext={openMenu} />
@@ -717,7 +726,7 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
             </section>
           )}
 
-          <section className="rs-inv-sec">
+          <section className="rs-inv-sec rs-inv-sec--carried">
             <SectionHeader title="Carried Items" count={inventory.count} collapsed={carriedCollapsed} onToggle={() => setCarriedCollapsed((c) => !c)} />
             {carriedCollapsed ? (
               <ImageStrip items={sortedTop} showHand={false} onEquip={onEquip} onOpen={onOpen} onContext={openMenu} />
@@ -746,7 +755,6 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
                     <SortableRow key={id} item={item} index={index} group={ROOT} depth={0} dnd={dnd} onEquip={onEquip} onOpen={onOpen} onSetQty={onSetQty} onContext={openMenu} />
                   );
                 })}
-                {dragActive && <RootZone dnd={dnd} />}
               </div>
             )}
           </section>
