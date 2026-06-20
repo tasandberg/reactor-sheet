@@ -5,14 +5,16 @@ import { raistlin } from "./__fixtures__/raistlin";
 describe("selectAttacks", () => {
   const vm = selectAttacks(raistlin);
 
-  it("expands a melee+missile weapon into two rows", () => {
+  it("keeps a melee+missile weapon as one row carrying both modes (melee first)", () => {
     const dagger = vm.filter((a) => a.name === "Dagger");
-    expect(dagger.map((a) => a.kind)).toEqual(["melee", "missile"]);
+    expect(dagger).toHaveLength(1);
+    expect(dagger[0].modes.map((m) => m.kind)).toEqual(["melee", "missile"]);
   });
 
   it("builds hit/damage roll specs: STR for melee, DEX hit for missile (no missile dmg mod)", () => {
-    const melee = vm.find((a) => a.name === "Dagger" && a.kind === "melee")!;
-    const missile = vm.find((a) => a.name === "Dagger" && a.kind === "missile")!;
+    const dagger = vm.find((a) => a.name === "Dagger")!;
+    const melee = dagger.modes.find((m) => m.kind === "melee")!;
+    const missile = dagger.modes.find((m) => m.kind === "missile")!;
     // STR 9 → +0: no suffix, plain formula
     expect(melee.hit.label).toBe("1d20");
     expect(melee.hit.formula).toBe("1d20");
@@ -29,6 +31,7 @@ describe("selectAttacks", () => {
       { label: "Two-handed", icon: "fa-hand-fist" },
       { label: "Slow", icon: "fa-hourglass" },
     ]);
-    expect(vm.every((a) => a.name !== "Quarterstaff" || a.kind === "melee")).toBe(true);
+    // single-mode (melee-only) weapon
+    expect(staff.modes.map((m) => m.kind)).toEqual(["melee"]);
   });
 });

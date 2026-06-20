@@ -539,6 +539,19 @@
 .fvtt-tag.melee i { color: var(--gold); }
 .fvtt-tag.missile i { color: var(--teal); }
 
+// kind toggle — when a weapon has BOTH melee+missile, the two kind tags act as a
+// segmented switch. Unselected is dimmed; selected lights up with its accent.
+.reactor-sheet-app .fvtt-tag.kind-toggle {
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s, opacity 0.12s;
+  i { opacity: 0.5; transition: opacity 0.12s; }
+  &:hover i { opacity: 0.85; }
+  &.selected { background: var(--surface-2, #2e2a23); }
+  &.selected i { opacity: 1; }
+  &.melee.selected { border-color: var(--gold-soft); }
+  &.missile.selected { border-color: var(--teal); }
+}
+
 // hover popover (more info) — used by tags AND the hit/dmg buttons
 .tag-pop {
   position: absolute; bottom: calc(100% + var(--spacer-1)); left: 50%; transform: translateX(-50%);

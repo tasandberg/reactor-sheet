@@ -37,16 +37,13 @@ export interface RollSpec {
   flavor: string;
 }
 
-export interface AttackVM {
-  id: string;
-  itemId: string;
-  name: string;
-  img: string;
+/** One attack mode (melee or missile) of a weapon: its hit/damage rolls + displays. */
+export interface AttackMode {
   kind: "melee" | "missile";
   kindLabel: string;
   /** To-hit roll (1d20 + ability mod). */
   hit: RollSpec;
-  /** Button text — always-signed mono, e.g. "d20+2" / "d20+0". */
+  /** Button text — always-signed mono, e.g. "+2" / "+0". */
   hitDisplay: string;
   /** Full hit formula with named mods for the popover, e.g. "1d20 + 1 (dex)". */
   hitTip: string;
@@ -56,6 +53,17 @@ export interface AttackVM {
   dmgDisplay: string;
   /** Full damage formula with named mods for the popover, e.g. "1d6 + 1 (str)". */
   dmgTip: string;
+}
+
+/** One equipped weapon. A weapon that is both melee+missile carries both modes
+ *  (melee first); the row lets the player toggle which one is active. */
+export interface AttackVM {
+  id: string;
+  itemId: string;
+  name: string;
+  img: string;
+  /** One per attack mode, melee before missile. length 1 = a single static tag. */
+  modes: AttackMode[];
   qualities: { label: string; icon: string }[];
 }
 

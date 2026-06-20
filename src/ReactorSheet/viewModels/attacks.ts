@@ -1,5 +1,5 @@
 import type { OSEActor } from "../types/types";
-import type { AttackVM, RollSpec } from "./types";
+import type { AttackVM, AttackMode, RollSpec } from "./types";
 
 /** Term to append to a formula for a mod, e.g. +1 / -2 / "" for 0. */
 const term = (mod: number) => (mod === 0 ? "" : mod > 0 ? `+${mod}` : `${mod}`);
@@ -11,7 +11,8 @@ const signed = (mod: number) => (mod >= 0 ? `+${mod}` : `${mod}`);
 const tip = (base: string, mod: number, abil: string) =>
   mod === 0 ? base : `${base} ${mod > 0 ? "+" : "−"} ${Math.abs(mod)} (${abil})`;
 
-/** Equipped weapons → one row per attack mode (melee/missile). */
+/** Equipped weapons → one row each. A melee+missile weapon carries both modes
+ *  (melee first) so the row can toggle between them. */
 export function selectAttacks(actor: OSEActor): AttackVM[] {
   const { weapons, scores } = actor.system;
   const out: AttackVM[] = [];
@@ -26,7 +27,7 @@ export function selectAttacks(actor: OSEActor): AttackVM[] {
       qualities.push({ label: q.label, icon: q.icon ?? "" });
     }
     const die = w.system.damage;
-    const make = (kind: "melee" | "missile"): AttackVM => {
+    const make = (kind: "melee" | "missile"): AttackMode => {
       const ranged = kind === "missile";
       // to-hit: str for melee, dex for missile. damage: str for melee, none for missile.
       const hitMod = ranged ? scores.dex.mod : scores.str.mod;
@@ -44,10 +45,6 @@ export function selectAttacks(actor: OSEActor): AttackVM[] {
         flavor: `${actor.name} deals damage with ${w.name}${tail}`,
       };
       return {
-        id: `${w._id}-${kind}`,
-        itemId: w._id as string,
-        name: w.name as string,
-        img: w.img,
         kind,
         kindLabel: kind === "melee" ? "Melee" : "Missile",
         hit,
@@ -57,11 +54,20 @@ export function selectAttacks(actor: OSEActor): AttackVM[] {
         dmg,
         dmgDisplay: `${die}${signed(dmgMod)}`,
         dmgTip: tip(die, dmgMod, "str"),
-        qualities,
       };
     };
-    if (w.system.melee) out.push(make("melee"));
-    if (w.system.missile) out.push(make("missile"));
+    const modes: AttackMode[] = [];
+    if (w.system.melee) modes.push(make("melee"));
+    if (w.system.missile) modes.push(make("missile"));
+    if (modes.length === 0) continue;
+    out.push({
+      id: w._id as string,
+      itemId: w._id as string,
+      name: w.name as string,
+      img: w.img,
+      modes,
+      qualities,
+    });
   }
   return out;
 }
