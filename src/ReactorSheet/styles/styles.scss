@@ -22,7 +22,7 @@
   // --- titlebar: near-black to match the top-bar, design-system font ---
   .window-header {
     background: var(--ink, #070605);
-    border-bottom: 1px solid #000;
+    border-bottom: 1px solid var(--ink, #070605);
   }
   .window-title {
     font-family: var(--display); // IM Fell English SC — chiseled small-caps

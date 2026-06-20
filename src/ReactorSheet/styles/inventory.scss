@@ -95,7 +95,7 @@
 .rs-inv-img {
   display: inline-flex; align-items: center; justify-content: center;
   width: 30px; height: 30px;
-  border-radius: 4px; overflow: hidden;
+  border-radius: var(--r-sm, 4px); overflow: hidden;
   background: var(--ink, #070605);
   border: 1px solid var(--border, #3a342c);
   img { width: 100%; height: 100%; object-fit: cover; }
@@ -109,7 +109,7 @@
 .rs-inv .rs-inv-drag {
   display: inline-flex; align-items: center; justify-content: center;
   color: var(--text-faint, #6a6354);
-  cursor: grab; font-size: 12px; line-height: 1;
+  cursor: grab; font-size: var(--fs-xs, 12px); line-height: 1;
   padding: var(--spacer-1); border-radius: 3px;
   transition: color 0.12s;
   &:active { cursor: grabbing; }
@@ -121,9 +121,9 @@
 .rs-inv .rs-inv-equip {
   justify-self: center;
   display: inline-flex; align-items: center; justify-content: center;
-  width: 22px; height: 22px; padding: 0; border-radius: 4px;
+  width: 22px; height: 22px; padding: 0; border-radius: var(--r-sm, 4px);
   background: transparent; border: none; cursor: pointer;
-  color: var(--text-faint, #6a6354); font-size: 13px;
+  color: var(--text-faint, #6a6354); font-size: var(--fs-sm, 13px);
   transition: color 0.12s, background 0.12s;
   &:hover { color: var(--text-dim, #b5ad97); background: var(--surface-2, #2c2823); }
   &.is-on { color: var(--teal); }
@@ -185,7 +185,7 @@
   display: inline-flex; align-items: center; justify-content: center;
   background: transparent; border: none;
   color: var(--text-mute, #8a8270);
-  cursor: pointer; padding: 0 4px; font-size: 13px; line-height: 1;
+  cursor: pointer; padding: 0 4px; font-size: var(--fs-sm, 13px); line-height: 1;
   transition: color 0.12s;
 
   svg, i { transition: transform 0.18s; display: block; }
@@ -235,7 +235,7 @@
 }
 .rs-inv .rs-inv-qtyin {
   width: 100%; text-align: center;
-  padding: 2px 0; border-radius: 4px;
+  padding: 2px 0; border-radius: var(--r-sm, 4px);
   background: var(--surface, #23201a);
   border: 1px solid var(--border-soft, #2c2823); // always visible so it reads as a field
   color: var(--text-dim, #b5ad97);
@@ -276,7 +276,7 @@
 // The whole (collapsed) container is the nest drop target — dotted brass
 // outline (container = brass).
 .rs-inv-container.is-drop-target {
-  border-radius: 4px;
+  border-radius: var(--r-sm, 4px);
   outline: 2px dotted var(--accent-alt);
   outline-offset: -2px;
   background: color-mix(in oklab, var(--accent-alt) 9%, transparent);
@@ -317,7 +317,7 @@
   padding: var(--spacer-2) var(--spacer-2);
   background: var(--surface, #23201a);
   border: 1px solid var(--border, #3a342c);
-  border-radius: 6px;
+  border-radius: var(--r-md, 6px);
   color: var(--text, #e5dec8);
   font-family: var(--mono); font-size: var(--fs-md, 15px);
   transition: border-color 0.12s;
@@ -363,7 +363,7 @@
 
 // --- Equipped tray: dashed-bordered row of large ink-stamp tiles ---
 .rs-equip-tray {
-  display: flex; flex-wrap: wrap; gap: 9px; align-items: flex-start;
+  display: flex; flex-wrap: wrap; gap: var(--spacer-2); align-items: flex-start;
   padding: var(--spacer-3);
   border: 1.5px dashed var(--border-soft, #2c2823); border-radius: var(--r-md, 6px);
   transition: border-color 0.12s, background 0.12s;
@@ -455,7 +455,7 @@
   position: fixed; z-index: 1000; min-width: 168px;
   padding: var(--spacer-1);
   background: var(--surface, #23201a);
-  border: 1px solid var(--border, #3a342c); border-radius: 6px;
+  border: 1px solid var(--border, #3a342c); border-radius: var(--r-md, 6px);
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
 }
 .rs-ctx-title {
@@ -467,7 +467,7 @@
 }
 .rs-inv .rs-ctx-item {
   display: flex; align-items: center; gap: var(--spacer-2); width: 100%;
-  padding: var(--spacer-2); border-radius: 4px;
+  padding: var(--spacer-2); border-radius: var(--r-sm, 4px);
   background: transparent; border: none; cursor: pointer; text-align: left;
   font-family: var(--sans); font-size: var(--fs-sm, 13px);
   color: var(--text, #e5dec8);
