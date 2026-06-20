@@ -87,6 +87,8 @@
 // header alignment matches the cells below it
 .rs-inv .rs-inv-th-wt { justify-content: flex-end; }
 .rs-inv .rs-inv-th-cat { justify-content: flex-end; }
+// "Item" header spans the image + name columns so it starts at the image edge
+.rs-inv .rs-inv-th-item { grid-column: 2 / 4; justify-content: flex-start; }
 .rs-inv-th-caret { font-size: 8px; width: 6px; } // reserve space so labels don't shift
 
 // --- item image (col 2) ---

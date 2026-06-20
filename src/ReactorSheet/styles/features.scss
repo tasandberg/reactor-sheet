@@ -102,9 +102,7 @@
 }
 .rs-feat-head .section-title { flex: 1; }
 
-// Round brass-outline action button (add / edit toggle). Qualified to beat the
-// `.reactor-sheet-app button { all: unset }` reset (0,1,1).
-.reactor-sheet-app .rs-feat-add,
+// Language "go" button keeps the round brass-outline affordance.
 .reactor-sheet-app .rs-lang-go {
   flex: none;
   display: grid; place-items: center;
@@ -118,10 +116,21 @@
   transition: background 0.12s, color 0.12s, border-color 0.12s;
   &:hover:not(:disabled) { background: var(--accent-alt); color: var(--on-accent); }
   &:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-  // Edit toggle "on" state — teal, matching the prototype edit affordance.
-  &.on {
-    background: var(--teal); border-color: var(--teal); color: var(--on-accent);
-  }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+// Add-ability "+" — deliberately subtle (seldom used): a faint ghost icon that
+// only gains colour on hover. No outline/fill at rest.
+.reactor-sheet-app .rs-feat-add {
+  flex: none;
+  display: grid; place-items: center;
+  width: 22px; height: 22px;
+  background: none; border: none; cursor: pointer;
+  color: var(--text-faint, #6a6354);
+  font-size: var(--fs-2xs, 11px);
+  transition: color 0.12s;
+  &:hover:not(:disabled) { color: var(--accent-alt); }
+  &:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
   &:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 

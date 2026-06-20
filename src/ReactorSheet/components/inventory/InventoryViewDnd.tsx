@@ -330,8 +330,8 @@ function SortHeaderRow({ sort, onSort }: { sort: SortState; onSort: (key: Invent
   return (
     <div className="rs-inv-row rs-inv-headrow" role="row">
       <span aria-hidden="true" /> {/* drag */}
-      <span aria-hidden="true" /> {/* image */}
-      <SortHeader col="name" label="Name" className="rs-inv-th-name" sort={sort} onSort={onSort} />
+      {/* "Item" spans the image + name columns so it left-aligns to the image */}
+      <SortHeader col="name" label="Item" className="rs-inv-th-item" sort={sort} onSort={onSort} />
       <SortHeader col="category" label="Type" className="rs-inv-th-cat" sort={sort} onSort={onSort} />
       <SortHeader col="weight" label="Wt" className="rs-inv-th-wt" sort={sort} onSort={onSort} />
       <span className="rs-inv-thlabel rs-inv-thlabel-eq">Equip</span>
