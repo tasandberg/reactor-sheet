@@ -20,6 +20,7 @@ import type {
 import { sortInventory, SORT_DEFAULT_DIR } from "../../viewModels/inventory";
 import { useDragReorder } from "./useDragReorder";
 import { SectionTitle } from "../ui/SectionTitle";
+import { Tag } from "../ui/Tag";
 import { cx } from "../ui/cx";
 
 type Dnd = ReturnType<typeof useDragReorder>;
@@ -268,7 +269,7 @@ function ContainerRow({
           <i className="fa-solid fa-grip-lines" />
         </span>
         <ItemImage item={item} />
-        <NameCell item={item} onOpen={onOpen} badge={<span className="rs-inv-count">{count}</span>} trailing={caret} />
+        <NameCell item={item} onOpen={onOpen} badge={<Tag intent="count">{count}</Tag>} trailing={caret} />
         <span className="rs-inv-rowcat">{item.category}</span>
         <span className="rs-inv-wt">{weightLabel(item.weight)}</span>
         <RowEquip item={item} onEquip={onEquip} />
@@ -393,7 +394,7 @@ function EncumbranceBar({ e }: { e: EncumbranceVM }) {
 function SectionCount({ title, items }: { title: string; items: InventoryItemVM[] }) {
   return (
     <div className="rs-inv-sec-head">
-      <span className="rs-inv-sec-title">{title}</span>
+      <SectionTitle variant="sub">{title}</SectionTitle>
       <span className="rs-inv-sec-count">{sectionCountLabel(items)}</span>
     </div>
   );

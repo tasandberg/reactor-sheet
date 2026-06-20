@@ -85,7 +85,8 @@
   display: flex;
   align-items: center;
   gap: var(--spacer-1);
-  padding: 3px var(--spacer-2);
+  height: 30px; // locked: focused input border must not grow the box
+  padding: 0 var(--spacer-2);
   border: 1px solid var(--border-soft, #2c2823);
   border-radius: var(--r-md, 6px);
   background: var(--surface);
@@ -93,30 +94,36 @@
 .rs-mb-hp { border-color: color-mix(in srgb, var(--crimson) 55%, transparent); }
 .rs-mb-ac { border-color: color-mix(in srgb, var(--teal) 50%, transparent); }
 
-.rs-mb-stamp {
-  font-family: var(--mono);
-  font-size: var(--fs-3xs, 10px);
-  letter-spacing: 0.06em;
-  color: var(--text-faint, #6a6354);
-}
+// Label uses the shared ink-stamp <Stamp size="sm"> (black bar, cream caps);
+// this class is just a hover hook for the −/+ swap. Keep styling on .stamp.
 
-.rs-mb-hp-input {
-  width: 2.2em;
+// Qualified with .reactor-sheet-app so font/colour/size beat the
+// `.reactor-sheet-app input { all: unset }` reset (0,1,1) — otherwise the
+// editable HP number renders in the inherited sans/text colour, not crimson.
+.reactor-sheet-app .rs-mb-hp-input {
+  width: 1.4em;
   min-width: 0;
   text-align: center;
   cursor: text;
   font-family: var(--display);
-  font-size: var(--fs-md, 15px);
+  font-size: var(--fs-3xl, 24px);
+  line-height: 1;
+  // Clamp to the box height so the focus border never overflows the parent.
+  // IM Fell numerals sit low, so lift the glyph with bottom padding (not a
+  // transform, which would carry the border up out of the box).
+  height: 100%;
+  box-sizing: border-box;
   color: var(--crimson);
   border: 1px solid transparent;
   border-radius: var(--r-sm, 4px);
-  padding: 0 1px;
+  padding: 0 0 var(--spacer-1);
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
-.rs-mb-hp-input:focus { border-color: var(--crimson); background: var(--bg, #181612); }
+.reactor-sheet-app .rs-mb-hp-input:focus { border-color: var(--crimson); background: var(--bg, #181612); }
 .rs-mb-hp-input::-webkit-inner-spin-button,
 .rs-mb-hp-input::-webkit-outer-spin-button { appearance: none; margin: 0; }
-.rs-mb-hp-input { -moz-appearance: textfield; appearance: textfield; }
-.rs-mb-hp-static { cursor: default; }
+.reactor-sheet-app .rs-mb-hp-static { cursor: default; }
 
 .rs-mb-hp-max {
   font-family: var(--mono);
@@ -124,9 +131,48 @@
   color: var(--text-mute);
 }
 
+// The label sits in normal flow (flex-centered by .rs-mb-hp); the −/+ stepper
+// overlays it absolutely so hover-swapping the two never shifts the layout.
+.rs-mb-hp-slot {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  .rs-mb-stamp,
+  .rs-mb-hp-max { transition: opacity 0.12s ease; }
+}
+.reactor-sheet-app .rs-mb-hp-btn {
+  // boxed stepper matching the header .vv-step; beats `button { all: unset }` (0,1,1)
+  position: absolute;
+  inset: 0;
+  margin: auto; // center the fixed-size box over the label
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--border, #3a342c);
+  border-radius: var(--r-sm, 4px);
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: var(--fs-sm, 13px);
+  line-height: 1;
+  color: var(--text-dim, #b5ad97);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+  &:hover { border-color: var(--gold); color: var(--text, #e5dec8); }
+}
+// hover the HP box: fade labels out, steppers in
+.rs-mb-hp:hover {
+  .rs-mb-stamp,
+  .rs-mb-hp-max { opacity: 0; }
+  .rs-mb-hp-btn { opacity: 1; pointer-events: auto; }
+}
+
 .rs-mb-ac-v {
   font-family: var(--display);
-  font-size: var(--fs-md, 15px);
+  font-size: var(--fs-2xl, 21px);
+  line-height: 1; // bigger glyph, box height unchanged
   color: var(--teal);
 }
 

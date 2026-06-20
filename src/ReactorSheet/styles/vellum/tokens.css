@@ -234,6 +234,29 @@ body {
   min-width: 0;
 }
 
+/* bare — embedded head (e.g. a modal title): keep the display type, drop the
+   rule + margins so it sits inside another framed container. */
+.section-title.bare {
+  border-bottom: none;
+  margin: 0;
+  padding-bottom: 0;
+}
+
+/* sub — small uppercase sans label for sub-section heads (inventory
+   "Equipped" / "All Items", etc.). */
+.section-title.sub {
+  font-family: var(--sans);
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  border-bottom: none;
+  margin: 0;
+  padding-bottom: 0;
+  line-height: var(--lh-normal);
+}
+
 /* Rule callout — italic serif explanatory line, like the print sheet */
 .rule {
   font-family: var(--serif);

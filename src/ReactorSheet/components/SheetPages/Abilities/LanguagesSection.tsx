@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { useReactorSheetContext } from "../../context";
 import { SectionTitle } from "../../ui/SectionTitle";
+import { IconButton } from "../../ui/IconButton";
+import { Tag } from "../../ui/Tag";
 import { cx } from "../../ui/cx";
 
 /** INT literacy/spoken mods resolve to localized labels on the actor; compose a flavour line. */
@@ -54,9 +56,9 @@ export function LanguagesSection({ editing: forced }: { editing?: boolean }) {
       <div className="rs-feat-head">
         <SectionTitle>Languages</SectionTitle>
         {!forced && (
-          <button
-            type="button"
-            className={cx("rs-feat-add", editing && "on")}
+          <IconButton
+            variant="accent"
+            on={editing}
             title={editing ? "Done editing languages" : "Edit languages"}
             aria-label={editing ? "Done editing languages" : "Edit languages"}
             aria-pressed={editing}
@@ -66,7 +68,7 @@ export function LanguagesSection({ editing: forced }: { editing?: boolean }) {
               className={cx("fas", editing ? "fa-check" : "fa-pen")}
               aria-hidden="true"
             />
-          </button>
+          </IconButton>
         )}
       </div>
 
@@ -75,7 +77,7 @@ export function LanguagesSection({ editing: forced }: { editing?: boolean }) {
           <span className="rs-langs-empty">None</span>
         )}
         {current.map((lang) => (
-          <span key={lang} className="rs-lang">
+          <Tag key={lang}>
             {lang}
             {editing && (
               <button
@@ -88,7 +90,7 @@ export function LanguagesSection({ editing: forced }: { editing?: boolean }) {
                 <i className="fas fa-xmark" aria-hidden="true" />
               </button>
             )}
-          </span>
+          </Tag>
         ))}
       </div>
 
@@ -113,16 +115,15 @@ export function LanguagesSection({ editing: forced }: { editing?: boolean }) {
               <option key={l} value={l} />
             ))}
           </datalist>
-          <button
-            type="button"
-            className="rs-lang-go"
+          <IconButton
+            variant="round"
             title="Add language"
             aria-label="Add language"
             disabled={!draft.trim()}
             onClick={() => add(draft)}
           >
             <i className="fas fa-plus" aria-hidden="true" />
-          </button>
+          </IconButton>
         </div>
       )}
 
