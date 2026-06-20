@@ -94,29 +94,33 @@
 .rs-mb-ac { border-color: color-mix(in srgb, var(--teal) 50%, transparent); }
 
 .rs-mb-stamp {
-  font-family: var(--mono);
-  font-size: var(--fs-3xs, 10px);
-  letter-spacing: 0.06em;
-  color: var(--text-faint, #6a6354);
+  font-family: var(--display, serif);
+  font-size: var(--fs-sm, 13px);
+  letter-spacing: 0.08em;
+  color: var(--text-mute, #8a8270);
 }
 
-.rs-mb-hp-input {
+// Qualified with .reactor-sheet-app so font/colour/size beat the
+// `.reactor-sheet-app input { all: unset }` reset (0,1,1) — otherwise the
+// editable HP number renders in the inherited sans/text colour, not crimson.
+.reactor-sheet-app .rs-mb-hp-input {
   width: 2.2em;
   min-width: 0;
   text-align: center;
   cursor: text;
   font-family: var(--display);
-  font-size: var(--fs-md, 15px);
+  font-size: var(--fs-lg, 16px);
   color: var(--crimson);
   border: 1px solid transparent;
   border-radius: var(--r-sm, 4px);
   padding: 0 1px;
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
-.rs-mb-hp-input:focus { border-color: var(--crimson); background: var(--bg, #181612); }
+.reactor-sheet-app .rs-mb-hp-input:focus { border-color: var(--crimson); background: var(--bg, #181612); }
 .rs-mb-hp-input::-webkit-inner-spin-button,
 .rs-mb-hp-input::-webkit-outer-spin-button { appearance: none; margin: 0; }
-.rs-mb-hp-input { -moz-appearance: textfield; appearance: textfield; }
-.rs-mb-hp-static { cursor: default; }
+.reactor-sheet-app .rs-mb-hp-static { cursor: default; }
 
 .rs-mb-hp-max {
   font-family: var(--mono);
@@ -126,7 +130,7 @@
 
 .rs-mb-ac-v {
   font-family: var(--display);
-  font-size: var(--fs-md, 15px);
+  font-size: var(--fs-lg, 16px);
   color: var(--teal);
 }
 
