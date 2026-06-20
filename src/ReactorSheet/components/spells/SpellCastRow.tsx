@@ -47,21 +47,21 @@ export function SpellCastRow({ spell, meta, onCast, onUnprepare, onOpenName, row
               <span key={i} className={cx("sp-dot", i < left && "filled")} aria-hidden="true" />
             ))}
           </span>
+          {onUnprepare && (
+            <button
+              type="button"
+              className="sp-trash"
+              onClick={onUnprepare}
+              title={`Remove ${spell.name}`}
+              aria-label={`Remove ${spell.name}`}
+            >
+              <i className="fa-solid fa-trash-can" aria-hidden="true" />
+            </button>
+          )}
         </span>
         <span className="spm">{meta}</span>
       </div>
       <span className="sp-actions">
-        {onUnprepare && (
-          <button
-            type="button"
-            className="sp-unprep"
-            onClick={onUnprepare}
-            title={`Unprepare ${spell.name}`}
-            aria-label={`Unprepare ${spell.name}`}
-          >
-            <i className="fa-solid fa-minus" aria-hidden="true" />
-          </button>
-        )}
         <button
           type="button"
           className="sp-cast"

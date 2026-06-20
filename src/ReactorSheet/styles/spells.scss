@@ -91,15 +91,15 @@
 // name + cast dots on one line (dots to the right of the name)
 .rs-spell .spn-row { display: inline-flex; align-items: baseline; gap: var(--spacer-2); min-width: 0; }
 .rs-spell .sp-actions { display: inline-flex; align-items: center; gap: var(--spacer-2); }
-// unprepare (free a slot) — a minus, not a checkbox
-.reactor-sheet-app .rs-spell .sp-unprep {
+// remove (free a slot) — small trashcan sitting just after the cast dots
+.reactor-sheet-app .rs-spell .sp-trash {
   display: inline-flex; align-items: center; justify-content: center;
   width: 18px; height: 18px; padding: 0;
-  background: transparent; border: 1px solid var(--border, #3a342c);
-  border-radius: 4px; color: var(--text-mute, #8a8270); cursor: pointer;
-  font-size: 9px; line-height: 1;
-  transition: color 0.12s, border-color 0.12s;
-  &:hover { color: var(--crimson, #c75044); border-color: var(--crimson); }
+  background: transparent; border: none;
+  color: var(--text-faint, #6a6354); cursor: pointer;
+  font-size: 11px; line-height: 1;
+  transition: color 0.12s;
+  &:hover { color: var(--crimson, #c75044); }
 }
 .rs-spell.spent .spn { text-decoration: line-through; color: var(--text-mute, #8a8270); }
 
