@@ -1,22 +1,38 @@
 import { useReactorSheetContext } from "../../context";
-import { selectFeatures } from "../../../viewModels/features";
-import { Column, TextLarge } from "../../shared/elements";
-import Languages from "../Notes/Languages";
-import { FeatureCard } from "./FeatureCard";
+import {
+  groupFeaturesByClass,
+  selectFeatures,
+} from "../../../viewModels/features";
+import { createAbility } from "./createAbility";
+import { FeatureSection, FeatureSectionHeader } from "./FeatureSection";
+import { LanguagesSection } from "./LanguagesSection";
 
 export default function Abilities() {
   const { actor } = useReactorSheetContext();
   const features = selectFeatures(actor);
+  const groups = groupFeaturesByClass(features, actor.system.details.class);
+
+  const onAdd = (slug: string) => createAbility(actor, slug);
 
   return (
-    <Column $justify="start" $align="start" $gap="md">
-      <TextLarge>Abilities</TextLarge>
-      <div className="fvtt-feats">
-        {features.map((f) => (
-          <FeatureCard key={f.id} feature={f} />
-        ))}
-      </div>
-      <Languages />
-    </Column>
+    <div className="rs-abilities-tab">
+      {groups.length === 0 ? (
+        // No features yet — still offer a way to create the first one.
+        <section className="rs-section rs-feat-sec">
+          <FeatureSectionHeader
+            title="Class Features"
+            hint={actor.system.details.class || undefined}
+            label={actor.system.details.class || "Class"}
+            onAdd={() => onAdd("")}
+          />
+          <p className="rs-flavour">No features yet.</p>
+        </section>
+      ) : (
+        groups.map((group) => (
+          <FeatureSection key={group.slug} group={group} onAdd={onAdd} />
+        ))
+      )}
+      <LanguagesSection />
+    </div>
   );
 }

@@ -85,3 +85,84 @@
   transition: color 0.12s;
   &:hover { color: var(--crimson, #c75044); }
 }
+
+// --- Section header: title + hint on the left, + / edit button on the right ---
+// Mirrors .rs-inv-head so the rule spans the full width and the title flexes.
+.rs-feat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacer-3);
+}
+.rs-feat-head .section-title { flex: 1; }
+
+// Round brass-outline action button (add / edit toggle). Qualified to beat the
+// `.reactor-sheet-app button { all: unset }` reset (0,1,1).
+.reactor-sheet-app .rs-feat-add,
+.reactor-sheet-app .rs-lang-go {
+  flex: none;
+  display: grid; place-items: center;
+  width: 26px; height: 26px;
+  border-radius: 999px;
+  background: none;
+  border: 1px solid var(--accent-alt);
+  color: var(--accent-alt);
+  cursor: pointer;
+  font-size: var(--fs-2xs, 11px);
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  &:hover:not(:disabled) { background: var(--accent-alt); color: var(--on-accent); }
+  &:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  // Edit toggle "on" state — teal, matching the prototype edit affordance.
+  &.on {
+    background: var(--teal); border-color: var(--teal); color: var(--on-accent);
+  }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+// --- Languages: ink-stamp chips ---
+.rs-langs { display: flex; flex-wrap: wrap; gap: var(--spacer-1); align-items: center; }
+.rs-langs-empty {
+  font-family: "IM Fell English", Georgia, serif; font-style: italic;
+  font-size: var(--fs-sm, 13px); color: var(--text-faint, #6a6354);
+}
+.rs-lang {
+  display: inline-flex; align-items: center; gap: var(--spacer-1);
+  font-family: var(--mono, monospace); font-size: var(--fs-xs, 12px);
+  color: var(--text-dim, #b5ad97);
+  background: var(--surface, #23201a);
+  border: 1px solid var(--border-soft, #2c2823);
+  padding: 3px 9px 2px; border-radius: 99px;
+}
+.reactor-sheet-app .rs-lang-x {
+  display: grid; place-items: center;
+  background: none; border: none; cursor: pointer; padding: 0;
+  margin-right: -2px;
+  color: var(--text-faint, #6a6354);
+  font-size: var(--fs-2xs, 11px);
+  transition: color 0.12s;
+  &:hover { color: var(--crimson, #c75044); }
+}
+
+// --- Languages: add row (text input + datalist choices + go button) ---
+.rs-lang-add {
+  display: flex; align-items: center; gap: var(--spacer-2);
+  margin-top: var(--spacer-3);
+}
+.reactor-sheet-app .rs-lang-input {
+  flex: 1; min-width: 0; max-width: 220px;
+  background: var(--bg-2, #1f1c17);
+  border: 1px solid var(--border-soft, #2c2823);
+  border-radius: var(--r-sm, 4px);
+  padding: var(--spacer-1) var(--spacer-2);
+  color: var(--text, #e5dec8);
+  font-family: var(--mono, monospace); font-size: var(--fs-xs, 12px);
+  &:focus-visible { outline: 2px solid var(--gold); outline-offset: -1px; }
+  &::placeholder { color: var(--text-faint, #6a6354); }
+}
+
+// --- Flavour line (italic serif, e.g. "Literate. Native + 2.") ---
+.rs-flavour {
+  font-family: "IM Fell English", Georgia, serif; font-style: italic;
+  font-size: var(--fs-sm, 13px); color: var(--text-mute, #8a8270);
+  line-height: 1.5; margin: var(--spacer-3) 0 0;
+}
