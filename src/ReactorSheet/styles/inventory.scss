@@ -414,16 +414,37 @@
 }
 .rs-equip-tcard:hover .rs-equip-tt-pop { opacity: 1; transform: translate(-50%, 0); }
 .rs-equip-tt-pop-nm { font-family: var(--display); font-size: var(--fs-base, 15px); color: var(--text, #e5dec8); line-height: 1.1; }
-.rs-equip-tt-pop-meta { display: flex; align-items: baseline; gap: var(--spacer-1); flex-wrap: wrap; }
 .rs-equip-tt-pop-type {
   font-family: var(--sans); font-size: var(--fs-3xs, 10px);
   letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-mute, #8a8270);
 }
-.rs-equip-tt-pop-dot { color: var(--text-faint, #6a6354); }
-.rs-equip-tt-pop-detail { font-family: var(--mono); font-size: var(--fs-xs, 12px); color: var(--text-mute, #8a8270); }
-.rs-equip-tt-pop-act {
-  font-family: var(--serif); font-style: italic; font-size: var(--fs-2xs, 11px);
-  color: var(--text-faint, #6a6354); margin-top: 1px;
+// stat rows — label on the left, mono value on the right
+.rs-equip-tt-pop-stats {
+  display: flex; flex-direction: column; gap: 2px;
+  margin-top: var(--spacer-1);
+  padding-top: var(--spacer-1); border-top: 1px solid var(--border-soft, #2c2823);
+}
+.rs-equip-tt-pop-stat {
+  display: flex; align-items: baseline; justify-content: space-between; gap: var(--spacer-3);
+  .k {
+    font-family: var(--sans); font-size: var(--fs-3xs, 10px);
+    letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-faint, #6a6354);
+  }
+  .v { font-family: var(--mono); font-size: var(--fs-xs, 12px); color: var(--text-dim, #b5ad97); }
+}
+// quality tags
+.rs-equip-tt-pop-tags {
+  display: flex; flex-wrap: wrap; gap: var(--spacer-1);
+  margin-top: var(--spacer-1);
+  padding-top: var(--spacer-1); border-top: 1px solid var(--border-soft, #2c2823);
+}
+.rs-equip-tt-pop-tag {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-family: var(--sans); font-size: var(--fs-3xs, 10px);
+  color: var(--text-dim, #b5ad97);
+  background: var(--bg-2, #1f1c17); border: 1px solid var(--border-soft, #2c2823);
+  border-radius: var(--r-sm, 4px); padding: 1px 6px;
+  i { font-size: 9px; color: var(--gold-dim); }
 }
 
 // ---------------------------------------------------------------------------

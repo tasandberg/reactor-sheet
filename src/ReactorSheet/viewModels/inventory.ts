@@ -88,6 +88,26 @@ function isCurrency(item: OseItem): boolean {
   return (item.system.tags ?? []).some((t: { value: string }) => t.value === "Currency");
 }
 
+/** World ascending-AC setting (descending is the OSE default). Safe in non-Foundry tests. */
+function ascendingAC(): boolean {
+  try {
+    // fvtt-types doesn't know OSE's settings namespace; read it loosely.
+    const settings = game.settings as { get(ns: string, key: string): unknown };
+    return !!settings.get(game.system.id, "ascendingAC");
+  } catch {
+    return false;
+  }
+}
+
+/** Armour class for an armour item: AAC (ascending) or AC (descending) per setting. */
+function armorClassOf(item: OseItem): { label: string; value: number } | null {
+  if (item.type !== "armor") return null;
+  const s = item.system as { ac?: { value?: number }; aac?: { value?: number } };
+  return ascendingAC()
+    ? { label: "AAC", value: s.aac?.value ?? 0 }
+    : { label: "AC", value: s.ac?.value ?? 0 };
+}
+
 function toVM(item: OseItem, children: InventoryItemVM[] = []): InventoryItemVM {
   const s = item.system;
   const q = s.quantity;
@@ -106,6 +126,8 @@ function toVM(item: OseItem, children: InventoryItemVM[] = []): InventoryItemVM 
     tags: itemTags(item),
     monogram: monogram(item.name as string),
     weight: s.cumulativeWeight ?? s.weight ?? 0,
+    cost: (s as { cost?: number }).cost ?? 0,
+    armorClass: armorClassOf(item),
     sort: orderOf(item),
     equippedSort: equippedOrderOf(item),
     equipped: "equipped" in s ? !!s.equipped : null,

@@ -55,6 +55,16 @@ describe("selectInventory", () => {
     expect(ring.damage).toBe("");
   });
 
+  it("carries cost; armorClass is AC (descending default) for armour, null otherwise", () => {
+    const armor = mk("armor", "Plate Mail", { equipped: true, weight: 500, cost: 60, ac: { value: 3 }, aac: { value: 16 } });
+    const [vm2] = selectInventory([armor]).items;
+    expect(vm2.cost).toBe(60);
+    // game.settings unavailable in tests ⇒ ascendingAC() falls back to false ⇒ AC
+    expect(vm2.armorClass).toEqual({ label: "AC", value: 3 });
+    // non-armour carries no armorClass
+    expect(selectInventory([mk("weapon", "Axe", { damage: "1d8", cost: 5 })]).items[0].armorClass).toBeNull();
+  });
+
   it("dedupes tags by label", () => {
     const dup = mk("weapon", "Sword", {
       damage: "1d8",
@@ -139,7 +149,7 @@ describe("selectInventory — container tree", () => {
 describe("sortInventory", () => {
   const mkVM = (overrides: Partial<import("./types").InventoryItemVM>): import("./types").InventoryItemVM => ({
     id: "x", name: "X", img: "", category: "Gear", categoryRank: 2,
-    damage: "", tags: [], monogram: "XX", weight: 0, sort: 0, equippedSort: 0,
+    damage: "", tags: [], monogram: "XX", weight: 0, cost: 0, armorClass: null, sort: 0, equippedSort: 0,
     equipped: null, quantity: null, isContainer: false, children: [],
     ...overrides,
   });
@@ -197,7 +207,7 @@ describe("sortInventory", () => {
 describe("sortEquipped", () => {
   const mkVM = (id: string, name: string, equippedSort: number): import("./types").InventoryItemVM => ({
     id, name, img: "", category: "Gear", categoryRank: 2, damage: "", tags: [],
-    monogram: "XX", weight: 0, sort: 0, equippedSort, equipped: true, quantity: null,
+    monogram: "XX", weight: 0, cost: 0, armorClass: null, sort: 0, equippedSort, equipped: true, quantity: null,
     isContainer: false, children: [],
   });
 

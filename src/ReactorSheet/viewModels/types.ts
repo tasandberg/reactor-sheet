@@ -110,6 +110,10 @@ export interface InventoryItemVM {
   /** Short monogram for the grid card when the item has no real art. */
   monogram: string;
   weight: number;
+  /** Item cost in gp (system.cost). 0 when unset. */
+  cost: number;
+  /** Armour class for armour items — label is "AC"/"AAC" per the ascendingAC setting. null otherwise. */
+  armorClass: { label: string; value: number } | null;
   sort: number;            // manual order — reactor-sheet `order` flag (falls back to item.sort)
   equippedSort: number;    // manual order within the equipped tray — `equippedOrder` flag (falls back to `sort`)
   /** null when the item type can't be equipped (no `equipped` field). */
