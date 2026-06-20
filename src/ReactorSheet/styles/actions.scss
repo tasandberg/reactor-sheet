@@ -430,8 +430,8 @@
 // --- memorized spells quick-cast (ported from .fvtt-castlist/.fvtt-spell) ---
 .fvtt-castlist { display: flex; flex-direction: column; margin-top: 2px; }
 .fvtt-spell {
-  display: grid; grid-template-columns: 18px 1fr auto;
-  align-items: center; gap: var(--spacer-2);
+  display: grid; grid-template-columns: auto 1fr auto;
+  align-items: center; gap: var(--spacer-3);
   padding: var(--spacer-2) var(--spacer-2) var(--spacer-2) var(--spacer-3);
   background: var(--surface, #23201a);
   border: 1px solid var(--border-soft, #2c2823);
@@ -440,12 +440,13 @@
 .fvtt-castlist .fvtt-spell:first-of-type { border-top: 1px solid var(--border-soft, #2c2823); border-radius: 7px 7px 0 0; }
 .fvtt-castlist .fvtt-spell:last-of-type { border-radius: 0 0 7px 7px; }
 .fvtt-castlist .fvtt-spell:only-of-type { border-radius: 7px; }
-.fvtt-spell .chk {
-  width: 14px; height: 14px;
-  background: var(--gold); color: var(--ink, #070605);
-  border-radius: 3px; display: grid; place-items: center;
-  font-size: 10px; font-weight: 700;
+// cast dots — one per selected slot; filled = casts remaining (accent), empty = spent
+.fvtt-spell .sp-dots { display: inline-flex; align-items: center; gap: var(--spacer-1); }
+.fvtt-spell .sp-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  border: 1px solid var(--accent-alt-dim, #a88240); background: transparent;
 }
+.fvtt-spell .sp-dot.filled { background: var(--gold); border-color: var(--gold); }
 .fvtt-spell .spn {
   font-family: var(--display, serif); font-size: var(--fs-md, 14px);
   color: var(--text, #e5dec8);
@@ -456,10 +457,18 @@
   color: var(--text-mute, #8a8270); margin-top: 1px;
 }
 .fvtt-spell .spm span + span::before { content: " · "; }
-.fvtt-spell .sp-cast { font-family: var(--sans); }
-// spent (no casts left until Rest): dim the row + grey the check
-.fvtt-spell.spent { opacity: 0.5; }
-.fvtt-spell.spent .chk { background: var(--surface-3, #3a3429); color: var(--text-mute, #8a8270); }
+// cast button — small dark rounded button; "spent" is disabled + dimmed
+.reactor-sheet-app .fvtt-spell .sp-cast {
+  font-family: var(--sans); font-size: var(--fs-xs, 12px);
+  color: var(--gold); cursor: pointer;
+  background: var(--bg-2, #1f1c17); border: 1px solid var(--border, #3a342c);
+  border-radius: var(--r-md, 6px); padding: var(--spacer-1) var(--spacer-3);
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+  &:hover:not(:disabled) { background: var(--surface-2, #2e2a23); border-color: var(--gold-soft); }
+  &:disabled { color: var(--text-faint, #6a6354); cursor: default; }
+}
+// spent (cast 0, still selected): dim the row + struck name (dots render empty)
+.fvtt-spell.spent { opacity: 0.6; }
 .fvtt-spell.spent .spn { text-decoration: line-through; }
 
 // === Actions sub-tab nav (MEDIUM only) =====================================

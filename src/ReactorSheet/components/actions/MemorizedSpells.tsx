@@ -5,14 +5,15 @@ import { cx } from "../ui/cx";
 type Props = { actor: OSEActor };
 
 /**
- * Quick-cast list of prepared spells. OSE populates `cast` (remaining castable
- * slots — the same field the Spells tab's PreparedSpells filters on); `memorized`
- * is often 0, so we gate on EITHER being > 0 to robustly catch every prepared
- * spell. The cast button reflects remaining casts: disabled / "spent" at 0.
- * Cast → `spell.spendSpell` (decrements `cast` + routes the roll); Rest refills it.
+ * Quick-cast list of selected spells. Per OSE: `memorized` = slots SELECTED for a
+ * spell (persists across rests), `cast` = casts REMAINING now (decrements on cast,
+ * refilled to `memorized` on rest). A spell with `cast === 0` but `memorized > 0`
+ * is SPENT but still selected — shown struck-through and disabled, not removed.
+ * `total` (the dot count) is max(memorized, cast) so it still works when only
+ * `cast` is set (e.g. spells prepared via the cast field). Cast → `spendSpell`.
  */
 export function MemorizedSpells({ actor }: Props) {
-  // Same flatten + path as PreparedSpells: spellList is Record<level, OseSpell[]>.
+  // Same flatten + path as the Spells tab: spellList is Record<level, OseSpell[]>.
   const spells: OseSpell[] = Object.values(actor.system.spells?.spellList ?? {})
     .flat()
     .filter((s) => (s.system.cast ?? 0) > 0 || (s.system.memorized ?? 0) > 0)
@@ -28,11 +29,17 @@ export function MemorizedSpells({ actor }: Props) {
       <div className="fvtt-castlist">
         {spells.map((spell) => {
           const left = spell.system.cast ?? 0;
+          const total = Math.max(spell.system.memorized ?? 0, left);
           const spent = left <= 0;
           const meta = [`Lvl ${spell.system.lvl}`, spell.system.range].filter(Boolean);
           return (
             <div className={cx("fvtt-spell", spent && "spent")} key={spell._id as string}>
-              <span className="chk" aria-hidden="true">✓</span>
+              {/* one dot per selected slot; filled = casts remaining, empty = spent */}
+              <span className="sp-dots" role="img" aria-label={`${left} of ${total} casts remaining`}>
+                {Array.from({ length: total }).map((_, i) => (
+                  <span key={i} className={cx("sp-dot", i < left && "filled")} aria-hidden="true" />
+                ))}
+              </span>
               <div className="spinfo">
                 <span className="spn">{spell.name}</span>
                 <span className="spm">
@@ -43,12 +50,12 @@ export function MemorizedSpells({ actor }: Props) {
               </div>
               <button
                 type="button"
-                className="rs-link sp-cast"
+                className="sp-cast"
                 disabled={spent}
                 onClick={() => cast(spell)}
-                title={spent ? `${spell.name} — no casts left (Rest to recover)` : `Cast ${spell.name}`}
+                title={spent ? `${spell.name} — spent (Rest to recover)` : `Cast ${spell.name}`}
               >
-                {spent ? "spent" : left > 1 ? `cast ×${left}` : "cast"}
+                {spent ? "spent" : "cast"}
               </button>
             </div>
           );
