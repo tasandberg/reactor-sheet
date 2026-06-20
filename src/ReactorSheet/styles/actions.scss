@@ -441,7 +441,7 @@
 .fvtt-castlist .fvtt-spell:last-of-type { border-radius: 0 0 7px 7px; }
 .fvtt-castlist .fvtt-spell:only-of-type { border-radius: 7px; }
 // cast dots — one per selected slot; filled = casts remaining (accent), empty = spent
-.fvtt-spell .sp-dots { display: inline-flex; align-items: center; gap: var(--spacer-1); }
+.fvtt-spell .sp-dots { display: inline-flex; align-items: center; gap: var(--spacer-1); min-width: 8px; }
 .fvtt-spell .sp-dot {
   width: 7px; height: 7px; border-radius: 50%;
   border: 1px solid var(--accent-alt-dim, #a88240); background: transparent;
