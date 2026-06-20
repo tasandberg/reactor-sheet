@@ -134,7 +134,9 @@
   align-self: start;
   width: 184px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  // minmax(0,…) so a wide value can't auto-expand a track past its share and
+  // shove the sibling card out of the container.
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--spacer-2);
 }
 .rs-vital {
@@ -165,6 +167,9 @@
 }
 .rs-vital .vv-sub .short { display: none; } // full label by default; short shows at XS
 .rs-vital .vv-row { display: flex; align-items: center; justify-content: center; gap: var(--spacer-2); }
+// Reserve width for up to 3 digits so the value's digit count never shifts the
+// flanking − / + steppers as HP changes. tabular-nums keeps digit widths uniform.
+.rs-vital .vv-value { min-width: 1.2em; text-align: center; font-variant-numeric: tabular-nums; }
 // medium+: − / + steppers revealed on hover
 .rs-vital .vv-step {
   display: inline-flex; align-items: center; justify-content: center;

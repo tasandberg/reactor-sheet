@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { IdentityVM, VitalsVM } from "../../viewModels/types";
+import { Stamp } from "../ui/Stamp";
 
 type Props = {
   identity: IdentityVM;
@@ -51,7 +52,21 @@ export function Minibar({ identity, vitals, onSetHp }: Props) {
       </div>
       <div className="rs-mb-vitals">
         <div className="rs-mb-hp">
-          <span className="rs-mb-stamp">HP</span>
+          {/* hover swaps label/max → −/+ steppers; grid-stacked so width never shifts */}
+          <span className="rs-mb-hp-slot">
+            <Stamp className="rs-mb-stamp">HP</Stamp>
+            {onSetHp && (
+              <button
+                type="button"
+                className="rs-mb-hp-btn"
+                aria-label="Decrease HP"
+                tabIndex={-1}
+                onClick={() => onSetHp(Math.max(0, vitals.hp.value - 1))}
+              >
+                −
+              </button>
+            )}
+          </span>
           {onSetHp ? (
             <input
               className="rs-mb-hp-input"
@@ -77,10 +92,23 @@ export function Minibar({ identity, vitals, onSetHp }: Props) {
           ) : (
             <span className="rs-mb-hp-input rs-mb-hp-static">{vitals.hp.value}</span>
           )}
-          <span className="rs-mb-hp-max">/{vitals.hp.max}</span>
+          <span className="rs-mb-hp-slot">
+            <span className="rs-mb-hp-max">/{vitals.hp.max}</span>
+            {onSetHp && (
+              <button
+                type="button"
+                className="rs-mb-hp-btn"
+                aria-label="Increase HP"
+                tabIndex={-1}
+                onClick={() => onSetHp(Math.min(vitals.hp.max, vitals.hp.value + 1))}
+              >
+                +
+              </button>
+            )}
+          </span>
         </div>
         <div className="rs-mb-ac">
-          <span className="rs-mb-stamp">AC</span>
+          <Stamp className="rs-mb-stamp">AC</Stamp>
           <span className="rs-mb-ac-v">{vitals.ac.ascending}</span>
         </div>
       </div>
