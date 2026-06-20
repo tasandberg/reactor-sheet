@@ -1,4 +1,5 @@
 import { cx } from "./cx";
+import { SectionTitle } from "./SectionTitle";
 import type { ReactNode } from "react";
 
 type Props = {
@@ -16,7 +17,7 @@ export function Modal({ open, title, onClose, children, footer, className }: Pro
     <div className="modal-scrim" onClick={onClose}>
       <div className={cx("modal", className)} onClick={(e) => e.stopPropagation()}>
         <div className="modal-head">
-          <span className="ttl">{title}</span>
+          <SectionTitle variant="bare" className="ttl">{title}</SectionTitle>
           <button type="button" className="x" aria-label="Close" onClick={onClose}>
             ×
           </button>

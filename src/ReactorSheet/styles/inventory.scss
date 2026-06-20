@@ -157,17 +157,7 @@
   color: var(--text-mute, #8a8270); white-space: nowrap; flex: none;
 }
 
-// container count pill (brass) — sits after the container name
-.rs-inv-count {
-  font-family: var(--mono); font-size: var(--fs-2xs, 11px);
-  color: var(--on-accent, #070605);
-  background: var(--accent-alt-dim);
-  border-radius: 999px;
-  padding: 1px 7px;
-  min-width: 16px;
-  text-align: center;
-  white-space: nowrap;
-}
+// container count pill (brass) — now <Tag intent="count">; see .tag.count
 
 // name column (col 3): name (+count) row on top, tags beneath, all left-justified
 .rs-inv-name-c {
@@ -352,10 +342,7 @@
   background: var(--bg);
   color: var(--text-mute, #8a8270);
 }
-.rs-inv-sec-title {
-  font-family: var(--sans); font-size: var(--fs-2xs, 11px); font-weight: 600;
-  letter-spacing: 0.09em; text-transform: uppercase;
-}
+// section title is now <SectionTitle variant="sub">; see .section-title.sub
 .rs-inv-sec-count {
   font-family: var(--mono); font-size: var(--fs-2xs, 11px);
   color: var(--text-faint, #6a6354); margin-left: auto; white-space: nowrap;

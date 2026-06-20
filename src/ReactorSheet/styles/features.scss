@@ -99,14 +99,8 @@
   font-family: "IM Fell English", Georgia, serif; font-style: italic;
   font-size: var(--fs-sm, 13px); color: var(--text-faint, #6a6354);
 }
-.rs-lang {
-  display: inline-flex; align-items: center; gap: var(--spacer-1);
-  font-family: var(--mono, monospace); font-size: var(--fs-xs, 12px);
-  color: var(--text-dim, #b5ad97);
-  background: var(--surface, #23201a);
-  border: 1px solid var(--border-soft, #2c2823);
-  padding: 3px 9px 2px; border-radius: 99px;
-}
+// language chips are now <Tag>; .tag provides the pill. The × stays bespoke
+// (it tucks inside the chip — an .icon-btn box would inflate the chip height).
 .reactor-sheet-app .rs-lang-x {
   display: grid; place-items: center;
   background: none; border: none; cursor: pointer; padding: 0;

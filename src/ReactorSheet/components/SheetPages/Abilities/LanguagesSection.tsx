@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useReactorSheetContext } from "../../context";
 import { SectionTitle } from "../../ui/SectionTitle";
 import { IconButton } from "../../ui/IconButton";
+import { Tag } from "../../ui/Tag";
 import { cx } from "../../ui/cx";
 
 /** INT literacy/spoken mods resolve to localized labels on the actor; compose a flavour line. */
@@ -76,7 +77,7 @@ export function LanguagesSection({ editing: forced }: { editing?: boolean }) {
           <span className="rs-langs-empty">None</span>
         )}
         {current.map((lang) => (
-          <span key={lang} className="rs-lang">
+          <Tag key={lang}>
             {lang}
             {editing && (
               <button
@@ -89,7 +90,7 @@ export function LanguagesSection({ editing: forced }: { editing?: boolean }) {
                 <i className="fas fa-xmark" aria-hidden="true" />
               </button>
             )}
-          </span>
+          </Tag>
         ))}
       </div>
 

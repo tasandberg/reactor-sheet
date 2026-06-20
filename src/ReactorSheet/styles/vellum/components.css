@@ -460,6 +460,8 @@
 .tag.forest  { color: var(--forest);  border-color: var(--forest);  background: color-mix(in oklab, var(--forest) 12%, transparent); }
 .tag.mustard { color: var(--mustard); border-color: var(--mustard); background: color-mix(in oklab, var(--mustard) 12%, transparent); }
 .tag.solid   { background: var(--ink); color: var(--stamp-text); border-color: var(--ink); font-family: var(--display); font-size: var(--fs-2xs); letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px 2px; }
+/* count — brass-solid numeric pill (container item counts, etc.) */
+.tag.count   { background: var(--accent-alt-dim); border-color: var(--accent-alt-dim); color: var(--on-accent); font-size: var(--fs-2xs); padding: 1px 7px; min-width: 16px; justify-content: center; }
 
 /* ─── Modal / Dialog ────────────────────────────────────────────────── */
 
@@ -493,11 +495,8 @@
   align-items: baseline;
   gap: 10px;
 }
+/* title is a <SectionTitle variant="bare">; just stretch it in the head row */
 .modal-head .ttl {
-  font-family: var(--display);
-  font-size: var(--fs-2xl);
-  letter-spacing: 0.02em;
-  color: var(--text);
   flex: 1;
 }
 .modal-head .x {
