@@ -56,13 +56,13 @@
 // Buttons qualified with .rs-topbar to beat the `.reactor-sheet-app button`
 // reset (0,1,1) — same fix as .rs-tabrail .rs-tab (see shell.scss).
 .rs-topbar .rs-tb-btn {
-  display: inline-flex; align-items: center; gap: 6px;
+  display: inline-flex; align-items: center; gap: var(--spacer-2);
   background: transparent;
   border: 1px solid rgba(229, 222, 200, 0.18);
   color: var(--stamp-text-dim, #b5ad97);
   font-family: var(--sans); font-weight: 500;
   font-size: var(--fs-3xs, 10px); letter-spacing: 0.08em; text-transform: uppercase;
-  padding: 6px 11px 5px; border-radius: 5px; cursor: pointer;
+  padding: 6px 11px 5px; border-radius: var(--r-sm, 4px); cursor: pointer;
   white-space: nowrap; transition: color 0.12s, border-color 0.12s, background 0.12s;
 }
 .rs-topbar .rs-tb-btn:hover:not(:disabled) { color: var(--stamp-text, #e5dec8); border-color: rgba(229, 222, 200, 0.4); }
@@ -70,7 +70,7 @@
 .rs-topbar .rs-tb-btn.up { background: var(--gold); border-color: var(--gold); color: var(--on-accent, #070605); }
 .rs-topbar .rs-tb-btn.up:hover:not(:disabled) { background: var(--gold-dim, var(--gold)); }
 .rs-topbar .rs-tb-btn.icon { padding: 6px 8px; }
-.rs-topbar .rs-tb-btn .i { font-size: 12px; line-height: 1; }
+.rs-topbar .rs-tb-btn .i { font-size: var(--fs-xs, 12px); line-height: 1; }
 
 // --- header band ---
 // Grid areas let medium and rail arrange the same markup differently:
@@ -96,7 +96,7 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  border-radius: 6px;
+  border-radius: var(--r-md, 6px);
   object-fit: cover;
   background: radial-gradient(circle at 50% 35%, #2c281f, #15130e);
   border: 2px solid var(--gold-dim);
@@ -141,7 +141,7 @@
   position: relative;
   background: var(--surface);
   border: 1px solid var(--border-soft, #2c2823);
-  border-radius: 7px;
+  border-radius: var(--r-md, 6px);
   padding: 6px 10px 8px;
   text-align: center;
 }
@@ -169,9 +169,9 @@
 .rs-vital .vv-step {
   display: inline-flex; align-items: center; justify-content: center;
   width: 18px; height: 18px;
-  border: 1px solid var(--border, #3a342c); border-radius: 4px;
+  border: 1px solid var(--border, #3a342c); border-radius: var(--r-sm, 4px);
   color: var(--text-dim, #b5ad97); cursor: pointer;
-  font-family: var(--sans); font-size: 13px; line-height: 1;
+  font-family: var(--sans); font-size: var(--fs-sm, 13px); line-height: 1;
   opacity: 0; transition: opacity 0.12s, border-color 0.12s, color 0.12s;
 }
 .rs-vital.hp:hover .vv-step,
@@ -185,7 +185,7 @@
   text-align: center;
   cursor: text;
   border: 1px solid transparent; // plain value until focused
-  border-radius: 4px;
+  border-radius: var(--r-sm, 4px);
   padding: 1px 0;
 }
 // active/edit: full crimson box + darker sunken bg around the value (prototype)
@@ -200,7 +200,7 @@
   grid-area: subs;
   align-self: start;
   display: flex;
-  gap: 6px;
+  gap: var(--spacer-2);
 }
 // borderless: just the stamp label + value, so HP/AC stay the only "boxes"
 .rs-tile {
@@ -232,7 +232,7 @@
   padding: var(--spacer-2) var(--spacer-2);
   background: var(--bg-2, #1f1c17);
   border: 1px solid var(--gold-soft);
-  border-radius: 8px;
+  border-radius: var(--r-lg, 10px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
   opacity: 0;
   visibility: hidden;
@@ -353,7 +353,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: var(--spacer-2);
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
@@ -376,7 +376,7 @@
 .fvtt-save {
   background: var(--surface, #23201a);
   border: 1px solid var(--border-soft, #2c2823);
-  border-radius: 7px;
+  border-radius: var(--r-md, 6px);
   padding: var(--spacer-2) var(--spacer-1) 7px;
   text-align: center;
   transition: border-color 0.12s, background 0.12s;
@@ -387,7 +387,7 @@
 .fvtt-save .sk {
   width: 22px; height: 22px; margin: 0 auto var(--spacer-1);
   background: var(--ink, #070605); color: var(--stamp-text, #e5dec8);
-  border-radius: 4px; display: grid; place-items: center;
+  border-radius: var(--r-sm, 4px); display: grid; place-items: center;
   font-family: var(--display, serif); font-size: var(--fs-xs, 12px);
 }
 .fvtt-save .sv {
@@ -406,14 +406,14 @@
   display: flex; align-items: center; gap: var(--spacer-2);
   background: var(--surface, #23201a);
   border: 1px solid var(--border-soft, #2c2823);
-  border-radius: 7px;
+  border-radius: var(--r-md, 6px);
   padding: var(--spacer-2) var(--spacer-2) var(--spacer-2) var(--spacer-3);
   transition: border-color 0.12s, background 0.12s;
 }
 .fvtt-skill.rollable { cursor: pointer; }
 .fvtt-skill.rollable:hover { border-color: var(--gold); background: var(--surface-2, #2e2a23); }
 .fvtt-skill.rollable:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
-.fvtt-skill .skic { color: var(--gold-dim); font-size: 14px; width: 18px; text-align: center; flex: none; }
+.fvtt-skill .skic { color: var(--gold-dim); font-size: var(--fs-md, 14px); width: 18px; text-align: center; flex: none; }
 .fvtt-skill .skn {
   font-family: var(--sans); font-size: var(--fs-sm, 13px);
   color: var(--text-dim, #b5ad97); flex: 1; min-width: 0;
@@ -424,7 +424,7 @@
   font-family: var(--mono, monospace); font-size: var(--fs-xs, 12px);
   color: var(--text-mute, #8a8270);
   white-space: nowrap; flex: none;
-  i { color: var(--gold-dim); font-size: 12px; }
+  i { color: var(--gold-dim); font-size: var(--fs-xs, 12px); }
 }
 
 // --- memorized spells quick-cast (ported from .fvtt-castlist/.fvtt-spell) ---
@@ -439,9 +439,9 @@
 }
 // name + cast dots on one line (dots to the right of the name)
 .fvtt-spell .spn-row { display: inline-flex; align-items: baseline; gap: var(--spacer-2); }
-.fvtt-castlist .fvtt-spell:first-of-type { border-top: 1px solid var(--border-soft, #2c2823); border-radius: 7px 7px 0 0; }
+.fvtt-castlist .fvtt-spell:first-of-type { border-top: 1px solid var(--border-soft, #2c2823); border-radius: var(--r-md, 6px) var(--r-md, 6px) 0 0; }
 .fvtt-castlist .fvtt-spell:last-of-type { border-radius: 0 0 7px 7px; }
-.fvtt-castlist .fvtt-spell:only-of-type { border-radius: 7px; }
+.fvtt-castlist .fvtt-spell:only-of-type { border-radius: var(--r-md, 6px); }
 // cast dots — one per memorised slot (shared by Actions + Spells). Gold = a cast
 // remaining; light/soft = a used (spent) cast — used dots stay, they don't vanish.
 .sp-dots { display: inline-flex; align-items: center; gap: var(--spacer-1); }
@@ -502,18 +502,18 @@
 .rs-weapon {
   background: var(--surface, #23201a);
   border: 1px solid var(--border-soft, #2c2823);
-  border-radius: 8px;
+  border-radius: var(--r-lg, 10px);
   padding: 9px 10px;
 }
 .rs-weapon .winfo { display: flex; align-items: center; gap: var(--spacer-3); min-width: 0; }
 // ink-stamp monogram (or weapon art)
 .rs-weapon .wic {
   width: 34px; height: 34px; flex: 0 0 auto;
-  border-radius: 6px;
+  border-radius: var(--r-md, 6px);
   background: var(--ink, #070605);
   color: var(--gold);
   display: grid; place-items: center;
-  font-family: var(--display); font-size: 16px;
+  font-family: var(--display); font-size: var(--fs-lg, 16px);
   border: 1px solid var(--border, #3a342c);
 }
 .rs-weapon .wic-img { object-fit: cover; }
@@ -630,7 +630,7 @@
   padding: var(--spacer-1) var(--spacer-3);
   background: transparent;
   border: 1px solid var(--gold-soft);
-  border-radius: 6px;
+  border-radius: var(--r-md, 6px);
   color: var(--gold);
   font-family: var(--sans); font-size: var(--fs-3xs, 10px); font-weight: 600;
   letter-spacing: 0.08em; text-transform: uppercase;
@@ -682,7 +682,7 @@
   padding: 6px;
   background: var(--bg-2, #1f1c17);
   border: 1px solid var(--border, #3a342c);
-  border-radius: 7px;
+  border-radius: var(--r-md, 6px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
   min-width: 130px;
 }
@@ -712,7 +712,7 @@
     gap: 1px;
     min-height: 76px;
     padding: 5px 4px 6px;
-    border-radius: 6px;
+    border-radius: var(--r-md, 6px);
   }
   .rs-vital .vv-l { font-size: var(--fs-2xs, 11px); padding: 4px 6px 3px; }
   .rs-vital .vv-big { font-size: var(--fs-3xl, 24px); }
@@ -724,7 +724,7 @@
   .rs-vital .vv-value { display: none; }
   .rs-vital .vv-input { display: inline-block; }
   // Init/HD/Move: borderless + small, three across (inherit the compact base)
-  .rs-substats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .rs-substats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacer-2); }
   .rs-tile { width: auto; }
   // attacks: keep the weapon card but tighten — icon-only tags, snug stat cells.
   .fvtt-tag .lbl { display: none; }
