@@ -76,7 +76,7 @@
 }
 .rs-spell .spinfo { min-width: 0; }
 .rs-spell .spn {
-  font-family: var(--display, serif); font-size: var(--fs-md, 14px);
+  font-family: var(--display, serif); font-size: var(--fs-lg, 16px);
   color: var(--text, #e5dec8); cursor: pointer;
   &:hover { color: var(--gold); }
 }
@@ -149,11 +149,4 @@
   .pa { margin-left: auto; color: var(--text-faint, #6a6354); font-size: 0.85em; }
   &:hover:not(:disabled) { border-color: var(--gold-dim); border-style: solid; }
   &:disabled { opacity: 0.4; cursor: not-allowed; }
-}
-// prepared = gold border + check, brighter text
-.reactor-sheet-app .rs-bookspell.prep {
-  border-style: solid; border-color: var(--gold);
-  background: color-mix(in srgb, var(--gold) 8%, transparent);
-  color: var(--text, #e5dec8);
-  .pa { color: var(--gold); }
 }

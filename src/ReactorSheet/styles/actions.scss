@@ -446,12 +446,12 @@
 // remaining; light/soft = a used (spent) cast — used dots stay, they don't vanish.
 .sp-dots { display: inline-flex; align-items: center; gap: var(--spacer-1); }
 .sp-dot {
-  width: 7px; height: 7px; border-radius: 50%;
+  width: 9px; height: 9px; border-radius: 50%;
   background: var(--gold-soft); border: 1px solid var(--gold-soft);
 }
 .sp-dot.filled { background: var(--gold); border-color: var(--gold); }
 .fvtt-spell .spn {
-  font-family: var(--display, serif); font-size: var(--fs-md, 14px);
+  font-family: var(--display, serif); font-size: var(--fs-lg, 16px);
   color: var(--text, #e5dec8);
 }
 .fvtt-spell .spm {
@@ -460,8 +460,9 @@
   color: var(--text-mute, #8a8270); margin-top: 1px;
 }
 .fvtt-spell .spm span + span::before { content: " · "; }
-// cast button — small dark rounded button; "spent" is disabled + dimmed
-.reactor-sheet-app .fvtt-spell .sp-cast {
+// cast button (shared by Actions + Spells rows) — small dark rounded button;
+// "spent" is disabled + dimmed.
+.reactor-sheet-app .sp-cast {
   font-family: var(--sans); font-size: var(--fs-xs, 12px);
   color: var(--gold); cursor: pointer;
   background: var(--bg-2, #1f1c17); border: 1px solid var(--border, #3a342c);

@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { OseSpell } from "../../../types/types";
 import type { SpellLevelVM } from "../../../viewModels/types";
 import { spellMeta } from "../../../viewModels/spells";
+import { SpellCastRow } from "../../spells/SpellCastRow";
 import { cx } from "../../ui/cx";
 
 /**
@@ -61,49 +62,19 @@ export default function SpellLevel({ vm }: { vm: SpellLevelVM }) {
         </div>
       ) : (
         prepared.map((spell) => (
-          <div className={cx("rs-spell", spell.system.cast <= 0 && "spent")} key={spell._id as string}>
-            <div className="spinfo">
-              <span className="spn-row">
-                <a className="spn" onClick={() => spell.sheet.render(true)}>
-                  {spell.name}
-                  {spell.system.memorized > 1 ? ` ×${spell.system.memorized}` : ""}
-                </a>
-                {/* one dot per slot; gold = cast remaining, light = used (kept) */}
-                <span className="sp-dots" role="img" aria-label={`${spell.system.cast} casts remaining`}>
-                  {Array.from({ length: Math.max(spell.system.memorized ?? 0, spell.system.cast ?? 0) }).map((_, i) => (
-                    <span key={i} className={cx("sp-dot", i < spell.system.cast && "filled")} aria-hidden="true" />
-                  ))}
-                </span>
+          <SpellCastRow
+            key={spell._id as string}
+            spell={spell}
+            rowClass="rs-spell"
+            meta={spellMeta(spell).map((p) => (
+              <span key={p.kind} className={cx(p.kind === "damage" && "dmg")}>
+                {p.text}
               </span>
-              <span className="spm">
-                {spellMeta(spell).map((p) => (
-                  <span key={p.kind} className={cx(p.kind === "damage" && "dmg")}>
-                    {p.text}
-                  </span>
-                ))}
-              </span>
-            </div>
-            <span className="sp-actions">
-              <button
-                type="button"
-                className="sp-unprep"
-                onClick={() => unprepare(spell)}
-                title={`Unprepare ${spell.name}`}
-                aria-label={`Unprepare ${spell.name}`}
-              >
-                <i className="fa-solid fa-minus" aria-hidden="true" />
-              </button>
-              <button
-                type="button"
-                className="rs-link sp-cast"
-                disabled={spell.system.cast <= 0}
-                onClick={() => cast(spell)}
-                title={spell.system.cast <= 0 ? `${spell.name} — spent (Rest to recover)` : `Cast ${spell.name}`}
-              >
-                {spell.system.cast <= 0 ? "spent" : "cast"}
-              </button>
-            </span>
-          </div>
+            ))}
+            onCast={() => cast(spell)}
+            onUnprepare={() => unprepare(spell)}
+            onOpenName={() => spell.sheet.render(true)}
+          />
         ))
       )}
 
@@ -123,15 +94,13 @@ export default function SpellLevel({ vm }: { vm: SpellLevelVM }) {
           ) : (
             spellbook.map((spell) => {
               // Spellbook always MEMORISES (adds a copy) up to the level's free
-              // slots — always a "+", never a checkmark. Removing a copy is the
-              // "−" on the prepared rows above.
-              const prepCount = spell.system.memorized ?? 0;
-              const isPrep = prepCount > 0;
+              // slots — always a "+", never a checkmark, and no "prepared"
+              // highlight (adding one is reflected in the prepared rows above).
               return (
                 <button
                   type="button"
                   key={spell._id as string}
-                  className={cx("rs-bookspell", isPrep && "prep")}
+                  className="rs-bookspell"
                   disabled={atCapacity}
                   onClick={() => prepare(spell)}
                   title={atCapacity ? "No slots left at this level" : `Memorise ${spell.name}`}
