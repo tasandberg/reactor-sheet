@@ -340,7 +340,9 @@
   background: var(--bg);
 }
 .rs-inv-stickyhead .rs-inv-sec--equipped { margin: 0 0 var(--spacer-3); }
-.rs-inv-sec--carried { margin-top: 0; }
+// breathing room below the sticky "All Items" header so the table (and its
+// outline-offset drop outline) clears the sticky band instead of being clipped.
+.rs-inv-sec--carried { margin-top: var(--spacer-3); }
 // static (non-collapsible) header: title on the left, "N items · X cn" on the right
 .rs-inv-sec-head {
   display: flex; align-items: baseline; gap: var(--spacer-2); width: 100%;

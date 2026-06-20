@@ -554,7 +554,7 @@
   display: inline-flex; align-items: center; justify-content: center;
   padding: 3px var(--spacer-2);
   cursor: pointer; background: transparent; border: none;
-  transition: background 0.12s;
+  // no transition: the switch is purely presentational, so it should flip instantly
   i { font-size: var(--fs-xs, 12px); }
   & + & { border-left: 1px solid var(--border, #3a342c); }
   &:hover { background: var(--surface-2, #2e2a23); }
