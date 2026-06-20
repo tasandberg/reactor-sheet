@@ -108,20 +108,24 @@ export default function SpellLevel({ vm }: { vm: SpellLevelVM }) {
             <div className="rs-book-empty">No spells known at this level.</div>
           ) : (
             spellbook.map((spell) => {
-              const isPrep = spell.system.cast > 0;
-              const locked = !isPrep && atCapacity;
+              // Spellbook always MEMORISES (adds a copy) up to the level's free
+              // slots — so a spell can be memorised more than once. Removing a
+              // copy is done from the prepared rows above (their ✓ unprepares).
+              const prepCount = spell.system.memorized || spell.system.cast || 0;
+              const isPrep = prepCount > 0;
               return (
                 <button
                   type="button"
                   key={spell._id as string}
                   className={cx("rs-bookspell", isPrep && "prep")}
-                  disabled={locked}
-                  onClick={() => (isPrep ? unprepare(spell) : prepare(spell))}
-                  title={
-                    isPrep ? `Unprepare ${spell.name}` : locked ? "No slots left" : `Prepare ${spell.name}`
-                  }
+                  disabled={atCapacity}
+                  onClick={() => prepare(spell)}
+                  title={atCapacity ? "No slots left at this level" : `Memorise ${spell.name}`}
                 >
-                  <span className="bn">{spell.name}</span>
+                  <span className="bn">
+                    {spell.name}
+                    {prepCount > 1 ? ` ×${prepCount}` : ""}
+                  </span>
                   <span className="pa" aria-hidden="true">
                     <i className={cx("fa-solid", isPrep ? "fa-check" : "fa-plus")} />
                   </span>
