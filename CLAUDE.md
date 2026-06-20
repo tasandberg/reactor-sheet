@@ -13,6 +13,15 @@ lives in `../CLAUDE.md`.
   actor as source of truth; view-models in `viewModels/` compute derived data.
 - Tokens/spacing: use the `--space-*`/`--spacer-*` (4px) scale and design tokens, never
   hardcoded px or invented colors. Brass = `--accent-alt`; equipped = `--teal`.
+- UI vocabulary: reach for the `ui/` primitives (`Button`, `IconButton`, `Tag`,
+  `SectionTitle`, `Stamp`, `Field`, `Modal`, …) before hand-rolling a new `.rs-*`
+  button/heading/tag class. Their styles live in `styles/vellum/` and are auto-scoped under
+  `.reactor-sheet`, so they beat the `.reactor-sheet-app … { all: unset }` reset.
+- Guardrails (run by `pnpm lint`): **stylelint** forbids bare px `font-size` / hex colors in
+  `styles/*.scss` (`var(--token, #fallback)` is fine; `vellum/` and sub-10px glyph sizes are
+  exempt — the latter via an inline `// stylelint-disable-line` + reason), and an **ESLint**
+  rule bans literal color/px in inline `style={{}}` (dynamic values like `` `${x}%` `` are fine;
+  the legacy tree is exempt).
 
 ## Refactor / cleanup backlog
 

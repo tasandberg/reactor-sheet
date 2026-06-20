@@ -89,7 +89,7 @@
 .rs-inv .rs-inv-th-cat { justify-content: flex-end; }
 // "Item" header spans the image + name columns so it starts at the image edge
 .rs-inv .rs-inv-th-item { grid-column: 2 / 4; justify-content: flex-start; }
-.rs-inv-th-caret { font-size: 8px; width: 6px; } // reserve space so labels don't shift
+.rs-inv-th-caret { font-size: 8px; width: 6px; } // stylelint-disable-line declaration-property-value-disallowed-list -- 8px sort-caret glyph (reserve space so labels don't shift)
 
 // --- item image (col 2) ---
 .rs-inv-img {
@@ -431,7 +431,7 @@
   color: var(--text-dim, #b5ad97);
   background: var(--bg-2, #1f1c17); border: 1px solid var(--border-soft, #2c2823);
   border-radius: var(--r-sm, 4px); padding: 1px 6px;
-  i { font-size: 9px; color: var(--gold-dim); }
+  i { font-size: 9px; color: var(--gold-dim); } // stylelint-disable-line declaration-property-value-disallowed-list -- 9px tag-icon glyph
 }
 
 // ---------------------------------------------------------------------------

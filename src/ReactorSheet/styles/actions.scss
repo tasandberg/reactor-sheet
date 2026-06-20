@@ -401,7 +401,7 @@
 }
 .fvtt-save .sn {
   display: block;
-  font-family: var(--sans); font-size: 8px; letter-spacing: 0.04em;
+  font-family: var(--sans); font-size: 8px; letter-spacing: 0.04em; // stylelint-disable-line declaration-property-value-disallowed-list -- 8px micro-label glyph; no sub-10px --fs-* token
   color: var(--text-faint, #6a6354); margin-top: 2px;
 }
 
