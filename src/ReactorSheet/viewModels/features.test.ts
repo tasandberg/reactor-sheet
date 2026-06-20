@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeAll, vi } from "vitest";
-import { groupFeaturesByClass, selectFeatures } from "./features";
-import type { FeatureVM } from "./features";
+import { selectFeatures } from "./features";
 import type { OSEActor, OseAbility } from "../types/types";
 
 // selectFeatures composes the roll tag from CONFIG.OSE.roll_type (a Foundry global).
@@ -41,7 +40,7 @@ describe("selectFeatures", () => {
     ]);
     const [vm] = selectFeatures(actor);
     expect(vm.rollable).toBe(true);
-    expect(vm.rollTag).toBe("1d6 ≤ 2");
+    expect(vm.rollTag).toBe("1d6 ≤2");
     expect(vm.onRoll).toBeTypeOf("function");
   });
 
@@ -67,41 +66,26 @@ describe("selectFeatures", () => {
     selectFeatures(actorWith([item]))[0].onRoll!();
     expect(item.roll).toHaveBeenCalledOnce();
   });
-});
 
-describe("groupFeaturesByClass", () => {
-  const feat = (id: string, requirements?: string): FeatureVM => ({
-    id,
-    name: id,
-    img: "",
-    description: "",
-    requirements,
-    rollable: false,
-    onDelete: () => {},
+  it("title-cases requirements for the tag label", () => {
+    const actor = actorWith([
+      ability({ _id: "a1", name: "Hide", system: { requirements: "magic-user" } }),
+    ]);
+    expect(selectFeatures(actor)[0].requiresLabel).toBe("Magic-User");
   });
 
-  it("groups by the requirements slug and sorts the actor's own class first", () => {
-    const groups = groupFeaturesByClass(
-      [feat("a", "thief"), feat("b", "magic-user"), feat("c", "magic-user")],
-      "Magic User" // free-text class normalizes to the "magic-user" slug
-    );
-    expect(groups.map((g) => g.slug)).toEqual(["magic-user", "thief"]);
-    expect(groups[0].isOwnClass).toBe(true);
-    expect(groups[0].label).toBe("Magic User"); // keeps the actor's own casing
-    expect(groups[0].features.map((f) => f.id)).toEqual(["b", "c"]);
-    expect(groups[1].isOwnClass).toBe(false);
-    expect(groups[1].label).toBe("Thief"); // title-cased from the slug
+  it("leaves requiresLabel undefined when requirements is unset", () => {
+    const actor = actorWith([ability({ _id: "a1", name: "Generic", system: {} })]);
+    expect(selectFeatures(actor)[0].requiresLabel).toBeUndefined();
   });
 
-  it("buckets features with no requirements into an 'Other' group", () => {
-    const groups = groupFeaturesByClass([feat("a")], "Fighter");
-    expect(groups).toHaveLength(1);
-    expect(groups[0].slug).toBe("");
-    expect(groups[0].label).toBe("Other");
-    expect(groups[0].isOwnClass).toBe(false);
-  });
-
-  it("returns no groups when there are no features", () => {
-    expect(groupFeaturesByClass([], "Cleric")).toEqual([]);
+  it("sorts by requirements (then name), with unset requirements last", () => {
+    const actor = actorWith([
+      ability({ _id: "a1", name: "Zeta", system: {} }), // no requirements → last
+      ability({ _id: "a2", name: "Beta", system: { requirements: "thief" } }),
+      ability({ _id: "a3", name: "Alpha", system: { requirements: "elf" } }),
+      ability({ _id: "a4", name: "Gamma", system: { requirements: "elf" } }),
+    ]);
+    expect(selectFeatures(actor).map((f) => f.name)).toEqual(["Alpha", "Gamma", "Beta", "Zeta"]);
   });
 });

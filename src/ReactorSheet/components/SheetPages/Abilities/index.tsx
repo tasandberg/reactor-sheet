@@ -1,37 +1,43 @@
 import { useReactorSheetContext } from "../../context";
-import {
-  groupFeaturesByClass,
-  selectFeatures,
-} from "../../../viewModels/features";
+import { selectFeatures } from "../../../viewModels/features";
+import { SectionTitle } from "../../ui/SectionTitle";
 import { createAbility } from "./createAbility";
-import { FeatureSection, FeatureSectionHeader } from "./FeatureSection";
+import { FeatureCard } from "./FeatureCard";
 import { LanguagesSection } from "./LanguagesSection";
 
 export default function Abilities() {
   const { actor } = useReactorSheetContext();
   const features = selectFeatures(actor);
-  const groups = groupFeaturesByClass(features, actor.system.details.class);
 
-  const onAdd = (slug: string) => createAbility(actor, slug);
+  // New abilities seed their requirements from the actor's class so they sort in
+  // with the rest; the create flow opens the sheet to fill in the details.
+  const onAdd = () => createAbility(actor, actor.system.details.class || "");
 
   return (
     <div className="rs-abilities-tab">
-      {groups.length === 0 ? (
-        // No features yet — still offer a way to create the first one.
-        <section className="rs-section rs-feat-sec">
-          <FeatureSectionHeader
-            title="Class Features"
-            hint={actor.system.details.class || undefined}
-            label={actor.system.details.class || "Class"}
-            onAdd={() => onAdd("")}
-          />
-          <p className="rs-flavour">No features yet.</p>
-        </section>
-      ) : (
-        groups.map((group) => (
-          <FeatureSection key={group.slug} group={group} onAdd={onAdd} />
-        ))
-      )}
+      <section className="rs-section rs-feat-sec">
+        <div className="rs-feat-head">
+          <SectionTitle>Abilities</SectionTitle>
+          <button
+            type="button"
+            className="rs-feat-add"
+            title="Add ability"
+            aria-label="Add ability"
+            onClick={onAdd}
+          >
+            <i className="fas fa-plus" aria-hidden="true" />
+          </button>
+        </div>
+        {features.length === 0 ? (
+          <p className="rs-flavour">No abilities yet.</p>
+        ) : (
+          <div className="fvtt-feats">
+            {features.map((f) => (
+              <FeatureCard key={f.id} feature={f} />
+            ))}
+          </div>
+        )}
+      </section>
       <LanguagesSection />
     </div>
   );
