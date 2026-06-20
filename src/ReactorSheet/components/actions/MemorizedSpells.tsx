@@ -30,7 +30,7 @@ export function MemorizedSpells({ actor }: Props) {
             meta={[`Lvl ${spell.system.lvl}`, spell.system.range]
               .filter(Boolean)
               .map((m) => <span key={m}>{m}</span>)}
-            onCast={() => void spell.spendSpell({ skipDialog: false })}
+            onCast={() => spell.spendSpell({ skipDialog: false })}
           />
         ))}
       </div>

@@ -33,7 +33,7 @@ export default function SpellLevel({ vm }: { vm: SpellLevelVM }) {
       "system.cast": Math.max(0, spell.system.cast - 1),
     });
   };
-  const cast = (spell: OseSpell) => void spell.spendSpell({ skipDialog: false });
+  const cast = (spell: OseSpell) => spell.spendSpell({ skipDialog: false });
 
   // One pip per slot: the first `used` (= casts ready) are filled, the rest spent.
   const pips = Array.from({ length: slots.max }, (_, i) => i < slots.used);

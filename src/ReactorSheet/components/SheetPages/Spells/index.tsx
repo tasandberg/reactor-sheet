@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { useReactorSheetContext } from "../../context";
 import { SectionTitle } from "../../ui/SectionTitle";
 import { selectSpellLevels } from "../../../viewModels/spells";
+import { cx } from "../../ui/cx";
 import SpellLevel from "./SpellLevel";
 
 /**
@@ -10,14 +12,23 @@ import SpellLevel from "./SpellLevel";
 export default function Spells() {
   const { actor } = useReactorSheetContext();
   const levels = selectSpellLevels(actor);
+  const [resting, setResting] = useState(false);
 
-  const rest = () => {
-    for (const { spellbook } of levels) {
-      for (const spell of spellbook) {
-        if (spell.system.cast !== spell.system.memorized) {
-          void spell.update({ "system.cast": spell.system.memorized });
+  const rest = async () => {
+    if (resting) return;
+    setResting(true);
+    try {
+      const updates: Promise<unknown>[] = [];
+      for (const { spellbook } of levels) {
+        for (const spell of spellbook) {
+          if (spell.system.cast !== spell.system.memorized) {
+            updates.push(spell.update({ "system.cast": spell.system.memorized }));
+          }
         }
       }
+      await Promise.all(updates);
+    } finally {
+      setResting(false);
     }
   };
 
@@ -30,9 +41,15 @@ export default function Spells() {
           type="button"
           className="rs-rest"
           onClick={rest}
+          disabled={resting}
+          aria-busy={resting}
           title="Re-memorise all spells"
         >
-          <i className="fa-solid fa-campground" aria-hidden="true" /> Rest
+          <i
+            className={cx("fa-solid", resting ? "fa-spinner fa-spin" : "fa-campground")}
+            aria-hidden="true"
+          />{" "}
+          Rest
         </button>
       </SectionTitle>
       {levels.map((vm) => (
