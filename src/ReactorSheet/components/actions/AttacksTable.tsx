@@ -38,26 +38,28 @@ function WeaponRow({ a, onRoll, onAttack }: { a: AttackVM; onRoll?: Props["onRol
             {a.name} <span className="wkind">({mode.kindLabel.toLowerCase()})</span>
           </div>
           <div className="wtags">
-            {/* kind tag(s): a toggle when the weapon has both modes, else static */}
-            {a.modes.map((m, i) =>
-              dual ? (
-                <button
-                  type="button"
-                  key={m.kind}
-                  className={cx("fvtt-tag", "kind-toggle", m.kind, i === active && "selected")}
-                  aria-pressed={i === active}
-                  onClick={() => setActive(i)}
-                  title={`${m.kindLabel} attack`}
-                >
-                  <i className={cx("fa-solid", kindIcon(m.kind))} aria-hidden="true" />
-                  <span className="tag-pop" role="tooltip">{m.kindLabel}</span>
-                </button>
-              ) : (
-                <span className={cx("fvtt-tag", m.kind)} key={m.kind} title={m.kindLabel}>
-                  <i className={cx("fa-solid", kindIcon(m.kind))} aria-hidden="true" />
-                  <span className="tag-pop" role="tooltip">{m.kindLabel}</span>
-                </span>
-              ),
+            {/* dual melee+missile → a segmented switch; single mode → a static tag */}
+            {dual ? (
+              <div className="kind-switch" role="group" aria-label="Attack mode">
+                {a.modes.map((m, i) => (
+                  <button
+                    type="button"
+                    key={m.kind}
+                    className={cx("kind-seg", m.kind, i === active && "selected")}
+                    aria-pressed={i === active}
+                    onClick={() => setActive(i)}
+                    title={`${m.kindLabel} attack`}
+                  >
+                    <i className={cx("fa-solid", kindIcon(m.kind))} aria-hidden="true" />
+                    <span className="tag-pop" role="tooltip">{m.kindLabel}</span>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <span className={cx("fvtt-tag", a.modes[0].kind)} title={a.modes[0].kindLabel}>
+                <i className={cx("fa-solid", kindIcon(a.modes[0].kind))} aria-hidden="true" />
+                <span className="tag-pop" role="tooltip">{a.modes[0].kindLabel}</span>
+              </span>
             )}
             {a.qualities.map((q) => (
               <span className="fvtt-tag" key={q.label} title={q.label}>

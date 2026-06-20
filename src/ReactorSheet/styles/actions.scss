@@ -539,27 +539,32 @@
 .fvtt-tag.melee i { color: var(--gold); }
 .fvtt-tag.missile i { color: var(--teal); }
 
-// kind toggle — when a weapon has BOTH melee+missile, the two kind tags become a
-// segmented BUTTON switch. Keep the tag shape but read clearly as a control:
-// raised surface + pressable hover; the selected segment fills with its accent.
-.reactor-sheet-app .fvtt-tag.kind-toggle {
-  cursor: pointer;
-  background: var(--surface-2, #2e2a23);
-  border-color: var(--border, #3a342c);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  transition: border-color 0.12s, background 0.12s, box-shadow 0.12s;
-  &:hover { border-color: var(--gold-soft); background: var(--surface, #23201a); }
-  &:active { box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35); }
-  // selected: fill with the mode accent so the active mode is unmistakable
-  &.melee.selected {
-    background: color-mix(in srgb, var(--gold) 18%, transparent);
-    border-color: var(--gold);
-  }
-  &.missile.selected {
-    background: color-mix(in srgb, var(--teal) 20%, transparent);
-    border-color: var(--teal);
-  }
+// kind switch — when a weapon has BOTH melee+missile, the two kinds become a
+// joined segmented control (unmistakably a switch, not a quality chip). The
+// selected segment fills SOLID with its accent; the other is a hoverable button.
+.reactor-sheet-app .kind-switch {
+  display: inline-flex; align-items: stretch;
+  background: var(--bg-2, #1f1c17);
+  border: 1px solid var(--border, #3a342c);
+  border-radius: var(--r-sm, 4px);
+  overflow: hidden;
 }
+.reactor-sheet-app .kind-seg {
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 3px var(--spacer-2);
+  cursor: pointer; background: transparent; border: none;
+  transition: background 0.12s;
+  i { font-size: var(--fs-xs, 12px); }
+  & + & { border-left: 1px solid var(--border, #3a342c); }
+  &:hover { background: var(--surface-2, #2e2a23); }
+  // idle icons carry the mode accent; selected flips to on-accent over a fill
+  &.melee i { color: var(--gold); }
+  &.missile i { color: var(--teal); }
+  &.melee.selected { background: var(--gold); i { color: var(--on-accent, #070605); } }
+  &.missile.selected { background: var(--teal); i { color: var(--on-accent, #070605); } }
+}
+.reactor-sheet-app .kind-seg:hover .tag-pop { opacity: 1; }
 
 // hover popover (more info) — used by tags AND the hit/dmg buttons
 .tag-pop {
