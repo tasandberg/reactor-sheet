@@ -30,9 +30,9 @@
   border-radius: 7px 7px 0 0;
 }
 .rs-spellhead .lv {
-  // --gold-bright is the constant bright accent that reads on the ink chip in
-  // BOTH themes (plain --gold is too dark on ink in cream).
-  background: var(--ink, #070605); color: var(--gold-bright, #e6c87e);
+  // --stamp-text is the light on-ink cream (same as the save stamps) — reads on
+  // the ink chip in BOTH themes and is lighter than the gold accent.
+  background: var(--ink, #070605); color: var(--stamp-text, #e5dec8);
   font-family: var(--display, serif);
   font-size: var(--fs-xs, 12px); letter-spacing: 0.06em;
   padding: 3px 8px 2px; border-radius: var(--r-sm, 4px);
