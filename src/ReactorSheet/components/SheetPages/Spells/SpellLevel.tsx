@@ -56,9 +56,7 @@ export default function SpellLevel({ vm }: { vm: SpellLevelVM }) {
 
       {prepared.length === 0 ? (
         <div className="rs-spell empty">
-          <span aria-hidden="true" />
           <div className="none">None memorised — open the spellbook.</div>
-          <span aria-hidden="true" />
         </div>
       ) : (
         prepared.map((spell) => (

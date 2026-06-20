@@ -463,8 +463,8 @@
 // cast button (shared by Actions + Spells rows) — small dark rounded button;
 // "spent" is disabled + dimmed.
 .reactor-sheet-app .sp-cast {
+  position: relative; // anchors the spinner overlay
   display: inline-flex; align-items: center; justify-content: center;
-  min-width: 3.4em; // fits "spent" so swapping in the spinner doesn't shift layout
   font-family: var(--sans); font-size: var(--fs-xs, 12px);
   color: var(--gold); cursor: pointer;
   background: var(--bg-2, #1f1c17); border: 1px solid var(--border, #3a342c);
@@ -472,8 +472,10 @@
   transition: background 0.12s, border-color 0.12s, color 0.12s;
   &:hover:not(:disabled) { background: var(--surface-2, #2e2a23); border-color: var(--gold-soft); }
   &:disabled { color: var(--text-faint, #6a6354); cursor: default; }
-  // keep the spinner brass even though :disabled dims the text
+  // while casting: hide the label (keeps its box → no resize) + overlay the spinner
   &[aria-busy="true"] { color: var(--gold); }
+  .sp-cast-lbl.is-hidden { visibility: hidden; }
+  .sp-cast-spin { position: absolute; inset: 0; display: grid; place-items: center; }
 }
 // spent (cast 0, still selected): dim the row + struck name (dots render empty)
 .fvtt-spell.spent { opacity: 0.6; }

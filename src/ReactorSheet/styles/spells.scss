@@ -61,6 +61,7 @@
 }
 .rs-spell.empty { color: var(--text-faint, #6a6354); }
 .rs-spell.empty .none {
+  grid-column: 1 / -1; // span the row, left-aligned (grid is 1fr auto)
   font-family: "IM Fell English", Georgia, serif; font-style: italic;
   font-size: var(--fs-sm, 13px);
 }

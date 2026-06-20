@@ -77,7 +77,9 @@ export function SpellCastRow({ spell, meta, onCast, onUnprepare, onOpenName, row
           onClick={handleCast}
           title={spent ? `${spell.name} — spent (Rest to recover)` : `Cast ${spell.name}`}
         >
-          {casting ? <i className="fa-solid fa-spinner fa-spin" aria-hidden="true" /> : spent ? "spent" : "cast"}
+          {/* keep the label in the DOM (hidden) so the spinner doesn't resize the button */}
+          <span className={cx("sp-cast-lbl", casting && "is-hidden")}>{spent ? "spent" : "cast"}</span>
+          {casting && <i className="fa-solid fa-spinner fa-spin sp-cast-spin" aria-hidden="true" />}
         </button>
       </span>
     </div>
