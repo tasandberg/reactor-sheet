@@ -129,9 +129,11 @@ export interface InventoryVM {
 /** One spell level's panel: capacity, the prepared rows, and the full spellbook. */
 export interface SpellLevelVM {
   level: number;
-  /** used = memorised casts still available; max = slot capacity at this level. */
+  /** used = casts still ready (sum of `cast`, drops as you cast); max = slot capacity. */
   slots: { used: number; max: number };
-  /** Spells with `cast > 0`, shown as ready-to-cast rows. */
+  /** Filled slots = sum of `memorized` (persists across casts); caps memorisation. */
+  occupied: number;
+  /** Selected spells (`memorized > 0`), shown as prepared rows (incl. fully spent). */
   prepared: OseSpell[];
   /** Every known spell at this level (for the expandable spellbook). */
   spellbook: OseSpell[];

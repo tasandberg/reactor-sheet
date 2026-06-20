@@ -430,23 +430,26 @@
 // --- memorized spells quick-cast (ported from .fvtt-castlist/.fvtt-spell) ---
 .fvtt-castlist { display: flex; flex-direction: column; margin-top: 2px; }
 .fvtt-spell {
-  display: grid; grid-template-columns: auto 1fr auto;
+  display: grid; grid-template-columns: 1fr auto;
   align-items: center; gap: var(--spacer-3);
   padding: var(--spacer-2) var(--spacer-2) var(--spacer-2) var(--spacer-3);
   background: var(--surface, #23201a);
   border: 1px solid var(--border-soft, #2c2823);
   border-top: none;
 }
+// name + cast dots on one line (dots to the right of the name)
+.fvtt-spell .spn-row { display: inline-flex; align-items: baseline; gap: var(--spacer-2); }
 .fvtt-castlist .fvtt-spell:first-of-type { border-top: 1px solid var(--border-soft, #2c2823); border-radius: 7px 7px 0 0; }
 .fvtt-castlist .fvtt-spell:last-of-type { border-radius: 0 0 7px 7px; }
 .fvtt-castlist .fvtt-spell:only-of-type { border-radius: 7px; }
-// cast dots — one per selected slot; filled = casts remaining (accent), empty = spent
-.fvtt-spell .sp-dots { display: inline-flex; align-items: center; gap: var(--spacer-1); min-width: 8px; }
-.fvtt-spell .sp-dot {
+// cast dots — one per memorised slot (shared by Actions + Spells). Gold = a cast
+// remaining; light/soft = a used (spent) cast — used dots stay, they don't vanish.
+.sp-dots { display: inline-flex; align-items: center; gap: var(--spacer-1); }
+.sp-dot {
   width: 7px; height: 7px; border-radius: 50%;
-  border: 1px solid var(--accent-alt-dim, #a88240); background: transparent;
+  background: var(--gold-soft); border: 1px solid var(--gold-soft);
 }
-.fvtt-spell .sp-dot.filled { background: var(--gold); border-color: var(--gold); }
+.sp-dot.filled { background: var(--gold); border-color: var(--gold); }
 .fvtt-spell .spn {
   font-family: var(--display, serif); font-size: var(--fs-md, 14px);
   color: var(--text, #e5dec8);

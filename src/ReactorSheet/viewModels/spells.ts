@@ -41,9 +41,13 @@ export function selectSpellLevels(actor: OSEActor): SpellLevelVM[] {
     .map((level) => {
       const max = (slots[level] ?? { max: 0 }).max;
       const spellbook = spellList[level] ?? [];
-      const used = spellbook.reduce((n, s) => n + (s.system.memorized ?? 0), 0);
+      // `ready` (= sum of cast) drives the "X / max ready" count + pips and drops
+      // as spells are cast; `occupied` (= sum of memorized) is the filled-slot
+      // count that drives capacity and persists across casts/rest.
+      const ready = spellbook.reduce((n, s) => n + (s.system.cast ?? 0), 0);
+      const occupied = spellbook.reduce((n, s) => n + (s.system.memorized ?? 0), 0);
       const prepared = spellbook.filter((s) => (s.system.memorized ?? 0) > 0);
-      return { level, slots: { used, max }, prepared, spellbook };
+      return { level, slots: { used: ready, max }, occupied, prepared, spellbook };
     })
     .filter((vm) => vm.slots.max > 0 || vm.spellbook.length > 0);
 }

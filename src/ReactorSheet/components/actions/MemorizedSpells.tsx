@@ -29,18 +29,21 @@ export function MemorizedSpells({ actor }: Props) {
       <div className="fvtt-castlist">
         {spells.map((spell) => {
           const left = spell.system.cast ?? 0;
+          const total = Math.max(spell.system.memorized ?? 0, left);
           const spent = left <= 0;
           const meta = [`Lvl ${spell.system.lvl}`, spell.system.range].filter(Boolean);
           return (
             <div className={cx("fvtt-spell", spent && "spent")} key={spell._id as string}>
-              {/* one accent dot per cast remaining (none when spent) */}
-              <span className="sp-dots" role="img" aria-label={`${left} cast${left === 1 ? "" : "s"} remaining`}>
-                {Array.from({ length: left }).map((_, i) => (
-                  <span key={i} className="sp-dot filled" aria-hidden="true" />
-                ))}
-              </span>
               <div className="spinfo">
-                <span className="spn">{spell.name}</span>
+                <span className="spn-row">
+                  <span className="spn">{spell.name}</span>
+                  {/* one dot per slot; gold = cast remaining, light = used (kept) */}
+                  <span className="sp-dots" role="img" aria-label={`${left} of ${total} casts remaining`}>
+                    {Array.from({ length: total }).map((_, i) => (
+                      <span key={i} className={cx("sp-dot", i < left && "filled")} aria-hidden="true" />
+                    ))}
+                  </span>
+                </span>
                 <span className="spm">
                   {meta.map((m) => (
                     <span key={m}>{m}</span>

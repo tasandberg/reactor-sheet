@@ -30,7 +30,9 @@
   border-radius: 7px 7px 0 0;
 }
 .rs-spellhead .lv {
-  background: var(--ink, #070605); color: var(--gold);
+  // --gold-bright is the constant bright accent that reads on the ink chip in
+  // BOTH themes (plain --gold is too dark on ink in cream).
+  background: var(--ink, #070605); color: var(--gold-bright, #e6c87e);
   font-family: var(--display, serif);
   font-size: var(--fs-xs, 12px); letter-spacing: 0.06em;
   padding: 3px 8px 2px; border-radius: var(--r-sm, 4px);
@@ -50,7 +52,7 @@
 
 // --- prepared cast rows ---
 .rs-spell {
-  display: grid; grid-template-columns: 18px 1fr auto;
+  display: grid; grid-template-columns: 1fr auto;
   align-items: center; gap: var(--spacer-2);
   padding: var(--spacer-2) var(--spacer-3);
   background: var(--surface, #23201a);
@@ -86,6 +88,20 @@
 .rs-spell .spm span + span::before { content: " · "; }
 .rs-spell .spm .dmg { color: var(--crimson); }
 .rs-spell .sp-cast { font-family: var(--sans); }
+// name + cast dots on one line (dots to the right of the name)
+.rs-spell .spn-row { display: inline-flex; align-items: baseline; gap: var(--spacer-2); min-width: 0; }
+.rs-spell .sp-actions { display: inline-flex; align-items: center; gap: var(--spacer-2); }
+// unprepare (free a slot) — a minus, not a checkbox
+.reactor-sheet-app .rs-spell .sp-unprep {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; padding: 0;
+  background: transparent; border: 1px solid var(--border, #3a342c);
+  border-radius: 4px; color: var(--text-mute, #8a8270); cursor: pointer;
+  font-size: 9px; line-height: 1;
+  transition: color 0.12s, border-color 0.12s;
+  &:hover { color: var(--crimson, #c75044); border-color: var(--crimson); }
+}
+.rs-spell.spent .spn { text-decoration: line-through; color: var(--text-mute, #8a8270); }
 
 // --- spellbook toggle (dashed divider with caret) ---
 .reactor-sheet-app .rs-bookbtn {

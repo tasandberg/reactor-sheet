@@ -9,29 +9,32 @@ import { cx } from "../../ui/cx";
  * the prepared-spell cast rows, and an expandable spellbook of all known spells.
  */
 export default function SpellLevel({ vm }: { vm: SpellLevelVM }) {
-  const { level, slots, prepared, spellbook } = vm;
+  const { level, slots, occupied, prepared, spellbook } = vm;
   const [bookOpen, setBookOpen] = useState(false);
 
-  const atCapacity = slots.used >= slots.max;
+  // Capacity is measured in OCCUPIED slots (sum of memorized), which persists across
+  // casts — so you can't over-memorise even after spells are spent.
+  const atCapacity = occupied >= slots.max;
 
-  // Prepare = bump `cast`; OSE keeps memorized count in `cast` (decremented on cast).
+  // Memorise into a slot: bump both memorized (the selection) and cast (a ready cast).
   const prepare = (spell: OseSpell) => {
     if (atCapacity) return;
     void spell.update({
-      "system.cast": spell.system.cast + 1,
       "system.memorized": spell.system.memorized + 1,
+      "system.cast": spell.system.cast + 1,
     });
   };
+  // Free a slot — works even when spent (cast 0): drop one memorized + one cast.
   const unprepare = (spell: OseSpell) => {
-    if (spell.system.cast <= 0) return;
+    if (spell.system.memorized <= 0) return;
     void spell.update({
-      "system.cast": spell.system.cast - 1,
-      "system.memorized": Math.max(0, spell.system.memorized - 1),
+      "system.memorized": spell.system.memorized - 1,
+      "system.cast": Math.max(0, spell.system.cast - 1),
     });
   };
   const cast = (spell: OseSpell) => void spell.spendSpell({ skipDialog: false });
 
-  // One pip per slot: the first `used` are available (filled), the rest spent (empty).
+  // One pip per slot: the first `used` (= casts ready) are filled, the rest spent.
   const pips = Array.from({ length: slots.max }, (_, i) => i < slots.used);
 
   return (
@@ -58,21 +61,20 @@ export default function SpellLevel({ vm }: { vm: SpellLevelVM }) {
         </div>
       ) : (
         prepared.map((spell) => (
-          <div className="rs-spell" key={spell._id as string}>
-            <button
-              type="button"
-              className="chk"
-              onClick={() => unprepare(spell)}
-              title={`Unprepare ${spell.name}`}
-              aria-label={`Unprepare ${spell.name}`}
-            >
-              <i className="fa-solid fa-check" aria-hidden="true" />
-            </button>
+          <div className={cx("rs-spell", spell.system.cast <= 0 && "spent")} key={spell._id as string}>
             <div className="spinfo">
-              <a className="spn" onClick={() => spell.sheet.render(true)}>
-                {spell.name}
-                {spell.system.memorized > 1 ? ` ×${spell.system.memorized}` : ""}
-              </a>
+              <span className="spn-row">
+                <a className="spn" onClick={() => spell.sheet.render(true)}>
+                  {spell.name}
+                  {spell.system.memorized > 1 ? ` ×${spell.system.memorized}` : ""}
+                </a>
+                {/* one dot per slot; gold = cast remaining, light = used (kept) */}
+                <span className="sp-dots" role="img" aria-label={`${spell.system.cast} casts remaining`}>
+                  {Array.from({ length: Math.max(spell.system.memorized ?? 0, spell.system.cast ?? 0) }).map((_, i) => (
+                    <span key={i} className={cx("sp-dot", i < spell.system.cast && "filled")} aria-hidden="true" />
+                  ))}
+                </span>
+              </span>
               <span className="spm">
                 {spellMeta(spell).map((p) => (
                   <span key={p.kind} className={cx(p.kind === "damage" && "dmg")}>
@@ -81,15 +83,26 @@ export default function SpellLevel({ vm }: { vm: SpellLevelVM }) {
                 ))}
               </span>
             </div>
-            <button
-              type="button"
-              className="rs-link sp-cast"
-              disabled={spell.system.cast <= 0}
-              onClick={() => cast(spell)}
-              title={spell.system.cast <= 0 ? `${spell.name} — spent (Rest to recover)` : `Cast ${spell.name}`}
-            >
-              {spell.system.cast <= 0 ? "spent" : "cast"}
-            </button>
+            <span className="sp-actions">
+              <button
+                type="button"
+                className="sp-unprep"
+                onClick={() => unprepare(spell)}
+                title={`Unprepare ${spell.name}`}
+                aria-label={`Unprepare ${spell.name}`}
+              >
+                <i className="fa-solid fa-minus" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                className="rs-link sp-cast"
+                disabled={spell.system.cast <= 0}
+                onClick={() => cast(spell)}
+                title={spell.system.cast <= 0 ? `${spell.name} — spent (Rest to recover)` : `Cast ${spell.name}`}
+              >
+                {spell.system.cast <= 0 ? "spent" : "cast"}
+              </button>
+            </span>
           </div>
         ))
       )}
@@ -110,8 +123,8 @@ export default function SpellLevel({ vm }: { vm: SpellLevelVM }) {
           ) : (
             spellbook.map((spell) => {
               // Spellbook always MEMORISES (adds a copy) up to the level's free
-              // slots — so a spell can be memorised more than once. Removing a
-              // copy is done from the prepared rows above (their ✓ unprepares).
+              // slots — always a "+", never a checkmark. Removing a copy is the
+              // "−" on the prepared rows above.
               const prepCount = spell.system.memorized ?? 0;
               const isPrep = prepCount > 0;
               return (
@@ -123,12 +136,9 @@ export default function SpellLevel({ vm }: { vm: SpellLevelVM }) {
                   onClick={() => prepare(spell)}
                   title={atCapacity ? "No slots left at this level" : `Memorise ${spell.name}`}
                 >
-                  <span className="bn">
-                    {spell.name}
-                    {prepCount > 1 ? ` ×${prepCount}` : ""}
-                  </span>
+                  <span className="bn">{spell.name}</span>
                   <span className="pa" aria-hidden="true">
-                    <i className={cx("fa-solid", isPrep ? "fa-check" : "fa-plus")} />
+                    <i className="fa-solid fa-plus" />
                   </span>
                 </button>
               );
