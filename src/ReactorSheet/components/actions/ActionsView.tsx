@@ -3,7 +3,7 @@ import type { RollSpec } from "../../viewModels/types";
 import { selectAbilities } from "../../viewModels/abilities";
 import { selectAttacks } from "../../viewModels/attacks";
 import { selectSaves } from "../../viewModels/saves";
-import { selectExploration } from "../../viewModels/exploration";
+import { selectExploration, rollExploration } from "../../viewModels/exploration";
 import { AbilityPlaques } from "./AbilityPlaques";
 import { AttacksTable } from "./AttacksTable";
 import { MemorizedSpells } from "./MemorizedSpells";
@@ -28,7 +28,7 @@ export function ActionsView({ actor }: Props) {
   const onAttack = (itemId: string) =>
     actor.system.weapons.find((w) => w._id === itemId)?.rollWeapon({ skipDialog: false });
   const onSave = (key: OSESave) => actor.rollSave(key, {});
-  const onExploration = (key: string) => actor.rollExploration(key, {});
+  const onExploration = (key: string) => rollExploration(actor, key);
 
   const attacks = selectAttacks(actor);
 

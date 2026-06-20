@@ -9,7 +9,7 @@ import { selectTopbar } from "../viewModels/topbar";
 import { selectIdentity } from "../viewModels/identity";
 import { selectVitals } from "../viewModels/vitals";
 import { selectSaves } from "../viewModels/saves";
-import { selectExploration } from "../viewModels/exploration";
+import { selectExploration, rollExploration } from "../viewModels/exploration";
 import { selectInventory, selectEncumbrance, selectCoins } from "../viewModels/inventory";
 import { flagPath, FLAGS, readFlag } from "../flags";
 import { useToast } from "./ui/toastContext";
@@ -130,7 +130,7 @@ export default function SheetShell() {
           saves={selectSaves(actor)}
           exploration={selectExploration(actor)}
           onRollSave={(key) => actor.rollSave(key, {})}
-          onRollExploration={(key) => actor.rollExploration(key, {})}
+          onRollExploration={(key) => rollExploration(actor, key)}
           tabbed
         />
       }
