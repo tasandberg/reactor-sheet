@@ -17,9 +17,9 @@ type Props = {
 
 /**
  * One spell row, shared by the Actions quick-cast list and the Spells-tab prepared
- * rows. Shows the name (+ ×N when selected into >1 slot), the cast dots to the
- * right (gold = a cast remaining, light = a used/spent cast — used dots stay), the
- * meta line, a cast/"spent" button, and (optionally) a "−" to free a slot.
+ * rows. Shows the name, the cast dots to the right (one per slot; gold = a cast
+ * remaining, light = a used/spent cast — used dots stay), the meta line, a
+ * cast/"spent" button, and (optionally, Spells tab) a trashcan to free a slot.
  *
  * `total` slots = max(memorized, cast); `cast` of them are still ready.
  */
@@ -27,12 +27,7 @@ export function SpellCastRow({ spell, meta, onCast, onUnprepare, onOpenName, row
   const left = spell.system.cast ?? 0;
   const total = Math.max(spell.system.memorized ?? 0, left);
   const spent = left <= 0;
-  const nameLabel = (
-    <>
-      {spell.name}
-      {spell.system.memorized > 1 ? ` ×${spell.system.memorized}` : ""}
-    </>
-  );
+  const nameLabel = spell.name;
   return (
     <div className={cx(rowClass, spent && "spent")}>
       <div className="spinfo">

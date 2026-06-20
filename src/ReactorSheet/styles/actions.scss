@@ -419,8 +419,10 @@
   color: var(--text-dim, #b5ad97); flex: 1; min-width: 0;
 }
 .fvtt-skill .skv {
+  // ink chip + on-ink text (--stamp-text stays light in BOTH themes), matching
+  // the save-stamp pattern so the value reads on dark + cream.
   font-family: var(--mono, monospace); font-size: var(--fs-xs, 12px);
-  color: var(--text, #e5dec8);
+  color: var(--stamp-text, #e5dec8);
   background: var(--ink, #070605);
   border: 1px solid var(--gold-soft);
   border-radius: 5px; padding: 3px 8px 2px;
@@ -474,45 +476,6 @@
 // spent (cast 0, still selected): dim the row + struck name (dots render empty)
 .fvtt-spell.spent { opacity: 0.6; }
 .fvtt-spell.spent .spn { text-decoration: line-through; }
-
-// === Actions sub-tab nav (MEDIUM only) =====================================
-// At medium width the Actions sections become a horizontal tab nav; xs + lg keep
-// them stacked (and lg keeps Saves/Exploration in the rail via .actions-only).
-.rs-act-subnav { display: none; } // hidden by default (xs + lg)
-
-.reactor-sheet-app .rs-act-tab {
-  flex: 1; // tabs share the full content width evenly (no horizontal scroll)
-  display: inline-flex; align-items: baseline; justify-content: center; gap: var(--spacer-2);
-  background: transparent; border: none; cursor: pointer;
-  padding: var(--spacer-2) var(--spacer-1);
-  margin-bottom: -2px; // overlap the nav rule so the active underline sits on it
-  font-family: var(--display); font-size: var(--fs-xl, 18px);
-  color: var(--text-mute, #8a8270);
-  white-space: nowrap;
-  border-bottom: 2px solid transparent;
-  transition: color 0.12s, border-color 0.12s;
-  &:hover { color: var(--text-dim, #b5ad97); }
-  &.active { color: var(--text, #e5dec8); border-bottom-color: var(--gold); }
-}
-// count pill — muted mono, subtle in both active/inactive
-.rs-act-tab-n {
-  font-family: var(--mono); font-size: var(--fs-2xs, 11px);
-  color: var(--text-mute, #8a8270); background: var(--surface-2, #2e2a23);
-  border-radius: 999px; padding: 1px 7px; min-width: 16px; text-align: center;
-}
-
-@container app (min-width: 561px) and (max-width: 669px) {
-  .rs-act-subnav {
-    display: flex; align-items: stretch;
-    margin-top: var(--spacer-5);
-    border-bottom: 2px solid var(--section-rule);
-  }
-  // show only the active section; the tab label replaces each section's title.
-  // Padding gives the content breathing room below the nav.
-  .reactor-sheet-app .rs-act-sec { display: none; }
-  .reactor-sheet-app .rs-act-sec.is-active { display: block; padding-top: var(--spacer-4); }
-  .reactor-sheet-app .rs-act-sec .section-title { display: none; }
-}
 
 // --- attacks: woodcut weapon cards (ported from prototype .fvtt-weapon) ---
 // Card grid: Item (icon + name/tags) | Hit | Damage | tall brass Atk button.
