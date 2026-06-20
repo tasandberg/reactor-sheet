@@ -1,6 +1,6 @@
-# Phase 3 — Collapsing header → minibar (xs/medium only)
+# Phase 3 — Collapsing header → minibar (MEDIUM only)
 
-Handoff behavior #1, scoped to the single-column layouts. The **lg two-pane left-rail layout is unaffected** (header is sticky in `.rs-left`, never scrolls out — no minibar).
+Handoff behavior #1. **Scope update (2026-06-19): MEDIUM-ONLY.** The minibar shows only in the medium band (app ~561–669px / sheet <630px, where the single-column header scrolls away), AND only while collapsed. It is hidden at **xs** (`@container app (max-width: 560px)` — bottom-tab layout) and at **lg** (`@container app (min-width: 670px)` — two-pane sticky left-rail header that never scrolls out). The two `app`-container gates are the source of truth for medium-only; the JS owns the collapsed state (header scrolled past the name). The **lg two-pane left-rail layout is unaffected** (header sticky in `.rs-left`).
 
 ## The dividing line
 
