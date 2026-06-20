@@ -49,7 +49,10 @@ export function ExplorationGrid({ exploration, onRoll }: { exploration: Explorat
         >
           <i className={cx("skic", e.icon)} aria-hidden="true" />
           <span className="skn">{e.label}</span>
-          <span className="skv">{e.inSix}-in-6</span>
+          <span className="skv">
+            {e.inSix}-in-6
+            <i className="fa-solid fa-dice-d6" aria-hidden="true" />
+          </span>
         </div>
       ))}
     </div>
