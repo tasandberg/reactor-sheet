@@ -1,6 +1,7 @@
 export { cx } from "./cx";
 export { Stamp } from "./Stamp";
 export { Button } from "./Button";
+export { IconButton } from "./IconButton";
 export { Tag } from "./Tag";
 export { SectionTitle } from "./SectionTitle";
 export { Card, KvCard } from "./Card";

@@ -247,6 +247,49 @@
 }
 .segmented button:hover:not(.on) { color: var(--text-dim); }
 
+/* ─── Icon button — transparent square wrapping a single glyph ───────────
+   Canonical replacement for the hand-rolled .ft-chev/.ft-del/.rs-feat-add/
+   .rs-lang-go/.sp-trash one-offs. Neutral by default; intents via variants. */
+
+.icon-btn {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: var(--r-sm);
+  color: var(--text-faint);
+  font-size: var(--fs-2xs);
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.12s, background 0.12s, border-color 0.12s;
+}
+.icon-btn:hover:not(:disabled) { color: var(--text-dim); }
+.icon-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.icon-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* compact box for inline carets / × / trash glyphs */
+.icon-btn.sm { width: 18px; height: 18px; font-size: var(--fs-3xs); }
+
+/* danger — delete / remove / × (faint → crimson) */
+.icon-btn.danger:hover:not(:disabled) { color: var(--crimson); }
+/* accent — add / edit affordances (faint → brass); `.on` = toggled active */
+.icon-btn.accent:hover:not(:disabled) { color: var(--accent-alt); }
+.icon-btn.on { color: var(--accent-alt); }
+/* round — brass-outline add affordance that fills on hover */
+.icon-btn.round {
+  border-radius: 999px;
+  border: 1px solid var(--accent-alt);
+  color: var(--accent-alt);
+}
+.icon-btn.round:hover:not(:disabled) {
+  background: var(--accent-alt);
+  color: var(--on-accent);
+}
+
 /* ─── Dropdown menu ─────────────────────────────────────────────────── */
 
 .menu {

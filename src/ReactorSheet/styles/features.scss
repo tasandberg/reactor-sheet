@@ -62,13 +62,7 @@
   &:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
 }
 
-.reactor-sheet-app .ft-chev {
-  flex: none; width: 16px; text-align: center; cursor: pointer;
-  background: none; border: none;
-  color: var(--text-faint, #6a6354); font-size: var(--fs-2xs, 11px);
-  &:hover { color: var(--text-dim, #b5ad97); }
-  &:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-}
+// (chevron is now <IconButton>; see .icon-btn in components.css)
 
 // Body indented under the title (past the 40px stamp + gap).
 .ft-body { padding: 0 var(--spacer-3) var(--spacer-3) 62px; }
@@ -84,13 +78,7 @@
   gap: var(--spacer-3);
   margin-top: var(--spacer-2);
 }
-.reactor-sheet-app .ft-del {
-  background: none; border: none; cursor: pointer;
-  color: var(--text-mute, #8a8270);
-  font-size: var(--fs-sm, 13px);
-  transition: color 0.12s;
-  &:hover { color: var(--crimson, #c75044); }
-}
+// (delete is now <IconButton variant="danger">; see .icon-btn in components.css)
 
 // --- Section header: title + hint on the left, + / edit button on the right ---
 // Mirrors .rs-inv-head so the rule spans the full width and the title flexes.
@@ -102,37 +90,8 @@
 }
 .rs-feat-head .section-title { flex: 1; }
 
-// Language "go" button keeps the round brass-outline affordance.
-.reactor-sheet-app .rs-lang-go {
-  flex: none;
-  display: grid; place-items: center;
-  width: 26px; height: 26px;
-  border-radius: 999px;
-  background: none;
-  border: 1px solid var(--accent-alt);
-  color: var(--accent-alt);
-  cursor: pointer;
-  font-size: var(--fs-2xs, 11px);
-  transition: background 0.12s, color 0.12s, border-color 0.12s;
-  &:hover:not(:disabled) { background: var(--accent-alt); color: var(--on-accent); }
-  &:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-  &:disabled { opacity: 0.4; cursor: not-allowed; }
-}
-
-// Add-ability "+" — deliberately subtle (seldom used): a faint ghost icon that
-// only gains colour on hover. No outline/fill at rest.
-.reactor-sheet-app .rs-feat-add {
-  flex: none;
-  display: grid; place-items: center;
-  width: 22px; height: 22px;
-  background: none; border: none; cursor: pointer;
-  color: var(--text-faint, #6a6354);
-  font-size: var(--fs-2xs, 11px);
-  transition: color 0.12s;
-  &:hover:not(:disabled) { color: var(--accent-alt); }
-  &:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-  &:disabled { opacity: 0.4; cursor: not-allowed; }
-}
+// Language "go" (round brass add) + Add-ability/edit "+" are now <IconButton>
+// (variant="round" / variant="accent"); see .icon-btn in components.css.
 
 // --- Languages: ink-stamp chips ---
 .rs-langs { display: flex; flex-wrap: wrap; gap: var(--spacer-1); align-items: center; }

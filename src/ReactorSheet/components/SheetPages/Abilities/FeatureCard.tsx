@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { FeatureVM } from "../../../viewModels/features";
 import { useReactorSheetContext } from "../../context";
 import { cx } from "../../ui/cx";
+import { IconButton } from "../../ui/IconButton";
 
 /** Enrich raw HTML once via Foundry's TextEditor (links, inline rolls, embeds). */
 function useEnriched(html: string): string {
@@ -79,9 +80,7 @@ export function FeatureCard({ feature }: { feature: FeatureVM }) {
             </div>
           )}
         </div>
-        <button
-          type="button"
-          className="ft-chev"
+        <IconButton
           aria-expanded={open}
           aria-label={open ? "Collapse" : "Expand"}
           onClick={(e) => {
@@ -90,7 +89,7 @@ export function FeatureCard({ feature }: { feature: FeatureVM }) {
           }}
         >
           {open ? "▾" : "▸"}
-        </button>
+        </IconButton>
       </div>
       {open && (
         <div className="ft-body">
@@ -99,14 +98,14 @@ export function FeatureCard({ feature }: { feature: FeatureVM }) {
             dangerouslySetInnerHTML={{ __html: desc }}
           />
           <div className="ft-actions">
-            <button
-              type="button"
-              className="ft-del"
+            <IconButton
+              variant="danger"
               title="Delete ability"
+              aria-label="Delete ability"
               onClick={feature.onDelete}
             >
               <i className="fas fa-trash" aria-hidden="true" />
-            </button>
+            </IconButton>
           </div>
         </div>
       )}

@@ -1,6 +1,7 @@
 import { useReactorSheetContext } from "../../context";
 import { selectFeatures } from "../../../viewModels/features";
 import { SectionTitle } from "../../ui/SectionTitle";
+import { IconButton } from "../../ui/IconButton";
 import { createAbility } from "./createAbility";
 import { FeatureCard } from "./FeatureCard";
 import { LanguagesSection } from "./LanguagesSection";
@@ -18,15 +19,14 @@ export default function Abilities() {
       <section className="rs-section rs-feat-sec">
         <div className="rs-feat-head">
           <SectionTitle>Abilities</SectionTitle>
-          <button
-            type="button"
-            className="rs-feat-add"
+          <IconButton
+            variant="accent"
             title="Add ability"
             aria-label="Add ability"
             onClick={onAdd}
           >
             <i className="fas fa-plus" aria-hidden="true" />
-          </button>
+          </IconButton>
         </div>
         {features.length === 0 ? (
           <p className="rs-flavour">No abilities yet.</p>

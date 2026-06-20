@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import type { OseSpell } from "../../types/types";
 import { cx } from "../ui/cx";
+import { IconButton } from "../ui/IconButton";
 
 type Props = {
   spell: OseSpell;
@@ -55,15 +56,15 @@ export function SpellCastRow({ spell, meta, onCast, onUnprepare, onOpenName, row
             ))}
           </span>
           {onUnprepare && (
-            <button
-              type="button"
-              className="sp-trash"
+            <IconButton
+              variant="danger"
+              size="sm"
               onClick={onUnprepare}
               title={`Remove ${spell.name}`}
               aria-label={`Remove ${spell.name}`}
             >
               <i className="fa-solid fa-trash-can" aria-hidden="true" />
-            </button>
+            </IconButton>
           )}
         </span>
         <span className="spm">{meta}</span>
