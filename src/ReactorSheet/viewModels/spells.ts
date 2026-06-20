@@ -23,8 +23,11 @@ export function spellMeta(spell: OseSpell): SpellMetaPart[] {
 }
 
 /**
- * Per-level spell panels. OSE keys: `slots[lvl] = {used, max}` (used = memorised
- * casts available, max = capacity); each spell's `system.cast` = times prepared.
+ * Per-level spell panels. A slot is OCCUPIED by each `memorized` copy of a spell
+ * (the selection — persists across casts and rest); `cast` is the casts remaining
+ * within those slots. So capacity is measured in `memorized` (NOT OSE's `slots.used`,
+ * which is the sum of `cast` and frees as you cast — that would let you over-memorise).
+ * The prepared list = every selected spell (`memorized > 0`), incl. fully-spent ones.
  * A level shows when it has capacity OR any known spell. Sorted ascending.
  */
 export function selectSpellLevels(actor: OSEActor): SpellLevelVM[] {
@@ -36,10 +39,11 @@ export function selectSpellLevels(actor: OSEActor): SpellLevelVM[] {
   return [...levels]
     .sort((a, b) => a - b)
     .map((level) => {
-      const slot = slots[level] ?? { used: 0, max: 0 };
+      const max = (slots[level] ?? { max: 0 }).max;
       const spellbook = spellList[level] ?? [];
-      const prepared = spellbook.filter((s) => s.system.cast > 0);
-      return { level, slots: slot, prepared, spellbook };
+      const used = spellbook.reduce((n, s) => n + (s.system.memorized ?? 0), 0);
+      const prepared = spellbook.filter((s) => (s.system.memorized ?? 0) > 0);
+      return { level, slots: { used, max }, prepared, spellbook };
     })
     .filter((vm) => vm.slots.max > 0 || vm.spellbook.length > 0);
 }

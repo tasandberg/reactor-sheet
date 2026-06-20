@@ -71,7 +71,7 @@ export default function SpellLevel({ vm }: { vm: SpellLevelVM }) {
             <div className="spinfo">
               <a className="spn" onClick={() => spell.sheet.render(true)}>
                 {spell.name}
-                {spell.system.cast > 1 ? ` ×${spell.system.cast}` : ""}
+                {spell.system.memorized > 1 ? ` ×${spell.system.memorized}` : ""}
               </a>
               <span className="spm">
                 {spellMeta(spell).map((p) => (
@@ -84,10 +84,11 @@ export default function SpellLevel({ vm }: { vm: SpellLevelVM }) {
             <button
               type="button"
               className="rs-link sp-cast"
+              disabled={spell.system.cast <= 0}
               onClick={() => cast(spell)}
-              title={`Cast ${spell.name}`}
+              title={spell.system.cast <= 0 ? `${spell.name} — spent (Rest to recover)` : `Cast ${spell.name}`}
             >
-              cast
+              {spell.system.cast <= 0 ? "spent" : "cast"}
             </button>
           </div>
         ))
@@ -111,7 +112,7 @@ export default function SpellLevel({ vm }: { vm: SpellLevelVM }) {
               // Spellbook always MEMORISES (adds a copy) up to the level's free
               // slots — so a spell can be memorised more than once. Removing a
               // copy is done from the prepared rows above (their ✓ unprepares).
-              const prepCount = spell.system.memorized || spell.system.cast || 0;
+              const prepCount = spell.system.memorized ?? 0;
               const isPrep = prepCount > 0;
               return (
                 <button
