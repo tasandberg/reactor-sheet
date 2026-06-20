@@ -244,53 +244,87 @@
 .rs-move-pop .k { font-family: var(--sans); font-size: var(--fs-xs, 12px); color: var(--text-dim, #b5ad97); }
 .rs-move-pop .vv { font-family: var(--mono); font-size: var(--fs-xs, 12px); color: var(--text); }
 
-// --- abilities ---
-.rs-abilities { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacer-2); }
+// --- abilities (ported from prototype .fvtt-abil: gold-framed plaque) ---
+// Box = gradient lift + gold-soft border + inner hairline frame + corner brackets.
+// Label is an ink stamp at top; big serif value fills the middle; mod is a gold
+// ink-pill pinned to the bottom edge.
+.rs-abilities { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacer-2); margin-top: var(--spacer-4); }
 @container sheet (min-width: 470px) { .rs-abilities { grid-template-columns: repeat(6, 1fr); } }
 .rs-abil {
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  min-height: 78px;
+  align-items: center;
+  min-height: 96px;
   background: linear-gradient(180deg, var(--surface-2, #2e2a23), var(--surface, #23201a)); // dark: subtle lift
-  border: 1px solid var(--border-soft);
-  border-radius: 8px;
-  padding: 7px;
+  border: 1px solid var(--gold-soft);
+  border-radius: var(--r-sm, 4px);
+  padding: var(--spacer-2) 6px 30px;
+  text-align: center;
   overflow: hidden;
 }
+// Inner hairline frame (corners connect)
+.rs-abil::before {
+  content: "";
+  position: absolute; inset: 3px;
+  border: 1px solid var(--gold-soft);
+  border-radius: 2px;
+  pointer-events: none;
+  opacity: 0.5;
+}
+// Gold corner brackets reinforcing where the frame lines meet
+.rs-abil::after {
+  content: "";
+  position: absolute; inset: 3px;
+  pointer-events: none;
+  opacity: 0.85;
+  background:
+    linear-gradient(var(--gold), var(--gold)) 0 0 / 9px 1.5px no-repeat,
+    linear-gradient(var(--gold), var(--gold)) 0 0 / 1.5px 9px no-repeat,
+    linear-gradient(var(--gold), var(--gold)) 100% 0 / 9px 1.5px no-repeat,
+    linear-gradient(var(--gold), var(--gold)) 100% 0 / 1.5px 9px no-repeat,
+    linear-gradient(var(--gold), var(--gold)) 0 100% / 9px 1.5px no-repeat,
+    linear-gradient(var(--gold), var(--gold)) 0 100% / 1.5px 9px no-repeat,
+    linear-gradient(var(--gold), var(--gold)) 100% 100% / 9px 1.5px no-repeat,
+    linear-gradient(var(--gold), var(--gold)) 100% 100% / 1.5px 9px no-repeat;
+}
 // Cream flats out; dark keeps the gradient above.
-// visible-but-soft gradient in light mode
-[data-theme="cream"] .rs-abil { background: linear-gradient(180deg, var(--surface), color-mix(in srgb, var(--surface-2) 80%, var(--surface))); }
-// Stamp bar spans full width at the top
+[data-theme="cream"] .rs-abil { background: var(--surface); }
+[data-theme="cream"] .rs-abil.rollable:hover { background: var(--surface-2); }
+// Stamp label at the top, inset from the gold frame
 .rs-abil .rs-abil-k {
-  display: block;
-  width: 100%;
-  text-align: center;
-  padding: 2px 4px 3px;
+  align-self: stretch;
+  margin: 1px 7px 0;
+  width: auto;
+  padding: 3px 0 2px;
 }
-// Big serif value with faint underline separator
+// Big serif value fills the middle
 .rs-abil .av {
-  font-family: var(--display); font-size: var(--fs-3xl, 24px);
+  position: relative;
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  width: 100%;
+  font-family: var(--display); font-size: var(--fs-4xl, 28px);
   line-height: 1; color: var(--text);
-  text-align: center;
-  padding: 4px 0 4px;
-  margin-top: 4px;
-  border-bottom: 1px solid var(--border-soft);
+  margin: 0;
 }
-// Muted mono modifier below the underline
-// ink chip; white text with a gold glow
+// Mod pill: gold-on-ink capsule pinned to the bottom edge
 .rs-abil .am {
-  align-self: center;
+  position: absolute;
+  left: 50%; bottom: 8px;
+  transform: translateX(-50%);
+  min-width: 38px;
   background: var(--ink);
-  color: var(--stamp-text, #e5dec8);
-  text-shadow: 0 0 7px color-mix(in srgb, var(--gold-bright) 70%, transparent);
   border-radius: 99px;
-  padding: 1px 10px 2px;
-  font-family: var(--mono); font-size: var(--fs-xs, 12px); font-weight: 700;
-  margin-top: 4px;
+  padding: 2px 9px 1px;
+  font-family: var(--mono); font-size: var(--fs-xs, 12px); font-weight: 600;
+  color: var(--gold);
 }
-// light mode: light chip just offset from the box, black text
-[data-theme="cream"] .rs-abil .am { background: color-mix(in srgb, var(--surface-2), var(--surface-3)); color: var(--ink); }
+// light mode: light parchment capsule with dark text (not brass)
+[data-theme="cream"] .rs-abil .am {
+  background: color-mix(in srgb, var(--ink) 7%, var(--surface));
+  color: var(--ink);
+}
 
 // --- section title override (prototype: 2px border-bottom, not 3px thick) ---
 .section-title {
@@ -385,35 +419,39 @@
   color: var(--text-dim, #b5ad97); flex: 1; min-width: 0;
 }
 .fvtt-skill .skv {
+  // muted "N-in-6" with a trailing d6 glyph — no pill.
+  display: inline-flex; align-items: center; gap: var(--spacer-1);
   font-family: var(--mono, monospace); font-size: var(--fs-xs, 12px);
-  color: var(--text, #e5dec8);
-  background: var(--ink, #070605);
-  border: 1px solid var(--gold-soft);
-  border-radius: 5px; padding: 3px 8px 2px;
+  color: var(--text-mute, #8a8270);
   white-space: nowrap; flex: none;
+  i { color: var(--gold-dim); font-size: 12px; }
 }
 
 // --- memorized spells quick-cast (ported from .fvtt-castlist/.fvtt-spell) ---
 .fvtt-castlist { display: flex; flex-direction: column; margin-top: 2px; }
 .fvtt-spell {
-  display: grid; grid-template-columns: 18px 1fr auto;
-  align-items: center; gap: var(--spacer-2);
+  display: grid; grid-template-columns: 1fr auto;
+  align-items: center; gap: var(--spacer-3);
   padding: var(--spacer-2) var(--spacer-2) var(--spacer-2) var(--spacer-3);
   background: var(--surface, #23201a);
   border: 1px solid var(--border-soft, #2c2823);
   border-top: none;
 }
+// name + cast dots on one line (dots to the right of the name)
+.fvtt-spell .spn-row { display: inline-flex; align-items: baseline; gap: var(--spacer-2); }
 .fvtt-castlist .fvtt-spell:first-of-type { border-top: 1px solid var(--border-soft, #2c2823); border-radius: 7px 7px 0 0; }
 .fvtt-castlist .fvtt-spell:last-of-type { border-radius: 0 0 7px 7px; }
 .fvtt-castlist .fvtt-spell:only-of-type { border-radius: 7px; }
-.fvtt-spell .chk {
-  width: 14px; height: 14px;
-  background: var(--gold); color: var(--ink, #070605);
-  border-radius: 3px; display: grid; place-items: center;
-  font-size: 10px; font-weight: 700;
+// cast dots — one per memorised slot (shared by Actions + Spells). Gold = a cast
+// remaining; light/soft = a used (spent) cast — used dots stay, they don't vanish.
+.sp-dots { display: inline-flex; align-items: center; gap: var(--spacer-1); }
+.sp-dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--gold-soft); border: 1px solid var(--gold-soft);
 }
+.sp-dot.filled { background: var(--gold); border-color: var(--gold); }
 .fvtt-spell .spn {
-  font-family: var(--display, serif); font-size: var(--fs-md, 14px);
+  font-family: var(--display, serif); font-size: var(--fs-lg, 16px);
   color: var(--text, #e5dec8);
 }
 .fvtt-spell .spm {
@@ -422,46 +460,129 @@
   color: var(--text-mute, #8a8270); margin-top: 1px;
 }
 .fvtt-spell .spm span + span::before { content: " · "; }
-.fvtt-spell .sp-cast { font-family: var(--sans); }
+// cast button (shared by Actions + Spells rows) — small dark rounded button;
+// "spent" is disabled + dimmed.
+.reactor-sheet-app .sp-cast {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 4.5em; // fits "cast"/"spent" so the centered spinner doesn't resize the button
+  font-family: var(--sans); font-size: var(--fs-xs, 12px);
+  color: var(--gold); cursor: pointer;
+  background: var(--bg-2, #1f1c17); border: 1px solid var(--border, #3a342c);
+  border-radius: var(--r-md, 6px); padding: var(--spacer-1) var(--spacer-3);
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+  &:hover:not(:disabled) { background: var(--surface-2, #2e2a23); border-color: var(--gold-soft); }
+  &:disabled { color: var(--text-faint, #6a6354); cursor: default; }
+  // keep the spinner brass even though :disabled dims the text
+  &[aria-busy="true"] { color: var(--gold); }
+}
+// spent (cast 0, still selected): dim the row + struck name (dots render empty)
+.fvtt-spell.spent { opacity: 0.6; }
+.fvtt-spell.spent .spn { text-decoration: line-through; }
 
-// --- attacks + tables ---
-.rs-weapon { display: flex; align-items: center; gap: 8px; }
-.rs-weapon img { width: 28px; height: 28px; border-radius: var(--r-sm, 4px); background: var(--surface, #23201a); }
-.rs-weapon .wname { font-weight: 600; }
-.rs-quals { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px; }
-.rs-quals .tag { display: inline-flex; align-items: center; gap: 4px; }
-
-// --- attacks: one row per mode, aligned grid (Item / Hit / Damage / Attack!) ---
-.rs-atk-table { display: flex; flex-direction: column; }
-.rs-atk-row {
+// --- attacks: woodcut weapon cards (ported from prototype .fvtt-weapon) ---
+// Card grid: Item (icon + name/tags) | Hit | Damage | tall brass Atk button.
+.rs-wtable { display: flex; flex-direction: column; gap: var(--spacer-1); }
+.rs-whdr,
+.rs-weapon {
   display: grid;
-  grid-template-columns: 1fr max-content max-content max-content;
+  // fixed Hit/Damage/Atk columns so buttons are a consistent width per type and
+  // double-digit dice (1d10+2) don't shift the layout.
+  grid-template-columns: minmax(0, 1fr) 62px 82px 96px;
+  gap: var(--spacer-3);
   align-items: center;
-  gap: var(--spacer-4);
-  padding: var(--spacer-3) var(--spacer-1);
-  border-bottom: 1px solid var(--border-soft, #2c2823);
 }
-// column headers
-.rs-atk-head {
-  padding-top: 0; padding-bottom: var(--spacer-2);
-  border-bottom: 2px solid var(--border, #3a342c);
-}
-.rs-atk-h {
+.rs-whdr {
+  padding: 0 var(--spacer-1) var(--spacer-1);
   font-family: var(--sans); font-size: var(--fs-3xs, 10px); font-weight: 600;
-  letter-spacing: 0.08em; text-transform: uppercase;
+  letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--text-faint, #6a6354);
 }
-.rs-atk-h-go { justify-self: center; }
-// col 1: image + name/tags
-.rs-atk-item { display: flex; align-items: center; gap: var(--spacer-3); min-width: 0; }
-.rs-atk-img { width: 36px; height: 36px; border-radius: 5px; object-fit: cover; background: var(--ink, #070605); border: 1px solid var(--border, #3a342c); }
-.rs-atk-main { flex: 1 1 auto; min-width: 0; }
-.rs-atk-name {
-  font-family: var(--display); font-size: var(--fs-md, 15px); color: var(--text, #e5dec8);
+.rs-whdr > span:nth-child(n + 2) { text-align: center; }
+
+.rs-weapon {
+  background: var(--surface, #23201a);
+  border: 1px solid var(--border-soft, #2c2823);
+  border-radius: 8px;
+  padding: 9px 10px;
+}
+.rs-weapon .winfo { display: flex; align-items: center; gap: var(--spacer-3); min-width: 0; }
+// ink-stamp monogram (or weapon art)
+.rs-weapon .wic {
+  width: 34px; height: 34px; flex: 0 0 auto;
+  border-radius: 6px;
+  background: var(--ink, #070605);
+  color: var(--gold);
+  display: grid; place-items: center;
+  font-family: var(--display); font-size: 16px;
+  border: 1px solid var(--border, #3a342c);
+}
+.rs-weapon .wic-img { object-fit: cover; }
+.rs-weapon .wmain { min-width: 0; }
+.rs-weapon .wname {
+  font-family: var(--display); font-size: var(--fs-md, 15px);
+  color: var(--text, #e5dec8); line-height: 1.15;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.rs-atk-kind { color: var(--text-mute, #8a8270); }
-.rs-atk-quals { display: flex; gap: var(--spacer-1); flex-wrap: wrap; margin-top: 2px; }
+.rs-weapon .wtags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
+
+// quality / mode tags — icon-only chips with a hover popover (+ native title)
+.fvtt-tag {
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--sans); font-size: var(--fs-3xs, 10px); letter-spacing: 0.03em;
+  color: var(--text-mute, #8a8270);
+  background: var(--bg-2, #1f1c17);
+  border: 1px solid var(--border-soft, #2c2823);
+  border-radius: var(--r-sm, 4px);
+  padding: var(--spacer-1);
+  white-space: nowrap; cursor: default;
+  i { font-size: var(--fs-xs, 12px); }
+  .tag-txt { padding: 0 var(--spacer-1); } // icon-less fallback
+}
+// mode tags carry the accent (melee = brass, missile = teal) on the icon
+.fvtt-tag.melee i { color: var(--gold); }
+.fvtt-tag.missile i { color: var(--teal); }
+
+// kind switch — when a weapon has BOTH melee+missile, the two kinds become a
+// joined segmented control (unmistakably a switch, not a quality chip). The
+// selected segment fills SOLID with its accent; the other is a hoverable button.
+.reactor-sheet-app .kind-switch {
+  display: inline-flex; align-items: stretch;
+  background: var(--bg-2, #1f1c17);
+  border: 1px solid var(--border, #3a342c);
+  border-radius: var(--r-sm, 4px);
+  overflow: hidden;
+}
+.reactor-sheet-app .kind-seg {
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 3px var(--spacer-2);
+  cursor: pointer; background: transparent; border: none;
+  // no transition: the switch is purely presentational, so it should flip instantly
+  i { font-size: var(--fs-xs, 12px); }
+  & + & { border-left: 1px solid var(--border, #3a342c); }
+  &:hover { background: var(--surface-2, #2e2a23); }
+  // idle icons carry the mode accent; selected flips to on-accent over a fill
+  &.melee i { color: var(--gold); }
+  &.missile i { color: var(--teal); }
+  &.melee.selected { background: var(--gold); i { color: var(--on-accent, #070605); } }
+  &.missile.selected { background: var(--teal); i { color: var(--on-accent, #070605); } }
+}
+.reactor-sheet-app .kind-seg:hover .tag-pop { opacity: 1; }
+
+// hover popover (more info) — used by tags AND the hit/dmg buttons
+.tag-pop {
+  position: absolute; bottom: calc(100% + var(--spacer-1)); left: 50%; transform: translateX(-50%);
+  z-index: 10; white-space: nowrap;
+  padding: var(--spacer-1) var(--spacer-2); border-radius: var(--r-sm, 4px);
+  background: var(--surface-2, #2e2a23); border: 1px solid var(--border, #3a342c);
+  color: var(--text-dim, #b5ad97);
+  font-family: var(--mono); font-size: var(--fs-2xs, 11px); letter-spacing: 0.02em;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  opacity: 0; pointer-events: none; transition: opacity 0.12s;
+}
+.fvtt-tag:hover .tag-pop,
+.reactor-sheet-app .wstat:hover .tag-pop { opacity: 1; }
 
 // reusable link-style button: accent colour denotes a clickable roll/link.
 // (qualified with .reactor-sheet-app to beat the `button { all: unset }` reset.)
@@ -476,23 +597,50 @@
   &:disabled { color: var(--text-mute, #8a8270); cursor: default; text-decoration: none; }
 }
 
-// Hit / Damage roll links
-.rs-atk-roll {
-  flex: 0 0 auto;
-  font-family: var(--mono); font-size: var(--fs-sm, 13px);
-  white-space: nowrap;
+// Hit / Damage — plain clickable cells: a small HIT/DMG label over the value
+// (hit = mode icon + modifier; dmg = full formula), with a full-formula popover.
+.reactor-sheet-app .wstat {
+  position: relative; justify-self: stretch;
+  display: inline-flex; flex-direction: column; align-items: center; gap: 1px;
+  background: transparent; border: none; cursor: pointer;
+  padding: var(--spacer-1) var(--spacer-1);
+  color: var(--text-dim, #b5ad97);
+  transition: color 0.12s;
+  &:hover:not(:disabled) { color: var(--text, #e5dec8); }
+  &.dmg:hover:not(:disabled) { color: var(--crimson, #c75044); }
+  &:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; border-radius: var(--r-sm, 4px); }
+  &:disabled { opacity: 0.5; cursor: default; }
 }
+.rs-weapon .wstat .sl {
+  font-family: var(--sans); font-size: var(--fs-3xs, 10px); font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-faint, #6a6354);
+}
+.rs-weapon .wstat .wv {
+  display: inline-flex; align-items: center; gap: var(--spacer-1);
+  font-family: var(--mono); font-size: var(--fs-sm, 13px); white-space: nowrap;
+  i { font-size: 0.9em; }
+}
+.rs-weapon .wname .wkind { color: var(--text-mute, #8a8270); }
 
-// composite attack button (Attack! column)
-.rs-atk-go {
-  justify-self: center;
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 40px; height: 32px; border-radius: 6px;
-  background: var(--teal); color: var(--on-accent, #070605);
-  border: 1px solid var(--teal); cursor: pointer; font-size: 14px;
-  transition: filter 0.12s;
-  &:hover:not(:disabled) { filter: brightness(1.12); }
-  &:disabled { cursor: default; opacity: 0.5; }
+// compact brass "Attack" button (composite hit + damage via OSE weapon dialog)
+.reactor-sheet-app .fvtt-atk {
+  justify-self: stretch;
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--spacer-1);
+  padding: var(--spacer-1) var(--spacer-3);
+  background: transparent;
+  border: 1px solid var(--gold-soft);
+  border-radius: 6px;
+  color: var(--gold);
+  font-family: var(--sans); font-size: var(--fs-3xs, 10px); font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s, transform 0.06s;
+  i { font-size: var(--fs-sm, 13px); }
+  &:hover:not(:disabled) { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 10%, transparent); }
+  &:active:not(:disabled) { transform: translateY(1px); }
+  &:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+  &:disabled { opacity: 0.35; cursor: default; }
 }
 
 // --- wealth + movement ---
@@ -578,14 +726,25 @@
   // Init/HD/Move: borderless + small, three across (inherit the compact base)
   .rs-substats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
   .rs-tile { width: auto; }
-  // attack tags: icon-only (hide the label text)
-  .rs-quals .lbl { display: none; }
-  // abilities: 6-across in one compact row
+  // attacks: keep the weapon card but tighten — icon-only tags, snug stat cells.
+  .fvtt-tag .lbl { display: none; }
+  .rs-weapon { gap: var(--spacer-2); padding: 8px; }
+  .rs-weapon .wstat { padding: 4px 2px; }
+  .rs-weapon .wstat .wv { font-size: var(--fs-xs, 12px); }
+  // abilities: 6-across in one compact row (flat — drop the md+ gold frame/brackets)
   .rs-abilities { grid-template-columns: repeat(6, 1fr); gap: var(--spacer-1); }
-  .rs-abil { min-height: 0; padding: 5px 3px 6px; }
-  .rs-abil .rs-abil-k { font-size: var(--fs-3xs, 10px); padding: 2px 2px 3px; }
-  .rs-abil .av { font-size: var(--fs-xl, 18px); padding: 3px 0; }
-  .rs-abil .am { font-size: var(--fs-3xs, 10px); padding: 0 6px 1px; }
+  .rs-abil {
+    min-height: 0; padding: 5px 3px 6px;
+    border-color: var(--border-soft);
+    align-items: stretch;
+  }
+  .rs-abil::before, .rs-abil::after { content: none; }
+  .rs-abil .rs-abil-k { margin: 0; font-size: var(--fs-3xs, 10px); padding: 2px 2px 3px; }
+  .rs-abil .av { flex: 0 0 auto; font-size: var(--fs-xl, 18px); padding: 3px 0; }
+  .rs-abil .am {
+    position: static; transform: none; align-self: center;
+    min-width: 0; font-size: var(--fs-3xs, 10px); padding: 0 6px 1px; margin-top: 2px;
+  }
   // topbar: collapse Rest / Level Up / Edit into the ⋮ overflow
   .rs-tb-actions { display: none; }
   .rs-topbar .rs-tb-btn.rs-tb-overflow { display: inline-flex; }

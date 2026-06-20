@@ -11,6 +11,8 @@ const item = (o: Partial<InventoryItemVM> & { id: string; name: string }): Inven
   tags: [],
   monogram: o.name.slice(0, 2).toUpperCase(),
   weight: 0,
+  cost: 0,
+  armorClass: null,
   sort: 0,
   equippedSort: 0,
   equipped: null,

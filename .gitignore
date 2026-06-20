@@ -34,3 +34,6 @@ docs/plans/
 
 # Local, uncommitted Vite overrides
 vite.config.local.json
+
+# local git worktrees
+.claude/worktrees/

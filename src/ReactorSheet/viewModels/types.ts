@@ -1,4 +1,4 @@
-import type { OSESave } from "../types/types";
+import type { OSESave, OseSpell } from "../types/types";
 
 export interface IdentityVM {
   name: string;
@@ -37,17 +37,33 @@ export interface RollSpec {
   flavor: string;
 }
 
+/** One attack mode (melee or missile) of a weapon: its hit/damage rolls + displays. */
+export interface AttackMode {
+  kind: "melee" | "missile";
+  kindLabel: string;
+  /** To-hit roll (1d20 + ability mod). */
+  hit: RollSpec;
+  /** Button text — always-signed mono, e.g. "+2" / "+0". */
+  hitDisplay: string;
+  /** Full hit formula with named mods for the popover, e.g. "1d20 + 1 (dex)". */
+  hitTip: string;
+  /** Damage roll (weapon die + ability mod). */
+  dmg: RollSpec;
+  /** Button text — always-signed mono, e.g. "1d6+0" / "1d10+2". */
+  dmgDisplay: string;
+  /** Full damage formula with named mods for the popover, e.g. "1d6 + 1 (str)". */
+  dmgTip: string;
+}
+
+/** One equipped weapon. A weapon that is both melee+missile carries both modes
+ *  (melee first); the row lets the player toggle which one is active. */
 export interface AttackVM {
   id: string;
   itemId: string;
   name: string;
   img: string;
-  kind: "melee" | "missile";
-  kindLabel: string;
-  /** To-hit roll (1d20 + ability mod). */
-  hit: RollSpec;
-  /** Damage roll (weapon die + ability mod). */
-  dmg: RollSpec;
+  /** One per attack mode, melee before missile. length 1 = a single static tag. */
+  modes: AttackMode[];
   qualities: { label: string; icon: string }[];
 }
 
@@ -63,6 +79,8 @@ export interface ExplorationVM {
   label: string;
   icon: string;
   inSix: number;
+  /** Not modelled in OSE (Forage/Hunt) — fires a plain 1d6 instead of a skill roll. */
+  simple: boolean;
 }
 
 export interface TopbarVM {
@@ -92,6 +110,10 @@ export interface InventoryItemVM {
   /** Short monogram for the grid card when the item has no real art. */
   monogram: string;
   weight: number;
+  /** Item cost in gp (system.cost). 0 when unset. */
+  cost: number;
+  /** Armour class for armour items — label is "AC"/"AAC" per the ascendingAC setting. null otherwise. */
+  armorClass: { label: string; value: number } | null;
   sort: number;            // manual order — reactor-sheet `order` flag (falls back to item.sort)
   equippedSort: number;    // manual order within the equipped tray — `equippedOrder` flag (falls back to `sort`)
   /** null when the item type can't be equipped (no `equipped` field). */
@@ -116,6 +138,19 @@ export interface InventoryVM {
   count: number;
   /** @deprecated kept for grid view compatibility */
   groups: InventoryGroup[];
+}
+
+/** One spell level's panel: capacity, the prepared rows, and the full spellbook. */
+export interface SpellLevelVM {
+  level: number;
+  /** used = casts still ready (sum of `cast`, drops as you cast); max = slot capacity. */
+  slots: { used: number; max: number };
+  /** Filled slots = sum of `memorized` (persists across casts); caps memorisation. */
+  occupied: number;
+  /** Selected spells (`memorized > 0`), shown as prepared rows (incl. fully spent). */
+  prepared: OseSpell[];
+  /** Every known spell at this level (for the expandable spellbook). */
+  spellbook: OseSpell[];
 }
 
 export interface CoinVM {

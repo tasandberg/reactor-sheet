@@ -26,20 +26,21 @@ function useEnriched(html: string): string {
   return enriched;
 }
 
-/** Collapsible class/race feature: ink-stamp · title · roll-tag pill · chevron. */
+/**
+ * Collapsible ability: ink-stamp · (name link + requires/roll tags) · chevron.
+ * The name opens the ability's own sheet; the roll tag rolls; the chevron (or a
+ * click anywhere else on the header) expands the description.
+ */
 export function FeatureCard({ feature }: { feature: FeatureVM }) {
   const [open, setOpen] = useState(false);
   const desc = useEnriched(feature.description);
   const monogram = feature.name.charAt(0).toUpperCase();
+  const toggle = () => setOpen((o) => !o);
 
   return (
     <div className={cx("fvtt-feat", open && "open")}>
-      <button
-        type="button"
-        className="ft-head"
-        aria-expanded={open}
-        onClick={() => setOpen((o) => !o)}
-      >
+      {/* header row: clickable to expand (mouse); name/roll/chevron are their own controls */}
+      <div className="ft-head" onClick={toggle}>
         {feature.img ? (
           <img className="ft-ic" src={feature.img} alt="" aria-hidden="true" />
         ) : (
@@ -47,31 +48,61 @@ export function FeatureCard({ feature }: { feature: FeatureVM }) {
             {monogram}
           </span>
         )}
-        <span className="ft-title">{feature.name}</span>
-        {feature.rollTag && <span className="ft-roll-tag">{feature.rollTag}</span>}
-        <span className="ft-chev" aria-hidden="true">
+        <div className="ft-main">
+          <button
+            type="button"
+            className="ft-title"
+            title={`Open ${feature.name}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              feature.onOpen();
+            }}
+          >
+            {feature.name}
+          </button>
+          {(feature.requiresLabel || feature.rollTag) && (
+            <div className="ft-tags">
+              {feature.requiresLabel && <span className="ft-tag">{feature.requiresLabel}</span>}
+              {feature.rollTag && (
+                <button
+                  type="button"
+                  className="ft-tag ft-tag-roll"
+                  title={`Roll ${feature.rollTag}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    feature.onRoll?.();
+                  }}
+                >
+                  Roll {feature.rollTag}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+        <button
+          type="button"
+          className="ft-chev"
+          aria-expanded={open}
+          aria-label={open ? "Collapse" : "Expand"}
+          onClick={(e) => {
+            e.stopPropagation();
+            toggle();
+          }}
+        >
           {open ? "▾" : "▸"}
-        </span>
-      </button>
+        </button>
+      </div>
       {open && (
         <div className="ft-body">
-          {feature.requirements && (
-            <div className="ft-req">{feature.requirements}</div>
-          )}
           <div
             className="ft-desc"
             dangerouslySetInnerHTML={{ __html: desc }}
           />
           <div className="ft-actions">
-            {feature.rollable && (
-              <button type="button" className="rs-link" onClick={feature.onRoll}>
-                <i className="fas fa-dice-d20" aria-hidden="true" /> Roll {feature.rollTag}
-              </button>
-            )}
             <button
               type="button"
               className="ft-del"
-              title="Delete feature"
+              title="Delete ability"
               onClick={feature.onDelete}
             >
               <i className="fas fa-trash" aria-hidden="true" />

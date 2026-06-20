@@ -330,8 +330,8 @@ function SortHeaderRow({ sort, onSort }: { sort: SortState; onSort: (key: Invent
   return (
     <div className="rs-inv-row rs-inv-headrow" role="row">
       <span aria-hidden="true" /> {/* drag */}
-      <span aria-hidden="true" /> {/* image */}
-      <SortHeader col="name" label="Name" className="rs-inv-th-name" sort={sort} onSort={onSort} />
+      {/* "Item" spans the image + name columns so it left-aligns to the image */}
+      <SortHeader col="name" label="Item" className="rs-inv-th-item" sort={sort} onSort={onSort} />
       <SortHeader col="category" label="Type" className="rs-inv-th-cat" sort={sort} onSort={onSort} />
       <SortHeader col="weight" label="Wt" className="rs-inv-th-wt" sort={sort} onSort={onSort} />
       <span className="rs-inv-thlabel rs-inv-thlabel-eq">Equip</span>
@@ -404,11 +404,15 @@ function SectionCount({ title, items }: { title: string; items: InventoryItemVM[
 // equipped item, each with a hover popover. Click a tile to unequip.
 // ---------------------------------------------------------------------------
 
-/** Popover detail line: weapon damage, else weight, else the category. */
-function equippedDetail(item: InventoryItemVM): string {
-  if (item.damage) return item.damage;
-  if (item.weight > 0) return weightLabel(item.weight);
-  return item.category;
+/** Full item stats for the equipped popover: AC/AAC, damage, qty, cost, weight. */
+function equippedStats(item: InventoryItemVM): { label: string; value: string }[] {
+  const stats: { label: string; value: string }[] = [];
+  if (item.armorClass) stats.push({ label: item.armorClass.label, value: String(item.armorClass.value) });
+  if (item.damage) stats.push({ label: "Dmg", value: item.damage });
+  if (item.quantity) stats.push({ label: "Qty", value: `${item.quantity.value} / ${item.quantity.max}` });
+  stats.push({ label: "Cost", value: `${item.cost} gp` });
+  stats.push({ label: "Wgt", value: weightLabel(item.weight) });
+  return stats;
 }
 
 function EquippedTray({
@@ -449,11 +453,25 @@ function EquippedTray({
           </button>
           <span className="rs-equip-tt-pop" role="tooltip">
             <span className="rs-equip-tt-pop-nm">{item.name}</span>
-            <span className="rs-equip-tt-pop-meta">
-              <span className="rs-equip-tt-pop-type">{item.category}</span>
-              <span className="rs-equip-tt-pop-dot">·</span>
-              <span className="rs-equip-tt-pop-detail">{equippedDetail(item)}</span>
+            <span className="rs-equip-tt-pop-type">{item.category}</span>
+            <span className="rs-equip-tt-pop-stats">
+              {equippedStats(item).map((st) => (
+                <span className="rs-equip-tt-pop-stat" key={st.label}>
+                  <span className="k">{st.label}</span>
+                  <span className="v">{st.value}</span>
+                </span>
+              ))}
             </span>
+            {item.tags.length > 0 && (
+              <span className="rs-equip-tt-pop-tags">
+                {item.tags.map((t) => (
+                  <span className="rs-equip-tt-pop-tag" key={t.label}>
+                    {t.icon && <i className={cx("fa-solid", t.icon)} aria-hidden="true" />}
+                    {t.label}
+                  </span>
+                ))}
+              </span>
+            )}
           </span>
         </div>
       ))}

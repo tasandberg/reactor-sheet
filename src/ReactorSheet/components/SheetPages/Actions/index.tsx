@@ -2,7 +2,6 @@ import styled from "styled-components";
 import ActorScores from "../../ActorScores";
 import { Column } from "../../shared/elements";
 import SavingThrows from "./SavingThrows";
-import PreparedSpells from "../Spells/PreparedSpells";
 import Exploration from "./Exploration";
 import Weapons from "./Weapons";
 
@@ -31,7 +30,6 @@ export default function Actions() {
       </ScoreBoxContainer>
       <Column $gap="lg" style={{ maxWidth: "550px", margin: "0 auto" }}>
         <Weapons />
-        <PreparedSpells />
         <Exploration />
         <SavingThrows />
       </Column>

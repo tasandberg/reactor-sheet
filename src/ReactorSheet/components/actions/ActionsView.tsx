@@ -3,16 +3,18 @@ import type { RollSpec } from "../../viewModels/types";
 import { selectAbilities } from "../../viewModels/abilities";
 import { selectAttacks } from "../../viewModels/attacks";
 import { selectSaves } from "../../viewModels/saves";
-import { selectExploration } from "../../viewModels/exploration";
+import { selectExploration, rollExploration } from "../../viewModels/exploration";
 import { AbilityPlaques } from "./AbilityPlaques";
 import { AttacksTable } from "./AttacksTable";
 import { MemorizedSpells } from "./MemorizedSpells";
-import { SavesExploration } from "./SavesExploration";
+import { SavesGrid, ExplorationGrid } from "./SavesExploration";
+import { SectionTitle } from "../ui/SectionTitle";
 
 type Props = { actor: OSEActor };
 
-/** Actions tab body. Saves/Exploration render here only when collapsed
- *  (.actions-only); when expanded they live in the left rail (see SheetShell). */
+/** Actions tab body — all sections stack (Abilities, Attacks, Spells, and at xs +
+ *  md Saves/Exploration). At lg, Saves/Exploration live in the left rail instead,
+ *  so they carry .actions-only (hidden at lg — see SheetShell/shell.scss). */
 export function ActionsView({ actor }: Props) {
   const onAbility = (key: string) => actor.rollCheck(key, {});
   // Hit/Damage are custom formula rolls (OSE has no separate hit/damage roll).
@@ -26,21 +28,24 @@ export function ActionsView({ actor }: Props) {
   const onAttack = (itemId: string) =>
     actor.system.weapons.find((w) => w._id === itemId)?.rollWeapon({ skipDialog: false });
   const onSave = (key: OSESave) => actor.rollSave(key, {});
-  const onExploration = (key: string) => actor.rollExploration(key, {});
+  const onExploration = (key: string) => rollExploration(actor, key);
+
+  const attacks = selectAttacks(actor);
 
   return (
     <>
       <AbilityPlaques abilities={selectAbilities(actor)} onRoll={onAbility} />
-      <AttacksTable attacks={selectAttacks(actor)} onRoll={onRoll} onAttack={onAttack} />
+      <AttacksTable attacks={attacks} onRoll={onRoll} onAttack={onAttack} />
       <MemorizedSpells actor={actor} />
-      <div className="actions-only">
-        <SavesExploration
-          saves={selectSaves(actor)}
-          exploration={selectExploration(actor)}
-          onRollSave={onSave}
-          onRollExploration={onExploration}
-        />
-      </div>
+      {/* .actions-only: hidden at lg (Saves/Exploration live in the rail there). */}
+      <section className="rs-section actions-only">
+        <SectionTitle hint="roll-above d20">Saving Throws</SectionTitle>
+        <SavesGrid saves={selectSaves(actor)} onRoll={onSave} />
+      </section>
+      <section className="rs-section actions-only">
+        <SectionTitle hint="1-in-6">Exploration</SectionTitle>
+        <ExplorationGrid exploration={selectExploration(actor)} onRoll={onExploration} />
+      </section>
     </>
   );
 }

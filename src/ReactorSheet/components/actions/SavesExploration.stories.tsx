@@ -11,10 +11,12 @@ const saves: SaveVM[] = [
   { key: "spell", label: "Spell", icon: "fas fa-hat-wizard", target: 15 },
 ];
 const exploration: ExplorationVM[] = [
-  { key: "ld", label: "Listen Door", icon: "fas fa-ear", inSix: 2 },
-  { key: "od", label: "Open Door", icon: "fas fa-door-open", inSix: 2 },
-  { key: "sd", label: "Find Door", icon: "fas fa-magnifying-glass", inSix: 1 },
-  { key: "ft", label: "Find Trap", icon: "fas fa-radar", inSix: 1 },
+  { key: "ld", label: "Listen at Door", icon: "fas fa-ear-listen", inSix: 2, simple: false },
+  { key: "od", label: "Open Stuck Door", icon: "fas fa-door-closed", inSix: 2, simple: false },
+  { key: "sd", label: "Find Secret Door", icon: "fas fa-magnifying-glass", inSix: 1, simple: false },
+  { key: "ft", label: "Find Trap", icon: "fas fa-radar", inSix: 1, simple: false },
+  { key: "forage", label: "Forage", icon: "fas fa-mushroom", inSix: 1, simple: true },
+  { key: "hunt", label: "Hunt", icon: "fas fa-bow-arrow", inSix: 1, simple: true },
 ];
 
 export const Default = () => (

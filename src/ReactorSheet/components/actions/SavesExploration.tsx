@@ -18,7 +18,7 @@ function saveStamp(label: string): string {
   return label.charAt(0).toUpperCase();
 }
 
-function SavesGrid({ saves, onRoll }: { saves: SaveVM[]; onRoll?: (key: OSESave) => void }) {
+export function SavesGrid({ saves, onRoll }: { saves: SaveVM[]; onRoll?: (key: OSESave) => void }) {
   return (
     <div className="fvtt-saves">
       {saves.map((s) => (
@@ -37,7 +37,7 @@ function SavesGrid({ saves, onRoll }: { saves: SaveVM[]; onRoll?: (key: OSESave)
   );
 }
 
-function ExplorationGrid({ exploration, onRoll }: { exploration: ExplorationVM[]; onRoll?: (key: string) => void }) {
+export function ExplorationGrid({ exploration, onRoll }: { exploration: ExplorationVM[]; onRoll?: (key: string) => void }) {
   return (
     <div className="fvtt-explore">
       {exploration.map((e) => (
@@ -49,7 +49,10 @@ function ExplorationGrid({ exploration, onRoll }: { exploration: ExplorationVM[]
         >
           <i className={cx("skic", e.icon)} aria-hidden="true" />
           <span className="skn">{e.label}</span>
-          <span className="skv">{e.inSix}-in-6</span>
+          <span className="skv">
+            {e.inSix}-in-6
+            <i className="fa-solid fa-dice-d6" aria-hidden="true" />
+          </span>
         </div>
       ))}
     </div>
