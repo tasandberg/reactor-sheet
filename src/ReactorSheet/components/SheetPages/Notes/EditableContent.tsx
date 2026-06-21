@@ -36,7 +36,7 @@ export default function EditableContent({
 
   return (
     <section className="rs-section rs-notes-sec">
-      <SectionTitle variant="sub">{title}</SectionTitle>
+      <SectionTitle>{title}</SectionTitle>
       <ProseMirrorEditor
         name={name}
         value={value}
