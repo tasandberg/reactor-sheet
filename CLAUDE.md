@@ -33,11 +33,10 @@ wants its own module, add it here (don't silently let files balloon). Prune entr
   SortableRow, SortHeader(Row), CoinRow, EncumbranceBar, NameCell, RowEquip…). Split sub-
   components into their own files (e.g. `inventory/EquippedTray.tsx`, `ItemContextMenu.tsx`,
   `rows/`), and lift the groups↔VM helpers (`buildGroups`, `persist`, etc.) into a module.
-- **`components/inventory/InventoryView.tsx` (~600 lines)** — legacy `@dnd-kit` implementation,
-  superseded by `InventoryViewDnd`. Confirm unused, then delete (and drop the `@dnd-kit` dep).
 - **`SheetShell.tsx`** — accumulating item-mutation handlers (equip/nest/consume/reorder/
   equippedOrder + toasts). Extract into a `useInventoryActions(actor, items)` hook.
-- **`components/SheetPages/Actions/` (capital-A)** — legacy Actions tab, replaced by the
-  lowercase `components/actions/` reskin. Confirm dead, then remove.
 - **`styles/inventory.scss` (~450 lines)** — split alongside the component breakup
   (equipped tray, rows, container, sticky head as separate partials).
+- **`shared/elements*` + `styled-components`** — the last of the legacy styling. Still used
+  by live `SheetPages/Notes` and `src/svg/*`; migrate those onto the Vellum primitives, then
+  delete `shared/elements*` and drop the `styled-components` dep.

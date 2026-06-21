@@ -152,7 +152,7 @@ export default function SheetShell() {
           onNest={onNest}
         />
       ) : (
-        <activeTab.Content />
+        activeTab.Content && <activeTab.Content />
       )}
     </Shell>
   );
