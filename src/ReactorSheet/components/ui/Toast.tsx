@@ -10,6 +10,7 @@ type Props = {
   className?: string;
 };
 
+/** @category Overlays */
 export function Toast({ intent, icon, title, message, onClose, className }: Props) {
   return (
     <div className={cx("toast", intent, className)}>

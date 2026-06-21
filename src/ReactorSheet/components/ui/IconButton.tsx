@@ -16,6 +16,8 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
  * `.ft-chev` / `.ft-del` / `.rs-feat-add` / `.rs-lang-go` / `.sp-trash` one-offs.
  * Styling lives in `.icon-btn` (components.css), which is auto-scoped under
  * `.reactor-sheet` so it beats the `.reactor-sheet-app button` reset.
+ *
+ * @category Controls
  */
 export function IconButton({ variant, size, on, className, type = "button", ...rest }: Props) {
   return (

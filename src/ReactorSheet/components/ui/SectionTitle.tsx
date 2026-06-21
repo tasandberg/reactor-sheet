@@ -11,6 +11,7 @@ type Props = HTMLAttributes<HTMLHeadingElement> & {
   variant?: "sub" | "bare";
 };
 
+/** @category Layout */
 export function SectionTitle({ hint, variant, children, className, ...rest }: Props) {
   return (
     <h3 className={cx("section-title", variant, className)} {...rest}>

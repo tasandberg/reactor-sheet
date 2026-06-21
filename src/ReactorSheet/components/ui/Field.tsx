@@ -1,6 +1,7 @@
 import { cx } from "./cx";
 import type { HTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
 
+/** @category Controls */
 export function Field({
   label,
   hint,

@@ -9,6 +9,7 @@ type Props = {
   className?: string;
 };
 
+/** @category Overlays */
 export function Empty({ icon, title, message, action, className }: Props) {
   return (
     <div className={cx("empty", className)}>

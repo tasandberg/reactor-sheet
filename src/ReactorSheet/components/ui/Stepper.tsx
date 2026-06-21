@@ -9,6 +9,7 @@ type Props = {
   className?: string;
 };
 
+/** @category Controls */
 export function Stepper({ value, onValueChange, min, max, step = 1, className }: Props) {
   const clamp = (n: number) => Math.min(max ?? Infinity, Math.max(min ?? -Infinity, n));
   return (

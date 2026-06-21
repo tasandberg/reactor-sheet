@@ -3,6 +3,7 @@ import type { HTMLAttributes, ReactNode } from "react";
 
 // React 19's HTMLAttributes already declares the native `popover` attribute as a
 // string union; omit it so our boolean `popover` modifier doesn't collapse to `never`.
+/** @category Overlays */
 export function Menu({ popover, open, className, ...rest }: Omit<HTMLAttributes<HTMLDivElement>, "popover"> & { popover?: boolean; open?: boolean }) {
   return <div className={cx("menu", popover && "is-popover", open && "is-open", className)} {...rest} />;
 }

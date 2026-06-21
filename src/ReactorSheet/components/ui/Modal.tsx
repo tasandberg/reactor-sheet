@@ -11,6 +11,7 @@ type Props = {
   className?: string;
 };
 
+/** @category Overlays */
 export function Modal({ open, title, onClose, children, footer, className }: Props) {
   if (!open) return null;
   return (
