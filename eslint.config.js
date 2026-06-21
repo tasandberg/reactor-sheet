@@ -40,24 +40,4 @@ export default tseslint.config([
     files: ["**/*.stories.tsx"],
     rules: { "no-restricted-syntax": "off" },
   },
-  {
-    // Legacy/dead tree (see CLAUDE.md "Refactor / cleanup backlog"): unmounted,
-    // kept for reference, slated for deletion — explicitly out of scope for the
-    // design-system guardrails.
-    files: [
-      "**/components/Layout.tsx",
-      "**/components/Nav.tsx",
-      "**/components/RestButtons.tsx",
-      "**/components/TabContent.tsx",
-      "**/components/Header/**",
-      "**/components/Footer/**",
-      "**/components/ActorScores/**",
-      "**/components/SheetPages/Actions/**",
-      "**/components/SheetPages/InventoryPage/**",
-      "**/components/inventory/InventoryView.tsx",
-      "**/components/shared/elements*",
-      "**/components/shared/GridTable.tsx",
-    ],
-    rules: { "no-restricted-syntax": "off" },
-  },
 ]);
