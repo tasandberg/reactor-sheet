@@ -37,6 +37,3 @@ wants its own module, add it here (don't silently let files balloon). Prune entr
   equippedOrder + toasts). Extract into a `useInventoryActions(actor, items)` hook.
 - **`styles/inventory.scss` (~450 lines)** — split alongside the component breakup
   (equipped tray, rows, container, sticky head as separate partials).
-- **`shared/elements*` + `styled-components`** — the last of the legacy styling. Still used
-  by live `SheetPages/Notes` and `src/svg/*`; migrate those onto the Vellum primitives, then
-  delete `shared/elements*` and drop the `styled-components` dep.
