@@ -1,6 +1,7 @@
 import { cx } from "./cx";
 import type { HTMLAttributes, TableHTMLAttributes, TdHTMLAttributes, ThHTMLAttributes } from "react";
 
+/** @category Data */
 export function Table({ className, ...rest }: TableHTMLAttributes<HTMLTableElement>) {
   return <table className={cx("table", className)} {...rest} />;
 }

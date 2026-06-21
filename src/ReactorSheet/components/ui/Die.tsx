@@ -8,6 +8,7 @@ type Props = {
   className?: string;
 };
 
+/** @category Display */
 export function Die({ sides, value, verdict, rolling, className }: Props) {
   return (
     <div className={cx("die", `d${sides}`, verdict, rolling && "rolling", className)}>

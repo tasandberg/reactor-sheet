@@ -6,6 +6,7 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   size?: "sm";
 };
 
+/** @category Controls */
 export function Button({ variant, size, className, type = "button", ...rest }: Props) {
   return <button type={type} className={cx("btn", variant, size, className)} {...rest} />;
 }

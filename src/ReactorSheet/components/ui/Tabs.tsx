@@ -8,6 +8,7 @@ type Props<T extends string> = {
   className?: string;
 };
 
+/** @category Navigation */
 export function Tabs<T extends string>({ tabs, active, onSelect, className }: Props<T>) {
   return (
     <div className={cx("tabs", className)} role="tablist">

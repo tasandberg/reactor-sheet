@@ -37,3 +37,10 @@ vite.config.local.json
 
 # local git worktrees
 .claude/worktrees/
+
+# design-sync
+.ds-sync/
+ds-bundle/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules

@@ -5,6 +5,7 @@ type Props = HTMLAttributes<HTMLSpanElement> & {
   intent?: "teal" | "crimson" | "forest" | "mustard" | "solid" | "count";
 };
 
+/** @category Display */
 export function Tag({ intent, className, ...rest }: Props) {
   return <span className={cx("tag", intent, className)} {...rest} />;
 }

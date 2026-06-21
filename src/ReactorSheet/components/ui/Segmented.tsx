@@ -8,6 +8,7 @@ type Props<T extends string> = {
   className?: string;
 };
 
+/** @category Controls */
 export function Segmented<T extends string>({ options, value, onValueChange, className }: Props<T>) {
   return (
     <div className={cx("segmented", className)}>

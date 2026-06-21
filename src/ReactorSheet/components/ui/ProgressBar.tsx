@@ -8,6 +8,7 @@ type Props = {
   className?: string;
 };
 
+/** @category Display */
 export function ProgressBar({ value, max, color = "var(--teal)", className }: Props) {
   const pct = max > 0 ? Math.min(100, Math.max(0, (value / max) * 100)) : 0;
   return (
