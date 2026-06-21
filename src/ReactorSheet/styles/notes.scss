@@ -1,0 +1,62 @@
+// Notes tab — Foundry's <prose-mirror> editor, lightly reskinned to sit in the
+// sheet. We only frame it (border, surface, spacing); the toggle button, menu,
+// and contenteditable keep Foundry's own core styles (the global reset in
+// styles.scss explicitly excludes <prose-mirror> internals).
+
+.rs-notes-tab {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-5, 20px);
+}
+
+// View ⇄ edit host. Keep Foundry's own `display: flex` / positioning — overriding
+// it to `block` collapses the active editor's content area behind the menu bar.
+// We only add the frame; `overflow: hidden` keeps the toggle inside the radius.
+.rs-prosemirror prose-mirror {
+  border: 1px solid var(--border-soft, #2c2823);
+  border-radius: var(--r-md, 6px);
+  background: var(--surface, #23201a);
+  overflow: hidden;
+
+  // Breathing room so rendered text + the live editor don't sit on the border.
+  .editor-content {
+    padding: var(--spacer-2, 8px) var(--spacer-3, 12px);
+  }
+
+  // Foundry's editor CSS assumes a dark editor surface and sets a light text
+  // colour on the contenteditable — invisible on our parchment. Pull it back to
+  // the sheet's body colour so typed text shows in both themes.
+  .editor-content .ProseMirror {
+    color: var(--text, #e7e0cc);
+    min-height: var(--spacer-12, 48px);
+  }
+
+  // Headings carry their own near-white colour from Foundry's editor stylesheet
+  // (so `# Heading` renders invisible). Re-anchor them to the body colour in both
+  // view (enriched) and edit; size/weight still convey hierarchy.
+  .editor-content :is(h1, h2, h3, h4, h5, h6) {
+    color: var(--text, #e7e0cc);
+  }
+
+  // Edit toggle — reskin Foundry's dark icon button as a vellum icon affordance
+  // (transparent, faint → brass on hover, matching `.icon-btn.accent`) and inset
+  // it from the corner rather than flush against the border.
+  button.toggle {
+    top: var(--spacer-1, 4px);
+    right: var(--spacer-1, 4px);
+    background: none;
+    border: none;
+    color: var(--text-faint, #8a8270);
+
+    &:hover {
+      color: var(--accent-alt);
+      background: none;
+    }
+  }
+
+  // While editing, Foundry disables (but doesn't hide) the toggle, so it collides
+  // with the right end of the menu bar. Hide it — the menu's own save exits edit.
+  &.active button.toggle {
+    display: none;
+  }
+}

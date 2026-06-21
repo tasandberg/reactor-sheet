@@ -21,8 +21,7 @@
     "clsx": "^2.1.1",
     "foundry-vtt-react": "^0.1.5",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "styled-components": "^6.1.19"
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",

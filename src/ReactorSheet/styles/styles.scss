@@ -5,6 +5,7 @@
 @use "inventory";
 @use "features";
 @use "spells";
+@use "notes";
 
 /** Purely for namespacing default style overrides */
 
@@ -123,10 +124,9 @@
 
   // Scoped element reset — ONLY elements WE render inside the React app, never
   // Foundry's window-frame controls. Classed Vellum controls (.btn/.input) still win.
-  button,
-  input,
-  select,
-  textarea {
+  // Excludes <prose-mirror> internals: that editor is Foundry-rendered chrome
+  // (toggle button, menu, contenteditable) and must keep its own core styles.
+  :is(button, input, select, textarea):not(prose-mirror *) {
     all: unset;
     box-sizing: border-box;
     font-family: var(--sans);

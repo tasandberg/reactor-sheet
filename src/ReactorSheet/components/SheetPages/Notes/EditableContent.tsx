@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useReactorSheetContext } from "../../context";
-import { TextLarge } from "../../shared/elements";
+import { SectionTitle } from "../../ui/SectionTitle";
+import { ProseMirrorEditor } from "../../ui/ProseMirrorEditor";
 
 export default function EditableContent({
   title,
@@ -14,24 +15,10 @@ export default function EditableContent({
   height?: number;
 }) {
   const { actor, updateActor } = useReactorSheetContext();
-  const [enriched, setEnriched] = useState<string>(null);
-  const editor = useRef<HTMLDivElement>(null);
+  const [enriched, setEnriched] = useState<string>("");
 
   useEffect(() => {
-    const currentEditor = editor.current;
-    const handleSave = async (e: Event) => {
-      e.preventDefault();
-      await updateActor({ [name]: (e.target as HTMLInputElement).value });
-    };
-    currentEditor.addEventListener("save", handleSave);
-    return () => {
-      if (currentEditor) {
-        currentEditor.removeEventListener("save", handleSave);
-      }
-    };
-  }, [enriched, editor, name, updateActor]);
-
-  useEffect(() => {
+    let live = true;
     foundry.applications.ux.TextEditor.enrichHTML(value, {
       secrets: true,
       documents: true,
@@ -39,23 +26,25 @@ export default function EditableContent({
       rolls: true,
       embeds: true,
       relativeTo: actor,
-    }).then((enriched) => {
-      setEnriched(enriched);
+    }).then((html) => {
+      if (live) setEnriched(html);
     });
+    return () => {
+      live = false;
+    };
   }, [value, actor]);
 
   return (
-    <div style={{ width: "100%" }}>
-      <TextLarge>{title}</TextLarge>
-      <div
-        ref={editor}
-        style={{ width: "100%" }}
-        dangerouslySetInnerHTML={{
-          __html: `<prose-mirror name="${name}" value="${value}" style="height: ${height}px;" toggled>
-            ${enriched}
-          </prose-mirror>`,
-        }}
+    <section className="rs-section rs-notes-sec">
+      <SectionTitle variant="sub">{title}</SectionTitle>
+      <ProseMirrorEditor
+        name={name}
+        value={value}
+        enriched={enriched}
+        height={height}
+        documentUUID={actor.uuid}
+        onSave={(next) => updateActor({ [name]: next })}
       />
-    </div>
+    </section>
   );
 }

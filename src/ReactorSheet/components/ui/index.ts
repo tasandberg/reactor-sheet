@@ -8,6 +8,7 @@ export { Card, KvCard } from "./Card";
 export { Table, Th, Td, Tr } from "./Table";
 export { Field, Input } from "./Field";
 export { Textarea } from "./Textarea";
+export { ProseMirrorEditor } from "./ProseMirrorEditor";
 export { Select } from "./Select";
 export { Stepper } from "./Stepper";
 export { Toggle } from "./Toggle";
