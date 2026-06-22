@@ -2,13 +2,7 @@
  * @file A class to handle the nested AC/AAC props on OseDataModelCharacter.
  */
 
-interface CharacterAC {
-  base: number;
-  naked: number;
-  shield: number;
-  value: number;
-  mod: number;
-}
+import type { CharacterAC } from "@ose-foundry-core/types";
 
 export default class OseDataModelCharacterAC implements CharacterAC {
   static baseAscending = 10;

@@ -1,7 +1,11 @@
+import type { RollType, Save } from "@ose-foundry-core/types";
 import type OseDataModelCharacterAC from "./data-model-character-ac";
 import type OseDataModelCharacterScores from "./data-model-character-scores";
 import type { TabIds } from "../components/shared/tabs";
 import type { ContextConnector } from "foundry-vtt-react";
+
+/** Saving-throw category key, sourced from the OSE system's CONFIG (`saves_long`). */
+export type OSESave = Save;
 
 // Add props as needed
 export type ReactorContext = {
@@ -26,8 +30,6 @@ export interface ReactorSheetContextValue {
     [key: string]: string | number | string[];
   }) => Promise<OSEActor | void>;
 }
-
-export type OSESave = "breath" | "death" | "paralysis" | "spell" | "wand";
 
 export type OseSpellList = Record<number, OseSpell[]>;
 
@@ -155,7 +157,8 @@ export type OseWeapon = OseItem & {
   bonus: number;
 };
 
-export type OseRollType = "result" | "above" | "below";
+/** Roll-comparison key, sourced from the OSE system's CONFIG (`roll_type`). */
+export type OseRollType = RollType;
 
 export type OseAbility = OseItem & {
   system: {

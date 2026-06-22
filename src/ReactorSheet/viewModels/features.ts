@@ -25,7 +25,7 @@ export interface FeatureVM {
 
 /** Symbol for the roll comparison (= / ≥ / ≤) from CONFIG.OSE. Falls back to "=". */
 function rollSymbol(rollType?: OseRollType): string {
-  const map = (CONFIG as { OSE?: { roll_type?: Record<string, string> } }).OSE?.roll_type;
+  const map = CONFIG.OSE?.roll_type;
   return (rollType && map?.[rollType]) || "=";
 }
 
