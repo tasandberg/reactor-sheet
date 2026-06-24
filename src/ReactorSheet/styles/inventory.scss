@@ -298,7 +298,11 @@
 }
 .rs-wealth-row {
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-  gap: var(--spacer-2) var(--spacer-5);
+  gap: var(--spacer-2) var(--spacer-4);
+}
+// md+ (above the XS bottom-tab tier): keep all denominations on one row.
+@container app (min-width: 480px) {
+  .rs-wealth-row { flex-wrap: nowrap; }
 }
 .rs-wealth-empty {
   margin: 0; text-align: center;
@@ -323,7 +327,7 @@
 .rs-wealth-coin .den:hover { color: var(--gold); }
 // Inline-editable value: plain text until focused, then a subtle boxed field.
 .rs-inv .rs-wealth-coin .val {
-  width: 3.5em; min-width: 0;
+  width: 3em; min-width: 0;
   font-family: var(--mono); font-size: var(--fs-md, 15px);
   color: var(--text, #e5dec8);
   background: transparent; border: 1px solid transparent;
