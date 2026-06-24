@@ -59,6 +59,11 @@
   border: 1px solid var(--border-soft, #2c2823);
   border-top: none;
 }
+// In the Spells tab `.rs-spellhead` supplies the top edge/radius; the Actions
+// quick-cast list (`.fvtt-castlist`) is headerless, so frame the rows here.
+.fvtt-castlist .rs-spell:first-of-type { border-top: 1px solid var(--border-soft, #2c2823); border-radius: var(--r-md, 6px) var(--r-md, 6px) 0 0; }
+.fvtt-castlist .rs-spell:last-of-type { border-radius: 0 0 var(--r-md, 6px) var(--r-md, 6px); }
+.fvtt-castlist .rs-spell:only-of-type { border-radius: var(--r-md, 6px); }
 .rs-spell.empty { color: var(--text-faint, #6a6354); }
 .rs-spell.empty .none {
   grid-column: 1 / -1; // span the row, left-aligned (grid is 1fr auto)

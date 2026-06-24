@@ -3,6 +3,7 @@ import "./styles/vellum/fonts.css";
 import "./styles/vellum/tokens.css";
 import "./styles/vellum/components.css";
 import "./styles/styles.scss";
+import "./styles/edit-modal.scss";
 import ReactorSheetProvider from "./components/ReactorSheetProvider";
 import SheetShell from "./components/SheetShell";
 import { ToastProvider } from "./components/ui/ToastHost";

@@ -7,7 +7,8 @@
 .rs-topbar {
   background: var(--ink, #070605);
   border-bottom: 1px solid var(--border, #3a342c);
-  padding: var(--spacer-1) var(--spacer-3);
+  // top · sides · bottom — a touch more breathing room under the bar.
+  padding: var(--spacer-1) var(--spacer-3) var(--spacer-2);
 }
 .rs-topbar-inner {
   display: flex;
@@ -28,7 +29,7 @@
   font-family: var(--mono); font-size: var(--fs-3xs, 10px);
   color: var(--stamp-text-faint, rgba(229, 222, 200, 0.35)); margin-top: 1px;
 }
-.rs-tb-xp { flex: 1; min-width: 44px; }
+.rs-tb-xp { flex: 1; min-width: 44px; max-width: 50%; }
 .rs-tb-bar {
   position: relative; height: 16px;
   border: 1px solid rgba(229, 222, 200, 0.22);
@@ -52,6 +53,10 @@
 .rs-topbar .rs-tb-btn.rs-tb-overflow { display: none; }
 // Inline action buttons group; hidden at XS, visible otherwise.
 .rs-tb-actions { display: contents; }
+// Push the action cluster (and the trailing theme toggle) to the right edge,
+// leaving the level chips + XP bar left. .rs-tb-actions is display:contents, so
+// the auto-margin goes on its first button (a direct flex item of the topbar).
+.rs-tb-actions > .rs-tb-btn:first-child { margin-left: auto; }
 
 // Buttons qualified with .rs-topbar to beat the `.reactor-sheet-app button`
 // reset (0,1,1) — same fix as .rs-tabrail .rs-tab (see shell.scss).
@@ -378,6 +383,8 @@
 // --- saves & exploration cards (rows → cards; ported from .fvtt-save/.fvtt-skill) ---
 // Saves: 5-up grid of ink-stamp · mono target · tiny label.
 .fvtt-saves { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--spacer-2); }
+// In the narrow left rail (large view), 5-up overflows — drop to 3+2.
+.rs-rail-extra .fvtt-saves { grid-template-columns: repeat(3, 1fr); }
 .fvtt-save {
   background: var(--surface, #23201a);
   border: 1px solid var(--border-soft, #2c2823);
@@ -407,6 +414,9 @@
 
 // Exploration: 2-up grid of gold glyph · label · N-in-6 ink pill.
 .fvtt-explore { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacer-2); }
+// In the narrow left rail (large view), 2-up is too tight — labels wrap to 3
+// lines. Stack to a single column there. (.rs-rail-extra only renders in two-pane.)
+.rs-rail-extra .fvtt-explore { grid-template-columns: 1fr; }
 .fvtt-skill {
   display: flex; align-items: center; gap: var(--spacer-2);
   background: var(--surface, #23201a);
@@ -432,21 +442,10 @@
   i { color: var(--gold-dim); font-size: var(--fs-xs, 12px); }
 }
 
-// --- memorized spells quick-cast (ported from .fvtt-castlist/.fvtt-spell) ---
+// --- memorized spells quick-cast ---
+// Container only; the rows reuse the Spells-tab `.rs-spell` (see MemorizedSpells
+// + spells.scss). Shared bits (.sp-dots/.sp-cast) live below.
 .fvtt-castlist { display: flex; flex-direction: column; margin-top: 2px; }
-.fvtt-spell {
-  display: grid; grid-template-columns: 1fr auto;
-  align-items: center; gap: var(--spacer-3);
-  padding: var(--spacer-2) var(--spacer-2) var(--spacer-2) var(--spacer-3);
-  background: var(--surface, #23201a);
-  border: 1px solid var(--border-soft, #2c2823);
-  border-top: none;
-}
-// name + cast dots on one line (dots to the right of the name)
-.fvtt-spell .spn-row { display: inline-flex; align-items: baseline; gap: var(--spacer-2); }
-.fvtt-castlist .fvtt-spell:first-of-type { border-top: 1px solid var(--border-soft, #2c2823); border-radius: var(--r-md, 6px) var(--r-md, 6px) 0 0; }
-.fvtt-castlist .fvtt-spell:last-of-type { border-radius: 0 0 7px 7px; }
-.fvtt-castlist .fvtt-spell:only-of-type { border-radius: var(--r-md, 6px); }
 // cast dots — one per memorised slot (shared by Actions + Spells). Gold = a cast
 // remaining; light/soft = a used (spent) cast — used dots stay, they don't vanish.
 .sp-dots { display: inline-flex; align-items: center; gap: var(--spacer-1); }
@@ -455,16 +454,6 @@
   background: var(--gold-soft); border: 1px solid var(--gold-soft);
 }
 .sp-dot.filled { background: var(--gold); border-color: var(--gold); }
-.fvtt-spell .spn {
-  font-family: var(--display, serif); font-size: var(--fs-lg, 16px);
-  color: var(--text, #e5dec8);
-}
-.fvtt-spell .spm {
-  display: block;
-  font-family: var(--mono, monospace); font-size: var(--fs-3xs, 10px);
-  color: var(--text-mute, #8a8270); margin-top: 1px;
-}
-.fvtt-spell .spm span + span::before { content: " · "; }
 // cast button (shared by Actions + Spells rows) — small dark rounded button;
 // "spent" is disabled + dimmed.
 .reactor-sheet-app .sp-cast {
@@ -480,9 +469,6 @@
   // keep the spinner brass even though :disabled dims the text
   &[aria-busy="true"] { color: var(--gold); }
 }
-// spent (cast 0, still selected): dim the row + struck name (dots render empty)
-.fvtt-spell.spent { opacity: 0.6; }
-.fvtt-spell.spent .spn { text-decoration: line-through; }
 
 // --- attacks: woodcut weapon cards (ported from prototype .fvtt-weapon) ---
 // Card grid: Item (icon + name/tags) | Hit | Damage | tall brass Atk button.
@@ -685,18 +671,20 @@
   flex-direction: column;
   gap: var(--spacer-1);
   padding: 6px;
-  background: var(--bg-2, #1f1c17);
-  border: 1px solid var(--border, #3a342c);
+  // The topbar (and its buttons' light text) stays dark in both themes, so the
+  // menu must too — a themed light bg here renders the button text invisible.
+  background: var(--ink, #070605);
+  border: 1px solid rgba(229, 222, 200, 0.18);
   border-radius: var(--r-md, 6px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
   min-width: 130px;
 }
 .rs-tb-menu .rs-tb-btn { width: 100%; justify-content: flex-start; }
 
-// === XS / mobile (≤560px app): compact header + topbar overflow ===
+// === XS / mobile (≤479px app): compact header + topbar overflow ===
 // MUST live here (after the base .rs-head / .rs-tb-* rules) to win the cascade —
 // shell.scss loads earlier, so XS overrides placed there lose at equal specificity.
-@container app (max-width: 560px) {
+@container app (max-width: 479px) {
   // header: portrait | name | compact HP/AC on top; Init/HD/Move full-width below
   .rs-head {
     grid-template-columns: auto 1fr auto;
@@ -753,4 +741,6 @@
   // topbar: collapse Rest / Level Up / Edit into the ⋮ overflow
   .rs-tb-actions { display: none; }
   .rs-topbar .rs-tb-btn.rs-tb-overflow { display: inline-flex; }
+  // The inline group is hidden here, so anchor the push-right on the ⋮ wrap.
+  .rs-tb-menu-wrap { margin-left: auto; }
 }

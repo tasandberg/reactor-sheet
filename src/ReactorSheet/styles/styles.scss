@@ -70,11 +70,13 @@
     cursor: pointer;
   }
 
-  // Foundry renders this when resizable; draw a visible diagonal grip so the
-  // affordance reads against our theme. Decoration only — drag stays Foundry's.
+  // Foundry v14 ships a webp grip on this handle; suppress it and draw our own
+  // theme-aware diagonal grip via ::after (else both show — a double handle).
+  // Decoration only — drag stays Foundry's.
   .window-resize-handle {
     z-index: 5;
     overflow: visible;
+    background-image: none;
     color: var(--text-mute, #8a8270);
 
     &::after {

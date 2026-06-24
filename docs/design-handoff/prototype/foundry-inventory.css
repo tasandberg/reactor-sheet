@@ -1,8 +1,0 @@
-/* ========================================================================
-   Foundry window — overrides for the reused hi-fi inventory (.hf-* markup
-   from hifi-center.jsx / hifi-sheet.css) so it sits naturally inside the
-   compact .fvtt-right tab column. Only spacing/scale tweaks; the inventory's
-   own tokens already match the shared palette.
-   ======================================================================== */
-.fvtt-hfinv { margin-top: 2px; }
-.fvtt-hfinv .hf-section { margin: 0; }

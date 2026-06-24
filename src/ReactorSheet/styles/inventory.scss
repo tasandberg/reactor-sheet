@@ -204,7 +204,7 @@
 }
 
 // xs / mobile (bottom-tabs layout): drop the Type column to save width.
-@container app (max-width: 560px) {
+@container app (max-width: 479px) {
   .rs-inv-row { grid-template-columns: 18px 30px 1fr 44px 44px; }
   .rs-inv-rowcat,
   .rs-inv .rs-inv-th-cat { display: none; }
