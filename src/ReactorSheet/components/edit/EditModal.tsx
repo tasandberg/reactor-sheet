@@ -209,17 +209,23 @@ export function EditModal({ open, onClose }: { open: boolean; onClose: () => voi
         <div className="ed-sec">
           <SectionTitle hint="raw scores">Ability Scores</SectionTitle>
           <div className="ed-cells ed-abil">
-            {ABIL_ORDER.map((k) => (
-              <StampCell
-                key={k}
-                stampKey={k.toUpperCase()}
-                value={sys.scores[k].value}
-                onChange={(n) => set(`system.scores.${k}.value`, clamp(n, 1, 20))}
-                min={1}
-                max={20}
-                caption={`mod ${fmtMod(sys.scores[k].mod)}`}
-              />
-            ))}
+            {ABIL_ORDER.map((k) => {
+              const req = defaults.requirements[k];
+              const below = req != null && sys.scores[k].value < req;
+              return (
+                <StampCell
+                  key={k}
+                  stampKey={k.toUpperCase()}
+                  value={sys.scores[k].value}
+                  onChange={(n) => set(`system.scores.${k}.value`, clamp(n, 1, 20))}
+                  min={1}
+                  max={20}
+                  warn={below}
+                  warnTitle={below ? `${sys.details.class} requires ${k.toUpperCase()} ${req}+` : undefined}
+                  caption={below ? `needs ${req}+` : `mod ${fmtMod(sys.scores[k].mod)}`}
+                />
+              );
+            })}
           </div>
         </div>
 

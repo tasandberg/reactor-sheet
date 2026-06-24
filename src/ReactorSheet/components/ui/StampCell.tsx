@@ -14,6 +14,8 @@ export function StampCell({
   max,
   caption,
   overridden,
+  warn,
+  warnTitle,
   onResetRequest,
 }: {
   stampKey: string;
@@ -24,10 +26,14 @@ export function StampCell({
   max: number;
   caption: ReactNode;
   overridden?: boolean;
+  /** Flags the cell (crimson) — e.g. a score below the class requirement. */
+  warn?: boolean;
+  /** Tooltip explaining the warning. */
+  warnTitle?: string;
   onResetRequest?: () => void;
 }) {
   return (
-    <div className={cx("ed-cell", overridden && "ovr")}>
+    <div className={cx("ed-cell", overridden && "ovr", warn && "warn")} title={warn ? warnTitle : undefined}>
       <span className="ck" title={fullName} aria-label={fullName}>{stampKey}</span>
       <NumberInput className="num" value={value} min={min} max={max} onCommit={onChange} />
       {onResetRequest != null ? (

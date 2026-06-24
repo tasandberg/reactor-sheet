@@ -3,7 +3,11 @@ import type { OSEActor, OSESave } from "../types/types";
 
 const SAVE_ORDER: OSESave[] = ["death", "wand", "paralysis", "breath", "spell"];
 
-type ClassDef = { levels: { xp: number; hd: string; saves: number[] }[] };
+type ClassDef = {
+  levels: { xp: number; hd: string; saves: number[] }[];
+  /** Minimum ability scores required by the class, e.g. { cha: 9 }. */
+  requirements?: Record<string, number>;
+};
 
 export type ClassDefaults = {
   matched: boolean;
@@ -14,6 +18,8 @@ export type ClassDefaults = {
   /** XP needed to reach the next level; null at max level. */
   nextXp: number | null;
   saves: Record<OSESave, number> | null;
+  /** Minimum ability scores required by the class (ability key → min). */
+  requirements: Record<string, number>;
 };
 
 const canon = (s: string) => (s ?? "").trim().toLowerCase().replace(/[-\s]+/g, " ");
@@ -55,7 +61,7 @@ export function availableClassNames(): string[] {
 export function selectClassDefaults(actor: OSEActor): ClassDefaults {
   const { class: cls, level } = actor.system.details;
   const def = findClass(cls)?.def;
-  if (!def) return { matched: false, maxLevel: 14, hd: null, levelXp: null, nextXp: null, saves: null };
+  if (!def) return { matched: false, maxLevel: 14, hd: null, levelXp: null, nextXp: null, saves: null, requirements: {} };
 
   const row = def.levels[level - 1];
   const nextRow = def.levels[level]; // 0-indexed: index `level` is the next level
@@ -69,5 +75,6 @@ export function selectClassDefaults(actor: OSEActor): ClassDefaults {
     levelXp: row?.xp ?? null,
     nextXp: nextRow?.xp ?? null,
     saves,
+    requirements: def.requirements ?? {},
   };
 }

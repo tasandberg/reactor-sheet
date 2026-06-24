@@ -755,6 +755,10 @@
   font-family: var(--mono); font-size: var(--fs-3xs); color: var(--text-mute);
   text-align: center; min-height: 13px; line-height: 1.2;
 }
+/* warn — e.g. an ability score below the class requirement */
+.ed-cell.warn .num { border-color: var(--crimson); }
+.ed-cell.warn .num:focus { border-color: var(--crimson); }
+.ed-cell.warn .cm { color: var(--crimson); }
 
 /* PortraitField — framed image with teal corner ticks */
 .ed-portrait {

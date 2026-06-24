@@ -83,6 +83,7 @@ describe("selectClassDefaults", () => {
 describe("selectClassDefaults — advanced classes", () => {
   const BARD = {
     name: "Bard",
+    requirements: { cha: 13, dex: 9 },
     levels: [
       { xp: 0, hd: "1d6", saves: [13, 14, 13, 16, 15] },
       { xp: 1500, hd: "2d6", saves: [13, 14, 13, 16, 14] },
@@ -107,6 +108,7 @@ describe("selectClassDefaults — advanced classes", () => {
     expect(d.matched).toBe(true);
     expect(d.hd).toBe("1d6");
     expect(d.nextXp).toBe(1500);
+    expect(d.requirements).toEqual({ cha: 13, dex: 9 });
   });
   it("prefers advanced data over classic for a same-named class", () => {
     // classic Fighter L1→L2 = 2000; advanced Fighter = 2200
