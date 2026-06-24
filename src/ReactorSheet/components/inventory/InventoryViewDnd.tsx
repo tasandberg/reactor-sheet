@@ -725,11 +725,11 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
 
   return (
     <section className="rs-inv">
+      <WealthBar coins={coins} onSetCoin={onSetCoin} onOpen={onOpen} />
+
       <div className="rs-inv-head">
         <SectionTitle hint="equip weapons &amp; armour to bring them into play">Inventory</SectionTitle>
       </div>
-
-      <WealthBar coins={coins} onSetCoin={onSetCoin} onOpen={onOpen} />
 
       {encumbrance.enabled && <EncumbranceBar e={encumbrance} />}
 
