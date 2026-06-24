@@ -135,19 +135,6 @@ export function EditModal({ open, onClose }: { open: boolean; onClose: () => voi
             </div>
           </div>
           <div className="ed-idgrid">
-            {isGM && classNames.length > 0 && (
-              <label className="ed-field" style={{ gridColumn: "1 / span 6" }}>
-                <span className="lab">Class <span className="hint">GM</span></span>
-                <select className="ed-input" value={sys.details.class} onChange={(e) => set("system.details.class", e.target.value)}>
-                  {!classNames.includes(sys.details.class) && (
-                    <option value={sys.details.class}>{sys.details.class.replace(/-/g, " ")}</option>
-                  )}
-                  {classNames.map((c) => (
-                    <option key={c} value={c}>{c.replace(/-/g, " ")}</option>
-                  ))}
-                </select>
-              </label>
-            )}
             <label className="ed-field" style={{ gridColumn: "1 / span 3" }}>
               <span className="lab">Alignment</span>
               <select className="ed-input" value={sys.details.alignment} onChange={(e) => set("system.details.alignment", e.target.value)}>
@@ -201,6 +188,20 @@ export function EditModal({ open, onClose }: { open: boolean; onClose: () => voi
                 onResetRequest={() => requestConfirm("Reset Initiative?", `Revert to the rule default of DEX ${fmtMod(dexInit)}.`, () => set("system.initiative.mod", 0))}
               />
             </div>
+
+            {isGM && classNames.length > 0 && (
+              <label className="ed-field" style={{ gridColumn: "1 / span 6" }}>
+                <span className="lab">Class <span className="hint">GM</span></span>
+                <select className="ed-input" value={sys.details.class} onChange={(e) => set("system.details.class", e.target.value)}>
+                  {!classNames.includes(sys.details.class) && (
+                    <option value={sys.details.class}>{sys.details.class.replace(/-/g, " ")}</option>
+                  )}
+                  {classNames.map((c) => (
+                    <option key={c} value={c}>{c.replace(/-/g, " ")}</option>
+                  ))}
+                </select>
+              </label>
+            )}
           </div>
         </div>
 
