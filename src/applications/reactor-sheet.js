@@ -48,36 +48,42 @@ class ReactorSheet extends ReactActorSheetV2 {
     this.element.dataset.kind = this.document?.system?.retainer?.enabled
       ? "hireling"
       : "pc";
-    this.#forwardLegacyRenderHook();
+    this.#injectCharacterBuilder();
   }
 
-  // ApplicationV2 sheets never fire the v1 `renderActorSheet` hook, so modules
-  // that decorate the sheet through it (e.g. OSR Character Builder, which appends
-  // a Character Builder button into `.profile .modifiers-btn`) never see us.
-  // Re-emit it with a jQuery-wrapped element so those listeners run against our
-  // DOM. Deferred a frame because the React portrait paints after `_onRender`.
-  // No-ops cleanly when jQuery/the hook are absent.
-  #forwardLegacyRenderHook() {
-    const jq = globalThis.jQuery ?? globalThis.$;
-    if (typeof jq !== "function") return;
+  // OSR Character Builder normally decorates the OSE sheet via the v1
+  // `renderActorSheet` hook — which ApplicationV2 sheets never fire. We can't
+  // re-emit that hook globally: other v1-hook modules (osr-item-shop, …) also
+  // listen and throw on our ApplicationV2/synthetic args. Instead we replicate
+  // just OSRCB's portrait icon and drive its own public API (`window.OSRCB.util`)
+  // on click. Gated on the module being active and its own new-character
+  // condition (`scores.str.value === 0`). No-ops cleanly otherwise.
+  #injectCharacterBuilder() {
+    if (!game.modules.get("osr-character-builder")?.active) return;
     requestAnimationFrame(() => {
       const root = this.element;
       if (!root?.isConnected) return;
       const wrap = root.querySelector(".rs-portrait-wrap");
       if (!wrap) return;
-      // The `.modifiers-btn` mount is created here, outside React's tree, and
-      // fully replaced each fire — listeners append a child and bind a delegated
-      // click with no dedup, so a fresh node prevents stacked buttons/handlers.
-      // Exact class string matches the module's `[class="modifiers-btn"]`.
+      // Re-rendered each pass; drop any prior icon so it can't stack.
       wrap.querySelector(":scope > .modifiers-btn")?.remove();
+      const actor = this.document;
+      if (actor?.system?.scores?.str?.value !== 0) return;
+
       const mount = document.createElement("div");
       mount.className = "modifiers-btn";
+      const btn = document.createElement("a");
+      btn.className = "osr-icon osr-choose-class";
+      btn.title = "Character Builder";
+      btn.innerHTML = `<i class="fas fa-user-shield"></i>`;
+      btn.addEventListener("click", () => {
+        const OSRCB = globalThis.OSRCB;
+        if (!OSRCB?.util?.renderCharacterBuilder) return;
+        const dataObj = OSRCB.util.mergeClassOptions();
+        OSRCB.util.renderCharacterBuilder(actor, dataObj);
+      });
+      mount.appendChild(btn);
       wrap.appendChild(mount);
-      try {
-        Hooks.callAll("renderActorSheet", this, jq(root), this.document);
-      } catch (err) {
-        console.warn("reactor-sheet: renderActorSheet forwarding failed", err);
-      }
     });
   }
 
