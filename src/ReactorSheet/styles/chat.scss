@@ -1,0 +1,90 @@
+// Vellum-themed chat cards for reactor-sheet attack/damage rolls.
+// Scoped under .reactor-card, NOT .reactor-sheet — the chat log sits outside the
+// sheet's scope (and outside [data-theme]), so colors use literal hex fallbacks via
+// var(--token, #fallback). Tokens still apply if the chat sidebar inherits :root.
+
+.reactor-card {
+  font-family: var(--serif, Georgia, serif);
+  color: var(--text, #e5dec8);
+  border: 1px solid var(--border, #3a342c);
+  border-radius: var(--r-md, 6px);
+  overflow: hidden;
+  background: var(--bg-2, #1f1c17);
+
+  .rc-head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacer-2, 8px);
+    padding: var(--spacer-2, 8px) var(--spacer-3, 12px);
+    background: var(--ink, #070605);
+    color: var(--stamp-text, #e5dec8);
+  }
+  .rc-title {
+    font-family: var(--display, "IM Fell English SC", Georgia, serif);
+    font-size: var(--fs-lg, 16px);
+    letter-spacing: 0.04em;
+  }
+  .rc-weapon {
+    margin-left: auto;
+    font-size: var(--fs-xs, 12px);
+    color: var(--stamp-text-dim, #b5ad97);
+  }
+
+  .rc-body {
+    padding: var(--spacer-2, 8px) var(--spacer-3, 12px) var(--spacer-3, 12px);
+  }
+
+  // HIT / MISS verdict stamp.
+  .rc-verdict {
+    margin-top: var(--spacer-2, 8px);
+    font-family: var(--display, "IM Fell English SC", Georgia, serif);
+    font-size: var(--fs-xl, 18px);
+    letter-spacing: 0.08em;
+    text-align: center;
+    padding: var(--spacer-1, 4px) 0;
+    border-radius: var(--r-sm, 4px);
+  }
+  .rc-verdict.is-hit {
+    color: var(--ink, #070605);
+    background: var(--hit, #7a9272);
+  }
+  .rc-verdict.is-miss {
+    color: var(--text-dim, #b5ad97);
+    background: color-mix(in srgb, var(--miss, #8a8270) 22%, transparent);
+  }
+  .rc-vs {
+    font-size: var(--fs-xs, 12px);
+    letter-spacing: 0.02em;
+  }
+
+  .rc-target {
+    margin-top: var(--spacer-2, 8px);
+    font-size: var(--fs-sm, 13px);
+    color: var(--text-dim, #b5ad97);
+  }
+
+  // GM apply-damage button.
+  .rc-apply {
+    margin-top: var(--spacer-2, 8px);
+    width: 100%;
+    cursor: pointer;
+    font-family: var(--display, "IM Fell English SC", Georgia, serif);
+    font-size: var(--fs-sm, 13px);
+    letter-spacing: 0.03em;
+    padding: var(--spacer-1, 4px) var(--spacer-2, 8px);
+    border-radius: var(--r-sm, 4px);
+    border: 1px solid var(--crimson-dim, #a83a2a);
+    color: var(--stamp-text, #e5dec8);
+    background: var(--damage, #c75044);
+  }
+  .rc-apply:hover {
+    background: var(--crimson-dim, #a83a2a);
+  }
+  .rc-apply.is-spent {
+    cursor: default;
+    opacity: 0.6;
+    border-color: var(--border, #3a342c);
+    background: var(--surface, #23201a);
+    color: var(--text-mute, #8a8270);
+  }
+}

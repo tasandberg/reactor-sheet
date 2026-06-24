@@ -4,6 +4,7 @@ import { selectAbilities } from "../../viewModels/abilities";
 import { selectAttacks } from "../../viewModels/attacks";
 import { selectSaves } from "../../viewModels/saves";
 import { selectExploration, rollExploration } from "../../viewModels/exploration";
+import { postRollCard } from "../../chat/attackCard";
 import { AbilityPlaques } from "./AbilityPlaques";
 import { AttacksTable } from "./AttacksTable";
 import { MemorizedSpells } from "./MemorizedSpells";
@@ -17,13 +18,10 @@ type Props = { actor: OSEActor };
  *  so they carry .actions-only (hidden at lg — see SheetShell/shell.scss). */
 export function ActionsView({ actor }: Props) {
   const onAbility = (key: string) => actor.rollCheck(key, {});
-  // Hit/Damage are custom formula rolls (OSE has no separate hit/damage roll).
-  const onRoll = (spec: RollSpec) => {
-    const speaker = ChatMessage.getSpeaker({ actor });
-    // fvtt-types' toMessage data typing is overly strict; pass the message data loosely.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    void new Roll(spec.formula).toMessage({ speaker, flavor: spec.flavor } as any);
-  };
+  // Hit/Damage are custom formula rolls (OSE has no separate hit/damage roll). The
+  // Vellum card is target-aware: a hit roll shows HIT/MISS vs the current target's AC,
+  // a damage roll offers GMs an apply-damage button. No target → plain card.
+  const onRoll = (spec: RollSpec) => void postRollCard(actor, spec);
   // The composite "Attack" uses OSE's own weapon roll dialog.
   const onAttack = (itemId: string) =>
     actor.system.weapons.find((w) => w._id === itemId)?.rollWeapon({ skipDialog: false });

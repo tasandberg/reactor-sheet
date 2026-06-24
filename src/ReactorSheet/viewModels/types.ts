@@ -35,6 +35,10 @@ export interface RollSpec {
   formula: string;
   /** Chat-message flavour. */
   flavor: string;
+  /** Roll kind — drives the Vellum chat card (hit → AC compare, damage → apply button). */
+  kind?: "hit" | "damage";
+  /** Weapon name, for the chat card header. */
+  weapon?: string;
 }
 
 /** One attack mode (melee or missile) of a weapon: its hit/damage rolls + displays. */
