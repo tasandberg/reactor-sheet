@@ -33,8 +33,7 @@ export function LanguagesSection({ editing: forced }: { editing?: boolean }) {
   const flavour = useFlavour();
 
   const choices = useMemo(() => {
-    // @ts-expect-error CONFIG.OSE is untyped
-    const all = (CONFIG.OSE.languages as string[]) ?? [];
+    const all = CONFIG.OSE?.languages ?? [];
     return all.filter((l) => !current.includes(l));
   }, [current]);
 

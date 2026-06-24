@@ -1,3 +1,5 @@
+import type { OseConfig } from "@ose-foundry-core/types";
+
 declare global {
   interface LenientGlobalVariableTypes {
     game: never;
@@ -7,4 +9,9 @@ declare global {
   class Hooks extends foundry.helpers.Hooks {}
   const fromUuid = foundry.utils.fromUuid;
   const fromUuidSync = foundry.utils.fromUuidSync;
+
+  // The OSE system's CONFIG.OSE block, typed from the published fork types.
+  interface CONFIG {
+    OSE: OseConfig;
+  }
 }
