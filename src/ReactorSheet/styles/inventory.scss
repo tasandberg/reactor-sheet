@@ -287,16 +287,21 @@
 // Coin editor
 // ---------------------------------------------------------------------------
 
-// Compact wealth strip (top of Inventory): a colour-dotted chip per denomination
-// with an inline-editable quantity. One flowing row; wraps on narrow widths.
-.rs-wealth { margin-bottom: var(--spacer-4); }
+// Compact wealth card (top of Inventory): a colour-dotted chip per denomination
+// with an inline-editable quantity, centred in a full-width card. No header.
+.rs-wealth {
+  margin-bottom: var(--spacer-4);
+  background: var(--surface, #23201a);
+  border: 1px solid var(--border-soft, #2c2823);
+  border-radius: var(--r-md, 6px);
+  padding: var(--spacer-3) var(--spacer-4);
+}
 .rs-wealth-row {
-  display: flex; flex-wrap: wrap; align-items: center;
-  gap: var(--spacer-2) var(--spacer-4);
-  margin-top: var(--spacer-2);
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: var(--spacer-2) var(--spacer-5);
 }
 .rs-wealth-empty {
-  margin: var(--spacer-2) 0 0;
+  margin: 0; text-align: center;
   font-family: var(--serif); font-style: italic;
   font-size: var(--fs-sm, 13px); color: var(--text-faint, #8a8270);
 }

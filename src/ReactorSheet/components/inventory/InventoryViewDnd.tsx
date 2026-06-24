@@ -364,9 +364,6 @@ function WealthBar({
   const sorted = [...coins].sort((a, b) => COIN_ORDER.indexOf(a.denom) - COIN_ORDER.indexOf(b.denom));
   return (
     <div className="rs-wealth">
-      <div className="rs-inv-sec-head">
-        <SectionTitle variant="sub">Wealth</SectionTitle>
-      </div>
       {coins.length === 0 ? (
         <p className="rs-wealth-empty">Drop coin items here to track your wealth.</p>
       ) : (
@@ -732,9 +729,9 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
         <SectionTitle hint="equip weapons &amp; armour to bring them into play">Inventory</SectionTitle>
       </div>
 
-      {encumbrance.enabled && <EncumbranceBar e={encumbrance} />}
-
       <WealthBar coins={coins} onSetCoin={onSetCoin} onOpen={onOpen} />
+
+      {encumbrance.enabled && <EncumbranceBar e={encumbrance} />}
 
       {/* Equipped tray + All-Items header pin together as one opaque block so the
           two never separate into a see-through gap (no JS height measuring). */}
