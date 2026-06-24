@@ -24,6 +24,18 @@
 
   .ed-sec { display: flex; flex-direction: column; gap: 12px; }
   .ed-sec > .section-title { margin: 0; font-size: var(--fs-2xl); }
+  // Class name in the Identity header — real serif italic (the display face is
+  // small-caps with no true italic), slightly dimmed as an annotation.
+  .ed-id-class { font-family: var(--serif); font-style: italic; color: var(--text-dim); }
+  // GM-only class dropdown, styled to read like the italic annotation with a
+  // subtle dotted underline + caret. Qualified to beat the app element reset.
+  .ed-sec > .section-title .ed-id-class-select {
+    font-family: var(--serif); font-style: italic; font-size: inherit;
+    color: var(--text-dim); background: transparent;
+    border: none; border-bottom: 1px dotted var(--border);
+    padding: 0 2px; cursor: pointer;
+    &:hover, &:focus { color: var(--text); border-bottom-color: var(--gold); outline: none; }
+  }
 
   .ed-id-top { display: flex; gap: 14px; align-items: stretch; }
   .ed-id-top .ed-portrait { align-self: stretch; height: auto; }

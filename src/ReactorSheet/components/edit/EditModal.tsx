@@ -5,7 +5,7 @@ import {
   StampCell, InlineButton, PortraitField, NumberInput, ValidatedInput,
 } from "../ui";
 import { useReactorSheetContext } from "../context";
-import { selectClassDefaults } from "../../viewModels/classRules";
+import { selectClassDefaults, availableClassNames } from "../../viewModels/classRules";
 import type { OSEActor, OSESave } from "../../types/types";
 
 // A hit-die formula must be a valid Roll AND actually contain a die term.
@@ -88,6 +88,9 @@ export function EditModal({ open, onClose }: { open: boolean; onClose: () => voi
   const set = (key: string, value: string | number) => void updateActor({ [key]: value });
 
   // --- Identity / progression ---
+  // GMs can re-class a character; players see the class as static header text.
+  const isGM = game.user?.isGM ?? false;
+  const classNames = availableClassNames();
   const level = sys.details.level;
   const dexInit = sys.scores.dex.init;
   const initMod = sys.initiative?.mod ?? 0;
@@ -107,7 +110,26 @@ export function EditModal({ open, onClose }: { open: boolean; onClose: () => voi
 
         {/* Identity */}
         <div className="ed-sec">
-          <SectionTitle hint={sys.details.class.replace(/-/g, " ")}>Identity</SectionTitle>
+          <SectionTitle>
+            Identity &amp; Vitals:{" "}
+            {isGM && classNames.length > 0 ? (
+              <select
+                className="ed-id-class-select"
+                value={sys.details.class}
+                title="Change class (GM)"
+                onChange={(e) => set("system.details.class", e.target.value)}
+              >
+                {!classNames.includes(sys.details.class) && (
+                  <option value={sys.details.class}>{sys.details.class.replace(/-/g, " ")}</option>
+                )}
+                {classNames.map((c) => (
+                  <option key={c} value={c}>{c.replace(/-/g, " ")}</option>
+                ))}
+              </select>
+            ) : (
+              <em className="ed-id-class">{sys.details.class.replace(/-/g, " ")}</em>
+            )}
+          </SectionTitle>
           <div className="ed-id-top">
             <PortraitField src={actor.img} onPick={(path) => set("img", path)} />
             <div className="ed-id-grid">
