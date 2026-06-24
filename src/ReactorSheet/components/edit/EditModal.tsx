@@ -110,26 +110,7 @@ export function EditModal({ open, onClose }: { open: boolean; onClose: () => voi
 
         {/* Identity */}
         <div className="ed-sec">
-          <SectionTitle>
-            Identity &amp; Vitals:{" "}
-            {isGM && classNames.length > 0 ? (
-              <select
-                className="ed-id-class-select"
-                value={sys.details.class}
-                title="Change class (GM)"
-                onChange={(e) => set("system.details.class", e.target.value)}
-              >
-                {!classNames.includes(sys.details.class) && (
-                  <option value={sys.details.class}>{sys.details.class.replace(/-/g, " ")}</option>
-                )}
-                {classNames.map((c) => (
-                  <option key={c} value={c}>{c.replace(/-/g, " ")}</option>
-                ))}
-              </select>
-            ) : (
-              <em className="ed-id-class">{sys.details.class.replace(/-/g, " ")}</em>
-            )}
-          </SectionTitle>
+          <SectionTitle>Identity &amp; Vitals: <em className="ed-id-class">{sys.details.class.replace(/-/g, " ")}</em></SectionTitle>
           <div className="ed-id-top">
             <PortraitField src={actor.img} onPick={(path) => set("img", path)} />
             <div className="ed-id-grid">
@@ -154,6 +135,19 @@ export function EditModal({ open, onClose }: { open: boolean; onClose: () => voi
             </div>
           </div>
           <div className="ed-idgrid">
+            {isGM && classNames.length > 0 && (
+              <label className="ed-field" style={{ gridColumn: "1 / span 6" }}>
+                <span className="lab">Class <span className="hint">GM</span></span>
+                <select className="ed-input" value={sys.details.class} onChange={(e) => set("system.details.class", e.target.value)}>
+                  {!classNames.includes(sys.details.class) && (
+                    <option value={sys.details.class}>{sys.details.class.replace(/-/g, " ")}</option>
+                  )}
+                  {classNames.map((c) => (
+                    <option key={c} value={c}>{c.replace(/-/g, " ")}</option>
+                  ))}
+                </select>
+              </label>
+            )}
             <label className="ed-field" style={{ gridColumn: "1 / span 3" }}>
               <span className="lab">Alignment</span>
               <select className="ed-input" value={sys.details.alignment} onChange={(e) => set("system.details.alignment", e.target.value)}>
