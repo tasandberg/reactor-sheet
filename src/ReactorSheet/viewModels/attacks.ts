@@ -38,11 +38,15 @@ export function selectAttacks(actor: OSEActor): AttackVM[] {
         label: `1d20${suffix(hitMod, hitAbil)}`,
         formula: `1d20${term(hitMod)}`,
         flavor: `${actor.name} attacks with ${w.name}${tail}`,
+        kind: "hit",
+        weapon: w.name as string,
       };
       const dmg: RollSpec = {
         label: `${die}${suffix(dmgMod, "str")}`,
         formula: `${die}${term(dmgMod)}`,
         flavor: `${actor.name} deals damage with ${w.name}${tail}`,
+        kind: "damage",
+        weapon: w.name as string,
       };
       return {
         kind,

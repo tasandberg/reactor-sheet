@@ -88,6 +88,8 @@ export type OSEActor = Actor & {
     };
     saves: Record<OSESave, { value: number }>;
     initiative: { value: number; mod: number };
+    /** To-hit: `value` = THAC0 (descending), `bba` = base attack bonus (ascending). */
+    thac0: { value: number; bba: number };
     updatedAt?: string;
     weapons: OseWeapon[];
   };
