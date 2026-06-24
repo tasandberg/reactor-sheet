@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { selectInventory, selectEncumbrance, sortInventory, sortEquipped } from "./inventory";
+import { selectInventory, selectEncumbrance, sortInventory, sortEquipped, coinDenom } from "./inventory";
 import type { OseItem, OSEActor } from "../types/types";
 import { MODULE_ID, FLAGS } from "../flags";
 
@@ -243,5 +243,22 @@ describe("selectEncumbrance", () => {
     expect(e.pct).toBeCloseTo(0.2375);
     expect(e.status).toBe("Unencumbered");
     expect(e.move).toBe(120);
+  });
+});
+
+describe("coinDenom", () => {
+  it("reads the denomination across compendium naming conventions", () => {
+    expect(coinDenom("GP")).toBe("gp"); // bare (system / Item Piles short)
+    expect(coinDenom("sp")).toBe("sp");
+    expect(coinDenom("[01.00] gold (gp)")).toBe("gp"); // classic-fantasy bracketed
+    expect(coinDenom("[00.50] electrum (ep)")).toBe("ep");
+    expect(coinDenom("Gold Pieces")).toBe("gp"); // full name (osr-helper-style)
+    expect(coinDenom("Silver Coins")).toBe("sp");
+    expect(coinDenom("Platinum Piece")).toBe("pp"); // singular
+  });
+  it("does not misread non-coin treasure as coins", () => {
+    expect(coinDenom("Gold ring")).toBeNull();
+    expect(coinDenom("Silver chalice")).toBeNull();
+    expect(coinDenom("Gemstone")).toBeNull();
   });
 });

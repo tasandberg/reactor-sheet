@@ -299,6 +299,11 @@
   gap: var(--spacer-2) var(--spacer-4);
   margin-top: var(--spacer-2);
 }
+.rs-wealth-empty {
+  margin: var(--spacer-2) 0 0;
+  font-family: var(--serif); font-style: italic;
+  font-size: var(--fs-sm, 13px); color: var(--text-faint, #8a8270);
+}
 .rs-wealth-coin { display: inline-flex; align-items: center; gap: var(--spacer-2); }
 .rs-wealth-coin .dot {
   width: 9px; height: 9px; border-radius: 50%; flex: none;

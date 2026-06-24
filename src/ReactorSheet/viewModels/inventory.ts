@@ -17,13 +17,31 @@ function equippedOrderOf(item: OseItem): number {
 
 const COIN_DENOMS = ["pp", "gp", "ep", "sp", "cp"] as const;
 
-/** Coin denomination of a treasure item: handles "GP" (actor) and "[01.00] Gold (gp)" (pack). */
+const COIN_METAL_DENOM: Record<string, string> = {
+  gold: "gp",
+  silver: "sp",
+  copper: "cp",
+  platinum: "pp",
+  electrum: "ep",
+};
+
+/**
+ * Coin denomination of a treasure item, across the naming conventions different
+ * compendiums use (the system ships no coins, so these vary):
+ *   - bare:       "GP" (system / Item Piles short)
+ *   - bracketed:  "[01.00] gold (gp)" (classic-fantasy), "(gp)"
+ *   - full name:  "Gold Pieces" / "Silver Coins" (osr-helper-style)
+ * The full-name form is restricted to `<metal> Pieces|Coins` so a non-coin
+ * treasure like "Gold ring" is NOT misread as gp. Returns null for non-coins.
+ */
 export function coinDenom(name: string): string | null {
-  return (
-    name.match(/\((pp|gp|ep|sp|cp)\)/i)?.[1]?.toLowerCase() ??
-    name.match(/^\s*(pp|gp|ep|sp|cp)\s*$/i)?.[1]?.toLowerCase() ??
-    null
-  );
+  const bracketed = name.match(/\((pp|gp|ep|sp|cp)\)/i)?.[1];
+  if (bracketed) return bracketed.toLowerCase();
+  const bare = name.match(/^\s*(pp|gp|ep|sp|cp)\s*$/i)?.[1];
+  if (bare) return bare.toLowerCase();
+  const metal = name.match(/\b(gold|silver|copper|platinum|electrum)\s+(?:pieces?|coins?)\b/i)?.[1];
+  if (metal) return COIN_METAL_DENOM[metal.toLowerCase()];
+  return null;
 }
 
 /** The coins the actor holds, in canonical pp→cp order, with their current quantities. */

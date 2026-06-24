@@ -349,13 +349,17 @@ function SortHeaderRow({ sort, onSort }: { sort: SortState; onSort: (key: Invent
 const COIN_ORDER = ["GP", "SP", "CP", "PP", "EP"];
 
 /** Compact single-row wealth strip: a colour-dotted chip per denomination with
- *  an inline-editable quantity. Commits on blur/Enter. */
+ *  an inline-editable quantity. Commits on blur/Enter. With no coin items the
+ *  module never mints any (coins vary by compendium) — it just prompts the user
+ *  to drop the denominations they want, which the sheet's item-drop adds. */
 function WealthBar({ coins, onSetCoin }: { coins: CoinVM[]; onSetCoin: (id: string, value: number) => void }) {
-  if (coins.length === 0) return null;
   const sorted = [...coins].sort((a, b) => COIN_ORDER.indexOf(a.denom) - COIN_ORDER.indexOf(b.denom));
   return (
     <div className="rs-wealth">
       <SectionTitle>Wealth</SectionTitle>
+      {coins.length === 0 ? (
+        <p className="rs-wealth-empty">Drop coin items here to track your wealth.</p>
+      ) : (
       <div className="rs-wealth-row">
         {sorted.map((c) => (
           <label key={c.id} className={`rs-wealth-coin rs-wealth-${c.denom.toLowerCase()}`}>
@@ -381,6 +385,7 @@ function WealthBar({ coins, onSetCoin }: { coins: CoinVM[]; onSetCoin: (id: stri
           </label>
         ))}
       </div>
+      )}
     </div>
   );
 }
