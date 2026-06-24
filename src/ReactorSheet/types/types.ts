@@ -86,7 +86,8 @@ export type OSEActor = Actor & {
       max: number;
       hd: string;
     };
-    saves: Record<OSESave, number>;
+    saves: Record<OSESave, { value: number }>;
+    initiative: { value: number; mod: number };
     updatedAt?: string;
     weapons: OseWeapon[];
   };

@@ -1,11 +1,15 @@
 import type { OSEActor, OseSpell } from "../../types/types";
 import { SectionTitle } from "../ui/SectionTitle";
 import { SpellCastRow } from "../spells/SpellCastRow";
+import { spellMeta } from "../../viewModels/spells";
+import { cx } from "../ui/cx";
 
 type Props = { actor: OSEActor };
 
 /**
- * Quick-cast list of selected spells (shares <SpellCastRow> with the Spells tab).
+ * Quick-cast list of selected spells — the same rich <SpellCastRow> the Spells
+ * tab uses (range · duration · save meta, clickable name), minus the trashcan
+ * (no `onUnprepare`, since you don't un-memorise from the Actions tab).
  * Gated on `cast > 0 || memorized > 0` so it catches every selected spell incl.
  * fully-spent ones (memorized persists). Cast → `spendSpell`.
  */
@@ -26,11 +30,14 @@ export function MemorizedSpells({ actor }: Props) {
           <SpellCastRow
             key={spell._id as string}
             spell={spell}
-            rowClass="fvtt-spell"
-            meta={[`Lvl ${spell.system.lvl}`, spell.system.range]
-              .filter(Boolean)
-              .map((m) => <span key={m}>{m}</span>)}
+            rowClass="rs-spell"
+            meta={spellMeta(spell).map((p) => (
+              <span key={p.kind} className={cx(p.kind === "damage" && "dmg")}>
+                {p.text}
+              </span>
+            ))}
             onCast={() => spell.spendSpell({ skipDialog: false })}
+            onOpenName={() => spell.sheet.render(true)}
           />
         ))}
       </div>

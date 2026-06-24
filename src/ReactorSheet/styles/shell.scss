@@ -176,7 +176,7 @@
 // === container reflow ===
 @container sheet (min-width: 600px) { .rs-pad { padding: 18px var(--spacer-5); } }
 
-@container sheet (min-width: 630px) {
+@container sheet (min-width: 700px) {
   .rs-pad { padding: var(--spacer-6) var(--spacer-6); }
   .rs-twopane {
     display: grid;
@@ -204,8 +204,10 @@
     gap: var(--spacer-3);
   }
   .rs-twopane .rs-portrait-wrap { align-self: center; width: 120px; height: 120px; }
-  .rs-twopane .rs-ident { align-items: center; text-align: center; }
-  .rs-twopane .rs-name { text-align: center; }
+  // Fill the rail column (don't size to content) so useFitText has a real
+  // `avail` width to shrink the name against, instead of overflowing the rail.
+  .rs-twopane .rs-ident { width: 100%; align-items: center; text-align: center; }
+  .rs-twopane .rs-name { text-align: center; align-self: stretch; }
   .rs-twopane .rs-class { text-align: center; }
   .rs-twopane .rs-vitals { width: 100%; }
   .rs-twopane .rs-substats { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; }
@@ -222,8 +224,8 @@
 }
 
 // Center tabs replace the right rail exactly when the two-pane engages.
-// sheet two-pane = 630; rail is 40px wide, so sheet 630 ⟺ app ≈ 670.
-@container app (min-width: 670px) {
+// sheet two-pane = 700; rail is 40px wide, so sheet 700 ⟺ app ≈ 740.
+@container app (min-width: 740px) {
   .rs-tabrail { display: none; }
   .rs-htabs {
     display: flex;
@@ -263,11 +265,11 @@
   .rs-htab.active .rs-htab-ic { color: var(--gold); }
 }
 
-// === XS tier (≤ 560c on app) ===
+// === XS tier (≤ 479c on app) ===
 // Bottom bar replaces the rail; header reflows to compact single-column.
 // XS nav swap only — the header + topbar XS overrides live in actions.scss (after
 // the base rules) so they win the cascade; shell.scss loads first and would lose.
-@container app (max-width: 560px) {
+@container app (max-width: 479px) {
   .rs-tabrail { display: none; }
   .rs-bottombar {
     display: flex;

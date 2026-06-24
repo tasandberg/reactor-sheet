@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Shell, type TabItem } from "./shell";
 import { useReactorSheetContext } from "./context";
+import { EditModal } from "./edit/EditModal";
 import { tabs, TabIds } from "./shared/tabs";
 import getLabel from "@src/util/getLabel";
 import { Topbar, HeaderBand, Minibar } from "./chrome";
@@ -22,6 +24,7 @@ import type { OseItem } from "../types/types";
 export default function SheetShell() {
   const { actor, items: invItems, currentTab, setCurrentTab, updateActor } = useReactorSheetContext();
   const toast = useToast();
+  const [editOpen, setEditOpen] = useState(false);
 
   const vitals = selectVitals(actor);
   const onSetHp = (value: number) => {
@@ -115,6 +118,8 @@ export default function SheetShell() {
   if (!activeTab) return null;
 
   return (
+    <>
+    <EditModal open={editOpen} onClose={() => setEditOpen(false)} />
     <Shell
       tabs={items}
       active={activeTab.id}
@@ -122,7 +127,7 @@ export default function SheetShell() {
         const next = visible.find((t) => t.id === id);
         if (next) setCurrentTab(next.id);
       }}
-      topbar={<Topbar vm={selectTopbar(actor)} />}
+      topbar={<Topbar vm={selectTopbar(actor)} onEdit={() => setEditOpen(true)} onLevelUp={() => toast({ intent: "warning", title: "Level Up", message: "Coming soon ;)" })} />}
       header={<HeaderBand identity={selectIdentity(actor)} vitals={vitals} onSetHp={onSetHp} />}
       minibar={<Minibar identity={selectIdentity(actor)} vitals={vitals} onSetHp={onSetHp} />}
       railExtra={
@@ -155,5 +160,6 @@ export default function SheetShell() {
         activeTab.Content && <activeTab.Content />
       )}
     </Shell>
+    </>
   );
 }

@@ -2,13 +2,14 @@ import { useState, useRef, useEffect } from "react";
 import type { TopbarVM } from "../../viewModels/types";
 import { toggleTheme } from "../../theme";
 
-type Props = { vm: TopbarVM };
+type Props = { vm: TopbarVM; onEdit: () => void; onLevelUp: () => void };
 
 /** Persistent topbar: level, XP, and chrome actions. The bar stays dark in both
- *  themes (--ink). Rest/Level Up/Edit are inert in the display pass; the theme
- *  toggle is live. At XS the three action buttons collapse into a ⋮ overflow menu. */
-export function Topbar({ vm }: Props) {
-  const pct = vm.xp.next > 0 ? Math.min(100, (vm.xp.value / vm.xp.next) * 100) : 0;
+ *  themes (--ink). Rest is inert in the display pass; Level Up fires a toast;
+ *  Edit opens the Edit Character modal; the theme toggle is live. At XS the three
+ *  action buttons collapse into a ⋮ overflow menu. */
+export function Topbar({ vm, onEdit, onLevelUp }: Props) {
+  const pct = vm.pct;
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -30,11 +31,11 @@ export function Topbar({ vm }: Props) {
         <span className="i" aria-hidden="true">☾</span>
         <span className="lbl">Rest</span>
       </button>
-      <button type="button" className="rs-tb-btn up" disabled>
+      <button type="button" className="rs-tb-btn up" onClick={() => { setMenuOpen(false); onLevelUp(); }}>
         <span className="i" aria-hidden="true">▲</span>
         <span className="lbl">Level Up</span>
       </button>
-      <button type="button" className="rs-tb-btn" disabled>
+      <button type="button" className="rs-tb-btn" onClick={() => { setMenuOpen(false); onEdit(); }}>
         <span className="i" aria-hidden="true">✎</span>
         <span className="lbl">Edit</span>
       </button>

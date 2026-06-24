@@ -14,4 +14,12 @@ describe("selectVitals", () => {
       moveBands: { encounter: 40, explore: 120, travel: 24 },
     });
   });
+
+  it("adds the manual initiative mod to dex init", () => {
+    const actor = {
+      ...raistlin,
+      system: { ...raistlin.system, initiative: { value: 0, mod: 2 } },
+    } as typeof raistlin;
+    expect(selectVitals(actor).initMod).toBe(3); // dex.init 1 + mod 2
+  });
 });

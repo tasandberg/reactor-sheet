@@ -13,7 +13,7 @@ type Props = {
   onUnprepare?: () => void;
   /** When provided, the name is a link that opens the item sheet (Spells tab). */
   onOpenName?: () => void;
-  /** Row wrapper class: "fvtt-spell" (Actions quick-cast) or "rs-spell" (Spells tab). */
+  /** Row wrapper class — "rs-spell" (Spells tab + Actions quick-cast). */
   rowClass: string;
 };
 

@@ -87,6 +87,8 @@ export interface TopbarVM {
   level: number;
   nextLevel: number;
   xp: { value: number; next: number };
+  /** Progress through the current level's XP band, 0–100. */
+  pct: number;
 }
 
 export interface WealthMovementVM {

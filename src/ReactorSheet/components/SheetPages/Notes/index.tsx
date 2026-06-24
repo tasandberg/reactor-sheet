@@ -8,13 +8,11 @@ export default function Notes() {
     <div className="rs-notes-tab">
       <EditableContent
         title="Notes"
-        height={150}
         name="system.details.notes"
         value={actor.system.details.notes}
       />
       <EditableContent
         title="Biography"
-        height={150}
         name="system.details.biography"
         value={actor.system.details.biography}
       />

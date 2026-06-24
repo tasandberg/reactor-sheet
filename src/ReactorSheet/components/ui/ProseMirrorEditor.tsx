@@ -7,8 +7,6 @@ type Props = {
   value: string;
   /** Enriched HTML shown in view mode (links/rolls/embeds resolved). */
   enriched: string;
-  /** Editor height in px. */
-  height?: number;
   /** `true` (default) = view with an edit toggle; `false` = always-on editor. */
   toggled?: boolean;
   /** Owning document UUID (e.g. `actor.uuid`); required for collaborative edits. */
@@ -30,7 +28,6 @@ export function ProseMirrorEditor({
   name,
   value,
   enriched,
-  height = 150,
   toggled = true,
   documentUUID,
   collaborate = false,
@@ -50,7 +47,6 @@ export function ProseMirrorEditor({
       compact: false,
       documentUUID,
     });
-    el.style.height = `${height}px`;
 
     const handleSave = (e: Event) =>
       onSaveRef.current((e.target as HTMLElement & { value: string }).value);
@@ -61,7 +57,7 @@ export function ProseMirrorEditor({
       el.removeEventListener("save", handleSave);
       el.remove();
     };
-  }, [name, value, enriched, height, toggled, collaborate, documentUUID]);
+  }, [name, value, enriched, toggled, collaborate, documentUUID]);
 
   return <div ref={host} className="rs-prosemirror" />;
 }
