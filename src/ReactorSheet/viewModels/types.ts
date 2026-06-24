@@ -9,9 +9,21 @@ export interface IdentityVM {
   title: string;
 }
 
+/** One line of the AC breakdown popover (e.g. "DEX modifier" → +1). */
+export interface AcBreakdownRow {
+  label: string;
+  /** Signed contribution to the ascending (AAC) total, e.g. "+10", "+1". */
+  value: string;
+}
+
 export interface VitalsVM {
   hp: { value: number; max: number };
-  ac: { ascending: number; descending: number };
+  ac: {
+    ascending: number;
+    descending: number;
+    /** Itemized AAC breakdown for the HoverCard (sums to `ascending`). */
+    breakdown: AcBreakdownRow[];
+  };
   initMod: number;
   hd: string;
   move: number;

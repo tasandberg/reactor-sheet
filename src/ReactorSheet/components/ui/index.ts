@@ -21,5 +21,7 @@ export { Die } from "./Die";
 export { Modal } from "./Modal";
 export { Toast } from "./Toast";
 export { Menu, MenuLabel, MenuSep, MenuItem } from "./Menu";
+export { HoverCard } from "./HoverCard";
+export type { HoverCardPlacement } from "./HoverCard";
 export { Empty } from "./Empty";
 export { Skeleton } from "./Skeleton";

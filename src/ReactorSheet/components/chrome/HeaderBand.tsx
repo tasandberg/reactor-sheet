@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef } from "react";
 import type { IdentityVM, VitalsVM } from "../../viewModels/types";
 import { formatMod } from "../../viewModels/format";
 import { Stamp } from "../ui/Stamp";
+import { HoverCard } from "../ui/HoverCard";
 
 /** Shrink a single-line element's font to fit its box (down to `min`x) instead of
  *  truncating. Sets `--fit-scale`; CSS multiplies the base font-size by it. */
@@ -106,16 +107,21 @@ export function HeaderBand({ identity, vitals, onSetHp }: Props) {
             <span className="short">/{vitals.hp.max}</span>
           </div>
         </div>
-        <div className="rs-vital ac">
+        <HoverCard.Anchor className="rs-vital ac" focusable aria-describedby="rs-ac-pop">
           <Stamp className="vv-l">AC</Stamp>
           <div className="vv-row">
             <div className="vv-big">{vitals.ac.ascending}</div>
           </div>
           <div className="vv-sub">
-            <span className="full">Ascending</span>
+            <span className="full">AAC · DAC {vitals.ac.descending}</span>
             <span className="short">asc</span>
           </div>
-        </div>
+          <HoverCard id="rs-ac-pop" placement="bottom-end">
+            <HoverCard.Header title="Armor Class" badge="AAC" />
+            <HoverCard.Rows items={vitals.ac.breakdown} />
+            <HoverCard.Total label="Total" value={vitals.ac.ascending} unit="AAC" />
+          </HoverCard>
+        </HoverCard.Anchor>
       </div>
     </div>
   );

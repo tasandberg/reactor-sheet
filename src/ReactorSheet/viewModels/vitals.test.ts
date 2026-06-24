@@ -7,7 +7,15 @@ describe("selectVitals", () => {
     const vm = selectVitals(raistlin);
     expect(vm).toEqual({
       hp: { value: 8, max: 9 },
-      ac: { ascending: 12, descending: 7 },
+      ac: {
+        ascending: 12,
+        descending: 7,
+        breakdown: [
+          { label: "Base (unarmored)", value: "+10" },
+          { label: "DEX modifier", value: "+1" },
+          { label: "Misc modifier", value: "+1" },
+        ],
+      },
       initMod: 1,
       hd: "3d4",
       move: 120,

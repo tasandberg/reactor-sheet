@@ -439,6 +439,141 @@
   z-index: 3;
 }
 
+/* ─── HoverCard — anchored read-only stat-breakdown popover ─────────────
+   Promoted from the prototype's one-off AC popover (.fvtt-acpop). A small
+   card anchored under the value it explains (e.g. the AC breakdown), revealed
+   on the anchor's :hover / :focus-within. Read-only → role="tooltip". Distinct
+   from .menu.is-popover, which is the interactive click-driven menu popover.
+   Token-only; themes via --surface-2 / --teal / --border / --text*. */
+
+/* Relative wrapper that drives the reveal. */
+.hovercard-anchor { position: relative; }
+
+.hovercard {
+  position: absolute;
+  z-index: 60;
+  width: 210px;
+  padding: 10px 11px 9px;
+  background: var(--surface-2);
+  border: 1px solid var(--teal);
+  border-radius: var(--r-lg);
+  box-shadow: 0 12px 30px oklch(0 0 0 / 0.45);
+  text-align: left;
+  cursor: default;
+  /* Hidden until the anchor is hovered/focused; lifts in from the placement edge. */
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition: opacity 0.13s, transform 0.13s;
+}
+/* Top placements lift up from below instead of down from above. */
+.hovercard.po-top-end,
+.hovercard.po-top-start { transform: translateY(4px); }
+
+.hovercard-anchor:hover > .hovercard,
+.hovercard-anchor:focus-within > .hovercard {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* Placement — vertical edge + horizontal alignment, with the arrow to match. */
+.hovercard.po-bottom-end   { top: calc(100% + 7px); right: 0; }
+.hovercard.po-bottom-start { top: calc(100% + 7px); left: 0; }
+.hovercard.po-top-end      { bottom: calc(100% + 7px); right: 0; }
+.hovercard.po-top-start    { bottom: calc(100% + 7px); left: 0; }
+
+/* Arrow — a small square rotated 45° with two teal borders, pinned under/over
+   the card's aligned edge. */
+.hovercard::before {
+  content: "";
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  background: var(--surface-2);
+  transform: rotate(45deg);
+}
+.hovercard.po-bottom-end::before,
+.hovercard.po-bottom-start::before {
+  top: -5px;
+  border-left: 1px solid var(--teal);
+  border-top: 1px solid var(--teal);
+}
+.hovercard.po-top-end::before,
+.hovercard.po-top-start::before {
+  bottom: -5px;
+  border-right: 1px solid var(--teal);
+  border-bottom: 1px solid var(--teal);
+}
+.hovercard.po-bottom-end::before,
+.hovercard.po-top-end::before { right: 26px; }
+.hovercard.po-bottom-start::before,
+.hovercard.po-top-start::before { left: 26px; }
+
+/* Header — display title + optional mono system badge. */
+.hovercard .hc-h {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-family: var(--display);
+  font-size: var(--fs-md);
+  color: var(--text);
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.hovercard .hc-sys {
+  font-family: var(--mono);
+  font-size: var(--fs-3xs);
+  letter-spacing: 0.08em;
+  color: var(--teal);
+  border: 1px solid color-mix(in srgb, var(--teal) 45%, transparent);
+  border-radius: var(--r-sm);
+  padding: 1px 5px;
+}
+
+/* Rows — key/value breakdown list. */
+.hovercard .hc-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacer-1);
+}
+.hovercard .hc-rows li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--spacer-2);
+}
+.hovercard .hc-k { font-family: var(--sans); font-size: var(--fs-xs); color: var(--text-dim); }
+.hovercard .hc-v { font-family: var(--mono); font-size: var(--fs-xs); color: var(--text); }
+
+/* Total — uppercase label + emphasized serif value with a small unit. */
+.hovercard .hc-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 7px;
+  padding-top: 7px;
+  border-top: 1px solid var(--border);
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+}
+.hovercard .hc-tv {
+  font-family: var(--display);
+  font-size: var(--fs-xl);
+  color: var(--teal);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.hovercard .hc-tv small { font-family: var(--mono); font-size: var(--fs-3xs); color: var(--text-mute); }
+
 /* ─── Tag / Badge ───────────────────────────────────────────────────── */
 
 .tag {
