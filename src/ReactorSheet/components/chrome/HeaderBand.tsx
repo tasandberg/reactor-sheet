@@ -44,7 +44,10 @@ export function HeaderBand({ identity, vitals, onSetHp }: Props) {
       </div>
       <div className="rs-ident">
         <div className="rs-name" ref={nameRef}>{identity.name}</div>
-        <div className="rs-class">{identity.classLabel} {identity.level} · {identity.alignment}</div>
+        <div className="rs-class">
+          {identity.classLabel} {identity.level}
+          {identity.title ? ` · ${identity.title}` : ""} · {identity.alignment}
+        </div>
       </div>
       <div className="rs-substats">
         <div className="rs-tile">
