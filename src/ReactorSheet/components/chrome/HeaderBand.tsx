@@ -39,8 +39,13 @@ export function HeaderBand({ identity, vitals, onSetHp }: Props) {
   const nameRef = useFitText(identity.name);
   return (
     <div className="rs-head">
-      <div className="rs-portrait-wrap">
-        <img className="rs-portrait" src={identity.img || undefined} alt={identity.name} />
+      {/* `.profile` / `.profile-img` mirror the OSE sheet so modules keyed on
+          those selectors match. The `.modifiers-btn` overlay that portrait-
+          decorating modules (e.g. OSR Character Builder) inject into is created
+          imperatively in reactor-sheet.js — outside React's tree — so React
+          never clobbers an injected child. */}
+      <div className="rs-portrait-wrap profile">
+        <img className="rs-portrait profile-img" src={identity.img || undefined} alt={identity.name} data-edit="img" title={identity.name} />
       </div>
       <div className="rs-ident">
         <div className="rs-name" ref={nameRef}>{identity.name}</div>

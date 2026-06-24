@@ -48,6 +48,37 @@ class ReactorSheet extends ReactActorSheetV2 {
     this.element.dataset.kind = this.document?.system?.retainer?.enabled
       ? "hireling"
       : "pc";
+    this.#forwardLegacyRenderHook();
+  }
+
+  // ApplicationV2 sheets never fire the v1 `renderActorSheet` hook, so modules
+  // that decorate the sheet through it (e.g. OSR Character Builder, which appends
+  // a Character Builder button into `.profile .modifiers-btn`) never see us.
+  // Re-emit it with a jQuery-wrapped element so those listeners run against our
+  // DOM. Deferred a frame because the React portrait paints after `_onRender`.
+  // No-ops cleanly when jQuery/the hook are absent.
+  #forwardLegacyRenderHook() {
+    const jq = globalThis.jQuery ?? globalThis.$;
+    if (typeof jq !== "function") return;
+    requestAnimationFrame(() => {
+      const root = this.element;
+      if (!root?.isConnected) return;
+      const wrap = root.querySelector(".rs-portrait-wrap");
+      if (!wrap) return;
+      // The `.modifiers-btn` mount is created here, outside React's tree, and
+      // fully replaced each fire — listeners append a child and bind a delegated
+      // click with no dedup, so a fresh node prevents stacked buttons/handlers.
+      // Exact class string matches the module's `[class="modifiers-btn"]`.
+      wrap.querySelector(":scope > .modifiers-btn")?.remove();
+      const mount = document.createElement("div");
+      mount.className = "modifiers-btn";
+      wrap.appendChild(mount);
+      try {
+        Hooks.callAll("renderActorSheet", this, jq(root), this.document);
+      } catch (err) {
+        console.warn("reactor-sheet: renderActorSheet forwarding failed", err);
+      }
+    });
   }
 
   async _prepareContext(options) {
