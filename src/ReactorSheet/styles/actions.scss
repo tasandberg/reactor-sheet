@@ -107,6 +107,19 @@
   border: 2px solid var(--gold-dim);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
+// Overlay anchor for module-injected portrait controls (see HeaderBand +
+// reactor-sheet.js renderActorSheet forwarding). Class is exactly
+// `modifiers-btn` (no extra classes) so the module's `[class="modifiers-btn"]`
+// selector matches. Empty until a module appends.
+.rs-portrait-wrap .modifiers-btn {
+  position: absolute;
+  top: var(--spacer-1);
+  right: var(--spacer-1);
+  z-index: 2;
+  display: flex;
+  gap: var(--spacer-1);
+  line-height: 1;
+}
 .rs-ident {
   grid-area: ident;
   min-width: 0;
