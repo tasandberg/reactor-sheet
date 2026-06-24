@@ -344,28 +344,44 @@ function SortHeaderRow({ sort, onSort }: { sort: SortState; onSort: (key: Invent
 // Coin / encumbrance
 // ---------------------------------------------------------------------------
 
-function CoinRow({ coin, onSetCoin }: { coin: CoinVM; onSetCoin: (id: string, value: number) => void }) {
+// Display order for the compact wealth row (most-used first), independent of the
+// canonical pp→cp storage order in selectCoins.
+const COIN_ORDER = ["GP", "SP", "CP", "PP", "EP"];
+
+/** Compact single-row wealth strip: a colour-dotted chip per denomination with
+ *  an inline-editable quantity. Commits on blur/Enter. */
+function WealthBar({ coins, onSetCoin }: { coins: CoinVM[]; onSetCoin: (id: string, value: number) => void }) {
+  if (coins.length === 0) return null;
+  const sorted = [...coins].sort((a, b) => COIN_ORDER.indexOf(a.denom) - COIN_ORDER.indexOf(b.denom));
   return (
-    <label className="rs-coin">
-      <span className="rs-coin-l">{coin.denom}</span>
-      <input
-        type="number"
-        inputMode="numeric"
-        min={0}
-        className="rs-coin-in"
-        defaultValue={coin.value}
-        key={coin.value}
-        aria-label={`${coin.denom} quantity`}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") e.currentTarget.blur();
-        }}
-        onBlur={(e) => {
-          const n = parseInt(e.currentTarget.value, 10);
-          if (Number.isNaN(n)) e.currentTarget.value = String(coin.value);
-          else onSetCoin(coin.id, Math.max(0, n));
-        }}
-      />
-    </label>
+    <div className="rs-wealth">
+      <SectionTitle>Wealth</SectionTitle>
+      <div className="rs-wealth-row">
+        {sorted.map((c) => (
+          <label key={c.id} className={`rs-wealth-coin rs-wealth-${c.denom.toLowerCase()}`}>
+            <span className="dot" aria-hidden="true" />
+            <span className="den">{c.denom}</span>
+            <input
+              type="number"
+              inputMode="numeric"
+              min={0}
+              className="val"
+              defaultValue={c.value}
+              key={c.value}
+              aria-label={`${c.denom} quantity`}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") e.currentTarget.blur();
+              }}
+              onBlur={(e) => {
+                const n = parseInt(e.currentTarget.value, 10);
+                if (Number.isNaN(n)) e.currentTarget.value = String(c.value);
+                else onSetCoin(c.id, Math.max(0, n));
+              }}
+            />
+          </label>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -705,6 +721,8 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
         <SectionTitle hint="equip weapons &amp; armour to bring them into play">Inventory</SectionTitle>
       </div>
 
+      <WealthBar coins={coins} onSetCoin={onSetCoin} />
+
       {encumbrance.enabled && <EncumbranceBar e={encumbrance} />}
 
       {/* Equipped tray + All-Items header pin together as one opaque block so the
@@ -775,17 +793,6 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
           })}
         </div>
       </section>
-
-      {coins.length > 0 && (
-        <div className="rs-inv-coin">
-          <SectionTitle>Coin</SectionTitle>
-          <div className="rs-coins">
-            {coins.map((c) => (
-              <CoinRow key={c.id} coin={c} onSetCoin={onSetCoin} />
-            ))}
-          </div>
-        </div>
-      )}
 
       {menu && <ItemContextMenu menu={menu} onClose={() => setMenu(null)} onOpen={onOpen} onEquip={onEquip} onConsume={onConsume} onDelete={onDelete} />}
     </section>
