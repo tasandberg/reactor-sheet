@@ -36,8 +36,17 @@ async function applyToActor(actor: OSEActor, amount: number): Promise<void> {
   await actor.update({ "system.hp.value": next });
 }
 
-/** Render-time handler for our damage cards. */
+/** Render-time handler for our chat cards. Marks OUR messages so chat.scss can take
+ *  over the whole message box, then (for damage cards) wires the GM apply button. */
 export function onRenderChatMessage(message: ChatMessage, html: HTMLElement): void {
+  // Only touch our own cards — gate on the reactor-sheet flag / the card marker.
+  const isOurs =
+    Boolean(flags(message).getFlag(MODULE_ID, "damage")) ||
+    Boolean(html.querySelector(".reactor-card"));
+  if (!isOurs) return;
+  // Take over the message chrome (padding/border/flavor handled in chat.scss).
+  html.classList.add("reactor-message");
+
   const btn = html.querySelector<HTMLButtonElement>('[data-action="reactor-apply-damage"]');
   if (!btn) return;
 

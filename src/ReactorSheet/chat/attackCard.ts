@@ -63,7 +63,7 @@ function resolveHit(roll: Roll, attacker: OSEActor, target: TargetInfo): boolean
   });
 }
 
-/** Card shell: ink header band + body, all under `.reactor-card`. */
+/** Card shell: ink header band (title + weapon) + body, all under `.reactor-card`. */
 function shell(title: string, weapon: string | undefined, body: string): string {
   const sub = weapon ? `<span class="rc-weapon">${esc(weapon)}</span>` : "";
   return `<div class="reactor-card"><div class="rc-head"><span class="rc-title">${esc(
@@ -71,46 +71,51 @@ function shell(title: string, weapon: string | undefined, body: string): string 
   )}</span>${sub}</div><div class="rc-body">${body}</div></div>`;
 }
 
-/** Post a Vellum chat card for a sheet Hit/Damage roll. Falls back to a plain card
- *  shell either way; the only behavioural fork is the optional target line. */
+/** ONE clean roll readout: formula label + big total, with the per-die breakdown
+ *  tucked into an expandable <details> (Foundry's tooltip markup, no duplication). */
+async function rollResult(roll: Roll): Promise<string> {
+  const total = roll.total ?? 0;
+  const tooltip = await roll.getTooltip(); // just the .dice-tooltip die breakdown
+  return (
+    `<div class="rc-roll">` +
+    `<span class="rc-formula">${esc(roll.formula)}</span>` +
+    `<span class="rc-total">${total}</span>` +
+    `</div>` +
+    `<details class="rc-dice"><summary>dice</summary>${tooltip}</details>`
+  );
+}
+
+/** Post a Vellum chat card for a sheet Hit/Damage roll. The only behavioural fork is
+ *  the optional target line (hit verdict / apply-damage button). No `flavor` is set —
+ *  the card header carries the title + weapon, so Foundry's flavor line stays empty. */
 export async function postRollCard(actor: OSEActor, spec: RollSpec): Promise<void> {
   const speaker = ChatMessage.getSpeaker({ actor });
   const roll = await new Roll(spec.formula).evaluate();
   const total = roll.total ?? 0;
   const target = currentTarget();
-  const rolled = await roll.render(); // Foundry's dice-tooltip block
 
-  let body = "";
+  let body = await rollResult(roll);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const flags: Record<string, any> = {};
 
-  if (spec.kind === "hit") {
-    body += rolled;
-    if (target) {
-      const hit = resolveHit(roll, actor, target);
-      body += `<div class="rc-verdict ${hit ? "is-hit" : "is-miss"}">${
-        hit ? "HIT" : "MISS"
-      } <span class="rc-vs">vs ${esc(target.name)}</span></div>`;
-    }
-  } else if (spec.kind === "damage") {
-    body += rolled;
-    if (target) {
-      body +=
-        `<div class="rc-target">→ ${esc(target.name)}</div>` +
-        // GM-only apply button; hydrated/guarded by the renderChatMessageHTML hook.
-        `<button type="button" class="rc-apply" data-action="reactor-apply-damage">` +
-        `<i class="fa-solid fa-droplet" aria-hidden="true"></i> Apply ${total} damage</button>`;
-      flags.damage = { amount: total, targetUuid: target.uuid, targetName: target.name };
-      flags.damageApplied = false;
-    }
-  } else {
-    body += rolled;
+  if (spec.kind === "hit" && target) {
+    const hit = resolveHit(roll, actor, target);
+    body += `<div class="rc-verdict ${hit ? "is-hit" : "is-miss"}">${
+      hit ? "HIT" : "MISS"
+    } <span class="rc-vs">vs ${esc(target.name)}</span></div>`;
+  } else if (spec.kind === "damage" && target) {
+    body +=
+      `<div class="rc-target">→ ${esc(target.name)}</div>` +
+      // GM-only apply button; hydrated/guarded by the renderChatMessageHTML hook.
+      `<button type="button" class="rc-apply" data-action="reactor-apply-damage">` +
+      `<i class="fa-solid fa-droplet" aria-hidden="true"></i> Apply ${total} damage</button>`;
+    flags.damage = { amount: total, targetUuid: target.uuid, targetName: target.name };
+    flags.damageApplied = false;
   }
 
   const title = spec.kind === "damage" ? "Damage" : "Attack";
   await ChatMessage.create({
     speaker,
-    flavor: spec.flavor,
     rolls: [roll],
     content: shell(title, spec.weapon, body),
     flags: { [MODULE_ID]: flags },
