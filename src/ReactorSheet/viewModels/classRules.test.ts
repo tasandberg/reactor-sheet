@@ -79,3 +79,38 @@ describe("selectClassDefaults", () => {
     expect(d.saves).toEqual({ death: 13, wand: 14, paralysis: 13, breath: 16, spell: 15 });
   });
 });
+
+describe("selectClassDefaults — advanced classes", () => {
+  const BARD = {
+    name: "Bard",
+    levels: [
+      { xp: 0, hd: "1d6", saves: [13, 14, 13, 16, 15] },
+      { xp: 1500, hd: "2d6", saves: [13, 14, 13, 16, 14] },
+    ],
+  };
+  // Advanced Fighter with a different XP table than the classic FIGHTER above.
+  const ADV_FIGHTER = { name: "Fighter", levels: [{ xp: 0, hd: "1d8", saves: [12, 13, 14, 15, 16] }, { xp: 2200, hd: "2d8", saves: [10, 11, 12, 13, 14] }] };
+
+  beforeEach(() => {
+    (globalThis as unknown as { CONFIG: unknown }).CONFIG = {
+      OSE: {
+        classes: {
+          classic: { Fighter: FIGHTER, "Magic-User": MAGIC_USER },
+          advanced: { Bard: BARD, Fighter: ADV_FIGHTER },
+        },
+      },
+    };
+  });
+
+  it("resolves an advanced-only class (Bard) from the advanced map", () => {
+    const d = selectClassDefaults(actorAt("Bard", 1));
+    expect(d.matched).toBe(true);
+    expect(d.hd).toBe("1d6");
+    expect(d.nextXp).toBe(1500);
+  });
+  it("prefers advanced data over classic for a same-named class", () => {
+    // classic Fighter L1→L2 = 2000; advanced Fighter = 2200
+    expect(selectClassDefaults(actorAt("Fighter", 1)).nextXp).toBe(2200);
+    expect(normalizeClassName("Bard")).toBe("Bard");
+  });
+});
