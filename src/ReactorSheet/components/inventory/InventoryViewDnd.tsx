@@ -352,19 +352,29 @@ const COIN_ORDER = ["GP", "SP", "CP", "PP", "EP"];
  *  an inline-editable quantity. Commits on blur/Enter. With no coin items the
  *  module never mints any (coins vary by compendium) — it just prompts the user
  *  to drop the denominations they want, which the sheet's item-drop adds. */
-function WealthBar({ coins, onSetCoin }: { coins: CoinVM[]; onSetCoin: (id: string, value: number) => void }) {
+function WealthBar({
+  coins,
+  onSetCoin,
+  onOpen,
+}: {
+  coins: CoinVM[];
+  onSetCoin: (id: string, value: number) => void;
+  onOpen: (id: string) => void;
+}) {
   const sorted = [...coins].sort((a, b) => COIN_ORDER.indexOf(a.denom) - COIN_ORDER.indexOf(b.denom));
   return (
     <div className="rs-wealth">
-      <SectionTitle>Wealth</SectionTitle>
+      <div className="rs-inv-sec-head">
+        <SectionTitle variant="sub">Wealth</SectionTitle>
+      </div>
       {coins.length === 0 ? (
         <p className="rs-wealth-empty">Drop coin items here to track your wealth.</p>
       ) : (
       <div className="rs-wealth-row">
         {sorted.map((c) => (
-          <label key={c.id} className={`rs-wealth-coin rs-wealth-${c.denom.toLowerCase()}`}>
+          <span key={c.id} className={`rs-wealth-coin rs-wealth-${c.denom.toLowerCase()}`}>
             <span className="dot" aria-hidden="true" />
-            <span className="den">{c.denom}</span>
+            <button type="button" className="den" onClick={() => onOpen(c.id)} title={`Open ${c.denom}`}>{c.denom}</button>
             <input
               type="number"
               inputMode="numeric"
@@ -382,7 +392,7 @@ function WealthBar({ coins, onSetCoin }: { coins: CoinVM[]; onSetCoin: (id: stri
                 else onSetCoin(c.id, Math.max(0, n));
               }}
             />
-          </label>
+          </span>
         ))}
       </div>
       )}
@@ -393,13 +403,9 @@ function WealthBar({ coins, onSetCoin }: { coins: CoinVM[]; onSetCoin: (id: stri
 function EncumbranceBar({ e }: { e: EncumbranceVM }) {
   return (
     <div className="rs-enc">
-      <div className="rs-enc-top">
-        <span className="rs-enc-l">
-          Encumbrance <b>{e.value}</b> / <b>{e.max}</b> cn
-        </span>
-        <span className="rs-enc-r">
-          {e.status} · {e.move}′
-        </span>
+      <div className="rs-inv-sec-head">
+        <SectionTitle variant="sub">Encumbrance</SectionTitle>
+        <span className="rs-inv-sec-count">{e.value} / {e.max} cn · {e.status} · {e.move}′</span>
       </div>
       <div className="rs-enc-track">
         <div className="rs-enc-fill" style={{ width: `${Math.round(e.pct * 100)}%` }} />
@@ -726,9 +732,9 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
         <SectionTitle hint="equip weapons &amp; armour to bring them into play">Inventory</SectionTitle>
       </div>
 
-      <WealthBar coins={coins} onSetCoin={onSetCoin} />
-
       {encumbrance.enabled && <EncumbranceBar e={encumbrance} />}
+
+      <WealthBar coins={coins} onSetCoin={onSetCoin} onOpen={onOpen} />
 
       {/* Equipped tray + All-Items header pin together as one opaque block so the
           two never separate into a see-through gap (no JS height measuring). */}

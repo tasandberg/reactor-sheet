@@ -16,12 +16,8 @@
 }
 .rs-inv-head .section-title { flex: 1; margin: 0; padding-bottom: 0; border-bottom: none; }
 
-// --- encumbrance bar ---
-.rs-enc { margin: var(--spacer-3) 0 var(--spacer-6); }
-.rs-enc-top { display: flex; justify-content: space-between; align-items: baseline; gap: var(--spacer-3); }
-.rs-enc-l { font-family: var(--sans); font-size: var(--fs-sm, 13px); color: var(--text-dim, #b5ad97); }
-.rs-enc-l b { font-family: var(--mono); font-weight: 400; color: var(--text, #e5dec8); }
-.rs-enc-r { font-family: var(--mono); font-size: var(--fs-xs, 12px); color: var(--text-mute, #8a8270); white-space: nowrap; }
+// --- encumbrance bar (sub-header style, matches Equipped/All Items) ---
+.rs-enc { margin: 0 0 var(--spacer-4); }
 .rs-enc-track {
   margin-top: var(--spacer-2); height: 6px; border-radius: 99px;
   background: var(--surface-3, #3a3429); overflow: hidden;
@@ -309,11 +305,17 @@
   width: 9px; height: 9px; border-radius: 50%; flex: none;
   background: var(--coin, #8a8270);
 }
+// Clickable denomination label → opens the coin item sheet. A <button>, but this
+// 2-class selector beats the .reactor-sheet-app button reset, so neutralise the
+// native chrome here.
 .rs-wealth-coin .den {
+  background: none; border: none; padding: 0; cursor: pointer;
   font-family: var(--sans); font-weight: 600;
   font-size: var(--fs-xs, 12px); letter-spacing: 0.04em;
   color: var(--text-mute, #8a8270);
+  transition: color 0.12s;
 }
+.rs-wealth-coin .den:hover { color: var(--gold); }
 // Inline-editable value: plain text until focused, then a subtle boxed field.
 .rs-inv .rs-wealth-coin .val {
   width: 3.5em; min-width: 0;
