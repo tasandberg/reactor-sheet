@@ -1,7 +1,11 @@
+import type { RollType, Save } from "@ose-foundry-core/types";
 import type OseDataModelCharacterAC from "./data-model-character-ac";
 import type OseDataModelCharacterScores from "./data-model-character-scores";
 import type { TabIds } from "../components/shared/tabs";
 import type { ContextConnector } from "foundry-vtt-react";
+
+/** Saving-throw category key, sourced from the OSE system's CONFIG (`saves_long`). */
+export type OSESave = Save;
 
 // Add props as needed
 export type ReactorContext = {
@@ -26,8 +30,6 @@ export interface ReactorSheetContextValue {
     [key: string]: string | number | string[];
   }) => Promise<OSEActor | void>;
 }
-
-export type OSESave = "breath" | "death" | "paralysis" | "spell" | "wand";
 
 export type OseSpellList = Record<number, OseSpell[]>;
 
@@ -84,7 +86,10 @@ export type OSEActor = Actor & {
       max: number;
       hd: string;
     };
-    saves: Record<OSESave, number>;
+    saves: Record<OSESave, { value: number }>;
+    initiative: { value: number; mod: number };
+    /** To-hit: `value` = THAC0 (descending), `bba` = base attack bonus (ascending). */
+    thac0: { value: number; bba: number };
     updatedAt?: string;
     weapons: OseWeapon[];
   };
@@ -155,10 +160,26 @@ export type OseWeapon = OseItem & {
   bonus: number;
 };
 
+/** Roll-comparison key, sourced from the OSE system's CONFIG (`roll_type`). */
+export type OseRollType = RollType;
+
 export type OseAbility = OseItem & {
   system: {
     requirements?: string;
+    /** Enriched/raw HTML feature text. */
+    description?: string;
+    /** Roll formula, e.g. "1d6". Empty for passive features. */
+    roll?: string;
+    /** result | above | below → = / ≥ / ≤ (via CONFIG.OSE.roll_type). */
+    rollType?: OseRollType;
+    /** Target number for the success comparison. 0 = none. */
+    rollTarget?: number;
+    /** Associated saving throw, if any. */
+    save?: string;
+    blindroll?: boolean;
   };
+  /** OSE item roll dispatcher — for abilities, rolls the formula + posts to chat. */
+  roll: (options?: { event?: Event }) => void;
 };
 
 export type OseSpell = OseItem & {
@@ -167,6 +188,8 @@ export type OseSpell = OseItem & {
     range: string;
     duration: string;
     save: string;
+    /** Damage formula, e.g. "1d6+1". Optional — only attack spells carry it. */
+    damage?: string;
     memorized: number;
     cast: number;
   };

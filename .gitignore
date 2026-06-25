@@ -31,3 +31,16 @@ build/
 
 # Local planning docs (not committed)
 docs/plans/
+
+# Local, uncommitted Vite overrides
+vite.config.local.json
+
+# Claude Code — repo-specific skills/settings live outside the repo
+.claude/
+
+# design-sync
+.ds-sync/
+ds-bundle/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules

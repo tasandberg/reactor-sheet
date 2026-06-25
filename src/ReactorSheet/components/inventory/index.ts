@@ -1,0 +1,1 @@
+export { InventoryViewDnd } from "./InventoryViewDnd";
