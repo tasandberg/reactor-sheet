@@ -1,37 +1,33 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useReactorSheetContext } from "../../context";
-import { TextLarge } from "../../shared/elements";
+import { SectionTitle } from "../../ui/SectionTitle";
+import { IconButton } from "../../ui/IconButton";
+import { ProseMirrorEditor } from "../../ui/ProseMirrorEditor";
+import { getThemeSetting } from "../../../theme";
 
 export default function EditableContent({
   title,
   name,
   value,
-  height = 150,
 }: {
   title: string;
   name: string;
   value: string;
-  height?: number;
 }) {
   const { actor, updateActor } = useReactorSheetContext();
-  const [enriched, setEnriched] = useState<string>(null);
-  const editor = useRef<HTMLDivElement>(null);
+  const [enriched, setEnriched] = useState<string>("");
+  const [editing, setEditing] = useState(false);
+
+  // Foundry's content-links/editor resolve colours from its OWN theme scope
+  // (`.themed.theme-{light,dark}`), independent of our sheet theme — so a cream
+  // sheet would otherwise get dark-on-dark links. Mirror our theme onto the
+  // container so they match.
+  const fdTheme = getThemeSetting() === "cream" ? "theme-light" : "theme-dark";
 
   useEffect(() => {
-    const currentEditor = editor.current;
-    const handleSave = async (e: Event) => {
-      e.preventDefault();
-      await updateActor({ [name]: (e.target as HTMLInputElement).value });
-    };
-    currentEditor.addEventListener("save", handleSave);
-    return () => {
-      if (currentEditor) {
-        currentEditor.removeEventListener("save", handleSave);
-      }
-    };
-  }, [enriched, editor, name, updateActor]);
-
-  useEffect(() => {
+    let live = true;
+    // Foundry's rich-text renderer — resolves @UUID journal/actor links,
+    // inline rolls, and embeds. We render its output directly in view mode.
     foundry.applications.ux.TextEditor.enrichHTML(value, {
       secrets: true,
       documents: true,
@@ -39,23 +35,51 @@ export default function EditableContent({
       rolls: true,
       embeds: true,
       relativeTo: actor,
-    }).then((enriched) => {
-      setEnriched(enriched);
+    }).then((html) => {
+      if (live) setEnriched(html);
     });
+    return () => {
+      live = false;
+    };
   }, [value, actor]);
 
   return (
-    <div style={{ width: "100%" }}>
-      <TextLarge>{title}</TextLarge>
-      <div
-        ref={editor}
-        style={{ width: "100%" }}
-        dangerouslySetInnerHTML={{
-          __html: `<prose-mirror name="${name}" value="${value}" style="height: ${height}px;" toggled>
-            ${enriched}
-          </prose-mirror>`,
-        }}
-      />
-    </div>
+    <section className="rs-section rs-notes-sec">
+      <SectionTitle>{title}</SectionTitle>
+      {editing ? (
+        // Edit on demand: an always-on ProseMirror that fills the same space.
+        // Its Save persists and returns to the static view (no separate cancel).
+        <div className={`themed ${fdTheme}`}>
+          <ProseMirrorEditor
+            name={name}
+            value={value}
+            enriched={enriched}
+            toggled={false}
+            documentUUID={actor.uuid}
+            onSave={(next) => {
+              void updateActor({ [name]: next });
+              setEditing(false);
+            }}
+          />
+        </div>
+      ) : (
+        <div className={`rs-rt themed ${fdTheme}`}>
+          <IconButton
+            variant="accent"
+            className="rs-rt-edit"
+            title={`Edit ${title}`}
+            aria-label={`Edit ${title}`}
+            onClick={() => setEditing(true)}
+          >
+            <i className="fa-solid fa-pen-to-square" aria-hidden="true" />
+          </IconButton>
+          {enriched.trim() ? (
+            <div className="rs-rt-body" dangerouslySetInnerHTML={{ __html: enriched }} />
+          ) : (
+            <p className="rs-rt-empty">No {title.toLowerCase()} yet.</p>
+          )}
+        </div>
+      )}
+    </section>
   );
 }

@@ -1,10 +1,16 @@
 /**
  * @file A class representing a Character's ability scores.
  */
+import type { CharacterScores } from "@ose-foundry-core/types";
+
+export type { CharacterScores };
+
 type IncomingScore = {
   value: number;
   bonus: number;
 };
+
+export type BaseScore = IncomingScore & { mod: number };
 
 export type Scores = {
   str: BaseScore;
@@ -15,17 +21,6 @@ export type Scores = {
   cha: BaseScore;
 };
 type OptionalScores = Partial<Scores>;
-
-export type BaseScore = IncomingScore & { mod: number };
-
-export interface CharacterScores {
-  str: BaseScore & { od: number };
-  int: BaseScore & { literacy: string; spoken: string };
-  wis: BaseScore;
-  dex: BaseScore & { init: number };
-  con: BaseScore;
-  cha: BaseScore & { loyalty: number; retain: number; npc: number };
-}
 
 /**
  * A class representing a character's ability scores

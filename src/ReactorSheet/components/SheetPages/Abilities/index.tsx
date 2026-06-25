@@ -1,74 +1,44 @@
-import type { OseAbility } from "@src/ReactorSheet/types/types";
 import { useReactorSheetContext } from "../../context";
-import type { GridTableColumn } from "../../shared/constants";
-import { Badge, Column, TextLarge } from "../../shared/elements";
-import GridTable from "../../shared/GridTable";
-import { showDeleteDialog } from "../../shared/foundryDialogs";
-import Languages from "../Notes/Languages";
+import { selectFeatures } from "../../../viewModels/features";
+import { SectionTitle } from "../../ui/SectionTitle";
+import { IconButton } from "../../ui/IconButton";
+import { createAbility } from "./createAbility";
+import { FeatureCard } from "./FeatureCard";
+import { LanguagesSection } from "./LanguagesSection";
 
-const abilityColumns: GridTableColumn<OseAbility>[] = [
-  {
-    name: "image",
-    header: "",
-    width: "40px",
-    renderCell: (item) => (
-      <a onClick={() => item.sheet.render(true)}>
-        <img
-          src={item.img}
-          alt={item.name}
-          style={{ width: "35px", height: "35px" }}
-        />
-      </a>
-    ),
-  },
-  {
-    name: "ability",
-    align: "center",
-    justify: "start",
-    header: "Ability",
-    width: "2fr",
-    renderCell: (item) => (
-      <a onClick={() => item.sheet.render(true)}>{item.name}</a>
-    ),
-  },
-  {
-    name: "requirements",
-    header: "Source",
-    align: "center",
-    justify: "start",
-    renderCell: (item) =>
-      item.system.requirements ? (
-        <Badge>{item.system.requirements}</Badge>
-      ) : null,
-  },
-  {
-    name: "Delete",
-    header: "",
-    width: "40px",
-    renderCell: (item) => (
-      <a
-        className="btn btn-danger btn-sm"
-        onClick={() => showDeleteDialog(item)}
-        title="Delete Ability"
-      >
-        <i className="fas fa-trash" />
-      </a>
-    ),
-  },
-];
 export default function Abilities() {
   const { actor } = useReactorSheetContext();
-  const abilities = Object.values(actor.system.abilities ?? {});
+  const features = selectFeatures(actor);
+
+  // New abilities seed their requirements from the actor's class so they sort in
+  // with the rest; the create flow opens the sheet to fill in the details.
+  const onAdd = () => createAbility(actor, actor.system.details.class || "");
+
   return (
-    <Column $justify="start" $align="start" $gap="md">
-      <TextLarge>Abilities</TextLarge>
-      <GridTable<OseAbility>
-        showHeader={false}
-        columns={abilityColumns}
-        data={abilities}
-        getRowId={(item) => item._id}
-      />
-      <Languages />
-    </Column>
+    <div className="rs-abilities-tab">
+      <section className="rs-section rs-feat-sec">
+        <div className="rs-feat-head">
+          <SectionTitle>Abilities</SectionTitle>
+          <IconButton
+            variant="accent"
+            title="Add ability"
+            aria-label="Add ability"
+            onClick={onAdd}
+          >
+            <i className="fas fa-plus" aria-hidden="true" />
+          </IconButton>
+        </div>
+        {features.length === 0 ? (
+          <p className="rs-flavour">No abilities yet.</p>
+        ) : (
+          <div className="fvtt-feats">
+            {features.map((f) => (
+              <FeatureCard key={f.id} feature={f} />
+            ))}
+          </div>
+        )}
+      </section>
+      <LanguagesSection />
+    </div>
   );
 }
