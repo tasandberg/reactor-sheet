@@ -44,7 +44,7 @@ const inventory: InventoryVM = {
   groups: [],
 };
 
-const encumbrance: EncumbranceVM = { enabled: true, value: 380, max: 1600, pct: 0.2375, status: "Unencumbered", move: 120 };
+const encumbrance: EncumbranceVM = { enabled: true, value: 380, max: 1600, pct: 0.2375, tier: 0, status: "Unencumbered", label: "380 / 1600 cn", move: 120 };
 const coins = [
   { denom: "PP", id: "pp", value: 0 },
   { denom: "GP", id: "gp", value: 152 },

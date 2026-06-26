@@ -1,5 +1,5 @@
 import type { OSEActor, OseItem } from "../types/types";
-import type { InventorySortKey, SortDir, InventoryVM, InventoryItemVM, EncumbranceVM, CoinVM } from "./types";
+import type { InventorySortKey, SortDir, InventoryVM, InventoryItemVM, EncumbranceVM, EncumbranceTier, CoinVM } from "./types";
 import { FLAGS, readFlag } from "../flags";
 
 /** Manual order position: our own flag, falling back to Foundry's sort for un-migrated items. */
@@ -274,16 +274,40 @@ export function sortEquipped(items: InventoryItemVM[]): InventoryItemVM[] {
 // Encumbrance
 // ---------------------------------------------------------------------------
 
-const STEPS: { upto: number; status: string }[] = [
-  { upto: 0.5,  status: "Unencumbered" },
-  { upto: 0.75, status: "Lightly encumbered" },
-  { upto: 1,    status: "Heavily encumbered" },
-];
+// Status by tier — indexed by EncumbranceTier. OSE has no localized labels for
+// weight tiers, so these are ours; tier itself comes from the system's breakpoints.
+const TIER_STATUS = [
+  "Unencumbered",
+  "Lightly encumbered",
+  "Heavily encumbered",
+  "Severely encumbered",
+  "Overloaded",
+] as const;
 
 export function selectEncumbrance(actor: OSEActor): EncumbranceVM {
   const e = actor.system.encumbrance;
   const move = actor.system.movement?.base ?? 0;
   const pct = e.max > 0 ? Math.min(1, e.value / e.max) : 0;
-  const status = e.value > e.max ? "Overloaded" : (STEPS.find((s) => pct <= s.upto)?.status ?? "Unencumbered");
-  return { enabled: e.enabled, value: e.value, max: e.max, pct, status, move };
+  // Drive tier off the system's breakpoint flags (variant-aware) rather than our
+  // own % buckets — keeps status/move consistent across all encumbrance modes.
+  const tier: EncumbranceTier = e.encumbered
+    ? 4
+    : e.atThirdBreakpoint
+      ? 3
+      : e.atSecondBreakpoint
+        ? 2
+        : e.atFirstBreakpoint
+          ? 1
+          : 0;
+  const unit = e.variant === "itembased" ? "items" : "cn";
+  return {
+    enabled: e.enabled,
+    value: e.value,
+    max: e.max,
+    pct,
+    tier,
+    status: TIER_STATUS[tier],
+    label: `${e.value} / ${e.max} ${unit}`,
+    move,
+  };
 }

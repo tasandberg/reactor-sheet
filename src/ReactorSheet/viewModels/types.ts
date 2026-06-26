@@ -107,8 +107,8 @@ export interface InventoryItemVM {
   id: string;
   name: string;
   img: string;
-  category: string;        // "Weapon" | "Armour" | "Gear" | "Container"
-  categoryRank: number;    // weapon 0, armour 1, gear 2, container 3
+  category: string; // "Weapon" | "Armour" | "Gear" | "Container"
+  categoryRank: number; // weapon 0, armour 1, gear 2, container 3
   /** Weapon damage die, e.g. "1d8". "" for non-weapons. */
   damage: string;
   /** Item tags from system.tags (label + icon), deduped. [] if none. */
@@ -120,8 +120,8 @@ export interface InventoryItemVM {
   cost: number;
   /** Armour class for armour items — label is "AC"/"AAC" per the ascendingAC setting. null otherwise. */
   armorClass: { label: string; value: number } | null;
-  sort: number;            // manual order — reactor-sheet `order` flag (falls back to item.sort)
-  equippedSort: number;    // manual order within the equipped tray — `equippedOrder` flag (falls back to `sort`)
+  sort: number; // manual order — reactor-sheet `order` flag (falls back to item.sort)
+  equippedSort: number; // manual order within the equipped tray — `equippedOrder` flag (falls back to `sort`)
   /** null when the item type can't be equipped (no `equipped` field). */
   equipped: boolean | null;
   /** null unless the item is a stack (qty > 1) or charged (max set). */
@@ -138,7 +138,7 @@ export interface InventoryGroup {
 }
 
 export interface InventoryVM {
-  items: InventoryItemVM[];  // top-level only; containers carry their children. Includes equipped items.
+  items: InventoryItemVM[]; // top-level only; containers carry their children. Includes equipped items.
   /** Currently-equipped items, shown in the equipped tray (a subset of `items`). */
   equipped: InventoryItemVM[];
   count: number;
@@ -167,14 +167,21 @@ export interface CoinVM {
   value: number;
 }
 
+/** 0 unencumbered · 1/2/3 OSE movement breakpoints · 4 overloaded (over max). */
+export type EncumbranceTier = 0 | 1 | 2 | 3 | 4;
+
 export interface EncumbranceVM {
   enabled: boolean;
   value: number;
   max: number;
   /** Fraction 0–1 for the progress bar. */
   pct: number;
-  /** e.g. "Unencumbered". */
+  /** Movement-rate tier, from OSE breakpoint flags (not our own % buckets). */
+  tier: EncumbranceTier;
+  /** e.g. "Unencumbered" — derived from `tier`. */
   status: string;
+  /** Variant-aware value/max readout, e.g. "1071 / 1600 cn" or "10 / 16 items". */
+  label: string;
   /** Current movement (ft), e.g. 120. */
   move: number;
 }

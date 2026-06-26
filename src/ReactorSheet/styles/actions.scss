@@ -732,9 +732,23 @@
   // Init/HD/Move: borderless + small, three across (inherit the compact base)
   .rs-substats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacer-2); }
   .rs-tile { width: auto; }
-  // attacks: keep the weapon card but tighten — icon-only tags, snug stat cells.
+  // attacks: stack the weapon card into two rows so the name/tags get full
+  // width — the 4-col desktop grid starves them here (name truncates to "St…",
+  // tags wrap into a tall stack). Row 1 = icon + name/tags across the full
+  // width; row 2 = Hit · Dmg packed left, Attack pinned right.
   .fvtt-tag .lbl { display: none; }
-  .rs-weapon { gap: var(--spacer-2); padding: 8px; }
+  .rs-weapon {
+    grid-template-columns: auto auto 1fr;
+    grid-template-areas:
+      "info info info"
+      "hit  dmg  atk";
+    gap: var(--spacer-1) var(--spacer-2);
+    padding: 8px;
+  }
+  .rs-weapon .winfo { grid-area: info; }
+  .rs-weapon .wstat.hit { grid-area: hit; justify-self: start; }
+  .rs-weapon .wstat.dmg { grid-area: dmg; justify-self: start; }
+  .rs-weapon .fvtt-atk { grid-area: atk; justify-self: end; min-width: 96px; }
   .rs-weapon .wstat { padding: 4px 2px; }
   .rs-weapon .wstat .wv { font-size: var(--fs-xs, 12px); }
   // abilities: 6-across in one compact row (flat — drop the md+ gold frame/brackets)

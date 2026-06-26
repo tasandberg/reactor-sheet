@@ -60,6 +60,10 @@ export type OSEActor = Actor & {
       value: number;
       max: number;
       enabled: boolean;
+      encumbered: boolean;
+      atFirstBreakpoint: boolean;
+      atSecondBreakpoint: boolean;
+      atThirdBreakpoint: boolean;
     };
     exploration: {
       ft: number;
