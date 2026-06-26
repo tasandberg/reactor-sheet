@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { selectInventory, selectEncumbrance, sortInventory, sortEquipped, coinDenom } from "./inventory";
+import { selectInventory, selectEncumbrance, selectCoins, sortInventory, sortEquipped, coinDenom } from "./inventory";
 import type { OseItem, OSEActor } from "../types/types";
 import { MODULE_ID, FLAGS } from "../flags";
 
@@ -265,6 +265,23 @@ describe("selectEncumbrance", () => {
     expect(e.move).toBe(30);
   });
 
+  it("basic variant: bar fills from tier (not weight) and drops the cn load", () => {
+    // 100/1600 cn weight is meaningless in basic (tier comes from armor/treasure).
+    const actor = {
+      system: {
+        encumbrance: {
+          value: 100, max: 1600, enabled: true, variant: "basic",
+          encumbered: false, atFirstBreakpoint: true, atSecondBreakpoint: true, atThirdBreakpoint: false,
+        },
+        movement: { base: 60 },
+      },
+    } as unknown as OSEActor;
+    const e = selectEncumbrance(actor);
+    expect(e.tier).toBe(2);
+    expect(e.label).toBe(""); // no misleading "100 / 1600 cn"
+    expect(e.pct).toBeCloseTo(2 / 3); // bar tracks the tier, not 100/1600
+  });
+
   it("labels item-based encumbrance in items, not cn", () => {
     const actor = {
       system: {
@@ -273,6 +290,20 @@ describe("selectEncumbrance", () => {
       },
     } as unknown as OSEActor;
     expect(selectEncumbrance(actor).label).toBe("10 / 16 items");
+  });
+});
+
+describe("selectCoins", () => {
+  it("reads gpEach from system.cost, falling back to the standard rate", () => {
+    const coins = selectCoins([
+      mk("item", "GP", { treasure: true, cost: 1, quantity: { value: 1 } }),
+      mk("item", "EP", { treasure: true, cost: 0.5, quantity: { value: 300 } }),
+      mk("item", "CP", { treasure: true, quantity: { value: 50 } }), // no cost → fallback 0.01
+    ]);
+    const by = Object.fromEntries(coins.map((c) => [c.denom, c.gpEach]));
+    expect(by).toEqual({ GP: 1, EP: 0.5, CP: 0.01 });
+    // total = 1·1 + 300·0.5 + 50·0.01 = 151.5 gp
+    expect(coins.reduce((s, c) => s + c.value * c.gpEach, 0)).toBeCloseTo(151.5);
   });
 });
 

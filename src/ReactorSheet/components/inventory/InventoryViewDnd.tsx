@@ -452,81 +452,105 @@ const COIN_ORDER = ["GP", "SP", "CP", "PP", "EP"];
  *  an inline-editable quantity. Commits on blur/Enter. With no coin items the
  *  module never mints any (coins vary by compendium) — it just prompts the user
  *  to drop the denominations they want, which the sheet's item-drop adds. */
-function WealthBar({
+/** Wealth total in gp, trimmed of trailing zeros (151.5, 150, 0.5). */
+function fmtGp(n: number): string {
+  return (Math.round(n * 100) / 100).toString();
+}
+
+/** Wealth card (above the inventory header): total on the left, per-denomination
+ *  dot/value/denom chips, and an Edit toggle that turns the values into inputs. */
+function WealthCard({
   coins,
   onSetCoin,
-  onOpen,
 }: {
   coins: CoinVM[];
   onSetCoin: (id: string, value: number) => void;
-  onOpen: (id: string) => void;
 }) {
+  const [editing, setEditing] = useState(false);
   const sorted = [...coins].sort(
     (a, b) => COIN_ORDER.indexOf(a.denom) - COIN_ORDER.indexOf(b.denom),
   );
+  const total = sorted.reduce((sum, c) => sum + c.value * c.gpEach, 0);
+
   return (
-    <div className="rs-wealth">
+    <div className="rs-wealth-card">
+      <div className="rs-wealth-head">
+        <span className="rs-wealth-lbl">Wealth</span>
+        {coins.length > 0 && (
+          <span className="rs-wealth-sum">
+            <span className="n">{fmtGp(total)}</span> <span className="u">gp</span>
+          </span>
+        )}
+      </div>
+
       {coins.length === 0 ? (
-        <p className="rs-wealth-empty">
-          Drop coin items here to track your wealth.
-        </p>
+        <p className="rs-wealth-empty">Drop coin items here to track your wealth.</p>
       ) : (
-        <div className="rs-wealth-row">
+        <div className="rs-wealth-coins">
           {sorted.map((c) => (
             <span
               key={c.id}
               className={`rs-wealth-coin rs-wealth-${c.denom.toLowerCase()}`}
             >
               <span className="dot" aria-hidden="true" />
-              <button
-                type="button"
-                className="den"
-                onClick={() => onOpen(c.id)}
-                title={`Open ${c.denom}`}
-              >
-                {c.denom}
-              </button>
-              <input
-                type="number"
-                inputMode="numeric"
-                min={0}
-                className="val"
-                defaultValue={c.value}
-                key={c.value}
-                aria-label={`${c.denom} quantity`}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") e.currentTarget.blur();
-                }}
-                onBlur={(e) => {
-                  const n = parseInt(e.currentTarget.value, 10);
-                  if (Number.isNaN(n)) e.currentTarget.value = String(c.value);
-                  else onSetCoin(c.id, Math.max(0, n));
-                }}
-              />
+              {editing ? (
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  className="val"
+                  defaultValue={c.value}
+                  key={c.value}
+                  aria-label={`${c.denom} quantity`}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") e.currentTarget.blur();
+                  }}
+                  onBlur={(e) => {
+                    const n = parseInt(e.currentTarget.value, 10);
+                    if (Number.isNaN(n)) e.currentTarget.value = String(c.value);
+                    else onSetCoin(c.id, Math.max(0, n));
+                  }}
+                />
+              ) : (
+                <span className="val-static">{c.value}</span>
+              )}
+              <span className="den">{c.denom}</span>
             </span>
           ))}
         </div>
+      )}
+
+      {coins.length > 0 && (
+        <button
+          type="button"
+          className="rs-wealth-edit"
+          aria-pressed={editing}
+          onClick={() => setEditing((v) => !v)}
+        >
+          {editing ? "Done" : "Edit"}
+        </button>
       )}
     </div>
   );
 }
 
-function EncumbranceBar({ e }: { e: EncumbranceVM }) {
+// Encumbrance readout for the Inventory header: load · status · move, with the
+// band colour (green/yellow/red) on status+move carrying the signal — no bar.
+const ENC_BAND = ["ok", "warn", "danger", "danger", "danger"] as const;
+
+function EncumbranceReadout({ e }: { e: EncumbranceVM }) {
   return (
-    <div className="rs-enc">
-      <div className="rs-inv-sec-head">
-        <SectionTitle variant="sub">Encumbrance</SectionTitle>
-        <span className="rs-inv-sec-count">
-          {e.value} / {e.max} cn · {e.status} · {e.move}′
-        </span>
-      </div>
-      <div className="rs-enc-track">
-        <div
-          className="rs-enc-fill"
-          style={{ width: `${Math.round(e.pct * 100)}%` }}
-        />
-      </div>
-    </div>
+    <span className={cx("rs-enc-readout", ENC_BAND[e.tier])}>
+      {e.label && (
+        <>
+          <span className="load">{e.label}</span>
+          <span className="sep" aria-hidden="true">·</span>
+        </>
+      )}
+      <span className="status">{e.status}</span>
+      <span className="sep" aria-hidden="true">·</span>
+      <span className="move">{e.move}′</span>
+    </span>
   );
 }
 
@@ -961,14 +985,19 @@ export function InventoryViewDnd({
 
   return (
     <section className="rs-inv">
-      <div className="rs-inv-head">
-        <SectionTitle hint="equip weapons &amp; armour to bring them into play">
-          Inventory
-        </SectionTitle>
+      <WealthCard coins={coins} onSetCoin={onSetCoin} />
+      <div
+        className={cx("rs-inv-head", encumbrance.enabled && "enc-rule")}
+        // the header underline doubles as the encumbrance load bar (see .enc-rule)
+        style={
+          encumbrance.enabled
+            ? ({ "--enc-pct": `${Math.round(encumbrance.pct * 100)}%` } as React.CSSProperties)
+            : undefined
+        }
+      >
+        <SectionTitle>Inventory</SectionTitle>
+        {encumbrance.enabled && <EncumbranceReadout e={encumbrance} />}
       </div>
-      <div></div>
-      <WealthBar coins={coins} onSetCoin={onSetCoin} onOpen={onOpen} />
-      {encumbrance.enabled && <EncumbranceBar e={encumbrance} />}
 
       {/* Equipped tray + All-Items header pin together as one opaque block so the
           two never separate into a see-through gap (no JS height measuring). */}

@@ -54,9 +54,19 @@ export function selectCoins(items: OseItem[]): CoinVM[] {
   }
   return COIN_DENOMS.flatMap((d) => {
     const it = byDenom.get(d);
-    return it ? [{ denom: d.toUpperCase(), id: it._id as string, value: it.system.quantity?.value ?? 0 }] : [];
+    if (!it) return [];
+    const cost = (it.system as { cost?: number }).cost ?? 0;
+    return [{
+      denom: d.toUpperCase(),
+      id: it._id as string,
+      value: it.system.quantity?.value ?? 0,
+      gpEach: cost > 0 ? cost : (GP_PER_COIN[d] ?? 0),
+    }];
   });
 }
+
+// Standard OSE gp value per coin — fallback when an item's system.cost is unset.
+const GP_PER_COIN: Record<string, number> = { pp: 5, gp: 1, ep: 0.5, sp: 0.1, cp: 0.01 };
 
 // ---------------------------------------------------------------------------
 // Category metadata
@@ -287,7 +297,6 @@ const TIER_STATUS = [
 export function selectEncumbrance(actor: OSEActor): EncumbranceVM {
   const e = actor.system.encumbrance;
   const move = actor.system.movement?.base ?? 0;
-  const pct = e.max > 0 ? Math.min(1, e.value / e.max) : 0;
   // Drive tier off the system's breakpoint flags (variant-aware) rather than our
   // own % buckets — keeps status/move consistent across all encumbrance modes.
   const tier: EncumbranceTier = e.encumbered
@@ -299,6 +308,16 @@ export function selectEncumbrance(actor: OSEActor): EncumbranceVM {
         : e.atFirstBreakpoint
           ? 1
           : 0;
+  // Basic encumbrance is categorical (armor + treasure threshold) — value/max in cn
+  // has no bearing on the tier, so a weight bar/readout would contradict the status.
+  // Drive the bar off the tier (basic tops out at the 3rd breakpoint) and drop the
+  // misleading cn load. Weight/slot variants keep their real value/max load + fill.
+  const isBasic = e.variant === "basic";
+  const pct = isBasic
+    ? Math.min(1, tier / 3)
+    : e.max > 0
+      ? Math.min(1, e.value / e.max)
+      : 0;
   const unit = e.variant === "itembased" ? "items" : "cn";
   return {
     enabled: e.enabled,
@@ -307,7 +326,7 @@ export function selectEncumbrance(actor: OSEActor): EncumbranceVM {
     pct,
     tier,
     status: TIER_STATUS[tier],
-    label: `${e.value} / ${e.max} ${unit}`,
+    label: isBasic ? "" : `${e.value} / ${e.max} ${unit}`,
     move,
   };
 }

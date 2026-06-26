@@ -165,6 +165,8 @@ export interface CoinVM {
   /** The backing treasure item's id (for quantity updates). */
   id: string;
   value: number;
+  /** gp value of one coin of this denom (system.cost, std fallback) — for the wealth total. */
+  gpEach: number;
 }
 
 /** 0 unencumbered · 1/2/3 OSE movement breakpoints · 4 overloaded (over max). */
