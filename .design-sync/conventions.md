@@ -41,6 +41,24 @@ attribute on a `.reactor-sheet` ancestor.
   <div style={{ display: "flex", gap: "var(--spacer-3)", color: "var(--text-dim)" }}>…</div>
   ```
 
+## Section headers — use `<SectionTitle>`, never a bold white underline
+
+Section/group headings are a defining part of the Vellum look and they are **subtle**:
+display serif (`--display`) at normal weight in `--text` ink, over a thin **2px
+`var(--section-rule)`** hairline (= `--border`, a muted parchment/ink line — NOT white,
+NOT thick/heavy). Always render them with the `<SectionTitle>` component:
+
+```jsx
+<SectionTitle hint="3 prepared">Spells</SectionTitle>   {/* main head: serif + hairline rule */}
+<SectionTitle variant="sub">Equipped</SectionTitle>     {/* small uppercase sans label, no rule */}
+<SectionTitle variant="bare">Modal title</SectionTitle> {/* serif, no rule/margins (embedded heads) */}
+```
+
+**Do not** hand-roll a heading as bold white text with a heavy or white underline — that
+reads as a different design system. If you must style a heading yourself, match the
+component: `font-family: var(--display)`, normal weight, `color: var(--text)`, and a
+`2px solid var(--section-rule)` bottom border (none for `sub`/`bare`).
+
 ## Where the truth lives
 
 - `styles.css` is the whole styling closure (it `@import`s `_ds_bundle.css` — the scoped
