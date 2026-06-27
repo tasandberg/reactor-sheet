@@ -12,6 +12,7 @@ export function TabBar({ tabs, active, onSelect }: Props) {
           key={t.id}
           type="button"
           role="tab"
+          data-testid={`tab-${t.id}`}
           aria-selected={t.id === active}
           aria-controls="rs-tabpanel"
           className={cx("rs-htab", t.id === active && "active")}

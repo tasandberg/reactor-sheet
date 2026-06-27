@@ -25,6 +25,7 @@ export function SavesGrid({ saves, onRoll }: { saves: SaveVM[]; onRoll?: (key: O
         <div
           key={s.key}
           className={cx("fvtt-save", onRoll && "rollable")}
+          data-testid={`save-${s.key}`}
           title={onRoll ? `Roll ${s.label} save (≥ ${s.target})` : undefined}
           {...rollable(onRoll && (() => onRoll(s.key)))}
         >
