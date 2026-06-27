@@ -44,11 +44,11 @@ const inventory: InventoryVM = {
   groups: [],
 };
 
-const encumbrance: EncumbranceVM = { enabled: true, value: 380, max: 1600, pct: 0.2375, status: "Unencumbered", move: 120 };
+const encumbrance: EncumbranceVM = { enabled: true, value: 380, max: 1600, pct: 0.2375, tier: 0, status: "Unencumbered", label: "380 / 1600 cn", move: 120 };
 const coins = [
-  { denom: "PP", id: "pp", value: 0 },
-  { denom: "GP", id: "gp", value: 152 },
-  { denom: "SP", id: "sp", value: 8 },
+  { denom: "PP", id: "pp", name: "Platinum Pieces", img: "", value: 0, gpEach: 5 },
+  { denom: "GP", id: "gp", name: "Gold Pieces", img: "", value: 152, gpEach: 1 },
+  { denom: "SP", id: "sp", name: "Silver Pieces", img: "", value: 8, gpEach: 0.1 },
 ];
 
 const log = (label: string) => (...args: unknown[]) => console.log(label, ...args);

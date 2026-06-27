@@ -6,7 +6,14 @@ describe("selectAbilities", () => {
   const vm = selectAbilities(raistlin);
 
   it("returns the six scores in canonical order", () => {
-    expect(vm.map((a) => a.key)).toEqual(["str", "dex", "con", "int", "wis", "cha"]);
+    expect(vm.map((a) => a.key)).toEqual([
+      "str",
+      "int",
+      "wis",
+      "dex",
+      "con",
+      "cha",
+    ]);
   });
 
   it("reads value + derived mod with a formatted label", () => {

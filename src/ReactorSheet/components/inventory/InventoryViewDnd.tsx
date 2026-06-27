@@ -19,6 +19,9 @@ import type {
 } from "../../viewModels/types";
 import { sortInventory, SORT_DEFAULT_DIR } from "../../viewModels/inventory";
 import { useDragReorder } from "./useDragReorder";
+import { WealthSection } from "./WealthSection";
+import { ItemImage } from "./ItemImage";
+import { SortHeader } from "./SortHeader";
 import { SectionTitle } from "../ui/SectionTitle";
 import { Tag } from "../ui/Tag";
 import { cx } from "../ui/cx";
@@ -36,9 +39,12 @@ type Ops = {
   onNest: (itemId: string, containerId: string | null) => void;
 };
 
-/** Right-click context-menu target: which item, and where to anchor the menu. */
-type MenuState = { item: InventoryItemVM; x: number; y: number };
-type OnContext = (e: React.MouseEvent, item: InventoryItemVM) => void;
+/** Right-click context-menu target: which item, and where to anchor the menu.
+ *  Coins are real Foundry items too, so they reuse this — only the fields the menu
+ *  reads are required (a coin passes equipped/quantity null → just View + Delete). */
+type CtxItem = Pick<InventoryItemVM, "id" | "name" | "equipped" | "quantity">;
+type MenuState = { item: CtxItem; x: number; y: number };
+export type OnContext = (e: React.MouseEvent, item: CtxItem) => void;
 
 type Props = {
   inventory: InventoryVM;
@@ -85,12 +91,17 @@ function buildGroups(items: InventoryItemVM[], sort: SortState): Groups {
   const groups: Groups = { [ROOT]: [] };
   for (const it of sorted) {
     groups[ROOT].push(it.id);
-    if (it.isContainer) groups[gkey(it.id)] = sortInventory(it.children, sort.key, sort.dir).map((c) => c.id);
+    if (it.isContainer)
+      groups[gkey(it.id)] = sortInventory(it.children, sort.key, sort.dir).map(
+        (c) => c.id,
+      );
   }
   return groups;
 }
 
-function originContainers(items: InventoryItemVM[]): Map<string, string | null> {
+function originContainers(
+  items: InventoryItemVM[],
+): Map<string, string | null> {
   const m = new Map<string, string | null>();
   for (const it of items) {
     m.set(it.id, null);
@@ -103,17 +114,16 @@ function originContainers(items: InventoryItemVM[]): Map<string, string | null> 
 // Row pieces
 // ---------------------------------------------------------------------------
 
-function ItemImage({ item }: { item: InventoryItemVM }) {
-  return (
-    <span className="rs-inv-img" aria-hidden="true">
-      {item.img ? <img src={item.img} alt="" /> : <span className="mono">{item.monogram}</span>}
-    </span>
-  );
-}
-
 // Equip toggle: outlined hand = unequipped, filled hand = equipped.
-function RowEquip({ item, onEquip }: { item: InventoryItemVM; onEquip: (id: string) => void }) {
-  if (item.equipped === null) return <span className="rs-inv-equip-spacer" aria-hidden="true" />;
+function RowEquip({
+  item,
+  onEquip,
+}: {
+  item: InventoryItemVM;
+  onEquip: (id: string) => void;
+}) {
+  if (item.equipped === null)
+    return <span className="rs-inv-equip-spacer" aria-hidden="true" />;
   return (
     <button
       type="button"
@@ -122,7 +132,10 @@ function RowEquip({ item, onEquip }: { item: InventoryItemVM; onEquip: (id: stri
       aria-label={item.equipped ? "Unequip" : "Equip"}
       onClick={() => onEquip(item.id)}
     >
-      <i className={cx(item.equipped ? "fa-solid" : "fa-regular", "fa-hand")} aria-hidden="true" />
+      <i
+        className={cx(item.equipped ? "fa-solid" : "fa-regular", "fa-hand")}
+        aria-hidden="true"
+      />
     </button>
   );
 }
@@ -142,7 +155,11 @@ function NameCell({
   return (
     <div className="rs-inv-name-c">
       <div className="rs-inv-name-row">
-        <button type="button" className="rs-inv-name" onClick={() => onOpen(item.id)}>
+        <button
+          type="button"
+          className="rs-inv-name"
+          onClick={() => onOpen(item.id)}
+        >
           <span className="nm">{item.name}</span>
           {item.damage && <span className="rs-inv-qtytag">{item.damage}</span>}
           {!item.isContainer && item.quantity && item.quantity.value > 1 && (
@@ -160,10 +177,18 @@ function NameCell({
 // Shared row body (cols 2–8) — used by the main list AND the equipped table
 // ---------------------------------------------------------------------------
 
-function RowInner({ item, onEquip, onOpen }: { item: InventoryItemVM; onEquip: (id: string) => void; onOpen: (id: string) => void }) {
+function RowInner({
+  item,
+  onEquip,
+  onOpen,
+}: {
+  item: InventoryItemVM;
+  onEquip: (id: string) => void;
+  onOpen: (id: string) => void;
+}) {
   return (
     <>
-      <ItemImage item={item} />
+      <ItemImage img={item.img} monogram={item.monogram} />
       <NameCell item={item} onOpen={onOpen} />
       <span className="rs-inv-rowcat">{item.category}</span>
       <span className="rs-inv-wt">{weightLabel(item.weight)}</span>
@@ -200,11 +225,18 @@ function SortableRow({
   return (
     <div
       className={cx("rs-inv-row", "is-sortable", dnd.rowClass(group, index))}
-      style={depth > 0 ? ({ "--rs-inv-depth": depth } as React.CSSProperties) : undefined}
+      style={
+        depth > 0
+          ? ({ "--rs-inv-depth": depth } as React.CSSProperties)
+          : undefined
+      }
       onContextMenu={(e) => onContext(e, item)}
       // Root rows accept a container child dropped among them (un-nest), but NOT a
       // tray tile — equipped-tray drags onto the list are routed to unequip instead.
-      {...dnd.rowProps(group, index, { ownZone: group, acceptCrossGroup: group === ROOT ? (from) => from !== EQUIPPED : false })}
+      {...dnd.rowProps(group, index, {
+        ownZone: group,
+        acceptCrossGroup: group === ROOT ? (from) => from !== EQUIPPED : false,
+      })}
     >
       <span className="rs-inv-drag" aria-hidden="true">
         <i className="fa-solid fa-grip-lines" />
@@ -261,15 +293,30 @@ function ContainerRow({
     <div className={cx("rs-inv-container", isDropTarget && "is-drop-target")}>
       {/* The header row reorders among root items AND accepts items dropped onto it (nest). */}
       <div
-        className={cx("rs-inv-row", "is-container", "is-sortable", dnd.rowClass(ROOT, index))}
+        className={cx(
+          "rs-inv-row",
+          "is-container",
+          "is-sortable",
+          dnd.rowClass(ROOT, index),
+        )}
         onContextMenu={(e) => onContext(e, item)}
-        {...dnd.rowProps(ROOT, index, { container: collapsed, containerZone: item.id, ownZone: ROOT, acceptCrossGroup: (from) => from !== EQUIPPED })}
+        {...dnd.rowProps(ROOT, index, {
+          container: collapsed,
+          containerZone: item.id,
+          ownZone: ROOT,
+          acceptCrossGroup: (from) => from !== EQUIPPED,
+        })}
       >
         <span className="rs-inv-drag" aria-hidden="true">
           <i className="fa-solid fa-grip-lines" />
         </span>
-        <ItemImage item={item} />
-        <NameCell item={item} onOpen={onOpen} badge={<Tag intent="count">{count}</Tag>} trailing={caret} />
+        <ItemImage img={item.img} monogram={item.monogram} />
+        <NameCell
+          item={item}
+          onOpen={onOpen}
+          badge={<Tag intent="count">{count}</Tag>}
+          trailing={caret}
+        />
         <span className="rs-inv-rowcat">{item.category}</span>
         <span className="rs-inv-wt">{weightLabel(item.weight)}</span>
         <RowEquip item={item} onEquip={onEquip} />
@@ -278,13 +325,25 @@ function ContainerRow({
       <div
         className={cx("rs-inv-children", collapsed && "is-collapsed")}
         // Empty container: its body is the nest target (no sibling rows to hover).
-        {...(!collapsed && childIds.length === 0 ? dnd.nestProps(group, index, item.id) : {})}
+        {...(!collapsed && childIds.length === 0
+          ? dnd.nestProps(group, index, item.id)
+          : {})}
       >
         {!collapsed &&
           childIds.map((cid, i) => {
             const child = byId.get(cid);
             return child ? (
-              <SortableRow key={cid} item={child} index={i} group={group} depth={1} dnd={dnd} onEquip={onEquip} onOpen={onOpen} onContext={onContext} />
+              <SortableRow
+                key={cid}
+                item={child}
+                index={i}
+                group={group}
+                depth={1}
+                dnd={dnd}
+                onEquip={onEquip}
+                onOpen={onOpen}
+                onContext={onContext}
+              />
             ) : null;
           })}
       </div>
@@ -293,121 +352,58 @@ function ContainerRow({
 }
 
 // ---------------------------------------------------------------------------
-// Sort header (sorting only)
+// Sort header row (uses the shared SortHeader)
 // ---------------------------------------------------------------------------
 
-function SortHeader({
-  col,
-  label,
-  className,
+function SortHeaderRow({
   sort,
   onSort,
 }: {
-  col: InventorySortKey;
-  label: React.ReactNode;
-  className?: string;
   sort: SortState;
   onSort: (key: InventorySortKey) => void;
 }) {
-  const active = sort.key === col;
-  // A click bakes this order into the manual baseline; clicking the active header
-  // again flips direction. Drags then override.
-  const title = active ? "Sorted — click to reverse" : "Click to sort — then drag to fine-tune";
-  return (
-    <button
-      type="button"
-      className={cx("rs-inv-th", className, active && "active")}
-      aria-sort={active ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}
-      title={title}
+  const th = (col: InventorySortKey, label: React.ReactNode, className?: string) => (
+    <SortHeader
+      label={label}
+      className={className}
+      active={sort.key === col}
+      dir={sort.dir}
       onClick={() => onSort(col)}
-    >
-      {label}
-      <i className={cx("rs-inv-th-caret", "fa-solid", active && (sort.dir === "asc" ? "fa-caret-up" : "fa-caret-down"))} aria-hidden="true" />
-    </button>
+    />
   );
-}
-
-function SortHeaderRow({ sort, onSort }: { sort: SortState; onSort: (key: InventorySortKey) => void }) {
   return (
     <div className="rs-inv-row rs-inv-headrow" role="row">
       <span aria-hidden="true" /> {/* drag */}
       {/* "Item" spans the image + name columns so it left-aligns to the image */}
-      <SortHeader col="name" label="Item" className="rs-inv-th-item" sort={sort} onSort={onSort} />
-      <SortHeader col="category" label="Type" className="rs-inv-th-cat" sort={sort} onSort={onSort} />
-      <SortHeader col="weight" label="Wt" className="rs-inv-th-wt" sort={sort} onSort={onSort} />
+      {th("name", "Item", "rs-inv-th-item")}
+      {th("category", "Type", "rs-inv-th-cat")}
+      {th("weight", "Wt", "rs-inv-th-wt")}
       <span className="rs-inv-thlabel rs-inv-thlabel-eq">Equip</span>
     </div>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Coin / encumbrance
+// Encumbrance readout
 // ---------------------------------------------------------------------------
 
-// Display order for the compact wealth row (most-used first), independent of the
-// canonical pp→cp storage order in selectCoins.
-const COIN_ORDER = ["GP", "SP", "CP", "PP", "EP"];
+// Encumbrance readout for the Inventory header: load · status · move, with the
+// band colour (green/yellow/red) on status+move carrying the signal — no bar.
+const ENC_BAND = ["ok", "warn", "danger", "danger", "danger"] as const;
 
-/** Compact single-row wealth strip: a colour-dotted chip per denomination with
- *  an inline-editable quantity. Commits on blur/Enter. With no coin items the
- *  module never mints any (coins vary by compendium) — it just prompts the user
- *  to drop the denominations they want, which the sheet's item-drop adds. */
-function WealthBar({
-  coins,
-  onSetCoin,
-  onOpen,
-}: {
-  coins: CoinVM[];
-  onSetCoin: (id: string, value: number) => void;
-  onOpen: (id: string) => void;
-}) {
-  const sorted = [...coins].sort((a, b) => COIN_ORDER.indexOf(a.denom) - COIN_ORDER.indexOf(b.denom));
+function EncumbranceReadout({ e }: { e: EncumbranceVM }) {
   return (
-    <div className="rs-wealth">
-      {coins.length === 0 ? (
-        <p className="rs-wealth-empty">Drop coin items here to track your wealth.</p>
-      ) : (
-      <div className="rs-wealth-row">
-        {sorted.map((c) => (
-          <span key={c.id} className={`rs-wealth-coin rs-wealth-${c.denom.toLowerCase()}`}>
-            <span className="dot" aria-hidden="true" />
-            <button type="button" className="den" onClick={() => onOpen(c.id)} title={`Open ${c.denom}`}>{c.denom}</button>
-            <input
-              type="number"
-              inputMode="numeric"
-              min={0}
-              className="val"
-              defaultValue={c.value}
-              key={c.value}
-              aria-label={`${c.denom} quantity`}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") e.currentTarget.blur();
-              }}
-              onBlur={(e) => {
-                const n = parseInt(e.currentTarget.value, 10);
-                if (Number.isNaN(n)) e.currentTarget.value = String(c.value);
-                else onSetCoin(c.id, Math.max(0, n));
-              }}
-            />
-          </span>
-        ))}
-      </div>
+    <span className={cx("rs-enc-readout", ENC_BAND[e.tier])}>
+      {e.label && (
+        <>
+          <span className="load">{e.label}</span>
+          <span className="sep" aria-hidden="true">·</span>
+        </>
       )}
-    </div>
-  );
-}
-
-function EncumbranceBar({ e }: { e: EncumbranceVM }) {
-  return (
-    <div className="rs-enc">
-      <div className="rs-inv-sec-head">
-        <SectionTitle variant="sub">Encumbrance</SectionTitle>
-        <span className="rs-inv-sec-count">{e.value} / {e.max} cn · {e.status} · {e.move}′</span>
-      </div>
-      <div className="rs-enc-track">
-        <div className="rs-enc-fill" style={{ width: `${Math.round(e.pct * 100)}%` }} />
-      </div>
-    </div>
+      <span className="status">{e.status}</span>
+      <span className="sep" aria-hidden="true">·</span>
+      <span className="move">{e.move}′</span>
+    </span>
   );
 }
 
@@ -415,7 +411,13 @@ function EncumbranceBar({ e }: { e: EncumbranceVM }) {
 // Section header (static — title + "N items · X cn")
 // ---------------------------------------------------------------------------
 
-function SectionCount({ title, items }: { title: string; items: InventoryItemVM[] }) {
+function SectionCount({
+  title,
+  items,
+}: {
+  title: string;
+  items: InventoryItemVM[];
+}) {
   return (
     <div className="rs-inv-sec-head">
       <SectionTitle variant="sub">{title}</SectionTitle>
@@ -430,11 +432,21 @@ function SectionCount({ title, items }: { title: string; items: InventoryItemVM[
 // ---------------------------------------------------------------------------
 
 /** Full item stats for the equipped popover: AC/AAC, damage, qty, cost, weight. */
-function equippedStats(item: InventoryItemVM): { label: string; value: string }[] {
+function equippedStats(
+  item: InventoryItemVM,
+): { label: string; value: string }[] {
   const stats: { label: string; value: string }[] = [];
-  if (item.armorClass) stats.push({ label: item.armorClass.label, value: String(item.armorClass.value) });
+  if (item.armorClass)
+    stats.push({
+      label: item.armorClass.label,
+      value: String(item.armorClass.value),
+    });
   if (item.damage) stats.push({ label: "Dmg", value: item.damage });
-  if (item.quantity) stats.push({ label: "Qty", value: `${item.quantity.value} / ${item.quantity.max}` });
+  if (item.quantity)
+    stats.push({
+      label: "Qty",
+      value: `${item.quantity.value} / ${item.quantity.max}`,
+    });
   stats.push({ label: "Cost", value: `${item.cost} gp` });
   stats.push({ label: "Wgt", value: weightLabel(item.weight) });
   return stats;
@@ -462,19 +474,51 @@ function EquippedTray({
   return (
     <div
       className={cx("rs-equip-tray", dropping && "is-drop-target")}
-      onDragOver={equipDropActive ? (e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; setOver(true); } : undefined}
-      onDragLeave={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setOver(false); }}
-      onDrop={equipDropActive ? (e) => { e.preventDefault(); onEquipDrop(); setOver(false); } : undefined}
+      onDragOver={
+        equipDropActive
+          ? (e) => {
+              e.preventDefault();
+              e.dataTransfer.dropEffect = "move";
+              setOver(true);
+            }
+          : undefined
+      }
+      onDragLeave={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) setOver(false);
+      }}
+      onDrop={
+        equipDropActive
+          ? (e) => {
+              e.preventDefault();
+              onEquipDrop();
+              setOver(false);
+            }
+          : undefined
+      }
     >
       {items.map((item, i) => (
         <div
           key={item.id}
-          className={cx("rs-equip-tcard", "is-sortable", dnd.rowClass(EQUIPPED, i))}
+          className={cx(
+            "rs-equip-tcard",
+            "is-sortable",
+            dnd.rowClass(EQUIPPED, i),
+          )}
           onContextMenu={(e) => onContext(e, item)}
           {...dnd.rowProps(EQUIPPED, i, { ownZone: EQUIPPED, axis: "x" })}
         >
-          <button type="button" className="rs-equip-tt" onClick={() => onOpen(item.id)} aria-label={item.name} title={item.name}>
-            {item.img ? <img src={item.img} alt="" /> : <span className="rs-equip-tt-ic">{item.monogram}</span>}
+          <button
+            type="button"
+            className="rs-equip-tt"
+            onClick={() => onOpen(item.id)}
+            aria-label={item.name}
+            title={item.name}
+          >
+            {item.img ? (
+              <img src={item.img} alt="" />
+            ) : (
+              <span className="rs-equip-tt-ic">{item.monogram}</span>
+            )}
           </button>
           <span className="rs-equip-tt-pop" role="tooltip">
             <span className="rs-equip-tt-pop-nm">{item.name}</span>
@@ -491,7 +535,12 @@ function EquippedTray({
               <span className="rs-equip-tt-pop-tags">
                 {item.tags.map((t) => (
                   <span className="rs-equip-tt-pop-tag" key={t.label}>
-                    {t.icon && <i className={cx("fa-solid", t.icon)} aria-hidden="true" />}
+                    {t.icon && (
+                      <i
+                        className={cx("fa-solid", t.icon)}
+                        aria-hidden="true"
+                      />
+                    )}
                     {t.label}
                   </span>
                 ))}
@@ -542,26 +591,64 @@ function ItemContextMenu({
   };
 
   return (
-    <div className="rs-ctx" style={style} onPointerDown={(e) => e.stopPropagation()}>
+    <div
+      className="rs-ctx"
+      style={style}
+      onPointerDown={(e) => e.stopPropagation()}
+    >
       <div className="rs-ctx-title">{menu.item.name}</div>
-      <button type="button" className="rs-ctx-item" onClick={() => { onOpen(menu.item.id); onClose(); }}>
+      <button
+        type="button"
+        className="rs-ctx-item"
+        onClick={() => {
+          onOpen(menu.item.id);
+          onClose();
+        }}
+      >
         <i className="fa-solid fa-eye" aria-hidden="true" /> View Item
       </button>
       {/* Send Item is a WIP — see https://github.com/tasandberg/reactor-sheet/issues/16 */}
-      <button type="button" className="rs-ctx-item" disabled title="Coming soon">
+      <button
+        type="button"
+        className="rs-ctx-item"
+        disabled
+        title="Coming soon"
+      >
         <i className="fa-solid fa-gift" aria-hidden="true" /> Send Item
       </button>
       {menu.item.equipped === true && (
-        <button type="button" className="rs-ctx-item" onClick={() => { onEquip(menu.item.id); onClose(); }}>
+        <button
+          type="button"
+          className="rs-ctx-item"
+          onClick={() => {
+            onEquip(menu.item.id);
+            onClose();
+          }}
+        >
           <i className="fa-solid fa-hand" aria-hidden="true" /> Unequip
         </button>
       )}
       {menu.item.quantity != null && (
-        <button type="button" className="rs-ctx-item" onClick={() => { onConsume(menu.item.id); onClose(); }}>
-          <i className="fa-solid fa-circle-minus" aria-hidden="true" /> Consume one
+        <button
+          type="button"
+          className="rs-ctx-item"
+          onClick={() => {
+            onConsume(menu.item.id);
+            onClose();
+          }}
+        >
+          <i className="fa-solid fa-circle-minus" aria-hidden="true" /> Consume
+          one
         </button>
       )}
-      <button type="button" className="rs-ctx-item is-danger" onClick={() => { onDelete(menu.item.id); onClose(); }}>
+      <button
+        type="button"
+        className="rs-ctx-item is-danger"
+        onClick={() => {
+          onDelete(menu.item.id);
+          onClose();
+        }}
+      >
         <i className="fa-solid fa-trash" aria-hidden="true" /> Delete Item
       </button>
     </div>
@@ -572,7 +659,19 @@ function ItemContextMenu({
 // Root
 // ---------------------------------------------------------------------------
 
-export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onEquip, onOpen, onDelete, onConsume, onReorder, onReorderEquipped, onNest }: Props) {
+export function InventoryViewDnd({
+  inventory,
+  encumbrance,
+  coins,
+  onSetCoin,
+  onEquip,
+  onOpen,
+  onDelete,
+  onConsume,
+  onReorder,
+  onReorderEquipped,
+  onNest,
+}: Props) {
   // Rows always render in manual order (from `groups`); a sort-header click bakes the
   // chosen order into the `order` flag and returns here, so drags keep sticking.
   const [sort] = useState<SortState>({ key: "manual", dir: "asc" });
@@ -580,9 +679,13 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
   // (we don't stay in a live sort, so this is purely the affordance). null = none.
   const [lastSort, setLastSort] = useState<SortState | null>(null);
   const [expanded, setExpanded] = useState<Set<string>>(new Set()); // containers collapsed by default
-  const [groups, setGroups] = useState<Groups>(() => buildGroups(inventory.items, sort));
+  const [groups, setGroups] = useState<Groups>(() =>
+    buildGroups(inventory.items, sort),
+  );
   // The equipped tray keeps its OWN order (ids), independent of the All-Items list.
-  const [equippedIds, setEquippedIds] = useState<string[]>(() => inventory.equipped.map((it) => it.id));
+  const [equippedIds, setEquippedIds] = useState<string[]>(() =>
+    inventory.equipped.map((it) => it.id),
+  );
   const [listOver, setListOver] = useState(false); // tray tile hovering the list → unequip
   const [menu, setMenu] = useState<MenuState | null>(null);
 
@@ -615,7 +718,9 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
 
   // Rebuild the tray order from props whenever the equipped set or its order
   // (equippedSort) changes. `inventory.equipped` is already sorted by the VM.
-  const equipSig = inventory.equipped.map((it) => `${it.id},${it.equippedSort}`).join("|");
+  const equipSig = inventory.equipped
+    .map((it) => `${it.id},${it.equippedSort}`)
+    .join("|");
   useEffect(() => {
     setEquippedIds(inventory.equipped.map((it) => it.id));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -626,7 +731,9 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
   // drag-end used — only the gesture that produces `next` is different now.
   function persist(next: Groups) {
     const origin = originContainers(inventory.items);
-    const curOrder = new Map([...byId.values()].map((it) => [it.id, it.sort] as const));
+    const curOrder = new Map(
+      [...byId.values()].map((it) => [it.id, it.sort] as const),
+    );
     const reorder: { id: string; sort: number }[] = [];
     for (const [key, ids] of Object.entries(next)) {
       const containerId = groupContainerId(key);
@@ -641,7 +748,9 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
 
   // Persist the tray order: renumber (i+1)*100, emit only changed items.
   function persistEquipped(next: string[]) {
-    const cur = new Map(inventory.equipped.map((it) => [it.id, it.equippedSort] as const));
+    const cur = new Map(
+      inventory.equipped.map((it) => [it.id, it.equippedSort] as const),
+    );
     const updates: { id: string; sort: number }[] = [];
     next.forEach((id, i) => {
       const order = (i + 1) * 100;
@@ -696,7 +805,9 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
   const onSort = (key: InventorySortKey) => {
     const dir: SortDir =
       lastSort?.key === key && lastSort.dir === SORT_DEFAULT_DIR[key]
-        ? SORT_DEFAULT_DIR[key] === "asc" ? "desc" : "asc"
+        ? SORT_DEFAULT_DIR[key] === "asc"
+          ? "desc"
+          : "asc"
         : SORT_DEFAULT_DIR[key];
     const next = buildGroups(inventory.items, { key, dir });
     setGroups(next);
@@ -716,7 +827,9 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
   // Tray uses its own order (equippedIds), NOT the All-Items sort. Drop stale ids
   // (item just unequipped/deleted) so tile indices match the array the drag
   // handlers splice — keep `trayItems`/`trayIds` index-aligned.
-  const trayItems = equippedIds.map((id) => byId.get(id)).filter((it): it is InventoryItemVM => !!it);
+  const trayItems = equippedIds
+    .map((id) => byId.get(id))
+    .filter((it): it is InventoryItemVM => !!it);
   const trayIds = trayItems.map((it) => it.id);
   equippedIdsRef.current = trayIds; // drag handlers splice the rendered order
 
@@ -725,13 +838,19 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
 
   return (
     <section className="rs-inv">
-      <WealthBar coins={coins} onSetCoin={onSetCoin} onOpen={onOpen} />
-
-      <div className="rs-inv-head">
-        <SectionTitle hint="equip weapons &amp; armour to bring them into play">Inventory</SectionTitle>
+      <div
+        className={cx("rs-inv-head", encumbrance.enabled && "enc-rule")}
+        // the header underline doubles as the encumbrance load bar (see .enc-rule)
+        style={
+          encumbrance.enabled
+            ? ({ "--enc-pct": `${Math.round(encumbrance.pct * 100)}%` } as React.CSSProperties)
+            : undefined
+        }
+      >
+        <SectionTitle>Inventory</SectionTitle>
+        {encumbrance.enabled && <EncumbranceReadout e={encumbrance} />}
       </div>
-
-      {encumbrance.enabled && <EncumbranceBar e={encumbrance} />}
+      <WealthSection coins={coins} onSetCoin={onSetCoin} onOpen={onOpen} onContext={openMenu} />
 
       {/* Equipped tray + All-Items header pin together as one opaque block so the
           two never separate into a see-through gap (no JS height measuring). */}
@@ -748,7 +867,9 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
               equipDropActive={dnd.drag != null && dnd.drag.group !== EQUIPPED}
               onEquipDrop={() => {
                 const d = dnd.drag;
-                const id = d ? (groupsRef.current[d.group] ?? [])[d.idx] : undefined;
+                const id = d
+                  ? (groupsRef.current[d.group] ?? [])[d.idx]
+                  : undefined;
                 const it = id ? byId.get(id) : undefined;
                 // Only equip an equippable, not-yet-equipped item (don't toggle off).
                 if (id && it && it.equipped === false) onEquip(id);
@@ -762,22 +883,47 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
 
       <section className="rs-inv-sec rs-inv-sec--carried">
         <div
-          className={cx("rs-inv-list", equippedDragActive && listOver && "is-unequip-target")}
+          className={cx(
+            "rs-inv-list",
+            equippedDragActive && listOver && "is-unequip-target",
+          )}
           // Drag a tray tile down into the list → unequip it (the row already exists
           // here; this just flips the equipped flag). Rows themselves reject the
           // EQUIPPED group, so this wrapper is the sole handler for that drag.
-          onDragOver={equippedDragActive ? (e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; setListOver(true); } : undefined}
-          onDragLeave={equippedDragActive ? (e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setListOver(false); } : undefined}
-          onDrop={equippedDragActive ? (e) => {
-            e.preventDefault();
-            const d = dnd.drag;
-            const id = d ? equippedIdsRef.current[d.idx] : undefined;
-            if (id) onEquip(id); // toggles equipped off
-            setListOver(false);
-            dnd.clear();
-          } : undefined}
+          onDragOver={
+            equippedDragActive
+              ? (e) => {
+                  e.preventDefault();
+                  e.dataTransfer.dropEffect = "move";
+                  setListOver(true);
+                }
+              : undefined
+          }
+          onDragLeave={
+            equippedDragActive
+              ? (e) => {
+                  if (!e.currentTarget.contains(e.relatedTarget as Node))
+                    setListOver(false);
+                }
+              : undefined
+          }
+          onDrop={
+            equippedDragActive
+              ? (e) => {
+                  e.preventDefault();
+                  const d = dnd.drag;
+                  const id = d ? equippedIdsRef.current[d.idx] : undefined;
+                  if (id) onEquip(id); // toggles equipped off
+                  setListOver(false);
+                  dnd.clear();
+                }
+              : undefined
+          }
         >
-          <SortHeaderRow sort={lastSort ?? { key: "manual", dir: "asc" }} onSort={onSort} />
+          <SortHeaderRow
+            sort={lastSort ?? { key: "manual", dir: "asc" }}
+            onSort={onSort}
+          />
           {rootIds.map((id, index) => {
             const item = byId.get(id);
             if (!item) return null;
@@ -796,13 +942,32 @@ export function InventoryViewDnd({ inventory, encumbrance, coins, onSetCoin, onE
                 onContext={openMenu}
               />
             ) : (
-              <SortableRow key={id} item={item} index={index} group={ROOT} depth={0} dnd={dnd} onEquip={onEquip} onOpen={onOpen} onContext={openMenu} />
+              <SortableRow
+                key={id}
+                item={item}
+                index={index}
+                group={ROOT}
+                depth={0}
+                dnd={dnd}
+                onEquip={onEquip}
+                onOpen={onOpen}
+                onContext={openMenu}
+              />
             );
           })}
         </div>
       </section>
 
-      {menu && <ItemContextMenu menu={menu} onClose={() => setMenu(null)} onOpen={onOpen} onEquip={onEquip} onConsume={onConsume} onDelete={onDelete} />}
+      {menu && (
+        <ItemContextMenu
+          menu={menu}
+          onClose={() => setMenu(null)}
+          onOpen={onOpen}
+          onEquip={onEquip}
+          onConsume={onConsume}
+          onDelete={onDelete}
+        />
+      )}
     </section>
   );
 }

@@ -2,7 +2,7 @@ import { cx } from "./cx";
 import type { ButtonHTMLAttributes } from "react";
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "primary" | "danger" | "ghost";
+  variant?: "primary" | "outline" | "danger" | "ghost";
   size?: "sm";
 };
 

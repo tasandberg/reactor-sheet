@@ -955,6 +955,9 @@ body {
 .btn:hover { border-color: var(--brass); }
 .btn.primary { background: var(--brass); color: var(--on-accent); border-color: var(--brass); }
 .btn.primary:hover { background: var(--brass-dim); }
+/* outline (primary) — the brass accent, outlined rather than filled */
+.btn.outline { background: transparent; color: var(--brass); border-color: var(--brass); }
+.btn.outline:hover { background: color-mix(in srgb, var(--brass) 12%, transparent); }
 .btn.danger { color: var(--oxblood-2); border-color: oklch(0.56 0.15 25 / 0.5); }
 .btn.danger:hover { background: oklch(0.56 0.15 25 / 0.15); }
 .btn.ghost { background: transparent; border-color: var(--border-soft); color: var(--text-dim); }
