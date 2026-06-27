@@ -281,6 +281,30 @@
       "namedExport": "States",
       "meta": {}
     },
+    "layout--sectiontitle--bare": {
+      "name": "Bare",
+      "levels": [
+        "Layout",
+        "Sectiontitle"
+      ],
+      "locStart": 15,
+      "locEnd": 15,
+      "filePath": "src/ReactorSheet/components/ui/SectionTitle.stories.tsx",
+      "namedExport": "Bare",
+      "meta": {}
+    },
+    "layout--sectiontitle--sub": {
+      "name": "Sub",
+      "levels": [
+        "Layout",
+        "Sectiontitle"
+      ],
+      "locStart": 12,
+      "locEnd": 12,
+      "filePath": "src/ReactorSheet/components/ui/SectionTitle.stories.tsx",
+      "namedExport": "Sub",
+      "meta": {}
+    },
     "layout--sectiontitle--with-hint": {
       "name": "With hint",
       "levels": [

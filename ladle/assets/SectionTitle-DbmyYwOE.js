@@ -1,0 +1,1 @@
+import{j as e,c as l}from"./index-DHQ3rPXj.js";function r({hint:s,variant:t,children:n,className:c,...i}){return e.jsxs("h3",{className:l("section-title",t,c),...i,children:[n,s!=null&&e.jsx("span",{className:"hint",children:s})]})}export{r as S};

@@ -1,0 +1,1 @@
+import{j as r,c}from"./index-DHQ3rPXj.js";function n({className:s,...a}){return r.jsx("div",{className:c("card",s),...a})}function d({className:s,...a}){return r.jsx("div",{className:c("kv-card",s),...a})}export{n as C,d as K};
