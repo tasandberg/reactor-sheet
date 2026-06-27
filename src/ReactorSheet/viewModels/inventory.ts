@@ -59,6 +59,8 @@ export function selectCoins(items: OseItem[]): CoinVM[] {
     return [{
       denom: d.toUpperCase(),
       id: it._id as string,
+      name: (it.name as string) ?? d.toUpperCase(),
+      img: (it.img as string) ?? "",
       value: it.system.quantity?.value ?? 0,
       gpEach: cost > 0 ? cost : (GP_PER_COIN[d] ?? 0),
     }];

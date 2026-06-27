@@ -164,6 +164,10 @@ export interface CoinVM {
   denom: string;
   /** The backing treasure item's id (for quantity updates). */
   id: string;
+  /** The backing item's actual name (e.g. "Gold Pieces", "[01.00] Gold (gp)"). */
+  name: string;
+  /** The backing item's image (Foundry item img); "" when unset. */
+  img: string;
   value: number;
   /** gp value of one coin of this denom (system.cost, std fallback) — for the wealth total. */
   gpEach: number;

@@ -19,6 +19,9 @@ import type {
 } from "../../viewModels/types";
 import { sortInventory, SORT_DEFAULT_DIR } from "../../viewModels/inventory";
 import { useDragReorder } from "./useDragReorder";
+import { WealthSection } from "./WealthSection";
+import { ItemImage } from "./ItemImage";
+import { SortHeader } from "./SortHeader";
 import { SectionTitle } from "../ui/SectionTitle";
 import { Tag } from "../ui/Tag";
 import { cx } from "../ui/cx";
@@ -36,9 +39,12 @@ type Ops = {
   onNest: (itemId: string, containerId: string | null) => void;
 };
 
-/** Right-click context-menu target: which item, and where to anchor the menu. */
-type MenuState = { item: InventoryItemVM; x: number; y: number };
-type OnContext = (e: React.MouseEvent, item: InventoryItemVM) => void;
+/** Right-click context-menu target: which item, and where to anchor the menu.
+ *  Coins are real Foundry items too, so they reuse this — only the fields the menu
+ *  reads are required (a coin passes equipped/quantity null → just View + Delete). */
+type CtxItem = Pick<InventoryItemVM, "id" | "name" | "equipped" | "quantity">;
+type MenuState = { item: CtxItem; x: number; y: number };
+export type OnContext = (e: React.MouseEvent, item: CtxItem) => void;
 
 type Props = {
   inventory: InventoryVM;
@@ -107,18 +113,6 @@ function originContainers(
 // ---------------------------------------------------------------------------
 // Row pieces
 // ---------------------------------------------------------------------------
-
-function ItemImage({ item }: { item: InventoryItemVM }) {
-  return (
-    <span className="rs-inv-img" aria-hidden="true">
-      {item.img ? (
-        <img src={item.img} alt="" />
-      ) : (
-        <span className="mono">{item.monogram}</span>
-      )}
-    </span>
-  );
-}
 
 // Equip toggle: outlined hand = unequipped, filled hand = equipped.
 function RowEquip({
@@ -194,7 +188,7 @@ function RowInner({
 }) {
   return (
     <>
-      <ItemImage item={item} />
+      <ItemImage img={item.img} monogram={item.monogram} />
       <NameCell item={item} onOpen={onOpen} />
       <span className="rs-inv-rowcat">{item.category}</span>
       <span className="rs-inv-wt">{weightLabel(item.weight)}</span>
@@ -316,7 +310,7 @@ function ContainerRow({
         <span className="rs-inv-drag" aria-hidden="true">
           <i className="fa-solid fa-grip-lines" />
         </span>
-        <ItemImage item={item} />
+        <ItemImage img={item.img} monogram={item.monogram} />
         <NameCell
           item={item}
           onOpen={onOpen}
@@ -358,50 +352,8 @@ function ContainerRow({
 }
 
 // ---------------------------------------------------------------------------
-// Sort header (sorting only)
+// Sort header row (uses the shared SortHeader)
 // ---------------------------------------------------------------------------
-
-function SortHeader({
-  col,
-  label,
-  className,
-  sort,
-  onSort,
-}: {
-  col: InventorySortKey;
-  label: React.ReactNode;
-  className?: string;
-  sort: SortState;
-  onSort: (key: InventorySortKey) => void;
-}) {
-  const active = sort.key === col;
-  // A click bakes this order into the manual baseline; clicking the active header
-  // again flips direction. Drags then override.
-  const title = active
-    ? "Sorted — click to reverse"
-    : "Click to sort — then drag to fine-tune";
-  return (
-    <button
-      type="button"
-      className={cx("rs-inv-th", className, active && "active")}
-      aria-sort={
-        active ? (sort.dir === "asc" ? "ascending" : "descending") : "none"
-      }
-      title={title}
-      onClick={() => onSort(col)}
-    >
-      {label}
-      <i
-        className={cx(
-          "rs-inv-th-caret",
-          "fa-solid",
-          active && (sort.dir === "asc" ? "fa-caret-up" : "fa-caret-down"),
-        )}
-        aria-hidden="true"
-      />
-    </button>
-  );
-}
 
 function SortHeaderRow({
   sort,
@@ -410,129 +362,30 @@ function SortHeaderRow({
   sort: SortState;
   onSort: (key: InventorySortKey) => void;
 }) {
+  const th = (col: InventorySortKey, label: React.ReactNode, className?: string) => (
+    <SortHeader
+      label={label}
+      className={className}
+      active={sort.key === col}
+      dir={sort.dir}
+      onClick={() => onSort(col)}
+    />
+  );
   return (
     <div className="rs-inv-row rs-inv-headrow" role="row">
       <span aria-hidden="true" /> {/* drag */}
       {/* "Item" spans the image + name columns so it left-aligns to the image */}
-      <SortHeader
-        col="name"
-        label="Item"
-        className="rs-inv-th-item"
-        sort={sort}
-        onSort={onSort}
-      />
-      <SortHeader
-        col="category"
-        label="Type"
-        className="rs-inv-th-cat"
-        sort={sort}
-        onSort={onSort}
-      />
-      <SortHeader
-        col="weight"
-        label="Wt"
-        className="rs-inv-th-wt"
-        sort={sort}
-        onSort={onSort}
-      />
+      {th("name", "Item", "rs-inv-th-item")}
+      {th("category", "Type", "rs-inv-th-cat")}
+      {th("weight", "Wt", "rs-inv-th-wt")}
       <span className="rs-inv-thlabel rs-inv-thlabel-eq">Equip</span>
     </div>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Coin / encumbrance
+// Encumbrance readout
 // ---------------------------------------------------------------------------
-
-// Display order for the compact wealth row (most-used first), independent of the
-// canonical pp→cp storage order in selectCoins.
-const COIN_ORDER = ["GP", "SP", "CP", "PP", "EP"];
-
-/** Compact single-row wealth strip: a colour-dotted chip per denomination with
- *  an inline-editable quantity. Commits on blur/Enter. With no coin items the
- *  module never mints any (coins vary by compendium) — it just prompts the user
- *  to drop the denominations they want, which the sheet's item-drop adds. */
-/** Wealth total in gp, trimmed of trailing zeros (151.5, 150, 0.5). */
-function fmtGp(n: number): string {
-  return (Math.round(n * 100) / 100).toString();
-}
-
-/** Wealth card (above the inventory header): total on the left, per-denomination
- *  dot/value/denom chips, and an Edit toggle that turns the values into inputs. */
-function WealthCard({
-  coins,
-  onSetCoin,
-}: {
-  coins: CoinVM[];
-  onSetCoin: (id: string, value: number) => void;
-}) {
-  const [editing, setEditing] = useState(false);
-  const sorted = [...coins].sort(
-    (a, b) => COIN_ORDER.indexOf(a.denom) - COIN_ORDER.indexOf(b.denom),
-  );
-  const total = sorted.reduce((sum, c) => sum + c.value * c.gpEach, 0);
-
-  return (
-    <div className="rs-wealth-card">
-      <div className="rs-wealth-head">
-        <span className="rs-wealth-lbl">Wealth</span>
-        {coins.length > 0 && (
-          <span className="rs-wealth-sum">
-            <span className="n">{fmtGp(total)}</span> <span className="u">gp</span>
-          </span>
-        )}
-      </div>
-
-      {coins.length === 0 ? (
-        <p className="rs-wealth-empty">Drop coin items here to track your wealth.</p>
-      ) : (
-        <div className="rs-wealth-coins">
-          {sorted.map((c) => (
-            <span
-              key={c.id}
-              className={`rs-wealth-coin rs-wealth-${c.denom.toLowerCase()}`}
-            >
-              <span className="dot" aria-hidden="true" />
-              {editing ? (
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  min={0}
-                  className="val"
-                  defaultValue={c.value}
-                  key={c.value}
-                  aria-label={`${c.denom} quantity`}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") e.currentTarget.blur();
-                  }}
-                  onBlur={(e) => {
-                    const n = parseInt(e.currentTarget.value, 10);
-                    if (Number.isNaN(n)) e.currentTarget.value = String(c.value);
-                    else onSetCoin(c.id, Math.max(0, n));
-                  }}
-                />
-              ) : (
-                <span className="val-static">{c.value}</span>
-              )}
-              <span className="den">{c.denom}</span>
-            </span>
-          ))}
-        </div>
-      )}
-
-      {coins.length > 0 && (
-        <button
-          type="button"
-          className="rs-wealth-edit"
-          aria-pressed={editing}
-          onClick={() => setEditing((v) => !v)}
-        >
-          {editing ? "Done" : "Edit"}
-        </button>
-      )}
-    </div>
-  );
-}
 
 // Encumbrance readout for the Inventory header: load · status · move, with the
 // band colour (green/yellow/red) on status+move carrying the signal — no bar.
@@ -985,7 +838,6 @@ export function InventoryViewDnd({
 
   return (
     <section className="rs-inv">
-      <WealthCard coins={coins} onSetCoin={onSetCoin} />
       <div
         className={cx("rs-inv-head", encumbrance.enabled && "enc-rule")}
         // the header underline doubles as the encumbrance load bar (see .enc-rule)
@@ -998,6 +850,7 @@ export function InventoryViewDnd({
         <SectionTitle>Inventory</SectionTitle>
         {encumbrance.enabled && <EncumbranceReadout e={encumbrance} />}
       </div>
+      <WealthSection coins={coins} onSetCoin={onSetCoin} onOpen={onOpen} onContext={openMenu} />
 
       {/* Equipped tray + All-Items header pin together as one opaque block so the
           two never separate into a see-through gap (no JS height measuring). */}

@@ -304,83 +304,120 @@
 // Coin editor
 // ---------------------------------------------------------------------------
 
-// Wealth card (above the Inventory header): WEALTH label + gp total on the left,
-// colour-dotted denomination chips in the middle, an Edit toggle on the right.
-.rs-wealth-card {
-  display: flex; align-items: center; flex-wrap: wrap;
-  gap: var(--spacer-2) var(--spacer-6);
-  margin-bottom: var(--spacer-3);
-  background: var(--surface, #23201a);
-  border: 1px solid var(--border-soft, #2c2823);
-  border-radius: var(--r-lg, 10px);
-  padding: var(--spacer-3) var(--spacer-5);
+// Wealth section (below the Inventory header): a header bar whose caret toggles a
+// drag-reorderable coin table. Sits in the same rhythm as Equipped / All Items.
+.rs-wsec { margin: 0 0 var(--spacer-5); }
+
+// header bar — full-width button: overlapping coin dots · "Wealth" · gp total ·
+// caret · carried weight (far right).
+.rs-inv .rs-whead {
+  display: flex; align-items: center; gap: var(--spacer-3); width: 100%;
+  background: none; border: none; padding: 7px 2px 9px; cursor: pointer; text-align: left;
 }
-// left: WEALTH label stacked over the gp total
-.rs-wealth-head { display: flex; flex-direction: column; gap: 1px; flex: none; }
-.rs-wealth-lbl {
-  font-family: var(--sans); font-size: var(--fs-3xs, 10px); font-weight: 600;
-  letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-mute, #8a8270);
+.rs-inv .rs-whead:disabled { cursor: default; }
+.rs-whead .coins { display: inline-flex; }
+.rs-whead .coins .ci {
+  width: 11px; height: 11px; margin-left: -4px;
+  box-shadow: 0 0 0 1.5px var(--bg, #181612); // ring in the page bg → reads as stacked coins
 }
-.rs-wealth-sum {
-  font-family: var(--display); color: var(--gold); line-height: 1.1;
-  .n { font-size: var(--fs-xl, 18px); }
-  .u { font-size: var(--fs-xs, 12px); letter-spacing: 0.04em; text-transform: uppercase; }
+.rs-whead .coins .ci:first-child { margin-left: 0; }
+.rs-whead .key {
+  font-family: var(--sans); font-weight: 600; font-size: var(--fs-xs, 12px);
+  letter-spacing: 0.13em; text-transform: uppercase; color: var(--text-mute, #8a8270);
 }
-.rs-wealth-empty {
-  margin: 0;
+.rs-whead .v { font-family: var(--display); font-size: var(--fs-lg, 16px); color: var(--accent-alt); line-height: 1; }
+.rs-whead .v small {
+  font-family: var(--mono); font-size: var(--fs-2xs, 11px);
+  color: var(--accent-alt); opacity: 0.75; margin-left: 2px;
+}
+.rs-whead .rs-wcaret {
+  font-size: var(--fs-md, 15px); color: var(--text-mute, #8a8270);
+  transition: transform 0.18s, color 0.15s;
+}
+.rs-whead.open .rs-wcaret { transform: rotate(90deg); }
+.rs-inv .rs-whead:hover:not(:disabled) .rs-wcaret { color: var(--text, #e5dec8); }
+.rs-whead .wt { margin-left: auto; font-family: var(--mono); font-size: var(--fs-2xs, 11px); color: var(--text-faint, #6a6354); }
+
+.rs-wsec-empty {
+  margin: 0 0 var(--spacer-2) 2px;
   font-family: var(--serif); font-style: italic;
-  font-size: var(--fs-sm, 13px); color: var(--text-faint, #8a8270);
+  font-size: var(--fs-sm, 13px); color: var(--text-faint, #6a6354);
 }
-// middle: coin chips fill the row (wrap on XS, one line md+)
-.rs-wealth-coins {
-  display: flex; flex-wrap: wrap; align-items: center;
-  gap: var(--spacer-2) var(--spacer-5);
-  flex: 1 1 auto;
+
+// coin table — card; rows mirror the items table (handle · ink-icon · name …)
+.rs-cointab {
+  background: var(--bg-2, #1f1c17);
+  border: 1px solid var(--border-soft, #2c2823);
+  border-radius: var(--r-md, 6px);
+  padding: 3px 12px 9px; margin-top: 2px;
 }
-@container app (min-width: 480px) { .rs-wealth-coins { flex-wrap: nowrap; } }
-// right: Edit toggle (text button)
-.rs-inv .rs-wealth-edit {
-  flex: none; background: none; border: none; padding: 0; cursor: pointer;
-  font-family: var(--sans); font-size: var(--fs-3xs, 10px); font-weight: 600;
-  letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-mute, #8a8270);
-  transition: color 0.12s;
-  &:hover, &[aria-pressed="true"] { color: var(--gold); }
+// Grid mirrors the items table (handle · 30px image · name · …) so the coin rows
+// read as siblings; the trailing Qty/Weight/Value columns are coin-specific.
+.rs-coin-colhead,
+.rs-coin-row,
+.rs-coin-total {
+  display: grid;
+  grid-template-columns: 18px 30px minmax(0, 1fr) 74px 56px 64px;
+  column-gap: var(--spacer-2); align-items: center;
 }
-.rs-wealth-coin { display: inline-flex; align-items: baseline; gap: var(--spacer-2); }
-.rs-wealth-coin .dot {
-  width: 9px; height: 9px; border-radius: 50%; flex: none; align-self: center;
-  background: var(--coin, #8a8270);
+.rs-coin-colhead {
+  padding: 0 0 var(--spacer-1);
+  border-bottom: 2px solid var(--border, #3a342c);
 }
-// static value (read mode) then a small denomination label
-.rs-wealth-coin .val-static {
-  font-family: var(--mono); font-size: var(--fs-md, 15px); font-weight: 600;
-  color: var(--text, #e5dec8);
-}
-.rs-wealth-coin .den {
-  font-family: var(--sans); font-weight: 600;
-  font-size: var(--fs-2xs, 11px); letter-spacing: 0.06em; text-transform: uppercase;
-  color: var(--text-mute, #8a8270);
-}
-// Inline-editable value (Edit mode): a subtle boxed field.
-.rs-inv .rs-wealth-coin .val {
-  width: 3em; min-width: 0;
-  font-family: var(--mono); font-size: var(--fs-md, 15px);
-  color: var(--text, #e5dec8);
-  background: transparent; border: 1px solid transparent;
-  border-radius: var(--r-sm, 4px); padding: 1px 3px;
-  cursor: text; transition: border-color 0.12s, background 0.12s;
+// right-align the numeric sort headers (reuses the shared .rs-inv-th button)
+.rs-inv .rs-coin-th-num { justify-content: flex-end; }
+
+.rs-coin-row { padding: var(--spacer-2) 0; border-bottom: 1px solid var(--border-soft, #2c2823); }
+// drop-line affordance (matches the items rows)
+.rs-coin-row.drop-before { box-shadow: inset 0 2px 0 0 var(--teal, #1f7575); }
+.rs-coin-row.drop-after  { box-shadow: inset 0 -2px 0 0 var(--teal, #1f7575); }
+.rs-coin-row.dragging { opacity: 0.4; }
+.rs-inv .rs-coin-qty {
+  width: 100%; min-width: 0; text-align: right;
+  font-family: var(--mono); font-size: var(--fs-sm, 13px); color: var(--text, #e5dec8);
+  background: var(--surface, #23201a); border: 1px solid var(--border-soft, #2c2823);
+  border-radius: var(--r-sm, 4px); padding: 5px 8px;
+  transition: border-color 0.12s;
   -moz-appearance: textfield; appearance: textfield;
 }
-.rs-inv .rs-wealth-coin .val:hover { border-color: var(--border, #3a342c); }
-.rs-inv .rs-wealth-coin .val:focus { border-color: var(--gold); background: var(--surface, #23201a); }
-.rs-inv .rs-wealth-coin .val::-webkit-inner-spin-button,
-.rs-inv .rs-wealth-coin .val::-webkit-outer-spin-button { appearance: none; margin: 0; }
-// Per-denomination dot colours (hex fallbacks inside var() are stylelint-allowed).
-.rs-wealth-gp .dot { background: var(--coin-gp, #c8a04a); } // gold
-.rs-wealth-sp .dot { background: var(--coin-sp, #b9c0c9); } // silver
-.rs-wealth-cp .dot { background: var(--coin-cp, #b3724a); } // copper
-.rs-wealth-pp .dot { background: var(--coin-pp, #cdd6e0); } // platinum
-.rs-wealth-ep .dot { background: var(--coin-ep, #d8c98a); } // electrum
+.rs-inv .rs-coin-qty:hover { border-color: var(--border, #3a342c); }
+.rs-inv .rs-coin-qty:focus { border-color: var(--accent-alt); outline: none; }
+.rs-inv .rs-coin-qty::-webkit-inner-spin-button,
+.rs-inv .rs-coin-qty::-webkit-outer-spin-button { appearance: none; margin: 0; }
+.rs-coin-wt { text-align: right; font-family: var(--mono); font-size: var(--fs-xs, 12px); color: var(--text-dim, #b5ad97); }
+.rs-coin-val { text-align: right; font-family: var(--mono); font-size: var(--fs-xs, 12px); color: var(--text, #e5dec8); }
+
+.rs-coin-total {
+  align-items: baseline;
+  // no top border — the last coin row's bottom rule is the divider (avoids a double line)
+  padding: 8px 0 1px; margin-top: 2px;
+}
+// explicit close affordance under the table
+.rs-coin-done { display: flex; justify-content: flex-end; margin-top: var(--spacer-3); }
+.rs-coin-total .lab {
+  grid-column: 3; font-family: var(--sans); font-weight: 600; font-size: var(--fs-3xs, 10px);
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-mute, #8a8270);
+}
+.rs-coin-total .tw { grid-column: 5; text-align: right; font-family: var(--mono); font-size: var(--fs-xs, 12px); color: var(--text-dim, #b5ad97); }
+.rs-coin-total .tv { grid-column: 6; text-align: right; font-family: var(--mono); font-weight: 700; font-size: var(--fs-xs, 12px); color: var(--accent-alt); }
+
+// Per-denomination dot colours (handoff palette; hex fallbacks are stylelint-allowed).
+.rs-inv .ci { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.rs-inv .ci.pp { background: var(--coin-pp, #cfd2da); }
+.rs-inv .ci.gp { background: var(--accent-alt); }
+.rs-inv .ci.ep { background: var(--coin-ep, #cdbb78); }
+.rs-inv .ci.sp { background: var(--coin-sp, #b9bcc4); }
+.rs-inv .ci.cp { background: var(--coin-cp, #b1734a); }
+
+// xs / narrow inventory column: drop Weight + Value columns and the total row.
+// Header children: 1 drag · 2 Coin · 3 Qty · 4 Weight · 5 Value.
+@container app (max-width: 479px) {
+  .rs-coin-colhead,
+  .rs-coin-row { grid-template-columns: 18px 30px minmax(0, 1fr) 92px; }
+  .rs-coin-colhead > :nth-child(4),
+  .rs-coin-colhead > :nth-child(5) { display: none; }
+  .rs-coin-wt, .rs-coin-val, .rs-coin-total { display: none; }
+}
 
 // ---------------------------------------------------------------------------
 // Sections (Equipped tray + All Items) + sticky pinning
