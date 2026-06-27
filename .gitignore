@@ -30,7 +30,7 @@ build/
 /dist/
 
 # Local planning docs (not committed)
-docs/plans/
+docs
 
 # Local, uncommitted Vite overrides
 vite.config.local.json
