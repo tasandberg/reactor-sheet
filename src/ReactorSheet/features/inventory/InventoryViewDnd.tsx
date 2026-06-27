@@ -19,14 +19,21 @@ import type {
 } from "@domain/vm-types";
 import { sortInventory, SORT_DEFAULT_DIR } from "@features/inventory/inventory";
 import { useDragReorder } from "@features/inventory/useDragReorder";
+import { buildItemMacroDragData } from "@features/inventory/dragToMacro";
 import { WealthSection } from "@features/inventory/WealthSection";
 import { ItemImage } from "@features/inventory/ItemImage";
 import { SortHeader } from "@features/inventory/SortHeader";
+import { useReactorSheetContext } from "@app/context";
 import { SectionTitle } from "@ui/SectionTitle";
 import { Tag } from "@ui/Tag";
 import { cx } from "@ui/cx";
+import type { OseItem } from "@domain/types";
 
 type Dnd = ReturnType<typeof useDragReorder>;
+
+/** Per-row Foundry drag payload → drop onto the macro hotbar. undefined = row isn't
+ *  a draggable-to-macro item (default `<group>:<idx>` reorder payload is used). */
+type ItemDragData = (id: string) => string | undefined;
 
 type Ops = {
   onEquip: (id: string) => void;
@@ -208,6 +215,7 @@ function SortableRow({
   group,
   depth,
   dnd,
+  itemDragData,
   onEquip,
   onOpen,
   onContext,
@@ -217,6 +225,7 @@ function SortableRow({
   group: string;
   depth: number;
   dnd: Dnd;
+  itemDragData: ItemDragData;
   onEquip: (id: string) => void;
   onOpen: (id: string) => void;
   onContext: OnContext;
@@ -237,6 +246,7 @@ function SortableRow({
       {...dnd.rowProps(group, index, {
         ownZone: group,
         acceptCrossGroup: group === ROOT ? (from) => from !== EQUIPPED : false,
+        dragPayload: () => itemDragData(item.id),
       })}
     >
       <span className="rs-inv-drag" aria-hidden="true">
@@ -258,6 +268,7 @@ function ContainerRow({
   byId,
   collapsed,
   dnd,
+  itemDragData,
   onToggle,
   onEquip,
   onOpen,
@@ -269,6 +280,7 @@ function ContainerRow({
   byId: Map<string, InventoryItemVM>;
   collapsed: boolean;
   dnd: Dnd;
+  itemDragData: ItemDragData;
   onToggle: (id: string) => void;
   onEquip: (id: string) => void;
   onOpen: (id: string) => void;
@@ -306,6 +318,7 @@ function ContainerRow({
           containerZone: item.id,
           ownZone: ROOT,
           acceptCrossGroup: (from) => from !== EQUIPPED,
+          dragPayload: () => itemDragData(item.id),
         })}
       >
         <span className="rs-inv-drag" aria-hidden="true">
@@ -341,6 +354,7 @@ function ContainerRow({
                 group={group}
                 depth={1}
                 dnd={dnd}
+                itemDragData={itemDragData}
                 onEquip={onEquip}
                 onOpen={onOpen}
                 onContext={onContext}
@@ -456,6 +470,7 @@ function equippedStats(
 function EquippedTray({
   items,
   dnd,
+  itemDragData,
   onOpen,
   onContext,
   equipDropActive,
@@ -463,6 +478,7 @@ function EquippedTray({
 }: {
   items: InventoryItemVM[];
   dnd: Dnd;
+  itemDragData: ItemDragData;
   onOpen: (id: string) => void;
   onContext: OnContext;
   /** An All-Items row is mid-drag — the tray is a live equip drop target. */
@@ -506,7 +522,11 @@ function EquippedTray({
             dnd.rowClass(EQUIPPED, i),
           )}
           onContextMenu={(e) => onContext(e, item)}
-          {...dnd.rowProps(EQUIPPED, i, { ownZone: EQUIPPED, axis: "x" })}
+          {...dnd.rowProps(EQUIPPED, i, {
+            ownZone: EQUIPPED,
+            axis: "x",
+            dragPayload: () => itemDragData(item.id),
+          })}
         >
           <button
             type="button"
@@ -690,6 +710,15 @@ export function InventoryViewDnd({
   const [listOver, setListOver] = useState(false); // tray tile hovering the list → unequip
   const [menu, setMenu] = useState<MenuState | null>(null);
 
+  // Foundry items by id — source for the hotbar drag payload. Dragging a row onto
+  // the macro bar creates an item macro (OSE's hotbarDrop hook), like the stock sheet.
+  const { actor, items } = useReactorSheetContext();
+  const itemsById = new Map<string, OseItem>(items.map((it) => [it._id, it]));
+  const itemDragData: ItemDragData = (id) => {
+    const it = itemsById.get(id);
+    return it ? buildItemMacroDragData(actor, it) : undefined;
+  };
+
   const openMenu: OnContext = (e, item) => {
     e.preventDefault();
     setMenu({ item, x: e.clientX, y: e.clientY });
@@ -862,6 +891,7 @@ export function InventoryViewDnd({
             <EquippedTray
               items={trayItems}
               dnd={dnd}
+              itemDragData={itemDragData}
               onOpen={onOpen}
               onContext={openMenu}
               // Equip-by-drop only for an All-Items row drag (not a tray-internal reorder).
@@ -937,6 +967,7 @@ export function InventoryViewDnd({
                 byId={byId}
                 collapsed={!expanded.has(id)}
                 dnd={dnd}
+                itemDragData={itemDragData}
                 onToggle={toggleCollapse}
                 onEquip={onEquip}
                 onOpen={onOpen}
@@ -950,6 +981,7 @@ export function InventoryViewDnd({
                 group={ROOT}
                 depth={0}
                 dnd={dnd}
+                itemDragData={itemDragData}
                 onEquip={onEquip}
                 onOpen={onOpen}
                 onContext={openMenu}
