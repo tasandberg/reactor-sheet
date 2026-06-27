@@ -6,10 +6,7 @@ name: E2E Test Suite
 
 on:
   push:
-    # e2e-ci is temporary: lets the workflow run on the PR branch before it's on
-    # main (workflow_dispatch only registers from the default branch). Remove
-    # before merge.
-    branches: [main, e2e-ci]
+    branches: [main]
   # pull_request_target (not pull_request) so the job can read the license
   # secrets, which GitHub never exposes to fork-PR workflows. The Checkout step
   # then pulls the PR head — i.e. runs untrusted code with secrets present — so
