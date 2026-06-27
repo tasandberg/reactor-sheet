@@ -24,5 +24,7 @@
     "paths": {
       "@src/*": ["./src/*"]
     }
-  }
+  },
+  // tools/e2e is a standalone Playwright package compiled by its own toolchain.
+  "exclude": ["tools"]
 }

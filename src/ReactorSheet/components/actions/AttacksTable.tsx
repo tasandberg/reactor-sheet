@@ -26,7 +26,7 @@ function WeaponRow({ a, onRoll, onAttack }: { a: AttackVM; onRoll?: Props["onRol
   const dual = a.modes.length > 1;
 
   return (
-    <div className="rs-weapon" role="row">
+    <div className="rs-weapon" role="row" data-testid={`weapon-row-${a.itemId}`}>
       <div className="winfo">
         {a.img ? (
           <img className="wic wic-img" src={a.img} alt="" />
@@ -45,6 +45,7 @@ function WeaponRow({ a, onRoll, onAttack }: { a: AttackVM; onRoll?: Props["onRol
                   <button
                     type="button"
                     key={m.kind}
+                    data-testid={`attack-mode-${m.kind}-${a.itemId}`}
                     className={cx("kind-seg", m.kind, i === active && "selected")}
                     aria-pressed={i === active}
                     onClick={() => setActive(i)}
@@ -78,6 +79,7 @@ function WeaponRow({ a, onRoll, onAttack }: { a: AttackVM; onRoll?: Props["onRol
       <button
         type="button"
         className="wstat hit"
+        data-testid={`weapon-hit-${a.itemId}`}
         disabled={!onRoll}
         onClick={() => onRoll?.(mode.hit)}
         title={`Roll to hit · ${mode.hitTip}`}
@@ -104,6 +106,7 @@ function WeaponRow({ a, onRoll, onAttack }: { a: AttackVM; onRoll?: Props["onRol
       <button
         type="button"
         className="fvtt-atk"
+        data-testid={`weapon-attack-${a.itemId}`}
         disabled={!onAttack}
         onClick={() => onAttack?.(a.itemId)}
         title="Attack roll (hit + damage)"

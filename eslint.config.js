@@ -6,7 +6,8 @@ import tseslint from "typescript-eslint";
 import { globalIgnores } from "eslint/config";
 
 export default tseslint.config([
-  globalIgnores(["dist", "foundry"]),
+  // tools/e2e is a standalone Playwright package with its own toolchain/deps.
+  globalIgnores(["dist", "foundry", "tools"]),
   {
     files: ["**/*.{ts,tsx}"],
     extends: [
