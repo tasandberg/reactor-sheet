@@ -51,11 +51,13 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
           {
             name: "Dagger",
             type: "weapon",
+            // Equipped so it appears in the Attacks table (selectAttacks skips
+            // unequipped weapons). The equip spec toggles the armor, not this.
             system: {
               damage: "1d4",
               melee: true,
               missile: true,
-              equipped: false,
+              equipped: true,
               quantity: { value: 1 },
             },
           },

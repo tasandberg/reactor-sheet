@@ -7,15 +7,17 @@ test.describe("equip / unequip", () => {
     const sheet = await openCharacterSheet(page);
     await sheet.locator('[data-testid="tab-inventory"]').click();
 
-    const dagger = await itemId(page, "Dagger");
-    const equip = sheet.locator(`[data-testid="equip-${dagger}"]`);
+    // Use the armor so this test stays independent of the weapon the attack
+    // test needs kept equipped.
+    const armor = await itemId(page, "Leather Armor");
+    const equip = sheet.locator(`[data-testid="equip-${armor}"]`);
     await expect(equip).toBeVisible();
 
-    const wasEquipped = await itemGet(page, "Dagger", "system.equipped");
+    const wasEquipped = await itemGet(page, "Leather Armor", "system.equipped");
     await equip.click();
 
     await expect
-      .poll(() => itemGet(page, "Dagger", "system.equipped"), { timeout: 15_000 })
+      .poll(() => itemGet(page, "Leather Armor", "system.equipped"), { timeout: 15_000 })
       .toBe(!wasEquipped);
     await expect(equip).toHaveAttribute("aria-pressed", String(!wasEquipped));
   });

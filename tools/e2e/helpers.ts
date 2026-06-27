@@ -30,6 +30,14 @@ export async function joinAsGM(page: Page): Promise<void> {
  * actor's core.sheetClass flag, so render() shows the reactor sheet.
  */
 export async function openCharacterSheet(page: Page): Promise<Locator> {
+  // Foundry parks a persistent #notifications overlay (e.g. the min-resolution
+  // warning under headless) on top of the sheet, where it intercepts clicks.
+  // Let pointer events pass through it and clear any queued toasts.
+  await page
+    .addStyleTag({ content: "#notifications{pointer-events:none !important}" })
+    .catch(() => {});
+  await page.evaluate(() => (globalThis as any).ui?.notifications?.clear?.());
+
   await page.evaluate(async (name) => {
     const actor = (globalThis as any).game.actors.getName(name);
     if (!actor) throw new Error(`Seed actor "${name}" not found`);
@@ -91,14 +99,13 @@ export async function itemGet(page: Page, name: string, path: string): Promise<u
   );
 }
 
-/** Dismiss an OSE roll-config dialog if one popped (click its primary/Roll button). */
+/**
+ * OSE roll buttons open a DialogV2 roll-config ("Strength check", "Death Poison
+ * Save", …) whose primary "Roll" button is `[data-action="ok"]`. Wait briefly for
+ * it and click Roll. No-ops for rolls that post directly (no dialog).
+ */
 export async function confirmRollDialogIfPresent(page: Page): Promise<void> {
-  const dialogBtn = page
-    .locator(
-      '.application.dialog button, dialog[open] button[data-action="roll"], .dialog button.roll, button[data-button="roll"]',
-    )
-    .first();
-  if (await dialogBtn.isVisible().catch(() => false)) {
-    await dialogBtn.click().catch(() => {});
-  }
+  const ok = page.locator('.application.dialog button[data-action="ok"]').first();
+  await ok.waitFor({ state: "visible", timeout: 5_000 }).catch(() => {});
+  if (await ok.isVisible().catch(() => false)) await ok.click().catch(() => {});
 }
