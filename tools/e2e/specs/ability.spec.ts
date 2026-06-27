@@ -1,21 +1,15 @@
-import { test, expect } from "@playwright/test";
-import {
-  joinAsGM,
-  openCharacterSheet,
-  chatCount,
-  confirmRollDialogIfPresent,
-} from "../helpers";
+import { test, expect } from "../fixtures";
+import { openCharacterSheet, chatCount, confirmRollDialogIfPresent } from "../helpers";
 
 test.describe("ability checks", () => {
-  test("rolling a STR check posts a chat message", async ({ page }) => {
-    await joinAsGM(page);
-    const sheet = await openCharacterSheet(page);
+  test("rolling a STR check posts a chat message", async ({ gamePage }) => {
+    const sheet = await openCharacterSheet(gamePage);
     await sheet.locator('[data-testid="tab-actions"]').click();
 
-    const before = await chatCount(page);
+    const before = await chatCount(gamePage);
     await sheet.locator('[data-testid="ability-str"]:visible').first().click();
-    await confirmRollDialogIfPresent(page);
+    await confirmRollDialogIfPresent(gamePage);
 
-    await expect.poll(() => chatCount(page), { timeout: 15_000 }).toBeGreaterThan(before);
+    await expect.poll(() => chatCount(gamePage), { timeout: 15_000 }).toBeGreaterThan(before);
   });
 });

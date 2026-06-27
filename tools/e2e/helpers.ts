@@ -50,11 +50,19 @@ export async function openCharacterSheet(page: Page): Promise<Locator> {
   return sheet;
 }
 
-/** Close every open ApplicationV2 window (reset between specs). */
-export async function closeAllWindows(page: Page): Promise<void> {
+/**
+ * Reset UI between specs that share one booted page: close the reactor sheet and
+ * any open roll dialogs, but leave Foundry's core UI (sidebar, hotbar, …) alone.
+ * The bundled sheet class name is minified, so match on the element instead.
+ */
+export async function resetSheet(page: Page): Promise<void> {
   await page.evaluate(() => {
-    for (const app of (globalThis as any).foundry.applications.instances.values())
-      app.close?.();
+    for (const app of (globalThis as any).foundry.applications.instances.values()) {
+      const el = app.element as HTMLElement | undefined;
+      const isSheet = el?.classList?.contains("reactor-sheet");
+      const isDialog = el?.classList?.contains("dialog") || /Dialog/i.test(app.constructor?.name ?? "");
+      if (isSheet || isDialog) app.close?.();
+    }
   });
 }
 

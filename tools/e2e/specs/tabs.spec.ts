@@ -1,10 +1,9 @@
-import { test, expect } from "@playwright/test";
-import { joinAsGM, openCharacterSheet } from "../helpers";
+import { test, expect } from "../fixtures";
+import { openCharacterSheet } from "../helpers";
 
 test.describe("tab navigation", () => {
-  test("switching tabs updates the selected tab and panel", async ({ page }) => {
-    await joinAsGM(page);
-    const sheet = await openCharacterSheet(page);
+  test("switching tabs updates the selected tab and panel", async ({ gamePage }) => {
+    const sheet = await openCharacterSheet(gamePage);
 
     const inventoryTab = sheet.locator('[data-testid="tab-inventory"]');
     await inventoryTab.click();

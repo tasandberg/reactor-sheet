@@ -1,19 +1,12 @@
-import { test, expect } from "@playwright/test";
-import {
-  joinAsGM,
-  openCharacterSheet,
-  chatCount,
-  confirmRollDialogIfPresent,
-  itemId,
-} from "../helpers";
+import { test, expect } from "../fixtures";
+import { openCharacterSheet, chatCount, confirmRollDialogIfPresent, itemId } from "../helpers";
 
 test.describe("weapon attacks", () => {
-  test("toggling attack mode and rolling to hit posts a chat message", async ({ page }) => {
-    await joinAsGM(page);
-    const sheet = await openCharacterSheet(page);
+  test("toggling attack mode and rolling to hit posts a chat message", async ({ gamePage }) => {
+    const sheet = await openCharacterSheet(gamePage);
     await sheet.locator('[data-testid="tab-actions"]').click();
 
-    const dagger = await itemId(page, "Dagger");
+    const dagger = await itemId(gamePage, "Dagger");
 
     // Dagger is melee+missile → a segmented mode toggle. Switch to missile.
     const missile = sheet.locator(`[data-testid="attack-mode-missile-${dagger}"]`);
@@ -22,10 +15,10 @@ test.describe("weapon attacks", () => {
       await expect(missile).toHaveAttribute("aria-pressed", "true");
     }
 
-    const before = await chatCount(page);
+    const before = await chatCount(gamePage);
     await sheet.locator(`[data-testid="weapon-hit-${dagger}"]`).click();
-    await confirmRollDialogIfPresent(page);
+    await confirmRollDialogIfPresent(gamePage);
 
-    await expect.poll(() => chatCount(page), { timeout: 15_000 }).toBeGreaterThan(before);
+    await expect.poll(() => chatCount(gamePage), { timeout: 15_000 }).toBeGreaterThan(before);
   });
 });

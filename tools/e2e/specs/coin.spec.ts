@@ -1,10 +1,9 @@
-import { test, expect } from "@playwright/test";
-import { joinAsGM, openCharacterSheet, itemGet } from "../helpers";
+import { test, expect } from "../fixtures";
+import { openCharacterSheet, itemGet } from "../helpers";
 
 test.describe("wealth / coins", () => {
-  test("editing a coin quantity persists to the coin item", async ({ page }) => {
-    await joinAsGM(page);
-    const sheet = await openCharacterSheet(page);
+  test("editing a coin quantity persists to the coin item", async ({ gamePage }) => {
+    const sheet = await openCharacterSheet(gamePage);
     await sheet.locator('[data-testid="tab-inventory"]').click();
 
     await sheet.locator('[data-testid="wealth-toggle"]').click();
@@ -15,7 +14,7 @@ test.describe("wealth / coins", () => {
     await gp.blur();
 
     await expect
-      .poll(() => itemGet(page, "Gold piece", "system.quantity.value"), { timeout: 15_000 })
+      .poll(() => itemGet(gamePage, "Gold piece", "system.quantity.value"), { timeout: 15_000 })
       .toBe(123);
   });
 });
