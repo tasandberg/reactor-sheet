@@ -21,7 +21,7 @@ export default defineConfig({
     baseURL: BASE_URL,
     headless: true,
     viewport: { width: 1920, height: 1080 },
-    actionTimeout: 15_000,
+    actionTimeout: process.env.CI ? 30_000 : 15_000,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     // Software WebGL so the headless canvas boots (Foundry needs a WebGL context).
