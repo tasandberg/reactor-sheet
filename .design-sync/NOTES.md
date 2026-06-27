@@ -61,6 +61,14 @@ library under `src/ReactorSheet/components/ui/`.
   (Controls/Display/Layout/Overlays/Navigation/Data). Adding a primitive → add its
   `@category`. KvCard needs its OWN `@category` (it's the 2nd export in Card.tsx).
 
+## Parallel story set (Ladle)
+
+- The repo ALSO has Ladle stories at `src/ReactorSheet/components/ui/*.stories.tsx` — a
+  separate catalog from the synced `.design-sync/previews/*.tsx`. The sync (package shape)
+  reads ONLY `previews/`, never the stories. They're independent files: when you change a
+  component's authored preview, mirror the same exports into its `*.stories.tsx` so the two
+  catalogs don't drift (e.g. SectionTitle's `Sub`/`Bare` variants live in both).
+
 ## Re-sync risks (what can silently go stale)
 
 - **`build-css.mjs` mirrors the app pipeline by hand.** If the repo changes how Vellum CSS
