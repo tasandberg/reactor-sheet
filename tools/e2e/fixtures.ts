@@ -1,5 +1,5 @@
 import { test as base, expect, type Page } from "@playwright/test";
-import { joinAsGM, resetSheet } from "./helpers";
+import { joinAsGM, closeDialogs } from "./helpers";
 
 /**
  * Foundry's `game.ready` boot (~40s on a 2-core CI runner under software WebGL)
@@ -39,7 +39,7 @@ test.afterEach(async ({ gamePage }, testInfo) => {
       .then((buf) => testInfo.attach("failure", { body: buf, contentType: "image/png" }))
       .catch(() => {});
   }
-  await resetSheet(gamePage);
+  await closeDialogs(gamePage);
 });
 
 export { expect };

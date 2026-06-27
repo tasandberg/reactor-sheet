@@ -13,8 +13,10 @@ export default defineConfig({
   workers: 1,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : [["list"]],
-  timeout: 60_000,
-  expect: { timeout: 15_000 },
+  // Foundry ops run far slower on 2-core CI runners (sheet render, roll dialogs),
+  // so give each spec generous headroom there.
+  timeout: process.env.CI ? 150_000 : 60_000,
+  expect: { timeout: 20_000 },
   use: {
     baseURL: BASE_URL,
     headless: true,

@@ -30,38 +30,44 @@ export async function joinAsGM(page: Page): Promise<void> {
  * actor's core.sheetClass flag, so render() shows the reactor sheet.
  */
 export async function openCharacterSheet(page: Page): Promise<Locator> {
-  // Foundry parks a persistent #notifications overlay (e.g. the min-resolution
-  // warning under headless) on top of the sheet, where it intercepts clicks.
-  // Let pointer events pass through it and clear any queued toasts.
-  await page
-    .addStyleTag({ content: "#notifications{pointer-events:none !important}" })
-    .catch(() => {});
-  await page.evaluate(() => (globalThis as any).ui?.notifications?.clear?.());
-
   await page.evaluate(async (name) => {
-    const actor = (globalThis as any).game.actors.getName(name);
+    const g = globalThis as any;
+    // Foundry parks a persistent #notifications overlay (min-resolution warning
+    // under headless) over the sheet, intercepting clicks. Let pointer events
+    // pass through it (inject once) and clear queued toasts.
+    if (!document.getElementById("__e2e_notif_css")) {
+      const s = document.createElement("style");
+      s.id = "__e2e_notif_css";
+      s.textContent = "#notifications{pointer-events:none !important}";
+      document.head.appendChild(s);
+    }
+    g.ui?.notifications?.clear?.();
+
+    const actor = g.game.actors.getName(name);
     if (!actor) throw new Error(`Seed actor "${name}" not found`);
-    await actor.sheet.render(true);
+    // Rendering this React sheet is the expensive step on a 2-core runner, so
+    // render only once and reuse it across specs (the shared session keeps it up).
+    if (!actor.sheet.rendered) await actor.sheet.render(true);
     // Force the wide (large) layout tier so the horizontal tab bar renders.
     actor.sheet.setPosition?.({ width: 920, height: 820 });
   }, ACTOR_NAME);
   const sheet = page.locator(".reactor-sheet").first();
-  await sheet.waitFor({ state: "visible", timeout: 20_000 });
+  await sheet.waitFor({ state: "visible", timeout: 30_000 });
   return sheet;
 }
 
 /**
- * Reset UI between specs that share one booted page: close the reactor sheet and
- * any open roll dialogs, but leave Foundry's core UI (sidebar, hotbar, …) alone.
- * The bundled sheet class name is minified, so match on the element instead.
+ * Reset between specs that share one booted page + one open sheet: close any roll
+ * dialogs left over from a spec, but leave the reactor sheet itself open (so the
+ * next spec reuses the render) and Foundry's core UI alone.
  */
-export async function resetSheet(page: Page): Promise<void> {
+export async function closeDialogs(page: Page): Promise<void> {
   await page.evaluate(() => {
     for (const app of (globalThis as any).foundry.applications.instances.values()) {
       const el = app.element as HTMLElement | undefined;
-      const isSheet = el?.classList?.contains("reactor-sheet");
-      const isDialog = el?.classList?.contains("dialog") || /Dialog/i.test(app.constructor?.name ?? "");
-      if (isSheet || isDialog) app.close?.();
+      const isDialog =
+        el?.classList?.contains("dialog") || /Dialog/i.test(app.constructor?.name ?? "");
+      if (isDialog) app.close?.();
     }
   });
 }
