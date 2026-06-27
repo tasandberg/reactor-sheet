@@ -17,6 +17,12 @@ const config: UserConfig = {
     alias: {
       // Allow absolute imports from the src directory
       "@src": path.resolve(__dirname, "src"),
+      // Layer aliases — mirror the sheet's architecture (docs/trim-the-fat-plan.md)
+      "@app": path.resolve(__dirname, "src/ReactorSheet/app"),
+      "@layout": path.resolve(__dirname, "src/ReactorSheet/layout"),
+      "@features": path.resolve(__dirname, "src/ReactorSheet/features"),
+      "@domain": path.resolve(__dirname, "src/ReactorSheet/domain"),
+      "@ui": path.resolve(__dirname, "src/ReactorSheet/components/ui"),
     },
   },
   build: {

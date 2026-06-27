@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { resolveTheme, THEMES } from "./theme";
+import { resolveTheme, THEMES } from "@src/ReactorSheet/theme";
 
 describe("resolveTheme", () => {
   it("defaults to dark for unknown/empty input", () => {

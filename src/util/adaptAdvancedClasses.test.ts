@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { adaptAdvancedClass } from "./adaptAdvancedClasses";
+import { adaptAdvancedClass } from "@src/util/adaptAdvancedClasses";
 
 // Trimmed real data from OSE.data.classes.advanced (maxLvl shortened to 5 so
 // breakpoint expansion crosses exactly one boundary at level 5).

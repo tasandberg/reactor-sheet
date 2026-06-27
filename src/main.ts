@@ -1,7 +1,7 @@
-import ReactorSheet from "./applications/reactor-sheet";
-import { installAdvancedClasses } from "./util/adaptAdvancedClasses";
-import { onRenderChatMessage } from "./ReactorSheet/chat/applyDamage";
-import logger from "./util/logger";
+import ReactorSheet from "@src/applications/reactor-sheet";
+import { installAdvancedClasses } from "@src/util/adaptAdvancedClasses";
+import { onRenderChatMessage } from "@domain/chat/applyDamage";
+import logger from "@src/util/logger";
 
 export function initialize() {
   foundry.helpers.Hooks.once("init", () => {

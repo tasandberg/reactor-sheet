@@ -1,4 +1,4 @@
-import type { OseItem } from "@src/ReactorSheet/types/types";
+import type { OseItem } from "@domain/types";
 
 export function sumItemWeight(items: OseItem[]) {
   return items.reduce((sum, item) => {

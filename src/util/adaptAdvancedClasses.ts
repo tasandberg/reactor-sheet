@@ -1,5 +1,5 @@
 import type { Attribute, OseClass } from "@ose-foundry-core/types";
-import logger from "./logger";
+import logger from "@src/util/logger";
 
 /**
  * Adapts the OSE Advanced Fantasy tome's class data into the canonical
