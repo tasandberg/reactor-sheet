@@ -20,7 +20,7 @@ import type { IdentityVM, VitalsVM } from "@domain/vm-types";
  * and mounts the Actions body (other tabs still render their legacy Content).
  */
 export default function SheetShell() {
-  const { actor, items: invItems, currentTab, setCurrentTab, updateActor } = useReactorSheetContext();
+  const { actor, items: invItems, currentTab, setCurrentTab, updateActor, optimisticUpdate } = useReactorSheetContext();
   const toast = useToast();
   const [editOpen, setEditOpen] = useState(false);
 
@@ -44,7 +44,10 @@ export default function SheetShell() {
   };
   const onSetHp = (value: number) => {
     const next = Math.max(0, Math.min(vitals.hp.max, value));
-    if (next !== vitals.hp.value) void updateActor({ "system.hp.value": next });
+    if (next === vitals.hp.value) return;
+    const update = { "system.hp.value": next };
+    if (optimisticUpdate) optimisticUpdate("actor", update, () => updateActor(update));
+    else void updateActor(update);
   };
 
   const resolveItem = (id: string) => (invItems as OseItem[]).find((i) => i._id === id);
@@ -65,7 +68,9 @@ export default function SheetShell() {
         .reduce((m, i) => Math.max(m, readFlag<number>(i, FLAGS.equippedOrder) ?? 0), 0);
       update[flagPath(FLAGS.equippedOrder)] = maxEq + 100;
     }
-    void it.update(update);
+    // Optimistic: flip the hand instantly, reconcile when Foundry confirms.
+    if (optimisticUpdate) optimisticUpdate(id, update, () => it.update(update));
+    else void it.update(update);
     if (leftContainer) {
       const container = resolveItem(fromContainerId!);
       toast({
@@ -78,7 +83,11 @@ export default function SheetShell() {
   };
   const onOpenItem = (id: string) => resolveItem(id)?.sheet?.render(true);
   const onSetCoin = (id: string, value: number) => {
-    void resolveItem(id)?.update({ "system.quantity.value": value });
+    const it = resolveItem(id);
+    if (!it) return;
+    const update = { "system.quantity.value": value };
+    if (optimisticUpdate) optimisticUpdate(id, update, () => it.update(update));
+    else void it.update(update);
   };
   // Consume one: decrement the item's quantity (floored at 0).
   const onConsume = (id: string) => {

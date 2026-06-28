@@ -29,6 +29,15 @@ export interface ReactorSheetContextValue {
   updateActor: (updateData: {
     [key: string]: string | number | string[];
   }) => Promise<OSEActor | void>;
+  /** Apply an optimistic patch (flat dot-paths) to a doc immediately, run the real
+   *  Foundry write, and reconcile/rollback async. `key` = item `_id` or "actor".
+   *  Provided by OptimisticProvider; undefined outside it. */
+  optimisticUpdate?: (
+    key: string,
+    patch: Record<string, unknown>,
+    commit: () => Promise<unknown>,
+    debounceMs?: number,
+  ) => void;
 }
 
 export type OseSpellList = Record<number, OseSpell[]>;
