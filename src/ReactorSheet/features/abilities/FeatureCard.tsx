@@ -3,6 +3,7 @@ import type { FeatureVM } from "@features/abilities/features";
 import { useReactorSheetContext } from "@app/context";
 import { cx } from "@ui/cx";
 import { IconButton } from "@ui/IconButton";
+import { Monogram } from "@ui/Monogram";
 
 /** Enrich raw HTML once via Foundry's TextEditor (links, inline rolls, embeds). */
 function useEnriched(html: string): string {
@@ -42,13 +43,7 @@ export function FeatureCard({ feature }: { feature: FeatureVM }) {
     <div className={cx("fvtt-feat", open && "open")}>
       {/* header row: clickable to expand (mouse); name/roll/chevron are their own controls */}
       <div className="ft-head" onClick={toggle}>
-        {feature.img ? (
-          <img className="ft-ic" src={feature.img} alt="" aria-hidden="true" />
-        ) : (
-          <span className="ft-ic" aria-hidden="true">
-            {monogram}
-          </span>
-        )}
+        <Monogram img={feature.img} monogram={monogram} className="ft-ic" />
         <div className="ft-main">
           <button
             type="button"
