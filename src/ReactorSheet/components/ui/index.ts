@@ -1,5 +1,6 @@
 export { cx } from "./cx";
 export { Stamp } from "./Stamp";
+export { Monogram } from "./Monogram";
 export { Button } from "./Button";
 export { IconButton } from "./IconButton";
 export { InlineButton } from "./InlineButton";

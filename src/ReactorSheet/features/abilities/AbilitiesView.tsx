@@ -1,6 +1,6 @@
 import { useReactorSheetContext } from "@app/context";
 import { selectFeatures } from "@features/abilities/features";
-import { SectionTitle } from "@ui/SectionTitle";
+import { SectionHeader } from "@features/abilities/SectionHeader";
 import { IconButton } from "@ui/IconButton";
 import { createAbility } from "@features/abilities/createAbility";
 import { FeatureCard } from "@features/abilities/FeatureCard";
@@ -17,17 +17,19 @@ export default function Abilities() {
   return (
     <div className="rs-abilities-tab">
       <section className="rs-section rs-feat-sec">
-        <div className="rs-feat-head">
-          <SectionTitle>Abilities</SectionTitle>
-          <IconButton
-            variant="accent"
-            title="Add ability"
-            aria-label="Add ability"
-            onClick={onAdd}
-          >
-            <i className="fas fa-plus" aria-hidden="true" />
-          </IconButton>
-        </div>
+        <SectionHeader
+          title="Abilities"
+          controls={
+            <IconButton
+              variant="accent"
+              title="Add ability"
+              aria-label="Add ability"
+              onClick={onAdd}
+            >
+              <i className="fas fa-plus" aria-hidden="true" />
+            </IconButton>
+          }
+        />
         {features.length === 0 ? (
           <p className="rs-flavour">No abilities yet.</p>
         ) : (

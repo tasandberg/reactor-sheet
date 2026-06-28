@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useReactorSheetContext } from "@app/context";
-import { SectionTitle } from "@ui/SectionTitle";
+import { SectionHeader } from "@features/abilities/SectionHeader";
 import { IconButton } from "@ui/IconButton";
 import { Tag } from "@ui/Tag";
 import { cx } from "@ui/cx";
@@ -52,24 +52,26 @@ export function LanguagesSection({ editing: forced }: { editing?: boolean }) {
 
   return (
     <section className="rs-section rs-lang-sec">
-      <div className="rs-feat-head">
-        <SectionTitle>Languages</SectionTitle>
-        {!forced && (
-          <IconButton
-            variant="accent"
-            on={editing}
-            title={editing ? "Done editing languages" : "Edit languages"}
-            aria-label={editing ? "Done editing languages" : "Edit languages"}
-            aria-pressed={editing}
-            onClick={() => setLocalEditing((e) => !e)}
-          >
-            <i
-              className={cx("fas", editing ? "fa-check" : "fa-pen")}
-              aria-hidden="true"
-            />
-          </IconButton>
-        )}
-      </div>
+      <SectionHeader
+        title="Languages"
+        controls={
+          !forced && (
+            <IconButton
+              variant="accent"
+              on={editing}
+              title={editing ? "Done editing languages" : "Edit languages"}
+              aria-label={editing ? "Done editing languages" : "Edit languages"}
+              aria-pressed={editing}
+              onClick={() => setLocalEditing((e) => !e)}
+            >
+              <i
+                className={cx("fas", editing ? "fa-check" : "fa-pen")}
+                aria-hidden="true"
+              />
+            </IconButton>
+          )
+        }
+      />
 
       <div className="rs-langs">
         {current.length === 0 && !editing && (

@@ -2,6 +2,7 @@ import { useState, type DragEvent } from "react";
 import type { AttackVM, RollSpec } from "@domain/vm-types";
 import { SectionTitle } from "@ui/SectionTitle";
 import { cx } from "@ui/cx";
+import { Monogram } from "@ui/Monogram";
 
 type Props = {
   attacks: AttackVM[];
@@ -54,11 +55,14 @@ function WeaponRow({ a, onRoll, onAttack, onOpen, dragData }: { a: AttackVM; onR
   return (
     <div className="rs-weapon" role="row" data-testid={`weapon-row-${a.itemId}`}>
       <div className="winfo">
-        {a.img ? (
-          <img className="wic wic-img" data-testid={`weapon-img-${a.itemId}`} src={a.img} alt="" {...macroDrag} />
-        ) : (
-          <span className="wic" aria-hidden="true" {...macroDrag}>{monogram(a.name)}</span>
-        )}
+        <Monogram
+          img={a.img}
+          monogram={monogram(a.name)}
+          className="wic"
+          imgClassName="wic-img"
+          data-testid={`weapon-img-${a.itemId}`}
+          {...macroDrag}
+        />
         <div className="wmain">
           <div className="wname">
             {onOpen ? (
