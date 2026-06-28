@@ -7,14 +7,13 @@ import getLabel from "@src/util/getLabel";
 import { ActionsView, SavesExploration } from "@features/actions";
 import { InventoryViewDnd as InventoryView } from "@features/inventory";
 import { selectTopbar } from "@domain/topbar";
-import { selectIdentity } from "@domain/identity";
-import { selectVitals } from "@domain/vitals";
 import { selectSaves } from "@features/actions/saves";
 import { selectExploration, rollExploration } from "@features/actions/exploration";
 import { selectInventory, selectEncumbrance, selectCoins } from "@features/inventory/inventory";
 import { flagPath, FLAGS, readFlag } from "@domain/flags";
 import { useToast } from "@ui/toastContext";
 import type { OseItem } from "@domain/types";
+import type { IdentityVM, VitalsVM } from "@domain/vm-types";
 
 /**
  * Foundry-aware container: computes view-models, fills the Shell chrome slots,
@@ -25,7 +24,24 @@ export default function SheetShell() {
   const toast = useToast();
   const [editOpen, setEditOpen] = useState(false);
 
-  const vitals = selectVitals(actor);
+  // Chrome props built inline from the actor (HeaderBand + Minibar share the shape).
+  const { details, hp, aac, ac, scores, movement, initiative } = actor.system;
+  const identity: IdentityVM = {
+    name: actor.name,
+    img: actor.img,
+    classLabel: details.class,
+    level: details.level,
+    alignment: details.alignment,
+    title: details.title,
+  };
+  const vitals: VitalsVM = {
+    hp: { value: hp.value, max: hp.max },
+    ac: { ascending: aac.value, descending: ac.value },
+    initMod: scores.dex.init + (initiative?.mod ?? 0),
+    hd: hp.hd,
+    move: movement.base,
+    moveBands: { encounter: movement.encounter, explore: movement.base, travel: movement.overland },
+  };
   const onSetHp = (value: number) => {
     const next = Math.max(0, Math.min(vitals.hp.max, value));
     if (next !== vitals.hp.value) void updateActor({ "system.hp.value": next });
@@ -127,8 +143,8 @@ export default function SheetShell() {
         if (next) setCurrentTab(next.id);
       }}
       topbar={<Topbar vm={selectTopbar(actor)} onEdit={() => setEditOpen(true)} onLevelUp={() => toast({ intent: "warning", title: "Level Up", message: "Coming soon ;)" })} />}
-      header={<HeaderBand identity={selectIdentity(actor)} vitals={vitals} onSetHp={onSetHp} />}
-      minibar={<Minibar identity={selectIdentity(actor)} vitals={vitals} onSetHp={onSetHp} />}
+      header={<HeaderBand identity={identity} vitals={vitals} onSetHp={onSetHp} />}
+      minibar={<Minibar identity={identity} vitals={vitals} onSetHp={onSetHp} />}
       railExtra={
         <SavesExploration
           saves={selectSaves(actor)}
