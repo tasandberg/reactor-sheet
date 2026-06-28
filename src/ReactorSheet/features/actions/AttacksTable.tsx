@@ -53,7 +53,7 @@ function WeaponRow({ a, onRoll, onAttack, dragData }: { a: AttackVM; onRoll?: Pr
     <div className="rs-weapon" role="row" data-testid={`weapon-row-${a.itemId}`}>
       <div className="winfo">
         {a.img ? (
-          <img className="wic wic-img" src={a.img} alt="" {...macroDrag} />
+          <img className="wic wic-img" data-testid={`weapon-img-${a.itemId}`} src={a.img} alt="" {...macroDrag} />
         ) : (
           <span className="wic" aria-hidden="true" {...macroDrag}>{monogram(a.name)}</span>
         )}
