@@ -20,7 +20,7 @@ import type { IdentityVM, VitalsVM } from "@domain/vm-types";
  * and mounts the Actions body (other tabs still render their legacy Content).
  */
 export default function SheetShell() {
-  const { actor, items: invItems, currentTab, setCurrentTab, updateActor } = useReactorSheetContext();
+  const { actor, items: invItems, currentTab, setCurrentTab, updateActor, optimisticUpdate } = useReactorSheetContext();
   const toast = useToast();
   const [editOpen, setEditOpen] = useState(false);
 
@@ -65,7 +65,9 @@ export default function SheetShell() {
         .reduce((m, i) => Math.max(m, readFlag<number>(i, FLAGS.equippedOrder) ?? 0), 0);
       update[flagPath(FLAGS.equippedOrder)] = maxEq + 100;
     }
-    void it.update(update);
+    // Optimistic: flip the hand instantly, reconcile when Foundry confirms.
+    if (optimisticUpdate) optimisticUpdate(id, update, () => it.update(update));
+    else void it.update(update);
     if (leftContainer) {
       const container = resolveItem(fromContainerId!);
       toast({

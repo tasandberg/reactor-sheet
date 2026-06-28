@@ -5,6 +5,7 @@ import "./styles/vellum/components.css";
 import "./styles/styles.scss";
 import "./styles/edit-modal.scss";
 import ReactorSheetProvider from "@app/ReactorSheetProvider";
+import { OptimisticProvider } from "@app/OptimisticProvider";
 import SheetShell from "@app/SheetShell";
 import { ToastProvider } from "@ui/ToastHost";
 import { useEffect, useRef, type ReactNode } from "react";
@@ -44,7 +45,9 @@ function ReactorSheetApp({
           source={source!}
           contextConnector={contextConnector}
         >
-          <SheetShell />
+          <OptimisticProvider>
+            <SheetShell />
+          </OptimisticProvider>
         </ReactorSheetProvider>
       </ToastProvider>
     </ThemedRoot>
