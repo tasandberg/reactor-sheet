@@ -1,0 +1,20 @@
+// Shared declaration groups, extracted verbatim from repeated rule bodies.
+// These are dedup, not restyle: each @include expands to the exact declarations
+// it replaced, so the compiled CSS is byte-identical (verified by diffing the
+// built main.css). Restyle/consolidation that *changes* output is done separately
+// with live-sheet visual checks — keep this file output-preserving.
+
+// Inked panel surface: dark fill + soft hairline border. The radius/padding that
+// vary per card stay at the call site.
+@mixin surface-card {
+  background: var(--surface, #23201a);
+  border: 1px solid var(--border-soft, #2c2823);
+}
+
+// Click-to-roll affordance for a bordered card (gold border + surface lift on
+// hover, gold focus ring). Include inside the card's own rule.
+@mixin rollable-card {
+  &.rollable { cursor: pointer; }
+  &.rollable:hover { border-color: var(--gold); background: var(--surface-2, #2e2a23); }
+  &.rollable:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+}
