@@ -209,7 +209,7 @@ export function WealthSection({
                   aria-label={`${c.name} quantity`}
                   onChange={(e) => setDraft((d) => ({ ...d, [c.denom]: e.target.value }))}
                   onFocus={(e) => e.currentTarget.select()}
-                  onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
+                  onKeyDown={(e) => { if (e.key === "Enter") { commit(c); setOpen(false); } }}
                   onBlur={() => commit(c)}
                 />
                 <span className="rs-coin-wt">{fmtCoin(qtyOf(c))} cn</span>
