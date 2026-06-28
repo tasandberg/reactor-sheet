@@ -187,7 +187,7 @@ jobs:
 
       - name: Run Playwright E2E suite
         working-directory: tools/e2e
-        run: npx playwright test
+        run: npx playwright test --forbid-only --workers=1
 
       - name: Upload Playwright report
         if: always()
