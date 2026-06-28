@@ -1,3 +1,4 @@
+@use "mixins" as *;
 // Display-layout helpers for the Actions tab + chrome (pass 1).
 // Pure layout on top of the Vellum component classes; colors come from tokens.
 
@@ -399,16 +400,13 @@
 // In the narrow left rail (large view), 5-up overflows — drop to 3+2.
 .rs-rail-extra .fvtt-saves { grid-template-columns: repeat(3, 1fr); }
 .fvtt-save {
-  background: var(--surface, #23201a);
-  border: 1px solid var(--border-soft, #2c2823);
+  @include surface-card;
   border-radius: var(--r-md, 6px);
   padding: var(--spacer-2) var(--spacer-1) 7px;
   text-align: center;
   transition: border-color 0.12s, background 0.12s;
+  @include rollable-card;
 }
-.fvtt-save.rollable { cursor: pointer; }
-.fvtt-save.rollable:hover { border-color: var(--gold); background: var(--surface-2, #2e2a23); }
-.fvtt-save.rollable:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
 .fvtt-save .sk {
   width: 22px; height: 22px; margin: 0 auto var(--spacer-1);
   background: var(--ink, #070605); color: var(--stamp-text, #e5dec8);
@@ -432,15 +430,12 @@
 .rs-rail-extra .fvtt-explore { grid-template-columns: 1fr; }
 .fvtt-skill {
   display: flex; align-items: center; gap: var(--spacer-2);
-  background: var(--surface, #23201a);
-  border: 1px solid var(--border-soft, #2c2823);
+  @include surface-card;
   border-radius: var(--r-md, 6px);
   padding: var(--spacer-2) var(--spacer-2) var(--spacer-2) var(--spacer-3);
   transition: border-color 0.12s, background 0.12s;
+  @include rollable-card;
 }
-.fvtt-skill.rollable { cursor: pointer; }
-.fvtt-skill.rollable:hover { border-color: var(--gold); background: var(--surface-2, #2e2a23); }
-.fvtt-skill.rollable:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
 .fvtt-skill .skic { color: var(--gold-dim); font-size: var(--fs-md, 14px); width: 18px; text-align: center; flex: none; }
 .fvtt-skill .skn {
   font-family: var(--sans); font-size: var(--fs-sm, 13px);
@@ -504,8 +499,7 @@
 .rs-whdr > span:nth-child(n + 2) { text-align: center; }
 
 .rs-weapon {
-  background: var(--surface, #23201a);
-  border: 1px solid var(--border-soft, #2c2823);
+  @include surface-card;
   border-radius: var(--r-lg, 10px);
   padding: 9px 10px;
 }

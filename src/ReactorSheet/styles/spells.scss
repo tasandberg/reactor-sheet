@@ -1,3 +1,4 @@
+@use "mixins" as *;
 // Spells tab — per-level panels (ink-stamp badge + slot pips), prepared cast
 // rows, and the expandable spellbook grid. Ported from the prototype
 // .fvtt-spell* classes onto rs- names + tokens (see foundry-styles.css SPELLS).
@@ -55,8 +56,7 @@
   display: grid; grid-template-columns: 1fr auto;
   align-items: center; gap: var(--spacer-2);
   padding: var(--spacer-2) var(--spacer-3);
-  background: var(--surface, #23201a);
-  border: 1px solid var(--border-soft, #2c2823);
+  @include surface-card;
   border-top: none;
 }
 // In the Spells tab `.rs-spellhead` supplies the top edge/radius; the Actions
