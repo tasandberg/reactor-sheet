@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type DragEvent } from "react";
 import type { AttackVM, RollSpec } from "@domain/vm-types";
 import { SectionTitle } from "@ui/SectionTitle";
 import { cx } from "@ui/cx";
@@ -9,6 +9,9 @@ type Props = {
   onRoll?: (spec: RollSpec) => void;
   /** Composite attack roll (OSE weapon dialog). */
   onAttack?: (itemId: string) => void;
+  /** Foundry item drag-data for a weapon, so its card drops onto the macro hotbar
+   *  to create an attack macro (same as an inventory row). undefined = not draggable. */
+  dragData?: (itemId: string) => string | undefined;
 };
 
 /** Monogram glyph for the ink-stamp weapon icon (first letter, Title-case). */
@@ -20,18 +23,39 @@ const kindIcon = (kind: "melee" | "missile") => (kind === "melee" ? "fa-sword" :
 
 /** One weapon card. A melee+missile weapon shows both kind tags as a toggle
  *  (melee active by default); the active mode drives Hit/Dmg. */
-function WeaponRow({ a, onRoll, onAttack }: { a: AttackVM; onRoll?: Props["onRoll"]; onAttack?: Props["onAttack"] }) {
+function WeaponRow({ a, onRoll, onAttack, dragData }: { a: AttackVM; onRoll?: Props["onRoll"]; onAttack?: Props["onAttack"]; dragData?: Props["dragData"] }) {
   const [active, setActive] = useState(0); // index into a.modes (melee = 0)
   const mode = a.modes[active] ?? a.modes[0];
   const dual = a.modes.length > 1;
+
+  // Drag the weapon image or the Attack button onto the macro hotbar → OSE's
+  // hotbarDrop creates an attack macro (same payload as the inventory row).
+  const macroDrag = dragData
+    ? {
+        draggable: true,
+        onDragStart: (e: DragEvent<HTMLElement>) => {
+          const payload = dragData(a.itemId);
+          if (!payload) {
+            e.preventDefault();
+            return;
+          }
+          e.dataTransfer.effectAllowed = "all";
+          try {
+            e.dataTransfer.setData("text/plain", payload);
+          } catch {
+            /* IE guard */
+          }
+        },
+      }
+    : {};
 
   return (
     <div className="rs-weapon" role="row" data-testid={`weapon-row-${a.itemId}`}>
       <div className="winfo">
         {a.img ? (
-          <img className="wic wic-img" src={a.img} alt="" />
+          <img className="wic wic-img" data-testid={`weapon-img-${a.itemId}`} src={a.img} alt="" {...macroDrag} />
         ) : (
-          <span className="wic" aria-hidden="true">{monogram(a.name)}</span>
+          <span className="wic" aria-hidden="true" {...macroDrag}>{monogram(a.name)}</span>
         )}
         <div className="wmain">
           <div className="wname">
@@ -107,6 +131,7 @@ function WeaponRow({ a, onRoll, onAttack }: { a: AttackVM; onRoll?: Props["onRol
         type="button"
         className="fvtt-atk"
         data-testid={`weapon-attack-${a.itemId}`}
+        {...macroDrag}
         disabled={!onAttack}
         onClick={() => onAttack?.(a.itemId)}
         title="Attack roll (hit + damage)"
@@ -122,13 +147,13 @@ function WeaponRow({ a, onRoll, onAttack }: { a: AttackVM; onRoll?: Props["onRol
 /** Equipped-weapon attacks as woodcut weapon cards: ink-stamp monogram, name +
  *  melee/missile + quality tags, clickable HIT/DMG stat cells (FA dice), and a
  *  tall brass Attack button (full hit + damage via the OSE weapon dialog). */
-export function AttacksTable({ attacks, onRoll, onAttack }: Props) {
+export function AttacksTable({ attacks, onRoll, onAttack, dragData }: Props) {
   return (
     <section className="rs-section rs-atk">
       <SectionTitle hint="click to roll">Attacks</SectionTitle>
       <div className="rs-wtable">
         {attacks.map((a) => (
-          <WeaponRow key={a.id} a={a} onRoll={onRoll} onAttack={onAttack} />
+          <WeaponRow key={a.id} a={a} onRoll={onRoll} onAttack={onAttack} dragData={dragData} />
         ))}
       </div>
     </section>

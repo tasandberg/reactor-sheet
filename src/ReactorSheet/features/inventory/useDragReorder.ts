@@ -34,6 +34,10 @@ type RowOpts = {
   /** Edge-detection axis for before/after. 'y' (default) splits on clientY;
    *  'x' splits on clientX — for a horizontal (flex-wrap) row like the equipped tray. */
   axis?: "x" | "y";
+  /** Override the `text/plain` drag payload (default `"<group>:<idx>"`). Used to
+   *  write Foundry item drag-data so the row also drops onto the macro hotbar.
+   *  Internal reorder reads its source from React state, not this, so it's safe. */
+  dragPayload?: () => string | undefined;
   onStart?: () => void;
   onEnd?: () => void;
 };
@@ -73,7 +77,8 @@ export function useDragReorder(opts: {
     onDragStart: (e) => {
       setDrag({ group, idx });
       e.dataTransfer.effectAllowed = "move";
-      try { e.dataTransfer.setData("text/plain", `${group}:${idx}`); } catch { /* IE guard */ }
+      const payload = o.dragPayload?.() ?? `${group}:${idx}`;
+      try { e.dataTransfer.setData("text/plain", payload); } catch { /* IE guard */ }
       o.onStart?.();
     },
     onDragEnd: () => { clear(); o.onEnd?.(); },
