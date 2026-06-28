@@ -1,12 +1,12 @@
-import type { ReactorSheetAppProps } from "./types/types";
+import type { ReactorSheetAppProps } from "@domain/types";
 import "./styles/vellum/fonts.css";
 import "./styles/vellum/tokens.css";
 import "./styles/vellum/components.css";
 import "./styles/styles.scss";
 import "./styles/edit-modal.scss";
-import ReactorSheetProvider from "./components/ReactorSheetProvider";
-import SheetShell from "./components/SheetShell";
-import { ToastProvider } from "./components/ui/ToastHost";
+import ReactorSheetProvider from "@app/ReactorSheetProvider";
+import SheetShell from "@app/SheetShell";
+import { ToastProvider } from "@ui/ToastHost";
 import { useEffect, useRef, type ReactNode } from "react";
 
 /** App root element. Theme is owned by the window (reactor-sheet.js `_onRender`

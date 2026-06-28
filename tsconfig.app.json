@@ -22,7 +22,17 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": false,
     "paths": {
-      "@src/*": ["./src/*"]
+      "@src/*": ["./src/*"],
+      "@app": ["./src/ReactorSheet/app"],
+      "@app/*": ["./src/ReactorSheet/app/*"],
+      "@layout": ["./src/ReactorSheet/layout"],
+      "@layout/*": ["./src/ReactorSheet/layout/*"],
+      "@features": ["./src/ReactorSheet/features"],
+      "@features/*": ["./src/ReactorSheet/features/*"],
+      "@domain": ["./src/ReactorSheet/domain"],
+      "@domain/*": ["./src/ReactorSheet/domain/*"],
+      "@ui": ["./src/ReactorSheet/components/ui"],
+      "@ui/*": ["./src/ReactorSheet/components/ui/*"]
     }
   },
   // tools/e2e is a standalone Playwright package compiled by its own toolchain.
