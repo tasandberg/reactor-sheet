@@ -521,6 +521,13 @@
   color: var(--text, #e5dec8); line-height: 1.15;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+// Weapon name as a button to open the item sheet — reset to inline text; brass on hover.
+.rs-weapon .wname-btn {
+  font: inherit; color: inherit;
+  background: none; border: 0; padding: 0;
+  cursor: pointer;
+}
+.rs-weapon .wname-btn:hover { color: var(--gold); text-decoration: underline; }
 .rs-weapon .wtags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px; }
 
 // quality / mode tags — icon-only chips with a hover popover (+ native title)

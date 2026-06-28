@@ -26,6 +26,7 @@ export function ActionsView({ actor }: Props) {
   // The composite "Attack" uses OSE's own weapon roll dialog.
   const onAttack = (itemId: string) =>
     actor.system.weapons.find((w) => w._id === itemId)?.rollWeapon({ skipDialog: false });
+  const onOpenWeapon = (itemId: string) => actor.items.get(itemId)?.sheet?.render(true);
   const onSave = (key: OSESave) => actor.rollSave(key, {});
   const onExploration = (key: string) => rollExploration(actor, key);
   // Drag a weapon card onto the macro hotbar → OSE's hotbarDrop creates an attack
@@ -40,7 +41,7 @@ export function ActionsView({ actor }: Props) {
   return (
     <>
       <AbilityPlaques abilities={selectAbilities(actor)} onRoll={onAbility} />
-      <AttacksTable attacks={attacks} onRoll={onRoll} onAttack={onAttack} dragData={dragData} />
+      <AttacksTable attacks={attacks} onRoll={onRoll} onAttack={onAttack} onOpen={onOpenWeapon} dragData={dragData} />
       <MemorizedSpells actor={actor} />
       {/* .actions-only: hidden at lg (Saves/Exploration live in the rail there). */}
       <section className="rs-section actions-only">

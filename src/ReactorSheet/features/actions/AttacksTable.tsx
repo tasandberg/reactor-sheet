@@ -9,6 +9,8 @@ type Props = {
   onRoll?: (spec: RollSpec) => void;
   /** Composite attack roll (OSE weapon dialog). */
   onAttack?: (itemId: string) => void;
+  /** Open the weapon's item sheet (click the name). */
+  onOpen?: (itemId: string) => void;
   /** Foundry item drag-data for a weapon, so its card drops onto the macro hotbar
    *  to create an attack macro (same as an inventory row). undefined = not draggable. */
   dragData?: (itemId: string) => string | undefined;
@@ -23,7 +25,7 @@ const kindIcon = (kind: "melee" | "missile") => (kind === "melee" ? "fa-sword" :
 
 /** One weapon card. A melee+missile weapon shows both kind tags as a toggle
  *  (melee active by default); the active mode drives Hit/Dmg. */
-function WeaponRow({ a, onRoll, onAttack, dragData }: { a: AttackVM; onRoll?: Props["onRoll"]; onAttack?: Props["onAttack"]; dragData?: Props["dragData"] }) {
+function WeaponRow({ a, onRoll, onAttack, onOpen, dragData }: { a: AttackVM; onRoll?: Props["onRoll"]; onAttack?: Props["onAttack"]; onOpen?: Props["onOpen"]; dragData?: Props["dragData"] }) {
   const [active, setActive] = useState(0); // index into a.modes (melee = 0)
   const mode = a.modes[active] ?? a.modes[0];
   const dual = a.modes.length > 1;
@@ -59,7 +61,20 @@ function WeaponRow({ a, onRoll, onAttack, dragData }: { a: AttackVM; onRoll?: Pr
         )}
         <div className="wmain">
           <div className="wname">
-            {a.name} <span className="wkind">({mode.kindLabel.toLowerCase()})</span>
+            {onOpen ? (
+              <button
+                type="button"
+                className="wname-btn"
+                data-testid={`weapon-name-${a.itemId}`}
+                onClick={() => onOpen(a.itemId)}
+                title={`Open ${a.name}`}
+              >
+                {a.name}
+              </button>
+            ) : (
+              a.name
+            )}{" "}
+            <span className="wkind">({mode.kindLabel.toLowerCase()})</span>
           </div>
           <div className="wtags">
             {/* dual melee+missile → a segmented switch; single mode → a static tag */}
@@ -147,13 +162,13 @@ function WeaponRow({ a, onRoll, onAttack, dragData }: { a: AttackVM; onRoll?: Pr
 /** Equipped-weapon attacks as woodcut weapon cards: ink-stamp monogram, name +
  *  melee/missile + quality tags, clickable HIT/DMG stat cells (FA dice), and a
  *  tall brass Attack button (full hit + damage via the OSE weapon dialog). */
-export function AttacksTable({ attacks, onRoll, onAttack, dragData }: Props) {
+export function AttacksTable({ attacks, onRoll, onAttack, onOpen, dragData }: Props) {
   return (
     <section className="rs-section rs-atk">
       <SectionTitle hint="click to roll">Attacks</SectionTitle>
       <div className="rs-wtable">
         {attacks.map((a) => (
-          <WeaponRow key={a.id} a={a} onRoll={onRoll} onAttack={onAttack} dragData={dragData} />
+          <WeaponRow key={a.id} a={a} onRoll={onRoll} onAttack={onAttack} onOpen={onOpen} dragData={dragData} />
         ))}
       </div>
     </section>
