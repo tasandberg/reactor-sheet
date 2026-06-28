@@ -630,6 +630,9 @@
 // compact brass "Attack" button (composite hit + damage via OSE weapon dialog)
 .reactor-sheet-app .fvtt-atk {
   justify-self: stretch;
+  // Chromium won't start a drag from a <button> on draggable=true alone; this
+  // opts the button in (so it drags to the macro hotbar like the weapon image).
+  -webkit-user-drag: element;
   display: inline-flex; align-items: center; justify-content: center; gap: var(--spacer-1);
   padding: var(--spacer-1) var(--spacer-3);
   background: transparent;

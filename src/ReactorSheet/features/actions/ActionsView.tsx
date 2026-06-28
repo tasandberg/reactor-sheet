@@ -1,10 +1,11 @@
-import type { OSEActor, OSESave } from "@domain/types";
+import type { OSEActor, OSESave, OseItem } from "@domain/types";
 import type { RollSpec } from "@domain/vm-types";
 import { selectAbilities } from "@features/actions/abilities";
 import { selectAttacks } from "@features/actions/attacks";
 import { selectSaves } from "@features/actions/saves";
 import { selectExploration, rollExploration } from "@features/actions/exploration";
 import { postRollCard } from "@domain/chat/attackCard";
+import { buildItemMacroDragData } from "@features/inventory/dragToMacro";
 import { AbilityPlaques } from "@features/actions/AbilityPlaques";
 import { AttacksTable } from "@features/actions/AttacksTable";
 import { MemorizedSpells } from "@features/actions/MemorizedSpells";
@@ -27,13 +28,19 @@ export function ActionsView({ actor }: Props) {
     actor.system.weapons.find((w) => w._id === itemId)?.rollWeapon({ skipDialog: false });
   const onSave = (key: OSESave) => actor.rollSave(key, {});
   const onExploration = (key: string) => rollExploration(actor, key);
+  // Drag a weapon card onto the macro hotbar → OSE's hotbarDrop creates an attack
+  // macro, same as dragging the item's inventory row.
+  const dragData = (itemId: string) => {
+    const item = actor.items.get(itemId) as unknown as OseItem | undefined;
+    return item ? buildItemMacroDragData(actor, item) : undefined;
+  };
 
   const attacks = selectAttacks(actor);
 
   return (
     <>
       <AbilityPlaques abilities={selectAbilities(actor)} onRoll={onAbility} />
-      <AttacksTable attacks={attacks} onRoll={onRoll} onAttack={onAttack} />
+      <AttacksTable attacks={attacks} onRoll={onRoll} onAttack={onAttack} dragData={dragData} />
       <MemorizedSpells actor={actor} />
       {/* .actions-only: hidden at lg (Saves/Exploration live in the rail there). */}
       <section className="rs-section actions-only">
