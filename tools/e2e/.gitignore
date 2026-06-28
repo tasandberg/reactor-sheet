@@ -1,0 +1,6 @@
+# Local runner deps and generated artifacts
+node_modules/
+package-lock.json
+test-results/
+playwright-report/
+blob-report/

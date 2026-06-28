@@ -128,6 +128,7 @@ function RowEquip({
     <button
       type="button"
       className={cx("rs-inv-equip", item.equipped && "is-on")}
+      data-testid={`equip-${item.id}`}
       aria-pressed={item.equipped}
       aria-label={item.equipped ? "Unequip" : "Equip"}
       onClick={() => onEquip(item.id)}

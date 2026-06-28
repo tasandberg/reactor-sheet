@@ -1,0 +1,15 @@
+{
+  "name": "reactor-sheet-e2e",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Headless Playwright E2E suite for the reactor-sheet Foundry module. Standalone so its Playwright dependency stays out of the module's build/runtime deps.",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "activate": "node activate-world.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.60.0",
+    "playwright": "1.60.0"
+  }
+}

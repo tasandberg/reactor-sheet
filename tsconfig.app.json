@@ -34,5 +34,7 @@
       "@ui": ["./src/ReactorSheet/components/ui"],
       "@ui/*": ["./src/ReactorSheet/components/ui/*"]
     }
-  }
+  },
+  // tools/e2e is a standalone Playwright package compiled by its own toolchain.
+  "exclude": ["tools"]
 }

@@ -14,6 +14,7 @@ export function AbilityPlaques({ abilities, onRoll }: Props) {
           <div
             className={cx("rs-abil", onRoll && "rollable")}
             key={a.key}
+            data-testid={`ability-${a.key}`}
             title={onRoll ? `Roll ${a.label} check` : undefined}
             {...rollable(onRoll && (() => onRoll(a.key)))}
           >

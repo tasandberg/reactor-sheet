@@ -114,6 +114,7 @@ export function WealthSection({
       <button
         type="button"
         className={cx("rs-whead", open && "open")}
+        data-testid="wealth-toggle"
         aria-expanded={open}
         disabled={!hasCoins}
         onClick={() => setOpen((o) => !o)}
@@ -203,6 +204,7 @@ export function WealthSection({
                   min={0}
                   inputMode="numeric"
                   draggable={false}
+                  data-testid={`coin-qty-${c.denom.toLowerCase()}`}
                   value={draft[c.denom] ?? String(c.value)}
                   aria-label={`${c.name} quantity`}
                   onChange={(e) => setDraft((d) => ({ ...d, [c.denom]: e.target.value }))}
