@@ -1,4 +1,4 @@
-# OSE Re-Actor Sheet
+# OSE Re-Actor Sheet [BETA]
 
 A fresh, responsive character sheet for **[Old School Essentials](https://necroticgnome.com/)** in Foundry VTT — rebuilt in React for a faster, cleaner play experience.
 
