@@ -30,9 +30,17 @@ Open any character actor — Re-Actor takes over as the sheet automatically.
 
 The sheet adapts to whatever space you give it. Drag the window narrow and tabs collapse to the bottom with a compact stat minibar; widen it and navigation moves to a roomy side rail. Run a tight one-window-among-many table without sacrificing legibility, or stretch out when you've got the room.
 
+<img width="55%" alt="image" src="https://github.com/user-attachments/assets/33cdf50c-8704-4c3e-b259-b65c2a00be41" />
+<img width="35%"  alt="image" src="https://github.com/user-attachments/assets/90524bf5-29d3-445b-980d-282cdac848bf" />
+
+
+
 ### Pop out for the luxe experience
 
 Send the sheet to its own browser window and treat it like a proper play surface — full-size on a second monitor or tablet while your map and tokens own the main screen. Same sheet, all the elbow room.
+
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/60320b54-3578-4eb4-8048-608dd1e17e71" />
+
 
 ### Built for OSE
 
