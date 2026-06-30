@@ -1,5 +1,4 @@
-import type { RollType, Save } from "@ose-foundry-core/types";
-import type OseDataModelCharacterAC from "@domain/data-model-character-ac";
+import type { CharacterAC, RollType, Save } from "@ose-foundry-core/types";
 import type OseDataModelCharacterScores from "@domain/data-model-character-scores";
 import type { TabIds } from "@app/tabs";
 import type { ContextConnector } from "foundry-vtt-react";
@@ -48,8 +47,8 @@ export type OSEActor = Actor & {
   items: Actor["items"] | OseItem[] | { contents: OseItem[] };
   updatedAt?: string;
   system: {
-    aac: OseDataModelCharacterAC;
-    ac: OseDataModelCharacterAC;
+    aac: CharacterAC;
+    ac: CharacterAC;
     details: {
       alignment: string;
       class: string;

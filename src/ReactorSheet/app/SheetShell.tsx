@@ -8,8 +8,15 @@ import { ActionsView, SavesExploration } from "@features/actions";
 import { InventoryViewDnd as InventoryView } from "@features/inventory";
 import { selectTopbar } from "@domain/topbar";
 import { selectSaves } from "@features/actions/saves";
-import { selectExploration, rollExploration } from "@features/actions/exploration";
-import { selectInventory, selectEncumbrance, selectCoins } from "@features/inventory/inventory";
+import {
+  selectExploration,
+  rollExploration,
+} from "@features/actions/exploration";
+import {
+  selectInventory,
+  selectEncumbrance,
+  selectCoins,
+} from "@features/inventory/inventory";
 import { flagPath, FLAGS, readFlag } from "@domain/flags";
 import { selectAc } from "@domain/vitals";
 import { usesAscendingAC } from "@domain/chat/targeting";
@@ -22,7 +29,14 @@ import type { IdentityVM, VitalsVM } from "@domain/vm-types";
  * and mounts the Actions body (other tabs still render their legacy Content).
  */
 export default function SheetShell() {
-  const { actor, items: invItems, currentTab, setCurrentTab, updateActor, optimisticUpdate } = useReactorSheetContext();
+  const {
+    actor,
+    items: invItems,
+    currentTab,
+    setCurrentTab,
+    updateActor,
+    optimisticUpdate,
+  } = useReactorSheetContext();
   const toast = useToast();
   const [editOpen, setEditOpen] = useState(false);
 
@@ -36,23 +50,33 @@ export default function SheetShell() {
     alignment: details.alignment,
     title: details.title,
   };
+  const isAscending = usesAscendingAC();
+  const equippedArmor = invItems.filter(
+    (i) => i.type === "armor" && i.system.equipped,
+  ) as unknown as Item[];
   const vitals: VitalsVM = {
     hp: { value: hp.value, max: hp.max },
-    ac: selectAc(aac.value, ac.value, usesAscendingAC()),
+    ac: selectAc(isAscending ? aac : ac, equippedArmor, isAscending),
     initMod: scores.dex.init + (initiative?.mod ?? 0),
     hd: hp.hd,
     move: movement.base,
-    moveBands: { encounter: movement.encounter, explore: movement.base, travel: movement.overland },
+    moveBands: {
+      encounter: movement.encounter,
+      explore: movement.base,
+      travel: movement.overland,
+    },
   };
   const onSetHp = (value: number) => {
     const next = Math.max(0, Math.min(vitals.hp.max, value));
     if (next === vitals.hp.value) return;
     const update = { "system.hp.value": next };
-    if (optimisticUpdate) optimisticUpdate("actor", update, () => updateActor(update));
+    if (optimisticUpdate)
+      optimisticUpdate("actor", update, () => updateActor(update));
     else void updateActor(update);
   };
 
-  const resolveItem = (id: string) => (invItems as OseItem[]).find((i) => i._id === id);
+  const resolveItem = (id: string) =>
+    (invItems as OseItem[]).find((i) => i._id === id);
   const onEquipItem = (id: string) => {
     const it = resolveItem(id);
     if (!it || !("equipped" in it.system)) return;
@@ -66,8 +90,14 @@ export default function SheetShell() {
       // A newly-equipped item goes to the END of the tray (its own order, set
       // explicitly so it never inherits — and so list reorders never move it).
       const maxEq = (invItems as OseItem[])
-        .filter((i) => i._id !== id && !!(i.system as { equipped?: boolean }).equipped)
-        .reduce((m, i) => Math.max(m, readFlag<number>(i, FLAGS.equippedOrder) ?? 0), 0);
+        .filter(
+          (i) =>
+            i._id !== id && !!(i.system as { equipped?: boolean }).equipped,
+        )
+        .reduce(
+          (m, i) => Math.max(m, readFlag<number>(i, FLAGS.equippedOrder) ?? 0),
+          0,
+        );
       update[flagPath(FLAGS.equippedOrder)] = maxEq + 100;
     }
     // Optimistic: flip the hand instantly, reconcile when Foundry confirms.
@@ -94,24 +124,31 @@ export default function SheetShell() {
   // Consume one: decrement the item's quantity (floored at 0).
   const onConsume = (id: string) => {
     const it = resolveItem(id);
-    const cur = (it?.system as { quantity?: { value: number } })?.quantity?.value ?? 0;
+    const cur =
+      (it?.system as { quantity?: { value: number } })?.quantity?.value ?? 0;
     if (it && cur > 0) void it.update({ "system.quantity.value": cur - 1 });
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const embedUpdate = (updates: object[]) => void (actor as any).updateEmbeddedDocuments("Item", updates);
+  const embedUpdate = (updates: object[]) =>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    void (actor as any).updateEmbeddedDocuments("Item", updates);
   // Manual order is stored in our own flag (not Foundry's `sort`, which the core
   // sheet and other modules also write).
   const onReorder = (u: { id: string; sort: number }[]) =>
     embedUpdate(u.map((x) => ({ _id: x.id, [flagPath(FLAGS.order)]: x.sort })));
   // The equipped tray has its own order, stored in a separate flag.
   const onReorderEquipped = (u: { id: string; sort: number }[]) =>
-    embedUpdate(u.map((x) => ({ _id: x.id, [flagPath(FLAGS.equippedOrder)]: x.sort })));
+    embedUpdate(
+      u.map((x) => ({ _id: x.id, [flagPath(FLAGS.equippedOrder)]: x.sort })),
+    );
   const onNest = (itemId: string, containerId: string | null) => {
     const it = resolveItem(itemId);
     const wasEquipped = !!(it?.system as { equipped?: boolean })?.equipped;
     // Stowing an item in a container also unequips it.
-    const update: Record<string, unknown> = { _id: itemId, "system.containerId": containerId ?? "" };
+    const update: Record<string, unknown> = {
+      _id: itemId,
+      "system.containerId": containerId ?? "",
+    };
     if (containerId && wasEquipped) update["system.equipped"] = false;
     embedUpdate([update]);
     if (containerId && wasEquipped) {
@@ -128,8 +165,11 @@ export default function SheetShell() {
     const it = resolveItem(id);
     if (!it) return;
     // Deleting a container: move its contents back to the top level first.
-    const kids = (invItems as OseItem[]).filter((c) => (c.system as { containerId?: string }).containerId === id);
-    if (kids.length) embedUpdate(kids.map((k) => ({ _id: k._id, "system.containerId": "" })));
+    const kids = (invItems as OseItem[]).filter(
+      (c) => (c.system as { containerId?: string }).containerId === id,
+    );
+    if (kids.length)
+      embedUpdate(kids.map((k) => ({ _id: k._id, "system.containerId": "" })));
     void it.delete();
   };
 
@@ -145,47 +185,63 @@ export default function SheetShell() {
 
   return (
     <>
-    <EditModal open={editOpen} onClose={() => setEditOpen(false)} />
-    <Frame
-      tabs={items}
-      active={activeTab.id}
-      onSelect={(id) => {
-        const next = visible.find((t) => t.id === id);
-        if (next) setCurrentTab(next.id);
-      }}
-      topbar={<Topbar vm={selectTopbar(actor)} onEdit={() => setEditOpen(true)} onLevelUp={() => toast({ intent: "warning", title: "Level Up", message: "Coming soon ;)" })} />}
-      header={<HeaderBand identity={identity} vitals={vitals} onSetHp={onSetHp} />}
-      minibar={<Minibar identity={identity} vitals={vitals} onSetHp={onSetHp} />}
-      railExtra={
-        <SavesExploration
-          saves={selectSaves(actor)}
-          exploration={selectExploration(actor)}
-          onRollSave={(key) => actor.rollSave(key, {})}
-          onRollExploration={(key) => rollExploration(actor, key)}
-          tabbed
-        />
-      }
-    >
-      {activeTab.id === TabIds.ACTIONS ? (
-        <ActionsView actor={actor} />
-      ) : activeTab.id === TabIds.INVENTORY ? (
-        <InventoryView
-          inventory={selectInventory(invItems as OseItem[])}
-          encumbrance={selectEncumbrance(actor)}
-          coins={selectCoins(invItems as OseItem[])}
-          onSetCoin={onSetCoin}
-          onEquip={onEquipItem}
-          onOpen={onOpenItem}
-          onDelete={onDeleteItem}
-          onConsume={onConsume}
-          onReorder={onReorder}
-          onReorderEquipped={onReorderEquipped}
-          onNest={onNest}
-        />
-      ) : (
-        activeTab.Content && <activeTab.Content />
-      )}
-    </Frame>
+      <EditModal open={editOpen} onClose={() => setEditOpen(false)} />
+      <Frame
+        tabs={items}
+        active={activeTab.id}
+        onSelect={(id) => {
+          const next = visible.find((t) => t.id === id);
+          if (next) setCurrentTab(next.id);
+        }}
+        topbar={
+          <Topbar
+            vm={selectTopbar(actor)}
+            onEdit={() => setEditOpen(true)}
+            onLevelUp={() =>
+              toast({
+                intent: "warning",
+                title: "Level Up",
+                message: "Coming soon ;)",
+              })
+            }
+          />
+        }
+        header={
+          <HeaderBand identity={identity} vitals={vitals} onSetHp={onSetHp} />
+        }
+        minibar={
+          <Minibar identity={identity} vitals={vitals} onSetHp={onSetHp} />
+        }
+        railExtra={
+          <SavesExploration
+            saves={selectSaves(actor)}
+            exploration={selectExploration(actor)}
+            onRollSave={(key) => actor.rollSave(key, {})}
+            onRollExploration={(key) => rollExploration(actor, key)}
+            tabbed
+          />
+        }
+      >
+        {activeTab.id === TabIds.ACTIONS ? (
+          <ActionsView actor={actor} />
+        ) : activeTab.id === TabIds.INVENTORY ? (
+          <InventoryView
+            inventory={selectInventory(invItems as OseItem[])}
+            encumbrance={selectEncumbrance(actor)}
+            coins={selectCoins(invItems as OseItem[])}
+            onSetCoin={onSetCoin}
+            onEquip={onEquipItem}
+            onOpen={onOpenItem}
+            onDelete={onDeleteItem}
+            onConsume={onConsume}
+            onReorder={onReorder}
+            onReorderEquipped={onReorderEquipped}
+            onNest={onNest}
+          />
+        ) : (
+          activeTab.Content && <activeTab.Content />
+        )}
+      </Frame>
     </>
   );
 }
