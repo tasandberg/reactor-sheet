@@ -1,5 +1,5 @@
 import { test, expect } from "../fixtures";
-import { openCharacterSheet, ACTOR_NAME, itemId, itemGet } from "../helpers";
+import { openCharacterSheet, ACTOR_NAME, itemId } from "../helpers";
 import type { Page, Locator } from "@playwright/test";
 
 const ARMOR = "Leather Armor";
@@ -12,63 +12,64 @@ async function setAscending(page: Page, value: boolean) {
   }, value);
 }
 
-/** Read the current ascending-AC setting. */
 async function getAscending(page: Page): Promise<boolean> {
   return page.evaluate(
     () => !!(globalThis as any).game.settings.get((globalThis as any).game.system.id, "ascendingAC"),
   );
 }
 
-/** The system's computed AC for a scheme (both are always derived, reflect equip state). */
-async function systemAc(page: Page, ascending: boolean): Promise<number> {
-  return page.evaluate(
-    ({ name, asc }) => {
+/** Equip/unequip the armour via the API (used once up front to capture expected AC). */
+async function setEquippedApi(page: Page, equipped: boolean) {
+  await page.evaluate(
+    async ({ name, eq }) => {
       const a = (globalThis as any).game.actors.getName(name);
-      return (asc ? a.system.aac.value : a.system.ac.value) as number;
+      await a.items.getName("Leather Armor").update({ "system.equipped": eq });
     },
-    { name: ACTOR_NAME, asc: ascending },
+    { name: ACTOR_NAME, eq: equipped },
   );
 }
 
-/** Toggle the armour to a target equipped state via the inventory equip button. */
-async function setEquipped(page: Page, sheet: Locator, armorId: string, want: boolean) {
-  if ((await itemGet(page, ARMOR, "system.equipped")) === want) return;
-  await sheet.locator('[data-testid="tab-inventory"]').click();
-  await sheet.locator(`[data-testid="equip-${armorId}"]`).click();
-  await expect
-    .poll(() => itemGet(page, ARMOR, "system.equipped"), { timeout: 15_000 })
-    .toBe(want);
-}
-
-/** Header AC tracks equipped armour for the scheme (equip/unequip re-renders, re-reading the setting). */
-async function verifyScheme(page: Page, sheet: Locator, ascending: boolean) {
-  await setAscending(page, ascending);
-  const armorId = await itemId(page, ARMOR);
-  const acValue = sheet.locator('[data-testid="ac-value"]');
-
-  // Equip → AC reflects the armour in this scheme.
-  await setEquipped(page, sheet, armorId, true);
-  const armored = await systemAc(page, ascending);
-  await expect(acValue).toHaveText(String(armored), { timeout: 15_000 });
-
-  // Unequip → reverts to naked (and the armour actually changed the value).
-  await setEquipped(page, sheet, armorId, false);
-  const naked = await systemAc(page, ascending);
-  expect(armored).not.toBe(naked);
-  await expect(acValue).toHaveText(String(naked), { timeout: 15_000 });
+/** Both schemes' computed AC for the actor's current equip state. */
+async function acBoth(page: Page): Promise<{ asc: number; desc: number }> {
+  return page.evaluate((name) => {
+    const a = (globalThis as any).game.actors.getName(name);
+    return { asc: a.system.aac.value as number, desc: a.system.ac.value as number };
+  }, ACTOR_NAME);
 }
 
 test.describe("AC display follows the ascendingAC setting", () => {
   test("equipping armour updates AC correctly in descending and ascending modes", async ({
     gamePage,
   }) => {
-    test.slow(); // two schemes × equip/unequip cycles
-
     const original = await getAscending(gamePage);
+
+    // Capture expected values once via the API (both schemes per prep), then assert
+    // the *optimistic* header instantly on each UI click — no per-toggle round-trip wait.
+    await setEquippedApi(gamePage, false);
+    const naked = await acBoth(gamePage);
+    await setEquippedApi(gamePage, true);
+    const armored = await acBoth(gamePage);
+    await setEquippedApi(gamePage, false); // baseline: unequipped
+    expect(armored).not.toEqual(naked);
+
     const sheet = await openCharacterSheet(gamePage);
+    const armorId = await itemId(gamePage, ARMOR);
+    const acValue = sheet.locator('[data-testid="ac-value"]');
+
     try {
-      await verifyScheme(gamePage, sheet, false); // descending
-      await verifyScheme(gamePage, sheet, true); // ascending
+      for (const ascending of [false, true]) {
+        await setAscending(gamePage, ascending);
+        await sheet.locator('[data-testid="tab-inventory"]').click();
+        const equip = sheet.locator(`[data-testid="equip-${armorId}"]`);
+
+        // Equip → optimistic header shows the armoured value for this scheme.
+        await equip.click();
+        await expect(acValue).toHaveText(String(ascending ? armored.asc : armored.desc));
+
+        // Unequip → reverts to naked.
+        await equip.click();
+        await expect(acValue).toHaveText(String(ascending ? naked.asc : naked.desc));
+      }
     } finally {
       await setAscending(gamePage, original);
     }
