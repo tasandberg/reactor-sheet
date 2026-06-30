@@ -109,7 +109,7 @@ export function Minibar({ identity, vitals, onSetHp }: Props) {
         </div>
         <div className="rs-mb-ac">
           <Stamp className="rs-mb-stamp">AC</Stamp>
-          <span className="rs-mb-ac-v">{vitals.ac.ascending}</span>
+          <span className="rs-mb-ac-v">{vitals.ac.value}</span>
         </div>
       </div>
     </div>

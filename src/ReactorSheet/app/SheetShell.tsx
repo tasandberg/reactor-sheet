@@ -11,6 +11,8 @@ import { selectSaves } from "@features/actions/saves";
 import { selectExploration, rollExploration } from "@features/actions/exploration";
 import { selectInventory, selectEncumbrance, selectCoins } from "@features/inventory/inventory";
 import { flagPath, FLAGS, readFlag } from "@domain/flags";
+import { selectAc } from "@domain/vitals";
+import { usesAscendingAC } from "@domain/chat/targeting";
 import { useToast } from "@ui/toastContext";
 import type { OseItem } from "@domain/types";
 import type { IdentityVM, VitalsVM } from "@domain/vm-types";
@@ -36,7 +38,7 @@ export default function SheetShell() {
   };
   const vitals: VitalsVM = {
     hp: { value: hp.value, max: hp.max },
-    ac: { ascending: aac.value, descending: ac.value },
+    ac: selectAc(aac.value, ac.value, usesAscendingAC()),
     initMod: scores.dex.init + (initiative?.mod ?? 0),
     hd: hp.hd,
     move: movement.base,

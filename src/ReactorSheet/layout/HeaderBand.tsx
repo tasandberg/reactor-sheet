@@ -117,11 +117,11 @@ export function HeaderBand({ identity, vitals, onSetHp }: Props) {
         <div className="rs-vital ac">
           <Stamp className="vv-l">AC</Stamp>
           <div className="vv-row">
-            <div className="vv-big">{vitals.ac.ascending}</div>
+            <div className="vv-big">{vitals.ac.value}</div>
           </div>
           <div className="vv-sub">
-            <span className="full">Ascending</span>
-            <span className="short">asc</span>
+            <span className="full">{vitals.ac.ascending ? "Ascending" : "Descending"}</span>
+            <span className="short">{vitals.ac.ascending ? "asc" : "desc"}</span>
           </div>
         </div>
       </div>
