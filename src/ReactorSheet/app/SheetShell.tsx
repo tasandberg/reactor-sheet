@@ -56,7 +56,7 @@ export default function SheetShell() {
   ) as unknown as Item[];
   const vitals: VitalsVM = {
     hp: { value: hp.value, max: hp.max },
-    ac: selectAc(isAscending ? aac : ac, equippedArmor, isAscending),
+    ac: selectAc(aac, ac, equippedArmor, isAscending),
     initMod: scores.dex.init + (initiative?.mod ?? 0),
     hd: hp.hd,
     move: movement.base,

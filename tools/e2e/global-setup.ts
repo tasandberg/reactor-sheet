@@ -64,9 +64,7 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
           {
             name: "Leather Armor",
             type: "armor",
-            // Explicit AC (better than the unarmoured base 9/10) so the AC spec can
-            // observe the value change on equip/unequip. Leather: AC 7 / AAC 12.
-            system: { equipped: false, ac: { value: 7 }, aac: { value: 12 } },
+            system: { equipped: false },
           },
           {
             name: "Gold piece",
