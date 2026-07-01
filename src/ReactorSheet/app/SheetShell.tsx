@@ -227,7 +227,7 @@ export default function SheetShell() {
         ) : activeTab.id === TabIds.INVENTORY ? (
           <InventoryView
             inventory={selectInventory(invItems as OseItem[])}
-            encumbrance={selectEncumbrance(actor)}
+            encumbrance={selectEncumbrance(actor, invItems as OseItem[])}
             coins={selectCoins(invItems as OseItem[])}
             onSetCoin={onSetCoin}
             onEquip={onEquipItem}
