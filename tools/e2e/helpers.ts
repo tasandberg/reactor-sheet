@@ -48,6 +48,10 @@ export async function openCharacterSheet(page: Page): Promise<Locator> {
     // Rendering this React sheet is the expensive step on a 2-core runner, so
     // render only once and reuse it across specs (the shared session keeps it up).
     if (!actor.sheet.rendered) await actor.sheet.render(true);
+    // First render races: the render() promise can resolve before the element is
+    // attached, and setPosition() calls getComputedStyle() on it. Wait for it.
+    for (let i = 0; i < 60 && !(actor.sheet.element instanceof HTMLElement); i++)
+      await new Promise((r) => setTimeout(r, 50));
     // Force the wide (large) layout tier so the horizontal tab bar renders.
     actor.sheet.setPosition?.({ width: 920, height: 820 });
   }, ACTOR_NAME);

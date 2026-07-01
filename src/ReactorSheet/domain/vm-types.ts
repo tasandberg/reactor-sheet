@@ -11,7 +11,8 @@ export interface IdentityVM {
 
 export interface VitalsVM {
   hp: { value: number; max: number };
-  ac: { ascending: number; descending: number };
+  /** Resolved AC for display: value matching the ascendingAC setting + the mode. */
+  ac: { value: number; ascending: boolean };
   initMod: number;
   hd: string;
   move: number;

@@ -1,9 +1,6 @@
+import type { CharacterAC } from "@ose-foundry-core/types";
 import type { OSEActor } from "@domain/types";
 import OseDataModelCharacterScores from "@domain/data-model-character-scores";
-import OseDataModelCharacterAC from "@domain/data-model-character-ac";
-
-// DEX 13 → standard mod +1; mod=1 (e.g. a ring) yields AAC 12 / DAC 7 per the design demo.
-const dexMod = 1;
 
 // The constructor's param type wants full BaseScore (incl. derived `mod`), but it only
 // reads value/bonus; pass the raw scores and cast to satisfy the declared signature.
@@ -16,8 +13,10 @@ const scores = new OseDataModelCharacterScores({
   cha: { value: 11, bonus: 0 },
 } as unknown as ConstructorParameters<typeof OseDataModelCharacterScores>[0]);
 
-const aac = new OseDataModelCharacterAC(true, [], dexMod, 1);
-const ac = new OseDataModelCharacterAC(false, [], dexMod, 1);
+// Static AC (DEX 13 → +1, ring mod +1): AAC 12 / DAC 7. The sheet only reads
+// `.value`; correctness of the AC math is covered by E2E, not the fixture.
+const aac: CharacterAC = { value: 12, mod: 1, base: 10, naked: 11, shield: 0 };
+const ac: CharacterAC = { value: 7, mod: 1, base: 9, naked: 8, shield: 0 };
 
 // Partial actor: only the fields view-models read. Cast through unknown because the
 // real OSEActor is a full Foundry document with methods we don't exercise in unit tests.

@@ -128,4 +128,8 @@ class ReactorSheet extends ReactActorSheetV2 {
   }
 }
 
+// Pin the class name: Foundry registers sheets by it (`ose.ReactorSheet`), so
+// minification mangling it would break registration and pinned sheetClass flags.
+Object.defineProperty(ReactorSheet, "name", { value: "ReactorSheet" });
+
 export default ReactorSheet;

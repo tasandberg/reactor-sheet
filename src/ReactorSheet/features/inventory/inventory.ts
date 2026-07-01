@@ -1,10 +1,23 @@
+import type { CharacterEncumbrance } from "@ose-foundry-core/types";
 import type { OSEActor, OseItem } from "@domain/types";
-import type { InventorySortKey, SortDir, InventoryVM, InventoryItemVM, EncumbranceVM, EncumbranceTier, CoinVM } from "@domain/vm-types";
+import type {
+  InventorySortKey,
+  SortDir,
+  InventoryVM,
+  InventoryItemVM,
+  EncumbranceVM,
+  EncumbranceTier,
+  CoinVM,
+} from "@domain/vm-types";
 import { FLAGS, readFlag } from "@domain/flags";
 
 /** Manual order position: our own flag, falling back to Foundry's sort for un-migrated items. */
 function orderOf(item: OseItem): number {
-  return readFlag<number>(item, FLAGS.order) ?? (item as unknown as { sort?: number }).sort ?? 0;
+  return (
+    readFlag<number>(item, FLAGS.order) ??
+    (item as unknown as { sort?: number }).sort ??
+    0
+  );
 }
 
 /** Manual order within the equipped tray: its OWN flag, independent of the list
@@ -39,12 +52,14 @@ export function coinDenom(name: string): string | null {
   if (bracketed) return bracketed.toLowerCase();
   const bare = name.match(/^\s*(pp|gp|ep|sp|cp)\s*$/i)?.[1];
   if (bare) return bare.toLowerCase();
-  const metal = name.match(/\b(gold|silver|copper|platinum|electrum)\s+(?:pieces?|coins?)\b/i)?.[1];
+  const metal = name.match(
+    /\b(gold|silver|copper|platinum|electrum)\s+(?:pieces?|coins?)\b/i,
+  )?.[1];
   if (metal) return COIN_METAL_DENOM[metal.toLowerCase()];
   return null;
 }
 
-/** The coins the actor holds, in canonical pp→cp order, with their current quantities. */
+/** The coins the actor holds, in canonical order, with their current quantities. */
 export function selectCoins(items: OseItem[]): CoinVM[] {
   const byDenom = new Map<string, OseItem>();
   for (const it of items) {
@@ -56,29 +71,37 @@ export function selectCoins(items: OseItem[]): CoinVM[] {
     const it = byDenom.get(d);
     if (!it) return [];
     const cost = (it.system as { cost?: number }).cost ?? 0;
-    return [{
-      denom: d.toUpperCase(),
-      id: it._id as string,
-      name: (it.name as string) ?? d.toUpperCase(),
-      img: (it.img as string) ?? "",
-      value: it.system.quantity?.value ?? 0,
-      gpEach: cost > 0 ? cost : (GP_PER_COIN[d] ?? 0),
-    }];
+    return [
+      {
+        denom: d.toUpperCase(),
+        id: it._id as string,
+        name: (it.name as string) ?? d.toUpperCase(),
+        img: (it.img as string) ?? "",
+        value: it.system.quantity?.value ?? 0,
+        gpEach: cost > 0 ? cost : (GP_PER_COIN[d] ?? 0),
+      },
+    ];
   });
 }
 
 // Standard OSE gp value per coin — fallback when an item's system.cost is unset.
-const GP_PER_COIN: Record<string, number> = { pp: 5, gp: 1, ep: 0.5, sp: 0.1, cp: 0.01 };
+const GP_PER_COIN: Record<string, number> = {
+  pp: 5,
+  gp: 1,
+  ep: 0.5,
+  sp: 0.1,
+  cp: 0.01,
+};
 
 // ---------------------------------------------------------------------------
 // Category metadata
 // ---------------------------------------------------------------------------
 
 const CATEGORY: Record<string, { label: string; rank: number }> = {
-  weapon:    { label: "Weapon",    rank: 0 },
-  armor:     { label: "Armour",    rank: 1 },
-  item:      { label: "Gear",      rank: 2 },
-  treasure:  { label: "Gear",      rank: 2 },
+  weapon: { label: "Weapon", rank: 0 },
+  armor: { label: "Armour", rank: 1 },
+  item: { label: "Gear", rank: 2 },
+  treasure: { label: "Gear", rank: 2 },
   container: { label: "Container", rank: 3 },
 };
 
@@ -115,7 +138,9 @@ function itemTags(item: OseItem): { label: string; icon: string }[] {
 }
 
 function isCurrency(item: OseItem): boolean {
-  return (item.system.tags ?? []).some((t: { value: string }) => t.value === "Currency");
+  return (item.system.tags ?? []).some(
+    (t: { value: string }) => t.value === "Currency",
+  );
 }
 
 /** World ascending-AC setting (descending is the OSE default). Safe in non-Foundry tests. */
@@ -132,20 +157,25 @@ function ascendingAC(): boolean {
 /** Armour class for an armour item: AAC (ascending) or AC (descending) per setting. */
 function armorClassOf(item: OseItem): { label: string; value: number } | null {
   if (item.type !== "armor") return null;
-  const s = item.system as { ac?: { value?: number }; aac?: { value?: number } };
+  const s = item.system as {
+    ac?: { value?: number };
+    aac?: { value?: number };
+  };
   return ascendingAC()
     ? { label: "AAC", value: s.aac?.value ?? 0 }
     : { label: "AC", value: s.ac?.value ?? 0 };
 }
 
-function toVM(item: OseItem, children: InventoryItemVM[] = []): InventoryItemVM {
+function toVM(
+  item: OseItem,
+  children: InventoryItemVM[] = [],
+): InventoryItemVM {
   const s = item.system;
   const q = s.quantity;
   const hasQty = !!q && (q.value > 1 || (q.max ?? 0) > 1);
   const cat = categoryFor(item.type as string);
-  const dmg = item.type === "weapon"
-    ? ((s as { damage?: string }).damage ?? "")
-    : "";
+  const dmg =
+    item.type === "weapon" ? ((s as { damage?: string }).damage ?? "") : "";
   return {
     id: item._id as string,
     name: item.name as string,
@@ -182,14 +212,17 @@ export function selectInventory(items: OseItem[]): InventoryVM {
   );
 
   // Index by id for O(1) child lookups
-  const byId = new Map<string, OseItem>(physical.map((it) => [it._id as string, it]));
+  const byId = new Map<string, OseItem>(
+    physical.map((it) => [it._id as string, it]),
+  );
 
   // Partition: children (have a containerId pointing to a known container) vs top-level
   const childrenByContainer = new Map<string, OseItem[]>();
   const topLevel: OseItem[] = [];
 
   for (const it of physical) {
-    const cid: string | undefined = (it.system as { containerId?: string }).containerId;
+    const cid: string | undefined = (it.system as { containerId?: string })
+      .containerId;
     if (cid && byId.has(cid)) {
       const bucket = childrenByContainer.get(cid) ?? [];
       bucket.push(it);
@@ -219,18 +252,24 @@ export function selectInventory(items: OseItem[]): InventoryVM {
   function flatten(list: InventoryItemVM[]): InventoryItemVM[] {
     return list.flatMap((it) => [it, ...flatten(it.children)]);
   }
-  const equipped = sortEquipped(flatten(vmItems).filter((it) => it.equipped === true));
+  const equipped = sortEquipped(
+    flatten(vmItems).filter((it) => it.equipped === true),
+  );
 
   // Legacy groups for grid view compatibility
   const GROUPS = [
-    { key: "weapons", label: "Weapons",      types: ["weapon"] },
-    { key: "armour",  label: "Armour & Wards", types: ["armor"] },
-    { key: "gear",    label: "Gear",          types: ["item", "treasure"] },
+    { key: "weapons", label: "Weapons", types: ["weapon"] },
+    { key: "armour", label: "Armour & Wards", types: ["armor"] },
+    { key: "gear", label: "Gear", types: ["item", "treasure"] },
   ];
   const groups = GROUPS.map((g) => ({
     key: g.key,
     label: g.label,
-    items: vmItems.filter((it) => g.types.includes(it.category.toLowerCase()) || (g.key === "gear" && it.categoryRank === 2)),
+    items: vmItems.filter(
+      (it) =>
+        g.types.includes(it.category.toLowerCase()) ||
+        (g.key === "gear" && it.categoryRank === 2),
+    ),
   })).filter((g) => g.items.length > 0);
 
   return { items: vmItems, equipped, count: countAll(vmItems), groups };
@@ -242,10 +281,10 @@ export function selectInventory(items: OseItem[]): InventoryVM {
 
 /** Natural direction each column sorts in when first selected. */
 export const SORT_DEFAULT_DIR: Record<InventorySortKey, SortDir> = {
-  manual: "asc",    // by our order flag — free drag-reordering
-  category: "asc",  // rank 0→3
-  name: "asc",      // A→Z
-  weight: "desc",   // heaviest first
+  manual: "asc", // by our order flag — free drag-reordering
+  category: "asc", // rank 0→3
+  name: "asc", // A→Z
+  weight: "desc", // heaviest first
 };
 
 /** Pure sort — by `key`/`dir`. Returns a new array, recurses into children. */
@@ -261,7 +300,8 @@ export function sortInventory(
         if (a.sort !== b.sort) return (a.sort - b.sort) * f;
         return a.name.localeCompare(b.name);
       case "category":
-        if (a.categoryRank !== b.categoryRank) return (a.categoryRank - b.categoryRank) * f;
+        if (a.categoryRank !== b.categoryRank)
+          return (a.categoryRank - b.categoryRank) * f;
         if (a.sort !== b.sort) return a.sort - b.sort;
         return a.name.localeCompare(b.name);
       case "name":
@@ -271,14 +311,18 @@ export function sortInventory(
     }
   });
   return sorted.map((it) =>
-    it.children.length > 0 ? { ...it, children: sortInventory(it.children, key, dir) } : it,
+    it.children.length > 0
+      ? { ...it, children: sortInventory(it.children, key, dir) }
+      : it,
   );
 }
 
 /** Order the equipped-tray subset by each item's `equippedSort` (ties broken by name). */
 export function sortEquipped(items: InventoryItemVM[]): InventoryItemVM[] {
   return [...items].sort((a, b) =>
-    a.equippedSort !== b.equippedSort ? a.equippedSort - b.equippedSort : a.name.localeCompare(b.name),
+    a.equippedSort !== b.equippedSort
+      ? a.equippedSort - b.equippedSort
+      : a.name.localeCompare(b.name),
   );
 }
 
@@ -296,20 +340,59 @@ const TIER_STATUS = [
   "Overloaded",
 ] as const;
 
-export function selectEncumbrance(actor: OSEActor): EncumbranceVM {
-  const e = actor.system.encumbrance;
+/** World significant-treasure setting (basic encumbrance). Safe in non-Foundry tests. */
+function significantTreasure(): boolean {
+  try {
+    const settings = game.settings as { get(ns: string, key: string): unknown };
+    return !!settings.get(game.system.id, "significantTreasure");
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Constructor shape of OSE's active encumbrance class (variant per world setting).
+ * The `ose` types package exports the CharacterEncumbrance *instance* interface but
+ * not the variant classes (nor a matching ctor sig), so the ctor is spelled here.
+ */
+type EncumbranceCtor = new (
+  max: number,
+  items: OseItem[],
+  options: { significantTreasure: boolean; scores: unknown },
+  strMod: number,
+) => CharacterEncumbrance;
+
+export function selectEncumbrance(
+  actor: OSEActor,
+  items?: OseItem[],
+): EncumbranceVM {
+  const live = actor.system.encumbrance;
+  // Optimistically recompute from the overlaid items via OSE's OWN encumbrance class,
+  // mirroring the system's construction, so equip/nest/consume/qty changes reflect
+  // instantly instead of waiting for the actor to re-prep. `max` (STR-derived cap) is
+  // item-independent so it's taken off the live instance. No items ⇒ live instance (tests).
+  const e =
+    items === undefined
+      ? live
+      : new (live.constructor as unknown as EncumbranceCtor)(
+          live.max,
+          items,
+          {
+            significantTreasure: significantTreasure(),
+            scores: actor.system.scores,
+          },
+          actor.system.scores?.str?.mod ?? 0,
+        );
   const move = actor.system.movement?.base ?? 0;
-  // Drive tier off the system's breakpoint flags (variant-aware) rather than our
-  // own % buckets — keeps status/move consistent across all encumbrance modes.
-  const tier: EncumbranceTier = e.encumbered
-    ? 4
-    : e.atThirdBreakpoint
-      ? 3
-      : e.atSecondBreakpoint
-        ? 2
-        : e.atFirstBreakpoint
-          ? 1
-          : 0;
+  // Tier = highest breakpoint reached (over-limit tops out at 4); use the system's
+  // variant-aware flags, not our own % buckets.
+  const breakpoints = [
+    e.atFirstBreakpoint,
+    e.atSecondBreakpoint,
+    e.atThirdBreakpoint,
+    e.encumbered,
+  ];
+  const tier = (breakpoints.lastIndexOf(true) + 1) as EncumbranceTier;
   // Basic encumbrance is categorical (armor + treasure threshold) — value/max in cn
   // has no bearing on the tier, so a weight bar/readout would contradict the status.
   // Drive the bar off the tier (basic tops out at the 3rd breakpoint) and drop the
