@@ -1,0 +1,1 @@
+import{i as e}from"./preload-helper-xPQekRTU.js";function t(e){return e?{role:`button`,tabIndex:0,onClick:e,onKeyDown:t=>{(t.key===`Enter`||t.key===` `)&&(t.preventDefault(),e())}}:{}}var n=e((()=>{}));export{t as n,n as t};
